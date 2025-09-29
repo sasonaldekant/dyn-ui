@@ -1,0 +1,8 @@
+{
+  "color": {
+    "semantic": {
+      "background": { "value": "{color.base.white.value}" },
+      "text": { "value": "{color.base.black.value}" }
+    }
+  }
+}
