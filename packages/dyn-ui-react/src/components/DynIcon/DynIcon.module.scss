@@ -1,33 +1,16 @@
 /**
- * DynIcon SCSS Module - Icon component styling
- * Supports string icons, React components, and interactive states
+ * DynIcon SCSS Module - Simplified for CSS Modules compatibility
+ * Clean selectors that work properly with CSS Module encapsulation
  */
-@import '../../styles/globals.scss';
 
-// Base icon styles
+/* Base icon styles */
 .dynIcon {
-  @extend .dyn-component;
-  
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  
-  // Default size
-  width: 1em;
-  height: 1em;
-  font-size: 1rem;
-  
-  // Inherit color from parent
   color: inherit;
   
-  // Smooth transitions
-  transition: var(--transition-colors), var(--transition-transform);
-  
-  // Prevent text selection
-  user-select: none;
-  
-  // SVG styling
   svg {
     width: 100%;
     height: 100%;
@@ -36,38 +19,32 @@
   }
 }
 
-// String-based icons (using icon fonts or names)
-.dynIconString {
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
-  line-height: 1;
-  
-  // Will be extended when icon font system is integrated
-  font-family: inherit;
+/* Size variants */
+.small {
+  width: 14px;
+  height: 14px;
 }
 
-// Custom React component icons
-.dynIconCustom {
-  // Additional styling for React component icons
-  // Ensures proper rendering of custom icon components
-  
-  > * {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
+.medium {
+  width: 16px;
+  height: 16px;
 }
 
-// Clickable/interactive icons
-.dynIconClickable {
+.large {
+  width: 18px;
+  height: 18px;
+}
+
+/* Interactive icons */
+.clickable {
   cursor: pointer;
-  border-radius: var(--radius-sm);
-  padding: 0.125em;
-  margin: -0.125em;
+  border-radius: 4px;
+  padding: 2px;
+  margin: -2px;
+  transition: all 0.2s ease;
   
   &:hover {
-    background-color: var(--color-surface);
+    background-color: rgba(0, 0, 0, 0.05);
     transform: scale(1.1);
   }
   
@@ -76,161 +53,77 @@
   }
   
   &:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid #0066cc;
     outline-offset: 2px;
   }
-  
-  // Keyboard navigation
-  &[tabindex] {
-    &:focus {
-      outline: 2px solid var(--color-primary);
-      outline-offset: 2px;
-    }
+}
+
+/* State colors */
+.success {
+  color: #059669;
+}
+
+.warning {
+  color: #d97706;
+}
+
+.danger {
+  color: #dc2626;
+}
+
+.info {
+  color: #0891b2;
+}
+
+/* Disabled state */
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Spinning animation */
+.spinning {
+  animation: iconSpin 1s linear infinite;
+}
+
+@keyframes iconSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
-// Size modifiers (when used with utility classes)
-.dynIcon {
-  // Extra small
-  &.xs {
-    font-size: 0.75rem;
-  }
-  
-  // Small
-  &.sm {
-    font-size: 0.875rem;
-  }
-  
-  // Medium (default)
-  &.md {
-    font-size: 1rem;
-  }
-  
-  // Large
-  &.lg {
-    font-size: 1.25rem;
-  }
-  
-  // Extra large
-  &.xl {
-    font-size: 1.5rem;
-  }
-  
-  // 2x large
-  &.xxl {
-    font-size: 2rem;
-  }
-}
-
-// State modifiers
-.dynIcon {
-  // Disabled state
-  &.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-  
-  // Loading/spinning state
-  &.spinning {
-    animation: dyn-spin 1s linear infinite;
-  }
-  
-  // Success state
-  &.success {
-    color: var(--color-success);
-  }
-  
-  // Warning state
-  &.warning {
-    color: var(--color-warning);
-  }
-  
-  // Danger state
-  &.danger {
-    color: var(--color-danger);
-  }
-  
-  // Info state
-  &.info {
-    color: var(--color-info);
-  }
-}
-
-// Contextual styling when used in other components
-.dyn-button .dynIcon {
-  // Icon in button context
-  flex-shrink: 0;
-}
-
-.dyn-input .dynIcon {
-  // Icon in input context
-  color: var(--color-text-secondary);
-}
-
-.dyn-menu-item .dynIcon {
-  // Icon in menu context
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-// Responsive adjustments
-@media (max-width: 640px) {
-  .dynIcon {
-    // Slightly larger touch targets on mobile
-    &.dynIconClickable {
-      padding: 0.25em;
-      margin: -0.25em;
-    }
-  }
-}
-
-// High contrast theme adjustments
-.theme-high-contrast .dynIcon {
-  &.dynIconClickable {
-    &:hover {
-      background-color: var(--color-text-primary);
-      color: var(--color-background);
-    }
-    
-    &:focus-visible {
-      outline-width: 3px;
-    }
-  }
-}
-
-// Reduced motion preferences
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .dynIcon {
+  .clickable {
     transition: none;
     
-    &.spinning {
-      animation: none;
+    &:hover {
+      transform: none;
     }
     
-    &.dynIconClickable {
-      &:hover {
-        transform: none;
-      }
-      
-      &:active {
-        transform: none;
-      }
+    &:active {
+      transform: none;
     }
+  }
+  
+  .spinning {
+    animation: none;
   }
 }
 
-// Print styles
+/* Print styles */
 @media print {
   .dynIcon {
-    // Ensure icons are visible in print
     color-adjust: exact;
     -webkit-print-color-adjust: exact;
-    
-    &.dynIconClickable {
-      // Remove interactive states in print
-      background: none !important;
-      transform: none !important;
-    }
+  }
+  
+  .clickable {
+    background: none !important;
+    transform: none !important;
   }
 }
