@@ -6,7 +6,7 @@ import styles from './DynButton.module.scss';
 
 /**
  * DynButton - Production-ready button component following DYN UI specification
- * Updated to properly use existing SCSS modules and class structure
+ * Updated for CSS Modules compatibility with simplified className logic
  */
 export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
   (
@@ -39,33 +39,32 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       onBlur?.();
     };
 
-    // Build CSS classes using existing SCSS module classes
+    // Simplified className logic for CSS Modules
     const buttonClasses = classNames(
       styles.dynButton,
-      styles[`dynButton--${kind}`],
-      styles[`dynButton--${size}`],
+      styles[kind],      // .primary, .secondary, .tertiary
+      styles[size],      // .small, .medium, .large
       {
-        [styles['dynButton--danger']]: danger,
-        [styles['dynButton--loading']]: loading,
-        [styles['dynButton--disabled']]: disabled,
-        [styles['dynButton--iconOnly']]: Boolean(icon && !label),
+        [styles.danger]: danger,
+        [styles.loading]: loading,
+        [styles.iconOnly]: Boolean(icon && !label),
       },
       className
     );
 
-    // Render loading spinner using existing SCSS class
+    // Render loading spinner
     const renderSpinner = () => {
       if (!loading) return null;
       return (
         <span 
-          className={styles.dynButtonSpinner}
+          className={styles.spinner}
           aria-hidden="true"
           data-testid="dyn-button-spinner"
         />
       );
     };
 
-    // Render icon using DynIcon component with proper CSS class
+    // Render icon
     const renderIcon = () => {
       if (loading) return renderSpinner();
       if (!icon) return null;
@@ -73,16 +72,17 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       return (
         <DynIcon 
           icon={icon}
-          className={styles.dynButtonIcon}
+          size={size}
+          className={styles.icon}
         />
       );
     };
 
-    // Render label with proper SCSS module class
+    // Render label
     const renderLabel = () => {
       if (!label) return null;
       return (
-        <span className={styles.dynButtonLabel}>
+        <span className={styles.label}>
           {label}
         </span>
       );
@@ -106,7 +106,9 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
         {...rest}
       >
         {renderIcon()}
-        {renderLabel()}
+        <span className={styles.content}>
+          {renderLabel()}
+        </span>
       </button>
     );
   }
