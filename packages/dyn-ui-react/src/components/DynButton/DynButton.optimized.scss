@@ -1,0 +1,253 @@
+/**
+ * DynButton Optimized SCSS - Short semantic class names
+ * Replaces long CSS Module hashes with readable short names
+ * Final classes: dyn-btn, dyn-btn--primary, dyn-btn--s, etc.
+ */
+
+/* Base button - short semantic name */
+.dyn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  position: relative;
+  box-sizing: border-box;
+  
+  &:focus-visible {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+  }
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+/* Kind variants - single word modifiers */
+.dyn-btn--primary {
+  background-color: #1976d2;
+  color: #ffffff;
+  border-color: #1976d2;
+  
+  &:hover:not(:disabled) {
+    background-color: #1565c0;
+    border-color: #1565c0;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+  }
+}
+
+.dyn-btn--secondary {
+  background-color: transparent;
+  color: #1976d2;
+  border-color: #1976d2;
+  
+  &:hover:not(:disabled) {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    border-color: #1565c0;
+  }
+}
+
+.dyn-btn--tertiary {
+  background-color: transparent;
+  color: #1976d2;
+  border-color: transparent;
+  
+  &:hover:not(:disabled) {
+    background-color: #e3f2fd;
+    color: #1565c0;
+  }
+}
+
+/* Size variants - single letter modifiers */
+.dyn-btn--s { /* small */
+  font-size: 12px;
+  padding: 6px 12px;
+  min-height: 32px;
+}
+
+.dyn-btn--m { /* medium */
+  font-size: 14px;
+  padding: 8px 16px;
+  min-height: 40px;
+}
+
+.dyn-btn--l { /* large */
+  font-size: 16px;
+  padding: 12px 20px;
+  min-height: 48px;
+}
+
+/* State modifiers - short names */
+.dyn-btn--danger {
+  background-color: #d32f2f;
+  color: #ffffff;
+  border-color: #d32f2f;
+  
+  &:hover:not(:disabled) {
+    background-color: #c62828;
+    border-color: #c62828;
+    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+  }
+  
+  /* Danger combinations */
+  &.dyn-btn--secondary {
+    background-color: transparent;
+    color: #d32f2f;
+    border-color: #d32f2f;
+    
+    &:hover:not(:disabled) {
+      background-color: #ffebee;
+      color: #c62828;
+      border-color: #c62828;
+    }
+  }
+  
+  &.dyn-btn--tertiary {
+    background-color: transparent;
+    color: #d32f2f;
+    border-color: transparent;
+    
+    &:hover:not(:disabled) {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+  }
+}
+
+.dyn-btn--loading {
+  pointer-events: none;
+  
+  .dyn-btn__content {
+    opacity: 0.7;
+  }
+}
+
+.dyn-btn--icon-only {
+  min-width: auto;
+  aspect-ratio: 1;
+  padding: 8px;
+}
+
+.dyn-btn--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Element modifiers - BEM style short names */
+.dyn-btn__content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.2s ease;
+}
+
+.dyn-btn__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+}
+
+.dyn-btn__label {
+  display: flex;
+  align-items: center;
+}
+
+/* Loading spinner - short name */
+.dyn-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: dyn-spin 1s linear infinite;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+/* Size specific icon adjustments */
+.dyn-btn--s .dyn-btn__icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.dyn-btn--l .dyn-btn__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Animations */
+@keyframes dyn-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive - maintain short names */
+@media (max-width: 640px) {
+  .dyn-btn--s {
+    min-height: 36px;
+    font-size: 14px;
+  }
+  
+  .dyn-btn--m {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  
+  .dyn-btn--l {
+    min-height: 52px;
+    font-size: 18px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .dyn-btn {
+    transition: none;
+    
+    &:hover:not(:disabled) {
+      transform: none;
+    }
+  }
+  
+  .dyn-spinner {
+    animation: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .dyn-btn {
+    background: transparent !important;
+    color: black !important;
+    border: 1px solid black !important;
+    transform: none !important;
+  }
+}
