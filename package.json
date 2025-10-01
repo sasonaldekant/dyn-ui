@@ -9,6 +9,8 @@
     "test": "turbo run test"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/react": "^19.1.14",
     "@types/react-dom": "^19.1.9",
