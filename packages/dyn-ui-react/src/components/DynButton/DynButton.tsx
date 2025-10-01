@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { DynButtonProps } from './DynButton.types';
 import { classNames } from '../../utils/classNames';
+import { DynIcon } from '../DynIcon';
 import styles from './DynButton.module.scss';
 
 /**
@@ -64,33 +65,16 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       );
     };
 
-    // Render icon with proper integration
+    // Render icon using DynIcon component
     const renderIcon = () => {
       if (loading) return renderSpinner();
       if (!icon) return null;
 
-      // Handle string icons (icon names) - will integrate with DynIcon later
-      if (typeof icon === 'string') {
-        return (
-          <span 
-            className={styles.dynButtonIcon}
-            data-icon={icon}
-            aria-hidden="true"
-          >
-            {/* Temporary placeholder - will be replaced with DynIcon integration */}
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <circle cx="8" cy="8" r="3" />
-              <path d="M8 1v2M8 13v2M15 8h-2M3 8H1M12.364 3.636l-1.414 1.414M5.05 10.95l-1.414 1.414M12.364 12.364l-1.414-1.414M5.05 5.05L3.636 3.636" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
-            </svg>
-          </span>
-        );
-      }
-
-      // Handle React components
       return (
-        <span className={styles.dynButtonIcon} aria-hidden="true">
-          {icon}
-        </span>
+        <DynIcon 
+          icon={icon}
+          className={styles.dynButtonIcon}
+        />
       );
     };
 
