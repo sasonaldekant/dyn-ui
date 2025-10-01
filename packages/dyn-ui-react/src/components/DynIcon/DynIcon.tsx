@@ -5,8 +5,8 @@ import styles from './DynIcon.module.scss';
 export interface DynIconProps {
   /** Icon name (string) or React component */
   icon: string | React.ReactNode;
-  /** Icon size - can be CSS value or predefined size */
-  size?: string | number;
+  /** Icon size */
+  size?: 'small' | 'medium' | 'large';
   /** Additional CSS classes */
   className?: string;
   /** Click handler for interactive icons */
@@ -14,12 +14,11 @@ export interface DynIconProps {
 }
 
 /**
- * DynIcon - Flexible icon component supporting string names and React components
- * Updated to properly use existing SCSS module classes
+ * DynIcon - Flexible icon component with CSS Modules compatibility
  */
 export const DynIcon: React.FC<DynIconProps> = ({
   icon,
-  size,
+  size = 'medium',
   className,
   onClick
 }) => {
@@ -27,25 +26,16 @@ export const DynIcon: React.FC<DynIconProps> = ({
   if (React.isValidElement(icon)) {
     const iconClasses = classNames(
       styles.dynIcon,
-      styles.dynIconCustom,
+      styles[size],
       {
-        [styles.dynIconClickable]: Boolean(onClick),
+        [styles.clickable]: Boolean(onClick),
       },
       className
     );
 
-    const iconStyle: React.CSSProperties = {
-      ...(size && {
-        fontSize: typeof size === 'number' ? `${size}px` : size,
-        width: typeof size === 'number' ? `${size}px` : size,
-        height: typeof size === 'number' ? `${size}px` : size,
-      }),
-    };
-
     return (
       <span 
-        className={iconClasses} 
-        style={iconStyle}
+        className={iconClasses}
         onClick={onClick}
         role={onClick ? 'button' : undefined}
         tabIndex={onClick ? 0 : undefined}
@@ -60,25 +50,16 @@ export const DynIcon: React.FC<DynIconProps> = ({
   if (typeof icon === 'string') {
     const iconClasses = classNames(
       styles.dynIcon,
-      styles.dynIconString,
+      styles[size],
       {
-        [styles.dynIconClickable]: Boolean(onClick),
+        [styles.clickable]: Boolean(onClick),
       },
       className
     );
 
-    const iconStyle: React.CSSProperties = {
-      ...(size && {
-        fontSize: typeof size === 'number' ? `${size}px` : size,
-        width: typeof size === 'number' ? `${size}px` : size,
-        height: typeof size === 'number' ? `${size}px` : size,
-      }),
-    };
-
     return (
-      <i 
+      <span 
         className={iconClasses}
-        style={iconStyle}
         data-icon={icon}
         onClick={onClick}
         role={onClick ? 'button' : undefined}
@@ -86,17 +67,14 @@ export const DynIcon: React.FC<DynIconProps> = ({
         aria-hidden={!onClick}
         title={icon}
       >
-        {/* SVG icons based on name */}
         <svg 
-          width="1em" 
-          height="1em" 
           viewBox="0 0 16 16" 
           fill="currentColor"
           aria-hidden="true"
         >
           {getIconPath(icon)}
         </svg>
-      </i>
+      </span>
     );
   }
 
@@ -106,7 +84,6 @@ export const DynIcon: React.FC<DynIconProps> = ({
 
 /**
  * Get SVG path for common icon names
- * This matches the existing icon system from the previous implementation
  */
 function getIconPath(iconName: string): React.ReactNode {
   switch (iconName) {
@@ -115,7 +92,7 @@ function getIconPath(iconName: string): React.ReactNode {
       return (
         <>
           <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
-          <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
+          <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319z"/>
         </>
       );
     case 'download':
@@ -138,6 +115,10 @@ function getIconPath(iconName: string): React.ReactNode {
     case 'dyn-icon-warning':
       return (
         <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+      );
+    case 'help':
+      return (
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
       );
     default:
       // Default icon - a simple circle
