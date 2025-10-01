@@ -1,0 +1,237 @@
+/**
+ * DynButton SCSS Module - Following original SCOPE 3 specification
+ * Integrated with design tokens system
+ */
+@import '../../styles/globals.scss';
+
+// Base button styles
+.dynButton {
+  @extend .dyn-component;
+  
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  
+  font-family: inherit;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  
+  transition: var(--transition-colors), var(--transition-transform);
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Button kinds (variants)
+.dynButton--primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border-color: var(--color-primary);
+  
+  &:hover:not(:disabled) {
+    filter: brightness(0.9);
+  }
+}
+
+.dynButton--secondary {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--color-secondary);
+    color: var(--color-secondary-contrast);
+  }
+}
+
+.dynButton--tertiary {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: transparent;
+  
+  &:hover:not(:disabled) {
+    background-color: var(--color-surface);
+  }
+}
+
+// Danger state
+.dynButton--danger {
+  &.dynButton--primary {
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+  }
+  
+  &.dynButton--secondary {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+    
+    &:hover:not(:disabled) {
+      background-color: var(--color-danger);
+      color: var(--color-primary-contrast);
+    }
+  }
+  
+  &.dynButton--tertiary {
+    color: var(--color-danger);
+    
+    &:hover:not(:disabled) {
+      background-color: rgba(220, 38, 38, 0.1); // danger with opacity
+    }
+  }
+}
+
+// Button sizes
+.dynButton--small {
+  padding: calc(var(--spacing-xs) * 1.5) var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  min-height: 28px;
+}
+
+.dynButton--medium {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  min-height: 36px;
+}
+
+.dynButton--large {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-md);
+  min-height: 44px;
+}
+
+// States
+.dynButton--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+  
+  &:hover {
+    transform: none;
+  }
+}
+
+.dynButton--loading {
+  pointer-events: none;
+  
+  .dynButtonLabel {
+    opacity: 0.7;
+  }
+}
+
+.dynButton--iconOnly {
+  min-width: auto;
+  aspect-ratio: 1;
+}
+
+// Icon styles
+.dynButtonIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .dynButton--small & svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .dynButton--large & svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// Loading spinner
+.dynButtonSpinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: dyn-spin 1s linear infinite;
+  flex-shrink: 0;
+  
+  .dynButton--small & {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .dynButton--large & {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// Label styles
+.dynButtonLabel {
+  transition: var(--transition-opacity);
+}
+
+// Responsive adjustments
+@media (max-width: 640px) {
+  .dynButton {
+    &--small {
+      min-height: 32px;
+      font-size: var(--font-size-sm);
+    }
+    
+    &--medium {
+      min-height: 40px;
+      font-size: var(--font-size-md);
+    }
+    
+    &--large {
+      min-height: 48px;
+      font-size: var(--font-size-lg);
+    }
+  }
+}
+
+// High contrast theme adjustments
+.theme-high-contrast .dynButton {
+  border-width: 2px;
+  
+  &:focus-visible {
+    outline-width: 3px;
+  }
+  
+  &--tertiary {
+    border-color: var(--color-border);
+  }
+}
+
+// Print styles
+@media print {
+  .dynButton {
+    background: transparent !important;
+    color: black !important;
+    border: 1px solid black !important;
+    transform: none !important;
+    
+    &--loading .dynButtonSpinner {
+      display: none;
+    }
+  }
+}
