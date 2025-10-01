@@ -1,31 +1,12 @@
 import React, { forwardRef } from 'react';
 import { DynButtonProps } from './DynButton.types';
-import styles from './DynButton.module.scss';
+// Note: CSS modules import commented out for Rollup build compatibility
+// import styles from './DynButton.module.scss';
 import { classNames } from '../../utils/classNames';
 
 /**
  * DynButton - Production-ready button component following DYN UI specification
- * 
- * @example
- * // Primary button with label
- * <DynButton kind="primary" label="Save Changes" onClick={handleSave} />
- * 
- * // Secondary button with icon and label
- * <DynButton 
- *   kind="secondary" 
- *   icon="download" 
- *   label="Download" 
- *   size="large"
- * />
- * 
- * // Icon-only button
- * <DynButton kind="tertiary" icon="settings" ariaLabel="Settings" />
- * 
- * // Loading state
- * <DynButton kind="primary" label="Saving..." loading={true} />
- * 
- * // Danger state
- * <DynButton kind="primary" label="Delete" danger={true} />
+ * Note: CSS modules temporarily disabled for build compatibility
  */
 export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
   (
@@ -58,16 +39,16 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       onBlur?.();
     };
 
-    // Build CSS classes
+    // Build CSS classes using basic class names instead of CSS modules
     const buttonClasses = classNames(
-      styles.dynButton,
-      styles[`dynButton--${kind}`],
-      styles[`dynButton--${size}`],
+      'dyn-button',
+      `dyn-button--${kind}`,
+      `dyn-button--${size}`,
       {
-        [styles['dynButton--danger']]: danger,
-        [styles['dynButton--loading']]: loading,
-        [styles['dynButton--disabled']]: disabled,
-        [styles['dynButton--iconOnly']]: icon && !label,
+        'dyn-button--danger': danger,
+        'dyn-button--loading': loading,
+        'dyn-button--disabled': disabled,
+        'dyn-button--icon-only': icon && !label,
       },
       className
     );
@@ -77,7 +58,7 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       if (!loading) return null;
       return (
         <span 
-          className={styles.dynButtonSpinner} 
+          className="dyn-button-spinner" 
           aria-hidden="true"
           data-testid="dyn-button-spinner"
         />
@@ -93,7 +74,7 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       if (typeof icon === 'string') {
         return (
           <span 
-            className={styles.dynButtonIcon}
+            className="dyn-button-icon"
             data-icon={icon}
             aria-hidden="true"
           >
@@ -107,7 +88,7 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
 
       // Handle React components
       return (
-        <span className={styles.dynButtonIcon} aria-hidden="true">
+        <span className="dyn-button-icon" aria-hidden="true">
           {icon}
         </span>
       );
@@ -117,7 +98,7 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
     const renderLabel = () => {
       if (!label) return null;
       return (
-        <span className={styles.dynButtonLabel}>
+        <span className="dyn-button-label">
           {label}
         </span>
       );
