@@ -6,7 +6,7 @@ import styles from './DynButton.module.scss';
 
 /**
  * DynButton - Production-ready button component following DYN UI specification
- * Fixed to use SCSS modules and proper design token integration
+ * Updated to properly use existing SCSS modules and class structure
  */
 export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
   (
@@ -39,7 +39,7 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       onBlur?.();
     };
 
-    // Build CSS classes using SCSS modules
+    // Build CSS classes using existing SCSS module classes
     const buttonClasses = classNames(
       styles.dynButton,
       styles[`dynButton--${kind}`],
@@ -53,7 +53,7 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       className
     );
 
-    // Render loading spinner with proper SCSS module classes
+    // Render loading spinner using existing SCSS class
     const renderSpinner = () => {
       if (!loading) return null;
       return (
@@ -65,7 +65,7 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       );
     };
 
-    // Render icon using DynIcon component
+    // Render icon using DynIcon component with proper CSS class
     const renderIcon = () => {
       if (loading) return renderSpinner();
       if (!icon) return null;
@@ -78,7 +78,7 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       );
     };
 
-    // Render label with proper SCSS module classes
+    // Render label with proper SCSS module class
     const renderLabel = () => {
       if (!label) return null;
       return (
