@@ -1,8 +1,7 @@
 import React, { forwardRef } from 'react';
 import { DynButtonProps } from './DynButton.types';
-// Note: CSS modules import removed to fix TypeScript build errors
-// import styles from './DynButton.module.scss';
 import { classNames } from '../../utils/classNames';
+import '../../styles/dyn-button.css';  // Import CSS styling
 
 /**
  * DynButton - Production-ready button component following DYN UI specification
@@ -60,6 +59,15 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
           className="dyn-button-spinner" 
           aria-hidden="true"
           data-testid="dyn-button-spinner"
+          style={{
+            display: 'inline-block',
+            width: '1em',
+            height: '1em',
+            border: '2px solid transparent',
+            borderTop: '2px solid currentColor',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}
         />
       );
     };
