@@ -1,16 +1,7 @@
 /**
- * Enhanced classNames utility with clsx integration for better performance
+ * Enhanced classNames utility - TypeScript compatible version
  * Optimized for DYN UI components with CSS Module support
  */
-
-// Import clsx if available, fallback to built-in implementation
-let clsx: any;
-try {
-  clsx = require('clsx');
-} catch {
-  // Fallback implementation if clsx is not available
-  clsx = null;
-}
 
 type ClassNameValue = string | number | boolean | null | undefined;
 
@@ -20,8 +11,8 @@ type ClassNameArg =
   | ClassNameArg[];
 
 /**
- * Concatenates class names conditionally using clsx if available
- * Falls back to built-in implementation for compatibility
+ * Concatenates class names conditionally
+ * Built-in implementation compatible with all environments
  * @param args - Array of class name arguments
  * @returns Concatenated class name string
  * 
@@ -43,12 +34,6 @@ type ClassNameArg =
  * ```
  */
 export function classNames(...args: ClassNameArg[]): string {
-  // Use clsx if available for better performance
-  if (clsx) {
-    return clsx(args);
-  }
-  
-  // Fallback implementation
   const classes: string[] = [];
 
   for (const arg of args) {
