@@ -1,6 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
+import postcss from 'rollup-plugin-postcss';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const packageJson = require('./package.json');
@@ -21,6 +22,11 @@ export default {
     }
   ],
   plugins: [
+    postcss({
+      extract: true,
+      minimize: true,
+      sourceMap: true,
+    }),
     resolve({
       browser: true,
       preferBuiltins: false
