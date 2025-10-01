@@ -1,6 +1,6 @@
 /**
- * DynButton SCSS Module - Following original SCOPE 3 specification
- * Integrated with design tokens system
+ * DynButton SCSS Module - Fixed styling with proper colors and states
+ * Following DYN UI design specifications with visual differentiation
  */
 @import '../../styles/globals.scss';
 
@@ -38,60 +38,71 @@
   }
 }
 
-// Button kinds (variants)
+// Button kinds (variants) - Fixed with distinct colors
 .dynButton--primary {
-  background-color: var(--color-primary);
-  color: var(--color-primary-contrast);
-  border-color: var(--color-primary);
+  background-color: #1976d2; // Blue primary
+  color: #ffffff;
+  border-color: #1976d2;
   
   &:hover:not(:disabled) {
-    filter: brightness(0.9);
+    background-color: #1565c0; // Darker blue on hover
+    border-color: #1565c0;
   }
 }
 
 .dynButton--secondary {
-  background-color: var(--color-surface);
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
+  background-color: transparent;
+  color: #1976d2; // Blue text
+  border-color: #1976d2; // Blue border
   
   &:hover:not(:disabled) {
-    background-color: var(--color-secondary);
-    color: var(--color-secondary-contrast);
+    background-color: #e3f2fd; // Light blue background on hover
+    color: #1565c0;
+    border-color: #1565c0;
   }
 }
 
 .dynButton--tertiary {
   background-color: transparent;
-  color: var(--color-primary);
-  border-color: transparent;
+  color: #1976d2; // Blue text
+  border-color: transparent; // No border
   
   &:hover:not(:disabled) {
-    background-color: var(--color-surface);
+    background-color: #e3f2fd; // Light blue background on hover
+    color: #1565c0;
   }
 }
 
-// Danger state
+// Danger state - RED colors for Delete, Remove, Cancel
 .dynButton--danger {
   &.dynButton--primary {
-    background-color: var(--color-danger);
-    border-color: var(--color-danger);
+    background-color: #d32f2f !important; // Red background
+    color: #ffffff !important;
+    border-color: #d32f2f !important;
+    
+    &:hover:not(:disabled) {
+      background-color: #c62828 !important; // Darker red on hover
+      border-color: #c62828 !important;
+    }
   }
   
   &.dynButton--secondary {
-    color: var(--color-danger);
-    border-color: var(--color-danger);
+    color: #d32f2f !important; // Red text
+    border-color: #d32f2f !important; // Red border
     
     &:hover:not(:disabled) {
-      background-color: var(--color-danger);
-      color: var(--color-primary-contrast);
+      background-color: #ffebee !important; // Light red background
+      color: #c62828 !important;
+      border-color: #c62828 !important;
     }
   }
   
   &.dynButton--tertiary {
-    color: var(--color-danger);
+    color: #d32f2f !important; // Red text
     
     &:hover:not(:disabled) {
-      background-color: rgba(220, 38, 38, 0.1); // danger with opacity
+      background-color: #ffebee !important; // Light red background
+      color: #c62828 !important;
     }
   }
 }
@@ -117,17 +128,18 @@
 
 // States
 .dynButton--disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
   
   &:hover {
-    transform: none;
+    transform: none !important;
   }
 }
 
 .dynButton--loading {
   pointer-events: none;
+  position: relative;
   
   .dynButtonLabel {
     opacity: 0.7;
@@ -172,6 +184,7 @@
   border-radius: 50%;
   animation: dyn-spin 1s linear infinite;
   flex-shrink: 0;
+  margin-right: 8px;
   
   .dynButton--small & {
     width: 14px;
@@ -187,6 +200,9 @@
 // Label styles
 .dynButtonLabel {
   transition: var(--transition-opacity);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 // Responsive adjustments
