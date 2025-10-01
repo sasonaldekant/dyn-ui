@@ -1,12 +1,11 @@
 import React, { forwardRef } from 'react';
 import { DynButtonProps } from './DynButton.types';
-// Note: CSS modules import commented out for Rollup build compatibility
+// Note: CSS modules import removed to fix TypeScript build errors
 // import styles from './DynButton.module.scss';
 import { classNames } from '../../utils/classNames';
 
 /**
  * DynButton - Production-ready button component following DYN UI specification
- * Note: CSS modules temporarily disabled for build compatibility
  */
 export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
   (
@@ -39,7 +38,7 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       onBlur?.();
     };
 
-    // Build CSS classes using basic class names instead of CSS modules
+    // Build CSS classes using basic class names
     const buttonClasses = classNames(
       'dyn-button',
       `dyn-button--${kind}`,
@@ -48,7 +47,7 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
         'dyn-button--danger': danger,
         'dyn-button--loading': loading,
         'dyn-button--disabled': disabled,
-        'dyn-button--icon-only': icon && !label,
+        'dyn-button--icon-only': Boolean(icon && !label),
       },
       className
     );
