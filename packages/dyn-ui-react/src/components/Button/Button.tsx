@@ -1,7 +1,8 @@
 import React, { forwardRef } from 'react';
 import { classNames } from '../../utils/classNames';
 import { BaseComponentProps, ColorVariant, Size } from '../../types/theme';
-import styles from './Button.module.scss';
+// Note: CSS modules import removed to fix TypeScript build errors
+// import styles from './Button.module.scss';
 
 export interface ButtonProps extends BaseComponentProps {
   /** Button visual variant */
@@ -57,23 +58,23 @@ export const DynButton = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const buttonClasses = classNames(
-      styles.button,
-      styles[`button--${variant}`],
-      styles[`button--${size}`],
+      'dyn-button',
+      `dyn-button--${variant}`,
+      `dyn-button--${size}`,
       {
-        [styles['button--disabled']]: disabled,
-        [styles['button--loading']]: loading,
-        [styles['button--full-width']]: fullWidth,
-        [styles['button--icon-only']]: icon && !children,
+        'dyn-button--disabled': disabled,
+        'dyn-button--loading': loading,
+        'dyn-button--full-width': fullWidth,
+        'dyn-button--icon-only': Boolean(icon && !children),
       },
       className
     );
 
     const renderIcon = () => {
       if (loading) {
-        return <span className={styles.spinner} aria-hidden="true" />;
+        return <span className="dyn-button-spinner" aria-hidden="true" />;
       }
-      return icon ? <span className={styles.icon} aria-hidden="true">{icon}</span> : null;
+      return icon ? <span className="dyn-button-icon" aria-hidden="true">{icon}</span> : null;
     };
 
     const renderContent = () => {
@@ -84,7 +85,7 @@ export const DynButton = forwardRef<HTMLButtonElement, ButtonProps>(
       return (
         <>
           {iconPosition === 'left' && renderIcon()}
-          {children && <span className={styles.content}>{children}</span>}
+          {children && <span className="dyn-button-content">{children}</span>}
           {iconPosition === 'right' && renderIcon()}
         </>
       );
