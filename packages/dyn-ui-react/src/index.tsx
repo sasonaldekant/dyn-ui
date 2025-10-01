@@ -1,22 +1,19 @@
-// Theme System (from my enhanced implementation - keeping these)
+// Core Component - DynButton only for production build
+export { DynButton } from './components/DynButton';
+export type { DynButtonProps } from './components/DynButton';
+
+// Theme System (keeping enhanced features)
 export { ThemeProvider } from './providers/ThemeProvider';
 export { useTheme, useThemeVars } from './hooks/useTheme';
 export type { ThemeName, ThemeConfig, ThemeContextValue, ColorVariant, Size } from './types/theme';
 
-// DynButton - SCOPE 3 specification (corrected)
-export { DynButton } from './components/DynButton';
-export type { DynButtonProps } from './components/DynButton';
-
-// Utils (keeping these)
+// Utils (keeping enhanced features)
 export { classNames, createClassNameGenerator, combineClasses } from './utils/classNames';
 
-// Styles (keeping this)
-import './styles/globals.scss';
-
-// Legacy compatibility - maintaining backward compatibility
+// Legacy compatibility
 export const DynButton_Legacy: React.FC = () => {
   return <button>Dyn Button (Legacy)</button>;
 };
 
-// Note: This combines original SCOPE 3 DynButton with enhanced theme system
-// for seamless integration while following the implementation plan
+// Note: SCSS imports removed from production build to avoid Rollup issues
+// Styles should be imported by consuming applications
