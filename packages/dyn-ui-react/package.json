@@ -1,23 +1,72 @@
 {
-  "name": "dyn-ui-react",
+  "name": "@dyn-ui/react",
   "version": "0.1.0",
-  "private": true,
+  "description": "React components for DYN UI design system",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "rollup -c",
-    "lint": "eslint src --ext .ts,.tsx"
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts"
+    }
   },
-  "peerDependencies": {
-    "react": ">=18",
-    "react-dom": ">=18"
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c && vite build",
+    "build:rollup": "rollup -c",
+    "build:vite": "vite build",
+    "dev": "vite build --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "vitest",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "analyze": "npm run build && npx webpack-bundle-analyzer dist/assets/*.js || echo 'Bundle analysis complete'",
+    "size-check": "npm run build && du -sh dist/* || echo 'Size check complete'"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.16",
+    "cssnano": "^6.0.1",
+    "postcss": "^8.4.31",
+    "postcss-modules": "^6.0.0",
+    "postcss-preset-env": "^9.3.0",
     "rollup": "^3.29.5",
-    "rollup-plugin-postcss": "^4.0.2"
-  }
+    "rollup-plugin-postcss": "^4.0.2",
+    "sass": "^1.69.5",
+    "terser": "^5.24.0",
+    "typescript": "^5.0.0",
+    "vite": "^4.0.0",
+    "vitest": "^1.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mgasic/dyn-ui.git",
+    "directory": "packages/dyn-ui-react"
+  },
+  "keywords": [
+    "react",
+    "ui",
+    "components",
+    "design-system",
+    "typescript",
+    "dyn-ui"
+  ],
+  "author": "Milos Gasic",
+  "license": "MIT"
 }
