@@ -17,6 +17,7 @@
     "@vitejs/plugin-react": "^4.7.0",
     "rollup": "^3.29.5",
     "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.2",
     "turbo": "^1.13.4",
     "typescript": "^5.9.2",
     "vite": "^4.5.14"
