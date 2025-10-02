@@ -8,7 +8,10 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "check": "node check-implementation.js",
+    "check:implementation": "node check-implementation.js",
+    "tokens:build": "cd packages/design-tokens && npm run build"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "4.1.1",
