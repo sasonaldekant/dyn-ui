@@ -6,7 +6,9 @@
     "build": "pnpm exec turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "storybook": "storybook dev -p 6006 -s public",
+    "build-storybook": "storybook build -s public"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
@@ -18,7 +20,8 @@
     "rollup": "^3.29.5",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
-    "sass": "^1.69.5",
+    "sass": "^1.93.2",
+    "terser": "^5.44.0",
     "turbo": "^1.13.4",
     "typescript": "^5.9.2",
     "vite": "^4.5.14"
