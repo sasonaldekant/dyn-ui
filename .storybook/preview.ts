@@ -1,10 +1,7 @@
 import type { Preview } from '@storybook/react'
-import { ThemeProvider } from '../packages/dyn-ui-react/src/providers/ThemeProvider'
 
-// Import all Dyn UI styles
-import '../packages/dyn-ui-react/src/styles/globals.scss'
-import '../packages/dyn-ui-react/src/styles/dyn-button.css'
-import '../apps/react-demo/src/dyn-ui-styles.css'
+// Import centralized Dyn UI styles (single source of truth)
+import '../packages/dyn-ui-react/src/styles/dyn-ui.css'
 
 const preview: Preview = {
   parameters: {
@@ -17,6 +14,9 @@ const preview: Preview = {
     },
     docs: {
       toc: true,
+      description: {
+        component: 'Dyn UI React komponente sa centralizovanim CSS design sistemom',
+      },
     },
     backgrounds: {
       default: 'light',
@@ -26,12 +26,12 @@ const preview: Preview = {
           value: '#ffffff',
         },
         {
-          name: 'dark',
-          value: '#1a1a1a',
-        },
-        {
           name: 'surface',
           value: '#f8fafc',
+        },
+        {
+          name: 'dark',
+          value: '#0f172a',
         },
       ],
     },
@@ -64,7 +64,16 @@ const preview: Preview = {
   decorators: [
     (Story) => {
       return (
-        <div style={{ padding: '2rem', fontFamily: 'system-ui' }}>
+        <div 
+          className="dyn-component"
+          style={{ 
+            padding: 'var(--spacing-xl, 2rem)', 
+            fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            background: 'var(--color-background, #ffffff)',
+            color: 'var(--color-text-primary, #1e293b)',
+            minHeight: '100vh'
+          }}
+        >
           <Story />
         </div>
       )
@@ -72,12 +81,16 @@ const preview: Preview = {
   ],
   globalTypes: {
     theme: {
-      description: 'Global theme for components',
+      description: 'Dyn UI theme variant',
       defaultValue: 'light',
       toolbar: {
         title: 'Theme',
-        icon: 'circlehollow',
-        items: ['light', 'dark', 'high-contrast'],
+        icon: 'paintbrush',
+        items: [
+          { value: 'light', title: 'Light Theme' },
+          { value: 'dark', title: 'Dark Theme' },
+          { value: 'high-contrast', title: 'High Contrast' }
+        ],
         dynamicTitle: true,
       },
     },
