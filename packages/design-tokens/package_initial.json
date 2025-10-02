@@ -1,0 +1,33 @@
+{
+  "name": "@dyn-ui/design-tokens",
+  "version": "1.0.0",
+  "description": "Design tokens for Dyn UI system",
+  "main": "build/js/tokens.js",
+  "types": "build/js/tokens.d.ts",
+  "files": [
+    "build/",
+    "tokens/"
+  ],
+  "scripts": {
+    "build": "style-dictionary build",
+    "build:watch": "style-dictionary build --watch",
+    "clean": "rimraf build",
+    "prebuild": "npm run clean"
+  },
+  "keywords": [
+    "design-tokens",
+    "design-system",
+    "css-variables"
+  ],
+  "author": "Dyn UI Team",
+  "license": "MIT",
+  "dependencies": {
+    "style-dictionary": "^3.9.2"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "timestamp": "2025-10-02T22:31:45.510Z",
+  "summary": {
+    "successful": 12,
+    "errors": 6,
+    "warnings": 3,
+    "total": 23
+  },
+  "results": [
+    {
+      "status": "success",
+      "message": "Color token (action.json) postoji",
+      "details": "C:\\Users\\m.gasic\\Documents\\ITZahtevi\\dyn-ui\\packages\\design-tokens\\tokens\\color\\action.json"
+    },
+    {
+      "status": "success",
+      "message": "Color token (neutral.json) postoji",
+      "details": "C:\\Users\\m.gasic\\Documents\\ITZahtevi\\dyn-ui\\packages\\design-tokens\\tokens\\color\\neutral.json"
+    },
+    {
+      "status": "success",
+      "message": "Color token (feedback.json) postoji",
+      "details": "C:\\Users\\m.gasic\\Documents\\ITZahtevi\\dyn-ui\\packages\\design-tokens\\tokens\\color\\feedback.json"
+    },
+    {
+      "status": "success",
+      "message": "Color token (base.json) postoji",
+      "details": "C:\\Users\\m.gasic\\Documents\\ITZahtevi\\dyn-ui\\packages\\design-tokens\\tokens\\color\\base.json"
+    },
+    {
+      "status": "success",
+      "message": "Size token (spacing.json) postoji",
+      "details": "C:\\Users\\m.gasic\\Documents\\ITZahtevi\\dyn-ui\\packages\\design-tokens\\tokens\\size\\spacing.json"
+    },
+    {
+      "status": "success",
+      "message": "Size token (font.json) postoji",
+      "details": "C:\\Users\\m.gasic\\Documents\\ITZahtevi\\dyn-ui\\packages\\design-tokens\\tokens\\size\\font.json"
+    },
+    {
+      "status": "success",
+      "message": "Size token (border.json) postoji",
+      "details": "C:\\Users\\m.gasic\\Documents\\ITZahtevi\\dyn-ui\\packages\\design-tokens\\tokens\\size\\border.json"
+    },
+    {
+      "status": "success",
+      "message": "Animation tokens postoji",
+      "details": "C:\\Users\\m.gasic\\Documents\\ITZahtevi\\dyn-ui\\packages\\design-tokens\\tokens\\animation\\transition.json"
+    },
+    {
+      "status": "success",
+      "message": "Style Dictionary config postoji",
+      "details": "C:\\Users\\m.gasic\\Documents\\ITZahtevi\\dyn-ui\\packages\\design-tokens\\style-dictionary.config.js"
+    },
+    {
+      "status": "info",
+      "message": "Pokušavam build design tokena...",
+      "details": ""
+    },
+    {
+      "status": "error",
+      "message": "Build script ne postoji u design-tokens package.json",
+      "details": ""
+    },
+    {
+      "status": "success",
+      "message": "DynButton (DynButton.tsx) postoji",
+      "details": "C:\\Users\\m.gasic\\Documents\\ITZahtevi\\dyn-ui\\packages\\dyn-ui-react\\src\\components\\DynButton\\DynButton.tsx"
+    },
+    {
+      "status": "success",
+      "message": "DynButton (DynButton.module.scss) postoji",
+      "details": "C:\\Users\\m.gasic\\Documents\\ITZahtevi\\dyn-ui\\packages\\dyn-ui-react\\src\\components\\DynButton\\DynButton.module.scss"
+    },
+    {
+      "status": "success",
+      "message": "SCSS koristi 44 CSS varijabli",
+      "details": ""
+    },
+    {
+      "status": "error",
+      "message": "Koristi neispravnu varijablu: var(--color-primary)",
+      "details": ""
+    },
+    {
+      "status": "error",
+      "message": "Koristi neispravnu varijablu: var(--radius-md)",
+      "details": ""
+    },
+    {
+      "status": "error",
+      "message": "Koristi neispravnu varijablu: var(--spacing-sm)",
+      "details": ""
+    },
+    {
+      "status": "error",
+      "message": "Koristi neispravnu varijablu: var(--transition-all)",
+      "details": ""
+    },
+    {
+      "status": "warning",
+      "message": "Ne koristi preporučenu varijablu: var(--color-action-default)",
+      "details": ""
+    },
+    {
+      "status": "warning",
+      "message": "Ne koristi preporučenu varijablu: var(--size-spacing-sm)",
+      "details": ""
+    },
+    {
+      "status": "warning",
+      "message": "Ne koristi preporučenu varijablu: var(--animation-transition-all)",
+      "details": ""
+    },
+    {
+      "status": "info",
+      "message": "Proverio ./packages/dyn-ui-react/src/styles/globals.scss - nema import design tokena",
+      "details": ""
+    },
+    {
+      "status": "error",
+      "message": "Design tokeni nisu integrisani ni u jedan globalni fajl",
+      "details": ""
+    }
+  ]
+}
