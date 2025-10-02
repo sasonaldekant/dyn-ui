@@ -1,0 +1,53 @@
+/**
+ * Do not edit directly
+ * Generated on Thu, 02 Oct 2025 23:51:52 GMT
+ */
+
+:root {
+  --animation-transition-all: all 0.2s ease-in-out;
+  --animation-transition-colors: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  --animation-transition-fast: 0.15s ease;
+  --animation-transition-normal: 0.2s ease-in-out;
+  --animation-transition-slow: 0.3s ease-in-out;
+  --color-action-default: #0066cc;
+  --color-action-hover: #0052a3;
+  --color-action-pressed: #003d7a;
+  --color-action-disabled: #cccccc;
+  --color-action-focus: #0066cc;
+  --color-base-white: #ffffff;
+  --color-base-black: #000000;
+  --color-feedback-positive: #4caf50;
+  --color-feedback-negative-default: #f44336;
+  --color-feedback-negative-dark: #d32f2f;
+  --color-feedback-negative-darker: #b71c1c;
+  --color-feedback-warning: #ff9800;
+  --color-feedback-info: #2196f3;
+  --color-neutral-light-10: #f0f0f0;
+  --color-neutral-light-20: #e0e0e0;
+  --color-neutral-light-00: #ffffff;
+  --color-neutral-light-05: #f9f9f9;
+  --color-neutral-mid-40: #999999;
+  --color-neutral-mid-60: #666666;
+  --color-neutral-dark-70: #666666;
+  --color-neutral-dark-90: #333333;
+  --color-semantic-background: #ffffff;
+  --color-semantic-text: #000000;
+  --color-theme-primary: #007bff;
+  --color-theme-secondary: #6c757d;
+  --shadow-elevation-low: 0 1px 3px rgba(0,0,0,0.12);
+  --shadow-elevation-medium: 0 3px 6px rgba(0,0,0,0.16);
+  --shadow-elevation-high: 0 10px 20px rgba(0,0,0,0.19);
+  --size-border-width-sm: 1rem;
+  --size-border-width-md: 2rem;
+  --size-border-width-lg: 3rem;
+  --size-border-radius-sm: 2rem;
+  --size-border-radius-md: 4rem;
+  --size-border-radius-lg: 8rem;
+  --size-font-small: 12rem;
+  --size-font-medium: 16rem;
+  --size-font-large: 20rem;
+  --size-spacing-xs: 4rem;
+  --size-spacing-sm: 8rem;
+  --size-spacing-md: 16rem;
+  --size-spacing-lg: 24rem;
+}

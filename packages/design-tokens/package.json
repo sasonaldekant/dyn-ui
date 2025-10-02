@@ -4,7 +4,7 @@
   "description": "Design tokens for DYN UI",
   "main": "build/js/tokens.js",
   "scripts": {
-    "build": "style-dictionary build",
+  "build": "style-dictionary build --config style-dictionary.config.js",
     "clean": "rimraf build",
     "build:clean": "npm run clean && npm run build"
   },
