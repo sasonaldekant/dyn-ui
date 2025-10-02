@@ -1,0 +1,233 @@
+/* Imported Dyn UI React styles for demo app */
+
+/* CSS Custom Properties (CSS Variables) */
+:root {
+  /* Colors - will be overridden by ThemeProvider */
+  --color-primary: #2563eb;
+  --color-primary-contrast: #ffffff;
+  --color-secondary: #64748b;
+  --color-secondary-contrast: #ffffff;
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+  --color-info: #0891b2;
+  --color-background: #ffffff;
+  --color-surface: #f8fafc;
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #64748b;
+  --color-border: #e2e8f0;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem;  /* 8px */
+  --spacing-md: 1rem;    /* 16px */
+  --spacing-lg: 1.5rem;  /* 24px */
+  --spacing-xl: 2rem;    /* 32px */
+
+  /* Border Radius */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;  /* 4px */
+  --radius-md: 0.375rem; /* 6px */
+  --radius-lg: 0.5rem;   /* 8px */
+  --radius-full: 9999px;
+
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;  /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-md: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem;  /* 20px */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+  /* Transitions */
+  --transition-colors: color 150ms ease-in-out, background-color 150ms ease-in-out, border-color 150ms ease-in-out;
+  --transition-transform: transform 150ms ease-in-out;
+  --transition-opacity: opacity 150ms ease-in-out;
+  --transition-all: all 150ms ease-in-out;
+
+  /* Button-specific tokens */
+  --dyn-color-primary:       #1976d2;
+  --dyn-color-primary-text:  #ffffff;
+  --dyn-color-secondary:     #1976d2;
+  --dyn-color-secondary-text:#1976d2;
+  --dyn-color-tertiary:      #1976d2;
+  --dyn-color-tertiary-text: #1976d2;
+  --dyn-color-danger:        #d32f2f;
+}
+
+/* Base component styles */
+.dyn-component {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-sizing: border-box;
+}
+
+/* Button Reset and Base Styles */
+.dyn-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: inherit;
+  transition: background .2s, color .2s, border .2s, opacity .2s;
+  padding: .5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  outline: none;
+}
+
+/* Kind Variants */
+.dyn-button--primary {
+  background: var(--dyn-color-primary);
+  color: var(--dyn-color-primary-text);
+}
+
+.dyn-button--primary:hover {
+  background: #1565c0;
+}
+
+.dyn-button--secondary {
+  background: transparent;
+  border: 2px solid var(--dyn-color-secondary);
+  color: var(--dyn-color-secondary-text);
+}
+
+.dyn-button--secondary:hover {
+  background: rgba(25, 118, 210, 0.1);
+}
+
+.dyn-button--tertiary {
+  background: transparent;
+  color: var(--dyn-color-tertiary-text);
+}
+
+.dyn-button--tertiary:hover {
+  background: rgba(25, 118, 210, 0.1);
+}
+
+.dyn-button--danger {
+  background: var(--dyn-color-danger) !important;
+  border-color: var(--dyn-color-danger) !important;
+  color: #fff !important;
+}
+
+.dyn-button--danger:hover {
+  background: #b71c1c !important;
+}
+
+/* Size Variants */
+.dyn-button--small { 
+  padding: .25rem .75rem; 
+  font-size: .825rem; 
+}
+
+.dyn-button--medium { 
+  padding: .5rem  1rem;  
+  font-size: .9rem;  
+}
+
+.dyn-button--large  { 
+  padding: .75rem 1.25rem;
+  font-size: 1rem;  
+}
+
+/* States */
+.dyn-button--loading,
+.dyn-button--disabled {
+  pointer-events: none;
+  opacity: .55;
+}
+
+.dyn-button--icon-only {
+  padding: .5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+/* Focus styles */
+.dyn-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.dyn-button--loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1rem;
+  height: 1rem;
+  margin: -0.5rem 0 0 -0.5rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Utility classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Demo-specific styles */
+.demo-container {
+  padding: var(--spacing-xl, 2rem);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.demo-section {
+  margin-bottom: var(--spacing-xl, 2rem);
+  padding: var(--spacing-lg, 1.5rem);
+  background: var(--color-surface, #ffffff);
+  border-radius: var(--radius-lg, 8px);
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+}
+
+.demo-section h2 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-md, 1rem);
+  color: var(--color-text-primary, #1e293b);
+  font-size: var(--font-size-lg, 1.125rem);
+}
+
+.demo-buttons {
+  display: flex;
+  gap: var(--spacing-md, 1rem);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.demo-info {
+  margin-top: var(--spacing-xl, 2rem);
+  padding: var(--spacing-lg, 1.5rem);
+  background: var(--color-surface, #f8fafc);
+  border-radius: var(--radius-lg, 8px);
+  border-left: 4px solid var(--color-primary, #2563eb);
+}
+
+.demo-info p {
+  margin: 0;
+  color: var(--color-text-secondary, #64748b);
+  font-size: var(--font-size-sm, 0.875rem);
+  line-height: 1.5;
+}
