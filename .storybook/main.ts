@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-vite'
+import path from 'path'
 
 const config: StorybookConfig = {
   stories: [
@@ -28,13 +29,22 @@ const config: StorybookConfig = {
   },
   docs: {
     autodocs: 'tag',
+    defaultName: 'Documentation',
   },
   viteFinal: async (config) => {
-    // Ensure proper handling of CSS imports
+    // Ensure proper CSS handling and workspace resolution
+    config.resolve = config.resolve || {}
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'dyn-ui-react': path.resolve(__dirname, '../packages/dyn-ui-react/src'),
+    }
+    
+    // Configure CSS processing
     if (config.css) {
       config.css.preprocessorOptions = {
+        ...config.css.preprocessorOptions,
         scss: {
-          additionalData: `@import "../packages/dyn-ui-react/src/styles/globals.scss";`,
+          additionalData: `@import "${path.resolve(__dirname, '../packages/dyn-ui-react/src/styles/dyn-ui.css')}";`,
         },
       }
     }
