@@ -1,0 +1,14 @@
+{
+  "color": {
+    "feedback": {
+      "positive": { "value": "#4caf50" },
+      "negative": {
+        "default": { "value": "#f44336" },
+        "dark": { "value": "#d32f2f" },
+        "darker": { "value": "#b71c1c" }
+      },
+      "warning": { "value": "#ff9800" },
+      "info": { "value": "#2196f3" }
+    }
+  }
+}
