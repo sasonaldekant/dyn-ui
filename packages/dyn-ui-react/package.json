@@ -20,7 +20,7 @@
     "build:vite": "vite build",
     "dev": "vite build --watch",
     "lint": "eslint src --ext .ts,.tsx",
-    "test": "echo \"Tests not configured yet\"",
+    "test": "vitest run --config ../../vitest.config.ts",
     "size-check": "npm run build && du -sh dist/* || echo 'Size check complete'"
   },
   "dependencies": {},

@@ -1,26 +1,10 @@
-# DYN UI React TypeScript Library
+# DYN-UI — v3 bundle
 
-Enterprise-ready UI components.
+Ovaj ZIP sadrži dokumentaciju i praktične fajlove za start v3 paketa i test okruženja.
 
+## Sadržaj
+- `docs/` — postojeća dokumentacija i planovi
+- `guides/` — brzi vodiči (test okruženje, TurboRepo/Vitest napomene)
+- `samples/vitest-setup/` — minimalni primjeri: `vitest.config.ts`, `vitest.setup.ts`, test za `DynButton` i predlošci `package.json` izmjena
 
-
-# Očisti cache
-rm -rf node_modules/.vite
-pnpm dev
-Ako build ne radi:
-
-
-# Rebuild sve pakete
-pnpm clean && pnpm install && pnpm build
-Ako Vite prijavljuje SCSS greške:
-
-
-# Instaliraj SASS
-pnpm add -D sass
-Komande za quick start:
-
-
-git pull origin main
-pnpm install
-cd apps/react-demo
-pnpm dev
+> Datum: 2025-10-02T21:26:10.482052Z

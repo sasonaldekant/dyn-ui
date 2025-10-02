@@ -1,6 +1,5 @@
 /**
- * DynButton SCSS Module - CSS Modules compatible with simplified selectors
- * Fixed to work properly with CSS Module encapsulation
+ * Modified DynButton SCSS Module using CSS custom properties (design tokens)
  */
 
 /* Base button styles */
@@ -8,31 +7,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   border: 1px solid transparent;
-  border-radius: 4px;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  border-radius: var(--radius-md);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-all);
   white-space: nowrap;
   position: relative;
   box-sizing: border-box;
-  
+
   &:focus-visible {
-    outline: 2px solid #0066cc;
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
-  
+
   &:hover:not(:disabled) {
     transform: translateY(-1px);
   }
-  
+
   &:active:not(:disabled) {
     transform: translateY(0);
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -40,103 +39,101 @@
   }
 }
 
-/* Button Kinds - Simplified selectors for CSS Modules */
+/* Button kinds */
 .primary {
-  background-color: #1976d2 !important;
-  color: #ffffff !important;
-  border-color: #1976d2 !important;
-  
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border-color: var(--color-primary);
+
   &:hover:not(:disabled) {
-    background-color: #1565c0 !important;
-    border-color: #1565c0 !important;
-    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3) !important;
+    background-color: color-mix(in srgb, var(--color-primary), white 15%);
+    border-color: color-mix(in srgb, var(--color-primary), white 15%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 }
 
 .secondary {
-  background-color: transparent !important;
-  color: #1976d2 !important;
-  border-color: #1976d2 !important;
-  
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+
   &:hover:not(:disabled) {
-    background-color: #e3f2fd !important;
-    color: #1565c0 !important;
-    border-color: #1565c0 !important;
+    background-color: color-mix(in srgb, var(--color-primary), white 90%);
+    color: color-mix(in srgb, var(--color-primary), black 80%);
+    border-color: color-mix(in srgb, var(--color-primary), black 80%);
   }
 }
 
 .tertiary {
-  background-color: transparent !important;
-  color: #1976d2 !important;
-  border-color: transparent !important;
-  
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: transparent;
+
   &:hover:not(:disabled) {
-    background-color: #e3f2fd !important;
-    color: #1565c0 !important;
+    background-color: color-mix(in srgb, var(--color-primary), white 90%);
+    color: color-mix(in srgb, var(--color-primary), black 80%);
   }
 }
 
-/* Button Sizes */
+/* Button sizes */
 .small {
-  font-size: 12px;
-  padding: 6px 12px;
-  min-height: 32px;
+  font-size: var(--font-size-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  min-height: 2rem; /* 32px */
 }
 
 .medium {
-  font-size: 14px;
-  padding: 8px 16px;
-  min-height: 40px;
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  min-height: 2.5rem; /* 40px */
 }
 
 .large {
-  font-size: 16px;
-  padding: 12px 20px;
-  min-height: 48px;
+  font-size: var(--font-size-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  min-height: 3rem; /* 48px */
 }
 
-/* Danger state - RED colors */
+/* Danger state */
 .danger {
-  background-color: #d32f2f !important;
-  color: #ffffff !important;
-  border-color: #d32f2f !important;
-  
+  background-color: var(--color-danger);
+  color: #ffffff;
+  border-color: var(--color-danger);
+
   &:hover:not(:disabled) {
-    background-color: #c62828 !important;
-    border-color: #c62828 !important;
-    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3) !important;
+    background-color: color-mix(in srgb, var(--color-danger), black 10%);
+    border-color: color-mix(in srgb, var(--color-danger), black 10%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 }
 
-/* Danger + Secondary = Red outline */
 .danger.secondary {
-  background-color: transparent !important;
-  color: #d32f2f !important;
-  border-color: #d32f2f !important;
-  
+  background-color: transparent;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+
   &:hover:not(:disabled) {
-    background-color: #ffebee !important;
-    color: #c62828 !important;
-    border-color: #c62828 !important;
+    background-color: color-mix(in srgb, var(--color-danger), white 90%);
+    color: color-mix(in srgb, var(--color-danger), black 80%);
+    border-color: color-mix(in srgb, var(--color-danger), black 80%);
   }
 }
 
-/* Danger + Tertiary = Red text */
 .danger.tertiary {
-  background-color: transparent !important;
-  color: #d32f2f !important;
-  border-color: transparent !important;
-  
+  background-color: transparent;
+  color: var(--color-danger);
+  border-color: transparent;
+
   &:hover:not(:disabled) {
-    background-color: #ffebee !important;
-    color: #c62828 !important;
+    background-color: color-mix(in srgb, var(--color-danger), white 90%);
+    color: color-mix(in srgb, var(--color-danger), black 80%);
   }
 }
 
 /* Loading state */
 .loading {
   pointer-events: none;
-  
+
   .content {
     opacity: 0.7;
   }
@@ -146,104 +143,93 @@
 .iconOnly {
   min-width: auto;
   aspect-ratio: 1;
-  padding: 8px;
+  padding: var(--spacing-sm);
 }
 
-/* Button content wrapper */
+/* Content wrapper */
 .content {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   transition: opacity 0.2s ease;
 }
 
-/* Loading spinner */
+/* Spinner */
 .spinner {
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   border: 2px solid transparent;
   border-top: 2px solid currentColor;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-right: 8px;
+  margin-right: var(--spacing-sm);
   flex-shrink: 0;
 }
 
-/* Icon styles */
 .icon {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  
+
   svg {
-    width: 16px;
-    height: 16px;
+    width: 1rem;
+    height: 1rem;
     fill: currentColor;
   }
 }
 
 .small .icon svg {
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 .large .icon svg {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
-/* Label */
 .label {
   display: flex;
   align-items: center;
 }
 
-/* Animations */
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
   .small {
-    min-height: 36px;
-    font-size: 14px;
+    min-height: 2.25rem;
+    font-size: var(--font-size-sm);
   }
-  
+
   .medium {
-    min-height: 44px;
-    font-size: 16px;
+    min-height: 2.75rem;
+    font-size: var(--font-size-md);
   }
-  
+
   .large {
-    min-height: 52px;
-    font-size: 18px;
+    min-height: 3.25rem;
+    font-size: var(--font-size-lg);
   }
 }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .dynButton {
     transition: none;
-    
     &:hover:not(:disabled) {
       transform: none;
     }
   }
-  
   .spinner {
     animation: none;
   }
 }
 
-/* Print styles */
 @media print {
   .dynButton {
     background: transparent !important;

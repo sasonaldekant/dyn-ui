@@ -1,0 +1,21 @@
+name: Chromatic
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  chromatic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run Storybook & upload to Chromatic
+        env:
+          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+        run: pnpm exec chromatic --exit-zero-on-changes

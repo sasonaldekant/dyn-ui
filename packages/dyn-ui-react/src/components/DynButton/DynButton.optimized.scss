@@ -1,39 +1,36 @@
 /**
- * DynButton Optimized SCSS - Short semantic class names
- * Replaces long CSS Module hashes with readable short names
- * Final classes: dyn-btn, dyn-btn--primary, dyn-btn--s, etc.
+ * Modified DynButton Optimized SCSS using design tokens
  */
 
-/* Base button - short semantic name */
 .dyn-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   border: 1px solid transparent;
-  border-radius: 4px;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  border-radius: var(--radius-md);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-all);
   white-space: nowrap;
   position: relative;
   box-sizing: border-box;
-  
+
   &:focus-visible {
-    outline: 2px solid #0066cc;
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
-  
+
   &:hover:not(:disabled) {
     transform: translateY(-1px);
   }
-  
+
   &:active:not(:disabled) {
     transform: translateY(0);
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -41,101 +38,100 @@
   }
 }
 
-/* Kind variants - single word modifiers */
+/* Kind variants */
 .dyn-btn--primary {
-  background-color: #1976d2;
-  color: #ffffff;
-  border-color: #1976d2;
-  
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border-color: var(--color-primary);
+
   &:hover:not(:disabled) {
-    background-color: #1565c0;
-    border-color: #1565c0;
-    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+    background-color: color-mix(in srgb, var(--color-primary), white 15%);
+    border-color: color-mix(in srgb, var(--color-primary), white 15%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 }
 
 .dyn-btn--secondary {
   background-color: transparent;
-  color: #1976d2;
-  border-color: #1976d2;
-  
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+
   &:hover:not(:disabled) {
-    background-color: #e3f2fd;
-    color: #1565c0;
-    border-color: #1565c0;
+    background-color: color-mix(in srgb, var(--color-primary), white 90%);
+    color: color-mix(in srgb, var(--color-primary), black 80%);
+    border-color: color-mix(in srgb, var(--color-primary), black 80%);
   }
 }
 
 .dyn-btn--tertiary {
   background-color: transparent;
-  color: #1976d2;
+  color: var(--color-primary);
   border-color: transparent;
-  
+
   &:hover:not(:disabled) {
-    background-color: #e3f2fd;
-    color: #1565c0;
+    background-color: color-mix(in srgb, var(--color-primary), white 90%);
+    color: color-mix(in srgb, var(--color-primary), black 80%);
   }
 }
 
-/* Size variants - single letter modifiers */
-.dyn-btn--s { /* small */
-  font-size: 12px;
-  padding: 6px 12px;
-  min-height: 32px;
+/* Size variants */
+.dyn-btn--s {
+  font-size: var(--font-size-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  min-height: 2rem;
 }
 
-.dyn-btn--m { /* medium */
-  font-size: 14px;
-  padding: 8px 16px;
-  min-height: 40px;
+.dyn-btn--m {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  min-height: 2.5rem;
 }
 
-.dyn-btn--l { /* large */
-  font-size: 16px;
-  padding: 12px 20px;
-  min-height: 48px;
+.dyn-btn--l {
+  font-size: var(--font-size-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  min-height: 3rem;
 }
 
-/* State modifiers - short names */
+/* Danger state */
 .dyn-btn--danger {
-  background-color: #d32f2f;
+  background-color: var(--color-danger);
   color: #ffffff;
-  border-color: #d32f2f;
-  
+  border-color: var(--color-danger);
+
   &:hover:not(:disabled) {
-    background-color: #c62828;
-    border-color: #c62828;
-    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+    background-color: color-mix(in srgb, var(--color-danger), black 10%);
+    border-color: color-mix(in srgb, var(--color-danger), black 10%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
-  
+
   /* Danger combinations */
   &.dyn-btn--secondary {
     background-color: transparent;
-    color: #d32f2f;
-    border-color: #d32f2f;
-    
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+
     &:hover:not(:disabled) {
-      background-color: #ffebee;
-      color: #c62828;
-      border-color: #c62828;
+      background-color: color-mix(in srgb, var(--color-danger), white 90%);
+      color: color-mix(in srgb, var(--color-danger), black 80%);
+      border-color: color-mix(in srgb, var(--color-danger), black 80%);
     }
   }
-  
+
   &.dyn-btn--tertiary {
     background-color: transparent;
-    color: #d32f2f;
+    color: var(--color-danger);
     border-color: transparent;
-    
+
     &:hover:not(:disabled) {
-      background-color: #ffebee;
-      color: #c62828;
+      background-color: color-mix(in srgb, var(--color-danger), white 90%);
+      color: color-mix(in srgb, var(--color-danger), black 80%);
     }
   }
 }
 
 .dyn-btn--loading {
   pointer-events: none;
-  
   .dyn-btn__content {
     opacity: 0.7;
   }
@@ -144,7 +140,7 @@
 .dyn-btn--icon-only {
   min-width: auto;
   aspect-ratio: 1;
-  padding: 8px;
+  padding: var(--spacing-sm);
 }
 
 .dyn-btn--disabled {
@@ -153,11 +149,11 @@
   pointer-events: none;
 }
 
-/* Element modifiers - BEM style short names */
+/* Elements */
 .dyn-btn__content {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   transition: opacity 0.2s ease;
 }
 
@@ -166,10 +162,10 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  
+
   svg {
-    width: 16px;
-    height: 16px;
+    width: 1rem;
+    height: 1rem;
     fill: currentColor;
   }
 }
@@ -179,70 +175,61 @@
   align-items: center;
 }
 
-/* Loading spinner - short name */
 .dyn-spinner {
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   border: 2px solid transparent;
   border-top: 2px solid currentColor;
   border-radius: 50%;
   animation: dyn-spin 1s linear infinite;
-  margin-right: 8px;
+  margin-right: var(--spacing-sm);
   flex-shrink: 0;
 }
 
 /* Size specific icon adjustments */
 .dyn-btn--s .dyn-btn__icon svg {
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 .dyn-btn--l .dyn-btn__icon svg {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
-/* Animations */
 @keyframes dyn-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-/* Responsive - maintain short names */
 @media (max-width: 640px) {
   .dyn-btn--s {
-    min-height: 36px;
-    font-size: 14px;
+    min-height: 2.25rem;
+    font-size: var(--font-size-sm);
   }
-  
   .dyn-btn--m {
-    min-height: 44px;
-    font-size: 16px;
+    min-height: 2.75rem;
+    font-size: var(--font-size-md);
   }
-  
   .dyn-btn--l {
-    min-height: 52px;
-    font-size: 18px;
+    min-height: 3.25rem;
+    font-size: var(--font-size-lg);
   }
 }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .dyn-btn {
     transition: none;
-    
     &:hover:not(:disabled) {
       transform: none;
     }
   }
-  
   .dyn-spinner {
     animation: none;
   }
 }
 
-/* Print styles */
 @media print {
   .dyn-btn {
     background: transparent !important;
