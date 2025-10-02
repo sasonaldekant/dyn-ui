@@ -1,56 +1,47 @@
-import type { StorybookConfig } from '@storybook/react-vite'
-import path from 'path'
+import type { StorybookConfig } from '@storybook/react-vite';
+import { join, dirname } from "path";
 
-const config: StorybookConfig = {
-  stories: [
-    '../packages/dyn-ui-react/src/**/*.stories.@(js|jsx|ts|tsx|mdx)',
-    '../apps/react-demo/src/**/*.stories.@(js|jsx|ts|tsx|mdx)',
-  ],
-  addons: [
-    '@storybook/addon-links',
-    '@storybook/addon-essentials',
-    '@storybook/addon-interactions',
-    '@storybook/addon-docs',
-    '@storybook/addon-controls',
-    '@storybook/addon-viewport',
-    '@storybook/addon-backgrounds',
-  ],
-  framework: {
-    name: '@storybook/react-vite',
-    options: {},
-  },
-  typescript: {
-    check: false,
-    reactDocgen: 'react-docgen-typescript',
-    reactDocgenTypescriptOptions: {
-      shouldExtractLiteralValuesFromEnum: true,
-      propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
-    },
-  },
-  docs: {
-    autodocs: 'tag',
-    defaultName: 'Documentation',
-  },
-  viteFinal: async (config) => {
-    // Ensure proper CSS handling and workspace resolution
-    config.resolve = config.resolve || {}
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'dyn-ui-react': path.resolve(__dirname, '../packages/dyn-ui-react/src'),
-    }
-    
-    // Configure CSS processing
-    if (config.css) {
-      config.css.preprocessorOptions = {
-        ...config.css.preprocessorOptions,
-        scss: {
-          additionalData: `@import "${path.resolve(__dirname, '../packages/dyn-ui-react/src/styles/dyn-ui.css')}";`,
-        },
-      }
-    }
-    
-    return config
-  },
+/**
+ * This function is used to resolve the absolute path of a package.
+ * It is needed in projects that use Yarn PnP or are set up within a monorepo.
+ */
+function getAbsolutePath(value: string): any {
+  return dirname(require.resolve(join(value, 'package.json')));
 }
 
-export default config
+const config: StorybookConfig = {
+  "stories": [
+    "../stories/**/*.mdx",
+    "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+    // Dodaj i naše DynButton stories
+    "../packages/dyn-ui-react/src/**/*.stories.@(js|jsx|ts|tsx)"
+  ],
+  "addons": [
+    getAbsolutePath('@chromatic-com/storybook'),
+    getAbsolutePath('@storybook/addon-docs'),
+    getAbsolutePath("@storybook/addon-a11y"),
+    getAbsolutePath("@storybook/addon-vitest")
+    // Dodaj dodatne addon-e
+    // getAbsolutePath("@storybook/addon-essentials"),
+    // getAbsolutePath("@storybook/addon-controls"),
+    // getAbsolutePath("@storybook/addon-interactions")
+  ],
+  "framework": {
+    "name": getAbsolutePath('@storybook/react-vite'),
+    "options": {}
+  },
+  
+  // ===== DODAJ OVDE viteFinal =====
+  viteFinal: async (config) => {
+    // Dodaj alias za workspace dependency
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'dyn-ui-react': join(__dirname, '../packages/dyn-ui-react/src'),
+    };
+    
+    return config;
+  },
+};
+
+export default config;
