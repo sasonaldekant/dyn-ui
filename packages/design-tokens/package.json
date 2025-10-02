@@ -1,4 +1,23 @@
 {
-  "name": "design-tokens",
-  "version": "0.1.0"
+  "name": "@dyn-ui/design-tokens",
+  "version": "0.1.0",
+  "description": "Design tokens for DYN UI",
+  "main": "build/js/tokens.js",
+  "scripts": {
+    "build": "style-dictionary build",
+    "clean": "rimraf build",
+    "build:clean": "npm run clean && npm run build"
+  },
+  "files": [
+    "build/**/*"
+  ],
+  "devDependencies": {
+    "style-dictionary": "^3.9.2",
+    "rimraf": "^3.0.2"
+  },
+  "keywords": [
+    "design-tokens",
+    "dyn-ui",
+    "style-dictionary"
+  ]
 }
