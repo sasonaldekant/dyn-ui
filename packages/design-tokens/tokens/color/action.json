@@ -1,0 +1,11 @@
+{
+  "color": {
+    "action": {
+      "default": { "value": "#0066cc" },
+      "hover": { "value": "#0052a3" },
+      "pressed": { "value": "#003d7a" },
+      "disabled": { "value": "#cccccc" },
+      "focus": { "value": "#0066cc" }
+    }
+  }
+}
