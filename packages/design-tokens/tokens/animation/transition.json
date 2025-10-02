@@ -1,0 +1,11 @@
+{
+  "animation": {
+    "transition": {
+      "all": { "value": "all 0.2s ease-in-out" },
+      "colors": { "value": "color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease" },
+      "fast": { "value": "0.15s ease" },
+      "normal": { "value": "0.2s ease-in-out" },
+      "slow": { "value": "0.3s ease-in-out" }
+    }
+  }
+}
