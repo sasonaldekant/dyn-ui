@@ -16,6 +16,7 @@ import type { DynSelectProps, DynFieldRef, SelectOption } from '../../types/fiel
 import { DynFieldContainer } from '../DynFieldContainer';
 import { useDynFieldValidation } from '../../hooks/useDynFieldValidation';
 import { DynIcon } from '../DynIcon';
+import './DynSelect.module.scss';
 
 export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
   (

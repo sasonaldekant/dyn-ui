@@ -16,6 +16,7 @@ import { DynFieldContainer } from '../DynFieldContainer';
 import { useDynFieldValidation } from '../../hooks/useDynFieldValidation';
 import { useDynDateParser } from '../../hooks/useDynDateParser';
 import { DynIcon } from '../DynIcon';
+import './DynDatePicker.module.scss';
 
 export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>(
   (

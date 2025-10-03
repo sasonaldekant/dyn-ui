@@ -14,6 +14,7 @@ import classNames from 'classnames';
 import type { DynCheckboxProps, DynFieldRef } from '../../types/field.types';
 import { DynFieldContainer } from '../DynFieldContainer';
 import { useDynFieldValidation } from '../../hooks/useDynFieldValidation';
+import './DynCheckbox.module.scss';
 
 export const DynCheckbox = forwardRef<DynFieldRef, DynCheckboxProps>(
   (
