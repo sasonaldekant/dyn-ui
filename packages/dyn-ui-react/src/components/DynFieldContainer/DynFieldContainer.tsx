@@ -5,6 +5,7 @@
 
 import React from 'react';
 import classNames from 'classnames';
+import './DynFieldContainer.module.scss';
 
 export interface DynFieldContainerProps {
   children: React.ReactElement;
