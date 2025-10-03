@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DynContainerProps, DynContainerRef } from './DynContainer.types';
 import { classNames } from '../../utils/classNames';
-import './DynContainer.css';
+import styles from './DynContainer.module.css';
 
 /**
  * DynContainer - Flexible container component for grouping content
@@ -23,11 +23,11 @@ export const DynContainer = React.forwardRef<DynContainerRef, DynContainerProps>
   ) => {
     // Build CSS classes
     const containerClasses = classNames(
-      'dyn-container',
+      styles['dyn-container'],
       {
-        'dyn-container--no-border': noBorder,
-        'dyn-container--no-padding': noPadding,
-        'dyn-container--with-title': !!title,
+        [styles['dyn-container--no-border']]: noBorder,
+        [styles['dyn-container--no-padding']]: noPadding,
+        [styles['dyn-container--with-title']]: !!title,
       },
       className
     );
@@ -54,11 +54,11 @@ export const DynContainer = React.forwardRef<DynContainerRef, DynContainerProps>
         {...rest}
       >
         {title && (
-          <div className="dyn-container__header">
-            <h2 className="dyn-container__title">{title}</h2>
+          <div className={styles['dyn-container__header']}>
+            <h2 className={styles['dyn-container__title']}>{title}</h2>
           </div>
         )}
-        <div className="dyn-container__content">
+        <div className={styles['dyn-container__content']}>
           {children}
         </div>
       </div>
