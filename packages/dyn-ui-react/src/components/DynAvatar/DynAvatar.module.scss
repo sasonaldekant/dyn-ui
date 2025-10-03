@@ -1,0 +1,130 @@
+.dyn-avatar {
+  /* CSS Custom Properties */
+  --avatar-size-xs: 24px;
+  --avatar-size-sm: 32px;
+  --avatar-size-md: 64px;
+  --avatar-size-lg: 96px;
+  --avatar-size-xl: 144px;
+
+  position: relative;
+  display: inline-block;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--color-neutral-light-05, #f5f5f5);
+  color: var(--color-neutral-dark-90, #333);
+  font-weight: 600;
+  user-select: none;
+
+  /* Size variants */
+  &.dyn-avatar-xs {
+    width: var(--avatar-size-xs);
+    height: var(--avatar-size-xs);
+    font-size: 0.625rem;
+  }
+
+  &.dyn-avatar-sm {
+    width: var(--avatar-size-sm);
+    height: var(--avatar-size-sm);
+    font-size: 0.75rem;
+  }
+
+  &.dyn-avatar-md {
+    width: var(--avatar-size-md);
+    height: var(--avatar-size-md);
+    font-size: 0.875rem;
+  }
+
+  &.dyn-avatar-lg {
+    width: var(--avatar-size-lg);
+    height: var(--avatar-size-lg);
+    font-size: 1rem;
+  }
+
+  &.dyn-avatar-xl {
+    width: var(--avatar-size-xl);
+    height: var(--avatar-size-xl);
+    font-size: 1.125rem;
+  }
+
+  /* Clickable state */
+  &.dyn-avatar-clickable {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &:focus {
+      outline: 2px solid var(--color-action-focus, #0066cc);
+      outline-offset: 2px;
+    }
+  }
+
+  /* Image */
+  .dyn-avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Placeholder */
+  .dyn-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-neutral-light-20, #ddd);
+    color: var(--color-neutral-dark-70, #666);
+  }
+
+  .dyn-avatar-initials {
+    font-weight: inherit;
+    text-transform: uppercase;
+  }
+
+  .dyn-avatar-placeholder-icon {
+    font-size: 0.8em;
+    opacity: 0.7;
+  }
+
+  /* Loading state */
+  &.dyn-avatar-loading {
+    .dyn-avatar-placeholder {
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        animation: shimmer 1.5s infinite;
+      }
+    }
+  }
+
+  /* Error state */
+  &.dyn-avatar-error {
+    .dyn-avatar-placeholder {
+      background-color: var(--color-neutral-light-30, #ccc);
+      color: var(--color-neutral-dark-50, #888);
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
