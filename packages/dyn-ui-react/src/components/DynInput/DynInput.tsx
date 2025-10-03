@@ -10,6 +10,7 @@ import { DynFieldContainer } from '../DynFieldContainer';
 import { useDynFieldValidation } from '../../hooks/useDynFieldValidation';
 import { useDynMask } from '../../hooks/useDynMask';
 import { DynIcon } from '../DynIcon';
+import './DynInput.module.scss';
 
 export const DynInput = forwardRef<DynFieldRef, DynInputProps>(
   (
