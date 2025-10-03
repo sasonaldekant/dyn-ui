@@ -1,7 +1,7 @@
-import { React } from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
 import { DynLabelProps } from '../../types/label.types';
-import './DynLabel.module.css';
+import styles from './DynLabel.module.css';
 
 export const DynLabel: React.FC<DynLabelProps> = ({
   children,
@@ -13,25 +13,25 @@ export const DynLabel: React.FC<DynLabelProps> = ({
   className
 }: DynLabelProps) => {
   const labelClasses = classNames(
-    'dyn-label',
-    disabled && 'dyn-label-disabled',
-    (required || optional) && 'dyn-label-with-requirement',
+    styles['dyn-label'],
+    disabled && styles['dyn-label--disabled'],
+    (required || optional) && styles['dyn-label--with-requirement'],
     className
   );
 
   const renderRequirementIndicator = () => {
     if (required) {
       return (
-        <span className="dyn-label-requirement dyn-label-required">
-          <span className="dyn-label-required-asterisk" aria-hidden="true">*</span>
+        <span className={`${styles['dyn-label-requirement']} ${styles['dyn-label--required']}`}>
+          <span className={styles['dyn-label-required-asterisk']} aria-hidden="true">*</span>
         </span>
       );
     }
 
     if (optional) {
       return (
-        <span className="dyn-label-requirement dyn-label-optional">
-          <span className="dyn-label-optional-text">(optional)</span>
+        <span className={`${styles['dyn-label-requirement']} ${styles['dyn-label--optional']}`}>
+          <span className={styles['dyn-label-optional-text']}>(optional)</span>
         </span>
       );
     }
@@ -43,20 +43,20 @@ export const DynLabel: React.FC<DynLabelProps> = ({
     if (!helpText) return null;
 
     return (
-      <span className="dyn-label-help-text" id={htmlFor ? `${htmlFor}-help` : undefined}>
+      <span className={styles['dyn-label-help-text']} id={htmlFor ? `${htmlFor}-help` : undefined}>
         {helpText}
       </span>
     );
   };
 
   return (
-    <div className="dyn-label-container">
+    <div className={styles['dyn-label-container']} role="group">
       <label 
         className={labelClasses} 
         htmlFor={htmlFor}
         aria-describedby={helpText && htmlFor ? `${htmlFor}-help` : undefined}
       >
-        <span className="dyn-label-text">
+        <span className={styles['dyn-label-text']}>
           {children}
           {renderRequirementIndicator()}
         </span>
@@ -64,4 +64,6 @@ export const DynLabel: React.FC<DynLabelProps> = ({
       {renderHelpText()}
     </div>
   );
-};
+};
+
+DynLabel.displayName = 'DynLabel';
