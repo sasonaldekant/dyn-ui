@@ -1,19 +1,41 @@
-// Core Component - DynButton only for production build
+// Core Components
 export { DynButton } from './components/DynButton';
 export type { DynButtonProps } from './components/DynButton';
 
-// Theme System (keeping enhanced features)
-export { ThemeProvider } from './providers/ThemeProvider';
+// Display Components - SCOPE 5
+export { DynBadge, DynAvatar, DynLabel, DynIcon } from './components';
+export type { 
+  DynBadgeProps, 
+  BadgeStatus, 
+  BadgeSize, 
+  DynAvatarProps, 
+  AvatarSize, 
+  DynLabelProps,
+  DynIconPropsNew as DynIconProps
+} from './components';
+export { DYN_COLOR_PALETTE, AVATAR_SIZES } from './components';
+
+// Providers
+export { ThemeProvider, IconDictionaryProvider } from './providers';
+export type { ThemeProviderProps } from './providers';
+
+// Hooks
 export { useTheme, useThemeVars } from './hooks/useTheme';
-export type { ThemeName, ThemeConfig, ThemeContextValue, ColorVariant, Size } from './types/theme';
+export { useIconDictionary } from './hooks/useIconDictionary';
 
-// Utils (keeping enhanced features)
+// Types
+export type { 
+  ThemeName, 
+  ThemeConfig, 
+  ThemeContextValue, 
+  ColorVariant, 
+  Size,
+  IconDictionary
+} from './types';
+
+// Utils
 export { classNames, createClassNameGenerator, combineClasses } from './utils/classNames';
-
-// Legacy compatibility
-export const DynButton_Legacy: React.FC = () => {
-  return <button>Dyn Button (Legacy)</button>;
-};
+export { generateInitials, formatBadgeValue, isThemeColor, processIconString } from './utils/dynFormatters';
 
 // Note: SCSS imports removed from production build to avoid Rollup issues
 // Styles should be imported by consuming applications
