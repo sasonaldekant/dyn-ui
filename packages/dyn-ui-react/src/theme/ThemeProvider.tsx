@@ -40,17 +40,12 @@ export function ThemeProvider({ initialTheme = 'light', children }: ThemeProvide
     
     // Set data attribute for CSS selector support
     root.setAttribute('data-theme', theme);
-    
-    // Debug log
-    console.log(`Theme changed to: ${theme}`);
-    console.log('Document classes:', root.className);
-    console.log('Data theme:', root.getAttribute('data-theme'));
   }, [theme]);
 
   // Set initial theme on mount
   React.useEffect(() => {
     setTheme(initialTheme);
-  }, []); // Only run once on mount
+  }, [initialTheme, setTheme]);
 
   const contextValue = React.useMemo(() => ({
     theme,
