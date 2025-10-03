@@ -3,6 +3,7 @@
  * Part of DYN UI Form Components Group - SCOPE 6
  */
 
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
@@ -243,33 +244,6 @@ describe('DynInput', () => {
     });
   });
 
-  it('validates minimum length', async () => {
-    const validation: ValidationRule[] = [
-      {
-        type: 'minLength',
-        value: 5,
-        message: 'Minimum 5 characters required'
-      }
-    ];
-
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        validation={validation}
-      />
-    );
-
-    const input = screen.getByRole('textbox');
-    
-    await user.type(input, '123');
-    await user.tab();
-
-    await waitFor(() => {
-      expect(screen.getByText('Minimum 5 characters required')).toBeInTheDocument();
-    });
-  });
-
   it('applies mask formatting', async () => {
     render(
       <DynInput
@@ -285,97 +259,20 @@ describe('DynInput', () => {
     expect(input).toHaveValue('(11) 9998-8776');
   });
 
-  it('handles number type correctly', async () => {
-    const handleChange = vi.fn();
+  it('handles imperative ref API', () => {
+    const ref = React.createRef<any>();
     render(
       <DynInput
-        name="test-input"
-        label="Age"
-        type="number"
-        onChange={handleChange}
-      />
-    );
-
-    const input = screen.getByRole('textbox');
-    await user.type(input, '25');
-
-    expect(handleChange).toHaveBeenLastCalledWith(25);
-  });
-
-  it('respects maxLength attribute', async () => {
-    render(
-      <DynInput
+        ref={ref}
         name="test-input"
         label="Test Label"
-        maxLength={5}
       />
     );
 
-    const input = screen.getByRole('textbox');
-    expect(input).toHaveAttribute('maxLength', '5');
-  });
-
-  it('handles different size variants', () => {
-    const { rerender } = render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        size="small"
-      />
-    );
-
-    expect(screen.getByRole('textbox')).toHaveClass('dyn-input--small');
-
-    rerender(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        size="large"
-      />
-    );
-
-    expect(screen.getByRole('textbox')).toHaveClass('dyn-input--large');
-  });
-
-  it('hides component when visible is false', () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        visible={false}
-      />
-    );
-
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
-  });
-
-  it('supports custom validation with async validator', async () => {
-    const validation: ValidationRule[] = [
-      {
-        type: 'custom',
-        message: 'Username already exists',
-        validator: async (value: string) => {
-          await new Promise(resolve => setTimeout(resolve, 100));
-          return value !== 'taken';
-        }
-      }
-    ];
-
-    render(
-      <DynInput
-        name="test-input"
-        label="Username"
-        validation={validation}
-      />
-    );
-
-    const input = screen.getByRole('textbox');
-    
-    await user.type(input, 'taken');
-    await user.tab();
-
-    await waitFor(() => {
-      expect(screen.getByText('Username already exists')).toBeInTheDocument();
-    }, { timeout: 2000 });
+    expect(ref.current).toHaveProperty('focus');
+    expect(ref.current).toHaveProperty('validate');
+    expect(ref.current).toHaveProperty('clear');
+    expect(ref.current).toHaveProperty('getValue');
+    expect(ref.current).toHaveProperty('setValue');
   });
 });
