@@ -1,5 +1,5 @@
 /**
- * DynIcon SCSS Module - Simplified for CSS Modules compatibility
+ * DynIcon SCSS Module - Enhanced for dictionary system compatibility
  * Clean selectors that work properly with CSS Module encapsulation
  */
 
@@ -19,20 +19,40 @@
   }
 }
 
+/* Font icon base class */
+.dynFontsIcon {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+  font-family: 'Font Awesome', 'DYN UI Icons', sans-serif;
+}
+
+/* Custom React component icons */
+.dynIconCustom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Size variants */
 .small {
   width: 14px;
   height: 14px;
+  font-size: 0.75rem;
 }
 
 .medium {
   width: 16px;
   height: 16px;
+  font-size: 1rem;
 }
 
 .large {
   width: 18px;
   height: 18px;
+  font-size: 1.25rem;
 }
 
 /* Interactive icons */
@@ -46,6 +66,7 @@
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
     transform: scale(1.1);
+    color: var(--color-action-hover, #0052a3);
   }
   
   &:active {
@@ -53,8 +74,55 @@
   }
   
   &:focus-visible {
-    outline: 2px solid #0066cc;
+    outline: 2px solid var(--color-action-focus, #0066cc);
     outline-offset: 2px;
+  }
+}
+
+/* Global icon classes for dictionary system */
+:global(.dyn-icon) {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+  font-family: 'DYN UI Icons', 'Font Awesome', sans-serif;
+
+  &.dyn-icon-clickable {
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--color-action-hover, #0052a3);
+    }
+
+    &:focus {
+      outline: 2px solid var(--color-action-focus, #0066cc);
+      outline-offset: 2px;
+    }
+  }
+}
+
+:global(.dyn-fonts-icon) {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+  font-family: 'Font Awesome', 'DYN UI Icons', sans-serif;
+
+  &.dyn-icon-clickable {
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--color-action-hover, #0052a3);
+    }
+
+    &:focus {
+      outline: 2px solid var(--color-action-focus, #0066cc);
+      outline-offset: 2px;
+    }
   }
 }
 
