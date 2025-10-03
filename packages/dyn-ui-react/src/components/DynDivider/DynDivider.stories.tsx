@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { React } from 'react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import * as React  from 'react';
 import { DynDivider } from './DynDivider';
 import { ThemeProvider } from '../../theme/ThemeProvider';
 

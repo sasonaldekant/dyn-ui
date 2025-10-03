@@ -427,7 +427,7 @@ interface DynIconProps {
 
 ```typescript
 interface DynLabelProps {
-  children: React.ReactNode;
+  children: React.ReactElement;
   required?: boolean;
   optional?: boolean;
   helpText?: string;

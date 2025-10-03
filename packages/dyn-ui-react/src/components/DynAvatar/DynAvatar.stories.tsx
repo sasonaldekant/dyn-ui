@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynAvatar } from './DynAvatar';
-import { IconDictionaryProvider } from '../../contexts/IconDictionaryContext';
+import { IconDictionaryProvider } from '../../providers/IconDictionaryProvider';
 
 const meta: Meta<typeof DynAvatar> = {
   title: 'Display Components/DynAvatar',

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ThemeSwitcher } from './ThemeSwitcher';
 describe('ThemeSwitcher', () => {
   it('exports a React component', () => {

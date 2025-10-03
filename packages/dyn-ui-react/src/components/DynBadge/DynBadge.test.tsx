@@ -117,7 +117,8 @@ describe('DynBadge', () => {
   it('handles React component icon', () => {
     const CustomIcon = () => <span data-testid="custom-icon">★</span>;
     render(<DynBadge icon={<CustomIcon />} />, { wrapper: TestWrapper });
-    
+
     expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
   });
 });
+

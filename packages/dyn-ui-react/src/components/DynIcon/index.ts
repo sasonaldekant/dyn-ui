@@ -1,5 +1,5 @@
 /**
  * DynIcon component exports
  */
-export { DynIcon, default } from './DynIcon';
-export type { DynIconProps } from './DynIcon';
+export { DynIcon } from './DynIcon';
+export type { IconDictionaryContext } from '../../providers/DynIconDictionaryProvider';

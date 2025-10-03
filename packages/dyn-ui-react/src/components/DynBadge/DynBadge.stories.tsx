@@ -1,7 +1,10 @@
 // packages/dyn-ui-react/src/components/DynBadge/DynBadge.stories.tsx
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynBadge } from './DynBadge';
-import { IconDictionaryProvider } from '../../contexts/IconDictionaryContext';
+import { DynBadgeProps } from '../../types/badge.types';
+import { IconDictionaryProvider } from '../../providers/IconDictionaryProvider';
+
+type StoryProps = DynBadgeProps & { variant?: 'default' | 'success' | 'warning' | 'error' | 'info' };
 
 const meta: Meta<typeof DynBadge> = {
   title: 'Display Components/DynBadge',
@@ -32,7 +35,7 @@ const meta: Meta<typeof DynBadge> = {
     icon: { control: 'text' },
     count: { control: 'number' },
     color: { control: 'color' },
-  },
+  } as any,
 };
 
 export default meta;
@@ -41,7 +44,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     children: 'Badge',
-  },
+    variant: 'default' as any,
+  } as StoryProps,
 };
 
 export const AllVariants: Story = {
@@ -59,7 +63,7 @@ export const AllVariants: Story = {
 export const WithIcons: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-      <DynBadge variant="success" icon="check">Completed</DynBadge>
+      <DynBadge count={5} variant="success" icon="check">Completed</DynBadge>
       <DynBadge variant="warning" icon="exclamation-triangle">Warning</DynBadge>
       <DynBadge variant="error" icon="times">Error</DynBadge>
       <DynBadge variant="info" icon="info-circle">Info</DynBadge>

@@ -1,5 +1,5 @@
 import { React, useState } from 'react';
-import { classNames } from 'classnames';
+import classNames from 'classnames';
 import { DynAvatarProps, AVATAR_SIZES } from '../../types/avatar.types';
 import { generateInitials } from '../../utils/dynFormatters';
 import './DynAvatar.module.css';
@@ -12,12 +12,12 @@ export const DynAvatar: React.FC<DynAvatarProps> = ({
   initials,
   className,
   onClick
-}) => {
+}: DynAvatarProps) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   
   const hasClickEvent = !!onClick;
-  const pixelSize = AVATAR_SIZES[size];
+  const pixelSize = AVATAR_SIZES[size as keyof typeof AVATAR_SIZES];
   
   // Generate initials if not provided
   const displayInitials = initials || (alt !== 'Avatar' ? generateInitials(alt) : '');

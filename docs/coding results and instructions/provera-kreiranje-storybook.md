@@ -9,6 +9,7 @@ Ovaj paket ima dva ključna alata:
    - Kreira `*.stories.tsx` i `*.test.tsx` samo ako **ne postoje**.
 
 ## Upotreba
+
 ```bash
 pnpm add -D tsx @types/node
 

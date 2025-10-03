@@ -150,7 +150,7 @@ interface ThemeProviderProps {
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ 
   children, 
   defaultTheme = 'light' 
-}) => {
+}: ThemeProviderProps) => {
   const [theme, setTheme] = useState<ThemeName>(defaultTheme);
 
   // Apply CSS custom properties to document root

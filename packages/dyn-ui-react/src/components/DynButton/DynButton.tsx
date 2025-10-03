@@ -1,14 +1,14 @@
-import { React, forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { DynButtonProps } from './DynButton.types';
 import { classNames } from '../../utils/classNames';
 import { DynIcon } from '../DynIcon';
-import { styles } from './DynButton.module.css';
+import styles from './DynButton.module.css';
 
 /**
  * DynButton - Production-ready button component following DYN UI specification
  * Updated for CSS Modules compatibility with simplified className logic
  */
-export export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
+export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
   (
     {
       label,
@@ -56,7 +56,7 @@ export export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
     const renderSpinner = () => {
       if (!loading) return null;
       return (
-        <span 
+        <span
           className={styles.spinner}
           aria-hidden="true"
           data-testid="dyn-button-spinner"
@@ -70,7 +70,7 @@ export export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
       if (!icon) return null;
 
       return (
-        <DynIcon 
+        <DynIcon
           icon={icon}
           size={size}
           className={styles.icon}
@@ -114,4 +114,4 @@ export export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
   }
 );
 
-DynButton.displayName = 'DynButton';
+DynButton.displayName = 'DynButton';

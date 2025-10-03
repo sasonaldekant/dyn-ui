@@ -1,4 +1,4 @@
-import { React, forwardRef } from 'react';
+import * as React from 'react';
 import { DynDividerProps, DynDividerRef, DIVIDER_COORDINATES } from './DynDivider.types';
 import { classNames } from '../../utils/classNames';
 import './DynDivider.css';
@@ -7,7 +7,7 @@ import './DynDivider.css';
  * DynDivider - Visual separator component with optional label
  * Follows DYN UI specification for layout components
  */
-export export const DynDivider = forwardRef<DynDividerRef, DynDividerProps>(
+export const DynDivider = React.forwardRef<DynDividerRef, DynDividerProps>(
   (
     {
       label,
@@ -39,9 +39,9 @@ export export const DynDivider = forwardRef<DynDividerRef, DynDividerProps>(
     // Divider with label
     if (label) {
       return (
-        <div 
-          className={dividerClasses} 
-          role="separator" 
+        <div
+          className={dividerClasses}
+          role="separator"
           aria-label={label}
           data-testid="dyn-divider"
           {...rest}
@@ -57,15 +57,15 @@ export export const DynDivider = forwardRef<DynDividerRef, DynDividerProps>(
 
     // Simple divider with SVG line
     return (
-      <div 
-        className={dividerClasses} 
+      <div
+        className={dividerClasses}
         role="separator"
         data-testid="dyn-divider"
         {...rest}
       >
-        <svg 
-          className="dyn-divider__svg" 
-          viewBox="0 0 100 1" 
+        <svg
+          className="dyn-divider__svg"
+          viewBox="0 0 100 1"
           preserveAspectRatio="none"
           aria-hidden="true"
         >
@@ -83,4 +83,4 @@ export export const DynDivider = forwardRef<DynDividerRef, DynDividerProps>(
   }
 );
 
-DynDivider.displayName = 'DynDivider';
+DynDivider.displayName = 'DynDivider';

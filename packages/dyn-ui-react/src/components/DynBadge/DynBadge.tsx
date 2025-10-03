@@ -1,5 +1,5 @@
-import { React } from 'react';
-import { classNames } from 'classnames';
+import  * as React from 'react';
+import classNames from 'classnames';
 import { DynBadgeProps, DYN_COLOR_PALETTE } from '../../types/badge.types';
 import { formatBadgeValue, isThemeColor } from '../../utils/dynFormatters';
 import { DynIcon } from '../DynIcon/DynIcon';
@@ -13,8 +13,9 @@ export const DynBadge: React.FC<DynBadgeProps> = ({
   icon,
   showBorder = false,
   ariaLabel,
+  children,
   className
-}) => {
+}: DynBadgeProps) => {
   const displayValue = formatBadgeValue(value);
   const isCustomColor = !isThemeColor(color);
   const customStyle = isCustomColor ? { backgroundColor: color } : undefined;
@@ -78,4 +79,7 @@ export const DynBadge: React.FC<DynBadgeProps> = ({
       {renderContent()}
     </span>
   );
-};
+};
+DynBadge.displayName = 'DynBadge';
+export { DynBadgeProps };
+

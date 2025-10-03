@@ -1,9 +1,9 @@
-import { React } from 'react';
-import { classNames } from 'classnames';
+import React from 'react';
+import classNames from 'classnames';
 import { DynIconProps } from '../../types/icon.types';
 import { useIconDictionary } from '../../hooks/useIconDictionary';
 import { processIconString } from '../../utils/dynFormatters';
-import { styles } from './DynIcon.module.css';
+import styles from './DynIcon.module.css';
 
 /**
  * DynIcon - Flexible icon component with dictionary support
@@ -13,7 +13,7 @@ export const DynIcon: React.FC<DynIconProps> = ({
   size,
   className,
   onClick
-}) => {
+}: DynIconProps) => {
   const iconDictionary = useIconDictionary();
 
   // Handle React component icons

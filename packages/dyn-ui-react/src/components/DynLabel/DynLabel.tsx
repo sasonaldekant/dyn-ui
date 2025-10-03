@@ -1,5 +1,5 @@
 import { React } from 'react';
-import { classNames } from 'classnames';
+import classNames from 'classnames';
 import { DynLabelProps } from '../../types/label.types';
 import './DynLabel.module.css';
 
@@ -11,7 +11,7 @@ export const DynLabel: React.FC<DynLabelProps> = ({
   optional = false,
   helpText,
   className
-}) => {
+}: DynLabelProps) => {
   const labelClasses = classNames(
     'dyn-label',
     disabled && 'dyn-label-disabled',

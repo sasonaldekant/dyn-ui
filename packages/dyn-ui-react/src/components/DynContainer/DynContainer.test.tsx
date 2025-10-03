@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { DynContainer } from './DynContainer';
 describe('DynContainer', () => {
   it('exports a React component', () => {

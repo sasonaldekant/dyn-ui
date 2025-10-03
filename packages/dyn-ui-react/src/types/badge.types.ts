@@ -10,6 +10,7 @@ export interface DynBadgeProps {
   icon?: BadgeIcon;
   showBorder?: boolean;
   ariaLabel?: string;
+  children?: string;
   className?: string;
 }
 

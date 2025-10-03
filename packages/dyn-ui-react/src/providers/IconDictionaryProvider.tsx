@@ -1,4 +1,4 @@
-import { React, createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { IconDictionary } from '../types/icon.types';
 
 interface IconDictionaryContextType {
@@ -12,7 +12,7 @@ interface Props {
   customDictionary?: IconDictionary;
 }
 
-export const IconDictionaryProvider: React.FC<Props> = ({ children, customDictionary }) => {
+export const IconDictionaryProvider: React.FC<Props> = ({ children, customDictionary }: Props) => {
   const [dictionary, setDictionary] = useState<IconDictionaryContextType>({});
 
   useEffect(() => {

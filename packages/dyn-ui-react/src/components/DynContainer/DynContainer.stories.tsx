@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynContainer } from './DynContainer';
 import { DynButton } from '../DynButton';
 
@@ -12,7 +12,7 @@ const meta: Meta<typeof DynContainer> = {
         component: `
           DynContainer is a flexible container component for grouping content.
           It provides consistent styling, optional borders, padding, and titles.
-          
+
           **Features:**
           - Optional borders and padding
           - Configurable height
@@ -34,7 +34,7 @@ const meta: Meta<typeof DynContainer> = {
       description: 'Remove container border and shadow',
     },
     noPadding: {
-      control: 'boolean', 
+      control: 'boolean',
       description: 'Remove internal padding',
     },
     title: {
@@ -138,7 +138,7 @@ export const CustomCombination: Story = {
           <li>Custom CSS class</li>
         </ul>
         <div style={{ marginTop: '20px' }}>
-          <DynButton label="Primary" kind="primary" style={{ marginRight: '10px' }} />
+          <DynButton label="Primary" kind="primary"/>
           <DynButton label="Secondary" kind="secondary" />
         </div>
       </div>
@@ -175,19 +175,19 @@ export const Showcase: Story = {
         <p>Standard container with all default settings.</p>
         <DynButton label="Default" kind="primary" />
       </DynContainer>
-      
+
       <DynContainer noBorder title="No Border">
         <p>Container without borders or shadow.</p>
         <DynButton label="No Border" kind="secondary" />
       </DynContainer>
-      
+
       <DynContainer noPadding title="No Padding">
         <div style={{ padding: '16px', backgroundColor: '#f5f5f5' }}>
           <p>Container with custom content padding.</p>
           <DynButton label="Custom" kind="tertiary" />
         </div>
       </DynContainer>
-      
+
       <DynContainer height={200} title="Fixed Height">
         <p>Container with fixed height constraint.</p>
         <p>Content will be constrained to the specified height.</p>

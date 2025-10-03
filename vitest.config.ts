@@ -1,14 +1,16 @@
 import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [react()],
   test: {
-    globals: true,
-    environment: 'jsdom',
+    globals: true,                 // describe/it/expect globalno
+    environment: 'jsdom',          // okruženje za React komponente
     setupFiles: './vitest.setup.ts',
-    css: true,
+    css: true,                     // dozvoli import CSS/CSS modules u testovima
     include: ['packages/**/?(*.){test,spec}.{ts,tsx}'],
-    coverage: { provider: 'v8', reporter: ['text', 'lcov'], reportsDirectory: './coverage' }
+    coverage: {
+      reporter: ['text', 'lcov'],
+      provider: 'v8',
+      reportsDirectory: './coverage'
+    }
   }
 });

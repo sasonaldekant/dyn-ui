@@ -10,7 +10,7 @@
   justify-content: center;
   flex-shrink: 0;
   color: inherit;
-  
+
   svg {
     width: 100%;
     height: 100%;
@@ -62,17 +62,17 @@
   padding: 2px;
   margin: -2px;
   transition: all 0.2s ease;
-  
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
     transform: scale(1.1);
     color: var(--color-action-hover, #0052a3);
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
-  
+
   &:focus-visible {
     outline: 2px solid var(--color-action-focus, #0066cc);
     outline-offset: 2px;
@@ -168,16 +168,16 @@
 @media (prefers-reduced-motion: reduce) {
   .clickable {
     transition: none;
-    
+
     &:hover {
       transform: none;
     }
-    
+
     &:active {
       transform: none;
     }
   }
-  
+
   .spinning {
     animation: none;
   }
@@ -186,10 +186,11 @@
 /* Print styles */
 @media print {
   .dynIcon {
-    color-adjust: exact;
+    accent-color: exact;
+    print-color-adjust: exact;       // added standard property for compatibility
     -webkit-print-color-adjust: exact;
   }
-  
+
   .clickable {
     background: none !important;
     transform: none !important;
