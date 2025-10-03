@@ -1,40 +1,56 @@
 import * as React from 'react';
 
+export type Theme = 'light' | 'dark';
+
 export type ThemeContextValue = {
-  theme: string;
-  setTheme: (theme: string) => void;
-  availableThemes: string[];
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  availableThemes: Theme[];
 };
 
-export const ThemeContext = React.createContext<ThemeContextValue>({
-  theme: 'light',
-  setTheme: () => {},
-  availableThemes: ['light', 'dark'],
-});
+export const ThemeContext = React.createContext<ThemeContextValue | null>(null);
 
 export type ThemeProviderProps = {
-  initialTheme?: string;
+  initialTheme?: Theme;
   children: React.ReactNode;
 };
 
-const AVAILABLE_THEMES = ['light', 'dark'];
+const AVAILABLE_THEMES: Theme[] = ['light', 'dark'];
 
 export function ThemeProvider({ initialTheme = 'light', children }: ThemeProviderProps) {
-  const [theme, setThemeState] = React.useState(initialTheme);
+  const [theme, setThemeState] = React.useState<Theme>(initialTheme);
 
-  const setTheme = React.useCallback((newTheme: string) => {
+  const setTheme = React.useCallback((newTheme: Theme) => {
     if (AVAILABLE_THEMES.includes(newTheme)) {
       setThemeState(newTheme);
-      // Apply theme to document
-      document.documentElement.setAttribute('data-theme', newTheme);
-      document.documentElement.className = `theme-${newTheme}`;
     }
   }, []);
 
+  // Apply theme to document when theme changes
+  React.useEffect(() => {
+    const root = document.documentElement;
+    
+    // Remove existing theme classes
+    AVAILABLE_THEMES.forEach(t => {
+      root.classList.remove(`theme-${t}`);
+    });
+    
+    // Add new theme class
+    root.classList.add(`theme-${theme}`);
+    
+    // Set data attribute for CSS selector support
+    root.setAttribute('data-theme', theme);
+    
+    // Debug log
+    console.log(`Theme changed to: ${theme}`);
+    console.log('Document classes:', root.className);
+    console.log('Data theme:', root.getAttribute('data-theme'));
+  }, [theme]);
+
   // Set initial theme on mount
   React.useEffect(() => {
-    setTheme(theme);
-  }, [theme, setTheme]);
+    setTheme(initialTheme);
+  }, []); // Only run once on mount
 
   const contextValue = React.useMemo(() => ({
     theme,
