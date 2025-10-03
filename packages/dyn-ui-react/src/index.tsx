@@ -15,19 +15,21 @@ export type {
 } from './components';
 export { DYN_COLOR_PALETTE, AVATAR_SIZES } from './components';
 
+// Theme System
+export { ThemeProvider, useTheme } from './theme/ThemeProvider';
+export type { ThemeProviderProps, ThemeContextValue, Theme } from './theme/ThemeProvider';
+
 // Providers
-export { ThemeProvider, IconDictionaryProvider } from './providers';
-export type { ThemeProviderProps } from './providers';
+export { IconDictionaryProvider } from './providers';
 
 // Hooks
-export { useTheme, useThemeVars } from './hooks/useTheme';
+export { useThemeVars } from './hooks/useTheme';
 export { useIconDictionary } from './hooks/useIconDictionary';
 
 // Types
 export type { 
   ThemeName, 
   ThemeConfig, 
-  ThemeContextValue, 
   ColorVariant, 
   Size,
   IconDictionary
