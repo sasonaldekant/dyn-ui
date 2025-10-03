@@ -1,9 +1,21 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { DynBadgeProps, DYN_COLOR_PALETTE } from '../../types/badge.types';
+import { BadgeStatus, BadgeSize, DYN_COLOR_PALETTE } from '../../types/badge.types';
 import { formatBadgeValue, isThemeColor } from '../../utils/dynFormatters';
 import { DynIcon } from '../DynIcon/DynIcon';
 import styles from './DynBadge.module.css';
+
+export interface DynBadgeProps {
+  value?: number;
+  color?: string;
+  status?: BadgeStatus;
+  size?: BadgeSize;
+  icon?: string | boolean | React.ReactNode;
+  showBorder?: boolean;
+  ariaLabel?: string;
+  children?: React.ReactNode;
+  className?: string;
+}
 
 export const DynBadge: React.FC<DynBadgeProps> = ({
   value = 0,
@@ -51,6 +63,10 @@ export const DynBadge: React.FC<DynBadgeProps> = ({
   };
 
   const renderContent = () => {
+    if (children) {
+      return children;
+    }
+
     if (icon && !value) {
       return renderIcon();
     }
@@ -66,9 +82,7 @@ export const DynBadge: React.FC<DynBadgeProps> = ({
 
     return value > 0 ? (
       <span className={styles['dyn-badge-value']}>{displayValue}</span>
-    ) : (
-      children
-    );
+    ) : null;
   };
 
   return (
@@ -84,4 +98,6 @@ export const DynBadge: React.FC<DynBadgeProps> = ({
 };
 
 DynBadge.displayName = 'DynBadge';
-export { DynBadgeProps };
+
+// Re-export types for convenience
+export type { BadgeStatus, BadgeSize };
