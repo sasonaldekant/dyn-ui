@@ -1,7 +1,7 @@
 // packages/dyn-ui-react/src/components/DynLabel/DynLabel.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
 import { DynLabel } from './DynLabel';
-import { IconDictionaryProvider } from '../../contexts/IconDictionaryContext';
+import { IconDictionaryProvider } from '../../providers/IconDictionaryProvider';
 
 const meta: Meta<typeof DynLabel> = {
   title: 'Display Components/DynLabel',
@@ -24,15 +24,8 @@ const meta: Meta<typeof DynLabel> = {
     required: { control: 'boolean' },
     optional: { control: 'boolean' },
     helpText: { control: 'text' },
-    icon: { control: 'text' },
-    size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-    },
-    variant: {
-      control: 'select',
-      options: ['default', 'subtle', 'accent'],
-    },
+    disabled: { control: 'boolean' },
+    htmlFor: { control: 'text' },
   },
 };
 
@@ -67,21 +60,22 @@ export const WithHelpText: Story = {
   },
 };
 
-export const WithIcon: Story = {
+export const Disabled: Story = {
   args: {
-    children: 'Email Address',
-    icon: 'envelope',
-    required: true,
-    helpText: 'We will never share your email',
+    children: 'Disabled Label',
+    disabled: true,
+    helpText: 'This field is disabled',
   },
 };
 
-export const AllVariants: Story = {
+export const AllStates: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <DynLabel variant="default" required>Default Required</DynLabel>
-      <DynLabel variant="subtle" optional>Subtle Optional</DynLabel>
-      <DynLabel variant="accent" icon="star">Accent with Icon</DynLabel>
+      <DynLabel>Default Label</DynLabel>
+      <DynLabel required>Required Field</DynLabel>
+      <DynLabel optional>Optional Field</DynLabel>
+      <DynLabel disabled>Disabled Label</DynLabel>
+      <DynLabel required helpText="This field is required">With Help Text</DynLabel>
     </div>
   ),
 };
