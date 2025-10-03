@@ -1,8 +1,15 @@
 /**
  * Dyn UI - Complete Design System CSS
+ * Updated to include Form Components Group - SCOPE 6
  * Single source of truth for all component styles
- * Compatible with React demo and Storybook
  */
+
+/* Import component styles */
+@import './dyn-field-container.css';
+@import './dyn-input.css';
+@import './dyn-select.css';
+@import './dyn-checkbox.css';
+@import './dyn-datepicker.css';
 
 /* ===== CSS Custom Properties (Design Tokens) ===== */
 :root {
@@ -292,7 +299,6 @@
   --color-primary: #007bff;
   --color-danger: #dc3545;
   --badge-bg: #e9ecef;
-  /* itd. */
   background-color: var(--color-bg);
   color: var(--color-text);
 }
@@ -303,11 +309,9 @@
   --color-primary: #339cfb;
   --color-danger: #ff5c5c;
   --badge-bg: #2a2a2a;
-  /* itd. */
   background-color: var(--color-bg);
   color: var(--color-text);
 }
-
 
 .theme-high-contrast {
   --color-primary: #000000;
