@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { useTheme } from '../../theme/ThemeProvider';
+import { useTheme, type Theme } from '../../theme/ThemeProvider';
 
 export type ThemeSwitcherProps = {
-  themes?: string[];
+  themes?: Theme[];
   size?: 'sm' | 'md';
   rounded?: 'sm' | 'md' | 'lg' | 'full';
-  onChange?: (theme: string) => void;
-  labels?: Record<string, string>;
+  onChange?: (theme: Theme) => void;
+  labels?: Record<Theme, string>;
+  className?: string;
 };
 
 const getSpacing = (size: 'sm' | 'md') => {
-  return size === 'sm' ? '8px' : '12px';
+  return size === 'sm' ? '6px' : '8px';
 };
 
 const getBorderRadius = (rounded: string) => {
@@ -29,52 +30,75 @@ export function ThemeSwitcher({
   rounded = 'md',
   onChange,
   labels,
+  className,
 }: ThemeSwitcherProps) {
   const { theme, setTheme, availableThemes } = useTheme();
   const themeList = themes && themes.length ? themes : availableThemes;
 
-  const handleThemeChange = (newTheme: string) => {
+  const handleThemeChange = (newTheme: Theme) => {
+    console.log(`Switching theme from ${theme} to ${newTheme}`);
     setTheme(newTheme);
     onChange?.(newTheme);
   };
+
+  const spacing = getSpacing(size);
+  const borderRadius = getBorderRadius(rounded);
 
   return (
     <div
       role="tablist"
       aria-label="Theme switcher"
+      className={className}
       style={{
         display: 'inline-flex',
-        border: '1px solid #e5e7eb',
-        borderRadius: getBorderRadius(rounded),
+        border: '1px solid var(--dyn-color-border, #e5e7eb)',
+        borderRadius,
         overflow: 'hidden',
-        background: '#f9fafb',
+        background: 'var(--dyn-color-muted, #f9fafb)',
+        transition: 'all 0.2s ease',
       }}
     >
       {themeList.map((t) => {
         const isActive = theme === t;
+        const label = labels?.[t] ?? t.charAt(0).toUpperCase() + t.slice(1);
+        
         return (
           <button
             key={t}
+            type="button"
             role="tab"
             aria-selected={isActive}
             onClick={() => handleThemeChange(t)}
             style={{
               appearance: 'none',
               cursor: 'pointer',
-              padding: `${getSpacing(size)} ${parseInt(getSpacing(size)) * 1.5}px`,
+              padding: `${spacing} ${parseInt(spacing) * 2}px`,
               border: 'none',
-              background: isActive ? '#3b82f6' : 'transparent',
-              color: isActive ? '#ffffff' : '#374151',
-              fontWeight: 500,
+              background: isActive ? 'var(--dyn-color-primary, #3b82f6)' : 'transparent',
+              color: isActive ? 'white' : 'var(--dyn-color-foreground, #374151)',
+              fontWeight: isActive ? 600 : 500,
               lineHeight: 1.2,
               fontSize: size === 'sm' ? '0.875rem' : '1rem',
               transition: 'all 0.2s ease',
+              minWidth: '60px',
+            }}
+            onMouseEnter={(e) => {
+              if (!isActive) {
+                e.currentTarget.style.background = 'var(--dyn-color-border, #f3f4f6)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive) {
+                e.currentTarget.style.background = 'transparent';
+              }
             }}
           >
-            {labels?.[t] ?? t.charAt(0).toUpperCase() + t.slice(1)}
+            {label}
           </button>
         );
       })}
     </div>
   );
 }
+
+ThemeSwitcher.displayName = 'ThemeSwitcher';
