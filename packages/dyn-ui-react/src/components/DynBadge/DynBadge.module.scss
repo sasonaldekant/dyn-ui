@@ -1,0 +1,135 @@
+.dyn-badge {
+  /* CSS Custom Properties from Design Tokens */
+  --badge-height-small: 8px;
+  --badge-height-medium: 16px;
+  --badge-height-large: 24px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  color: white;
+  white-space: nowrap;
+  vertical-align: middle;
+
+  /* Size variants */
+  &.dyn-badge-small {
+    height: var(--badge-height-small);
+    min-width: var(--badge-height-small);
+    padding: 0 4px;
+    font-size: 0.625rem;
+  }
+
+  &.dyn-badge-medium {
+    height: var(--badge-height-medium);
+    min-width: var(--badge-height-medium);
+    padding: 0 6px;
+  }
+
+  &.dyn-badge-large {
+    height: var(--badge-height-large);
+    min-width: var(--badge-height-large);
+    padding: 0 8px;
+    font-size: 0.875rem;
+  }
+
+  /* Theme colors */
+  &.dyn-badge-color-01 {
+    background-color: var(--color-01, #3f51b5);
+  }
+
+  &.dyn-badge-color-02 {
+    background-color: var(--color-02, #009688);
+  }
+
+  &.dyn-badge-color-03 {
+    background-color: var(--color-03, #f44336);
+  }
+
+  &.dyn-badge-color-04 {
+    background-color: var(--color-04, #ff9800);
+  }
+
+  &.dyn-badge-color-05 {
+    background-color: var(--color-05, #9c27b0);
+  }
+
+  &.dyn-badge-color-06 {
+    background-color: var(--color-06, #e91e63);
+  }
+
+  &.dyn-badge-color-07 {
+    background-color: var(--color-07, #795548);
+  }
+
+  &.dyn-badge-color-08 {
+    background-color: var(--color-08, #607d8b);
+  }
+
+  &.dyn-badge-color-09 {
+    background-color: var(--color-09, #ff5722);
+  }
+
+  &.dyn-badge-color-10 {
+    background-color: var(--color-10, #3f51b5);
+  }
+
+  &.dyn-badge-color-11 {
+    background-color: var(--color-11, #009688);
+  }
+
+  &.dyn-badge-color-12 {
+    background-color: var(--color-12, #ffc107);
+    color: var(--color-neutral-dark-90, #333);
+  }
+
+  /* Status colors */
+  &.dyn-badge-status-positive {
+    background-color: var(--color-feedback-positive, #4caf50);
+  }
+
+  &.dyn-badge-status-negative {
+    background-color: var(--color-feedback-negative, #f44336);
+  }
+
+  &.dyn-badge-status-warning {
+    background-color: var(--color-feedback-warning, #ff9800);
+  }
+
+  &.dyn-badge-status-disabled {
+    background-color: var(--color-neutral-dark-70, #666);
+  }
+
+  /* Border variant */
+  &.dyn-badge-border {
+    border: 2px solid var(--color-neutral-light-00, white);
+    box-shadow: 0 0 0 1px var(--color-neutral-dark-90, #333);
+  }
+
+  /* Icon only variant */
+  &.dyn-badge-icon-only {
+    padding: 2px;
+    aspect-ratio: 1;
+  }
+
+  /* With value */
+  &.dyn-badge-with-value {
+    .dyn-badge-value {
+      font-weight: inherit;
+    }
+  }
+
+  /* Icon styles */
+  .dyn-badge-custom-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dyn-badge-value {
+    font-weight: inherit;
+  }
+}
