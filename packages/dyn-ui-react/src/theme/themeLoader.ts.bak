@@ -1,4 +1,3 @@
-﻿/// <reference types="vite/client" />
 import type { DynThemeTokens } from './tokens';
 
 // Vite-only: map JSON fajlova u ovom folderu
@@ -19,4 +18,3 @@ export async function loadThemeTokens(name: ThemeName): Promise<DynThemeTokens> 
 export function getAvailableThemes(): string[] {
   return Object.keys(themeModules).map(p => p.replace('./themes/','').replace('.json',''));
 }
-

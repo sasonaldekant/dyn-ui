@@ -28,13 +28,12 @@ export type { ThemeProviderProps, ThemeContextValue } from '../theme/ThemeProvid
 
 // Export types
 export type { DynButtonProps } from './DynButton/DynButton.types';
-export type { DynIconProps } from './DynIcon/DynIcon';
+export type { DynIconProps as DynIconPropsNew } from '../types/icon.types';
 
 // Display Components types
 export type { DynBadgeProps, BadgeStatus, BadgeSize } from '../types/badge.types';
 export type { DynAvatarProps, AvatarSize } from '../types/avatar.types';
 export type { DynLabelProps } from '../types/label.types';
-export type { DynIconProps as DynIconPropsNew } from '../types/icon.types';
 
 // Utility types
 export type { ThemeSwitcherProps } from './ThemeSwitcher/ThemeSwitcher';
@@ -42,3 +41,4 @@ export type { ThemeSwitcherProps } from './ThemeSwitcher/ThemeSwitcher';
 // Constants
 export { DYN_COLOR_PALETTE } from '../types/badge.types';
 export { AVATAR_SIZES } from '../types/avatar.types';
+

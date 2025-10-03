@@ -118,4 +118,3 @@ export const DynIcon: React.FC<DynIconProps> = ({
 };
 
 DynIcon.displayName = 'DynIcon';
-export { DynIcon };

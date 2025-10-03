@@ -15,7 +15,7 @@
   --color-warning: #d97706;
   --color-danger: #dc2626;
   --color-info: #0891b2;
-  
+
   /* Surface Colors */
   --color-background: #ffffff;
   --color-surface: #f8fafc;
@@ -77,15 +77,15 @@
   --dyn-color-primary: #1976d2;
   --dyn-color-primary-text: #ffffff;
   --dyn-color-primary-hover: #1565c0;
-  
+
   --dyn-color-secondary: #1976d2;
   --dyn-color-secondary-text: #1976d2;
   --dyn-color-secondary-hover: rgba(25, 118, 210, 0.1);
-  
+
   --dyn-color-tertiary: #1976d2;
   --dyn-color-tertiary-text: #1976d2;
   --dyn-color-tertiary-hover: rgba(25, 118, 210, 0.08);
-  
+
   --dyn-color-danger: #d32f2f;
   --dyn-color-danger-hover: #b71c1c;
 }
@@ -120,7 +120,7 @@
   outline: none;
   position: relative;
   transition: var(--transition-colors), var(--transition-transform);
-  
+
   /* Default size (medium) */
   padding: var(--spacing-sm) var(--spacing-lg);
   border-radius: var(--radius-md);
@@ -286,18 +286,28 @@
   border: 0;
 }
 
-/* ===== Theme Support ===== */
 .theme-light {
-  /* Default theme */
+  --color-bg: #ffffff;
+  --color-text: #333333;
+  --color-primary: #007bff;
+  --color-danger: #dc3545;
+  --badge-bg: #e9ecef;
+  /* itd. */
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 .theme-dark {
-  --color-background: #0f172a;
-  --color-surface: #1e293b;
-  --color-text-primary: #f1f5f9;
-  --color-text-secondary: #94a3b8;
-  --color-border: #334155;
+  --color-bg: #121212;
+  --color-text: #dddddd;
+  --color-primary: #339cfb;
+  --color-danger: #ff5c5c;
+  --badge-bg: #2a2a2a;
+  /* itd. */
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
+
 
 .theme-high-contrast {
   --color-primary: #000000;
@@ -367,11 +377,11 @@
   .demo-container {
     padding: var(--spacing-lg);
   }
-  
+
   .demo-section {
     padding: var(--spacing-lg);
   }
-  
+
   .demo-buttons {
     gap: var(--spacing-sm);
   }
@@ -398,7 +408,7 @@
 /* ===== Print Styles ===== */
 @media print {
   .dyn-button {
-    color-adjust: exact;
+    print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
 }

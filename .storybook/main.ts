@@ -20,9 +20,9 @@ const config: StorybookConfig = {
     getAbsolutePath('@chromatic-com/storybook'),
     getAbsolutePath('@storybook/addon-docs'),
     getAbsolutePath("@storybook/addon-a11y"),
-    getAbsolutePath("@storybook/addon-vitest"),
+    //getAbsolutePath("@storybook/addon-vitest"),
     // Dodaj dodatne addon-e
-    // getAbsolutePath("@storybook/addon-essentials"),
+    //getAbsolutePath("@storybook/addon-essentials"),
     // getAbsolutePath("@storybook/addon-controls"),
     // getAbsolutePath("@storybook/addon-interactions")
   ],

@@ -1,2 +1,3 @@
-export { default } from './DynDivider';
+﻿export { DynDivider } from './DynDivider';
 export * from './DynDivider';
+
