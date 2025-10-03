@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DynDividerProps, DynDividerRef, DIVIDER_COORDINATES } from './DynDivider.types';
 import { classNames } from '../../utils/classNames';
-import './DynDivider.css';
+import styles from './DynDivider.module.css';
 
 /**
  * DynDivider - Visual separator component with optional label
@@ -21,10 +21,10 @@ export const DynDivider = React.forwardRef<DynDividerRef, DynDividerProps>(
 
     // Build CSS classes
     const dividerClasses = classNames(
-      'dyn-divider',
-      `dyn-divider--${borderWidth}`,
+      styles['dyn-divider'],
+      styles[`dyn-divider--${borderWidth}`],
       {
-        'dyn-divider--with-label': !!label,
+        [styles['dyn-divider--with-label']]: !!label,
       },
       className
     );
@@ -46,10 +46,10 @@ export const DynDivider = React.forwardRef<DynDividerRef, DynDividerProps>(
           data-testid="dyn-divider"
           {...rest}
         >
-          <div className="dyn-divider__content">
-            <div className="dyn-divider__line dyn-divider__line--left" />
-            <span className="dyn-divider__label">{label}</span>
-            <div className="dyn-divider__line dyn-divider__line--right" />
+          <div className={styles['dyn-divider__content']}>
+            <div className={`${styles['dyn-divider__line']} ${styles['dyn-divider__line--left']}`} />
+            <span className={styles['dyn-divider__label']}>{label}</span>
+            <div className={`${styles['dyn-divider__line']} ${styles['dyn-divider__line--right']}`} />
           </div>
         </div>
       );
@@ -64,7 +64,7 @@ export const DynDivider = React.forwardRef<DynDividerRef, DynDividerProps>(
         {...rest}
       >
         <svg
-          className="dyn-divider__svg"
+          className={styles['dyn-divider__svg']}
           viewBox="0 0 100 1"
           preserveAspectRatio="none"
           aria-hidden="true"
@@ -74,7 +74,7 @@ export const DynDivider = React.forwardRef<DynDividerRef, DynDividerProps>(
             y1="0.5"
             x2={coordinates.x2}
             y2="0.5"
-            className="dyn-divider__svg-line"
+            className={styles['dyn-divider__svg-line']}
             strokeLinecap="round"
           />
         </svg>
