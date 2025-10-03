@@ -1,8 +1,8 @@
-import React, { forwardRef } from 'react';
+import { React, forwardRef } from 'react';
 import { classNames } from '../../utils/classNames';
 import { BaseComponentProps, ColorVariant, Size } from '../../types/theme';
 // Note: CSS modules import removed to fix TypeScript build errors
-// import styles from './Button.module.scss';
+// import { styles } from './Button.module.css';
 
 export interface ButtonProps extends BaseComponentProps {
   /** Button visual variant */
@@ -110,5 +110,3 @@ export const DynButton = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 DynButton.displayName = 'DynButton';
-
-export default DynButton;

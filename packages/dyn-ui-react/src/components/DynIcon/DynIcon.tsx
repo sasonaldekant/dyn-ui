@@ -1,14 +1,14 @@
-import React from 'react';
-import classNames from 'classnames';
+import { React } from 'react';
+import { classNames } from 'classnames';
 import { DynIconProps } from '../../types/icon.types';
 import { useIconDictionary } from '../../hooks/useIconDictionary';
 import { processIconString } from '../../utils/dynFormatters';
-import styles from './DynIcon.module.scss';
+import { styles } from './DynIcon.module.css';
 
 /**
  * DynIcon - Flexible icon component with dictionary support
  */
-const DynIcon: React.FC<DynIconProps> = ({
+export const DynIcon: React.FC<DynIconProps> = ({
   icon,
   size,
   className,
@@ -19,7 +19,7 @@ const DynIcon: React.FC<DynIconProps> = ({
   // Handle React component icons
   if (React.isValidElement(icon)) {
     return (
-      <span 
+      <span
         className={classNames(styles.dynIconCustom, className)}
         onClick={onClick}
         role={onClick ? 'button' : undefined}
@@ -37,7 +37,7 @@ const DynIcon: React.FC<DynIconProps> = ({
   }
 
   const processedIcon = processIconString(icon, iconDictionary);
-  
+
   const iconClasses = classNames(
     processedIcon.baseClass,
     processedIcon.iconClass,
@@ -47,7 +47,7 @@ const DynIcon: React.FC<DynIconProps> = ({
   );
 
   return (
-    <i 
+    <i
       className={iconClasses}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
@@ -57,5 +57,4 @@ const DynIcon: React.FC<DynIconProps> = ({
     />
   );
 };
-
-export default DynIcon;
+export { DynIcon };

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import DynBadge from './DynBadge';
+import { DynBadge } from './DynBadge';
 import { IconDictionaryProvider } from '../../providers/IconDictionaryProvider';
 
 // Test wrapper with required providers

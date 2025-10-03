@@ -1,0 +1,45 @@
+/* Import design tokena */
+@import '../../../design-tokens/build/css/tokens.css';
+
+/* Reset i osnovni stilovi */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--size-font-family-base);
+  font-size: var(--size-font-base);
+  line-height: var(--size-font-line-height-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-neutral-light-00);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Fokus outline reset */
+button,
+input,
+select,
+textarea {
+  &:focus {
+    outline: none;
+  }
+}
+
+/* Screen reader only klasa */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,7 +1,7 @@
 // packages/dyn-ui-react/src/components/DynBadge/DynBadge.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
 import { DynBadge } from './DynBadge';
-import { IconDictionaryProvider } from '../IconDictionary/IconDictionaryProvider';
+import { IconDictionaryProvider } from '../../contexts/IconDictionaryContext';
 
 const meta: Meta<typeof DynBadge> = {
   title: 'Display Components/DynBadge',

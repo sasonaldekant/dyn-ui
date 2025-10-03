@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import classNames from 'classnames';
+import { React, useState } from 'react';
+import { classNames } from 'classnames';
 import { DynAvatarProps, AVATAR_SIZES } from '../../types/avatar.types';
 import { generateInitials } from '../../utils/dynFormatters';
-import './DynAvatar.module.scss';
+import './DynAvatar.module.css';
 
-const DynAvatar: React.FC<DynAvatarProps> = ({
+export const DynAvatar: React.FC<DynAvatarProps> = ({
   src,
   size = 'md',
   loading = 'eager',
@@ -91,6 +91,4 @@ const DynAvatar: React.FC<DynAvatarProps> = ({
       {renderContent()}
     </div>
   );
-};
-
-export default DynAvatar;
+};

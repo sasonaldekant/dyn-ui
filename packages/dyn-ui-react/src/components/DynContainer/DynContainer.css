@@ -1,0 +1,94 @@
+/* DynContainer Styles - Following DYN UI specification */
+.dyn-container {
+  /* CSS Custom Properties (Design Tokens) */
+  --container-padding: var(--spacing-sm, 16px);
+  --container-border-radius: var(--border-radius-md, 4px);
+  --container-border-width: var(--border-width-sm, 1px);
+  --container-border-color: var(--color-neutral-light-20, #e0e0e0);
+  --container-background: var(--color-neutral-light-00, #fff);
+  --container-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Base styles */
+  position: relative;
+  background-color: var(--container-background);
+  border: var(--container-border-width) solid var(--container-border-color);
+  border-radius: var(--container-border-radius);
+  box-shadow: var(--container-shadow);
+  overflow: hidden;
+
+  /* Modifiers */
+  &--no-border {
+    border: none;
+    box-shadow: none;
+  }
+
+  &--no-padding {
+    .dyn-container__content {
+      padding: 0;
+    }
+
+    .dyn-container__header {
+      padding: 0 0 var(--spacing-xs, 8px);
+    }
+  }
+
+  /* Header */
+  &__header {
+    padding: var(--container-padding) var(--container-padding) 0;
+    border-bottom: 1px solid var(--container-border-color);
+    margin-bottom: var(--spacing-sm, 16px);
+  }
+
+  &__title {
+    /* Typography tokens */
+    --title-font-family: var(--font-family-theme, system-ui);
+    --title-font-weight: var(--font-weight-semibold, 600);
+    --title-line-height: var(--line-height-md, 1.5);
+    --title-text-color: var(--color-neutral-dark-90, #333);
+    --title-font-size: 1.125rem;
+    --title-letter-spacing: 0.017rem;
+    --title-margin: 0 0 var(--spacing-xs, 8px);
+
+    font-family: var(--title-font-family);
+    font-weight: var(--title-font-weight);
+    font-size: var(--title-font-size);
+    line-height: var(--title-line-height);
+    letter-spacing: var(--title-letter-spacing);
+    color: var(--title-text-color);
+    margin: var(--title-margin);
+  }
+
+  /* Content */
+  &__content {
+    padding: var(--container-padding);
+  }
+
+  /* With title modifier */
+  &--with-title {
+    .dyn-container__content {
+      padding-top: 0;
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    --container-padding: var(--spacing-xs, 12px);
+    
+    &__header {
+      padding: var(--container-padding) var(--container-padding) 0;
+    }
+  }
+
+  /* High contrast theme support */
+  @media (prefers-contrast: high) {
+    --container-border-width: 2px;
+    --container-border-color: var(--color-neutral-dark-90, #333);
+  }
+
+  /* Print styles */
+  @media print {
+    border: 1px solid #000;
+    box-shadow: none;
+    break-inside: avoid;
+  }
+}

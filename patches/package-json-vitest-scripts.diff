@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,12 @@
+ {
+   "scripts": {
++    "test": "vitest --run",
++    "test:watch": "vitest",
++    "test:ui": "vitest --ui",
++    "coverage": "vitest --coverage"
+   }
+ }

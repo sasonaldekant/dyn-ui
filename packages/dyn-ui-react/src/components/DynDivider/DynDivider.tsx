@@ -1,13 +1,13 @@
-import React, { forwardRef } from 'react';
+import { React, forwardRef } from 'react';
 import { DynDividerProps, DynDividerRef, DIVIDER_COORDINATES } from './DynDivider.types';
 import { classNames } from '../../utils/classNames';
-import './DynDivider.scss';
+import './DynDivider.css';
 
 /**
  * DynDivider - Visual separator component with optional label
  * Follows DYN UI specification for layout components
  */
-export const DynDivider = forwardRef<DynDividerRef, DynDividerProps>(
+export export const DynDivider = forwardRef<DynDividerRef, DynDividerProps>(
   (
     {
       label,
@@ -83,6 +83,4 @@ export const DynDivider = forwardRef<DynDividerRef, DynDividerProps>(
   }
 );
 
-DynDivider.displayName = 'DynDivider';
-
-export default DynDivider;
+DynDivider.displayName = 'DynDivider';

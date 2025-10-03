@@ -1,0 +1,122 @@
+[
+  {
+    "component": "Button",
+    "dir": "packages\\dyn-ui-react\\src\\components\\Button",
+    "hasStory": true,
+    "hasTest": true,
+    "stories": [
+      "packages\\dyn-ui-react\\src\\components\\Button\\Button.stories.tsx"
+    ],
+    "tests": [
+      "packages\\dyn-ui-react\\src\\components\\Button\\Button.test.tsx"
+    ]
+  },
+  {
+    "component": "DynAvatar",
+    "dir": "packages\\dyn-ui-react\\src\\components\\DynAvatar",
+    "hasStory": true,
+    "hasTest": true,
+    "stories": [
+      "packages\\dyn-ui-react\\src\\components\\DynAvatar\\DynAvatar.stories.tsx"
+    ],
+    "tests": [
+      "packages\\dyn-ui-react\\src\\components\\DynAvatar\\DynAvatar.test.tsx"
+    ]
+  },
+  {
+    "component": "DynBadge",
+    "dir": "packages\\dyn-ui-react\\src\\components\\DynBadge",
+    "hasStory": true,
+    "hasTest": true,
+    "stories": [
+      "packages\\dyn-ui-react\\src\\components\\DynBadge\\DynBadge.stories.tsx"
+    ],
+    "tests": [
+      "packages\\dyn-ui-react\\src\\components\\DynBadge\\DynBadge.test.tsx"
+    ]
+  },
+  {
+    "component": "DynBox",
+    "dir": "packages\\dyn-ui-react\\src\\components\\DynBox",
+    "hasStory": true,
+    "hasTest": true,
+    "stories": [
+      "packages\\dyn-ui-react\\src\\components\\DynBox\\DynBox.stories.tsx"
+    ],
+    "tests": [
+      "packages\\dyn-ui-react\\src\\components\\DynBox\\DynBox.test.tsx"
+    ]
+  },
+  {
+    "component": "DynButton",
+    "dir": "packages\\dyn-ui-react\\src\\components\\DynButton",
+    "hasStory": true,
+    "hasTest": true,
+    "stories": [
+      "packages\\dyn-ui-react\\src\\components\\DynButton\\DynButton.stories.tsx"
+    ],
+    "tests": [
+      "packages\\dyn-ui-react\\src\\components\\DynButton\\DynButton.test.tsx"
+    ]
+  },
+  {
+    "component": "DynContainer",
+    "dir": "packages\\dyn-ui-react\\src\\components\\DynContainer",
+    "hasStory": true,
+    "hasTest": true,
+    "stories": [
+      "packages\\dyn-ui-react\\src\\components\\DynContainer\\DynContainer.stories.tsx"
+    ],
+    "tests": [
+      "packages\\dyn-ui-react\\src\\components\\DynContainer\\DynContainer.test.tsx"
+    ]
+  },
+  {
+    "component": "DynDivider",
+    "dir": "packages\\dyn-ui-react\\src\\components\\DynDivider",
+    "hasStory": true,
+    "hasTest": true,
+    "stories": [
+      "packages\\dyn-ui-react\\src\\components\\DynDivider\\DynDivider.stories.tsx"
+    ],
+    "tests": [
+      "packages\\dyn-ui-react\\src\\components\\DynDivider\\DynDivider.test.tsx"
+    ]
+  },
+  {
+    "component": "DynIcon",
+    "dir": "packages\\dyn-ui-react\\src\\components\\DynIcon",
+    "hasStory": true,
+    "hasTest": true,
+    "stories": [
+      "packages\\dyn-ui-react\\src\\components\\DynIcon\\DynIcon.stories.tsx"
+    ],
+    "tests": [
+      "packages\\dyn-ui-react\\src\\components\\DynIcon\\DynIcon.test.tsx"
+    ]
+  },
+  {
+    "component": "DynLabel",
+    "dir": "packages\\dyn-ui-react\\src\\components\\DynLabel",
+    "hasStory": true,
+    "hasTest": true,
+    "stories": [
+      "packages\\dyn-ui-react\\src\\components\\DynLabel\\DynLabel.stories.tsx"
+    ],
+    "tests": [
+      "packages\\dyn-ui-react\\src\\components\\DynLabel\\DynLabel.test.tsx"
+    ]
+  },
+  {
+    "component": "ThemeSwitcher",
+    "dir": "packages\\dyn-ui-react\\src\\components\\ThemeSwitcher",
+    "hasStory": true,
+    "hasTest": true,
+    "stories": [
+      "packages\\dyn-ui-react\\src\\components\\ThemeSwitcher\\ThemeSwitcher.stories.tsx"
+    ],
+    "tests": [
+      "packages\\dyn-ui-react\\src\\components\\ThemeSwitcher\\ThemeSwitcher.test.tsx"
+    ]
+  }
+]

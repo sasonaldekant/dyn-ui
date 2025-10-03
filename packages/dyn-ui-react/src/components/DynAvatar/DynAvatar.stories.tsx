@@ -1,88 +1,36 @@
-// packages/dyn-ui-react/src/components/DynAvatar/DynAvatar.stories.tsx
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import DynAvatar from './DynAvatar';
-import IconDictionaryProvider from './IconDictionary/IconDictionaryProvider';
+import type { Meta, StoryObj } from '@storybook/react';
+import { DynAvatar } from './DynAvatar';
+import { IconDictionaryProvider } from '../../contexts/IconDictionaryContext';
 
 const meta: Meta<typeof DynAvatar> = {
   title: 'Display Components/DynAvatar',
   component: DynAvatar,
-  decorators: [
-    (Story) => (
-      <IconDictionaryProvider>
-        <Story />
-      </IconDictionaryProvider>
-    ),
-  ],
-  parameters: {
-    layout: 'centered',
-  },
-  tags: ['autodocs'],
-  argTypes: {
-    src: { control: 'text' },
-    alt: { control: 'text' },
-    name: { control: 'text' },
-    size: {
-      control: 'select',
-      options: ['xs', 'sm', 'md', 'lg', 'xl'],
-    },
-    shape: {
-      control: 'select',
-      options: ['circle', 'square'],
-    },
-  },
+  decorators: [(Story) => (
+    <IconDictionaryProvider>
+      <Story />
+    </IconDictionaryProvider>
+  )],
 };
-
 export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    name: 'John Doe',
-    size: 'md',
-  },
+type Story = StoryObj<typeof DynAvatar>;
+
+export const Image: Story = {
+  args: { src: 'https://picsum.photos/96', alt: 'User avatar', size: 'md' },
 };
 
-export const WithImage: Story = {
-  args: {
-    src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-    alt: 'Profile picture',
-    name: 'John Doe',
-    size: 'md',
-  },
+export const WithInitials: Story = {
+  args: { initials: 'AP', size: 'md' },
 };
 
-export const ErrorFallback: Story = {
-  args: {
-    src: 'invalid-url.jpg',
-    name: 'Jane Smith',
-    size: 'md',
-  },
-};
-
-export const LoadingState: Story = {
-  args: {
-    name: 'Loading User',
-    size: 'md',
-    loading: true,
-  },
-};
-
-export const AllSizes: Story = {
+export const Sizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-      <DynAvatar name="Extra Small" size="xs" />
-      <DynAvatar name="Small Size" size="sm" />
-      <DynAvatar name="Medium Size" size="md" />
-      <DynAvatar name="Large Size" size="lg" />
-      <DynAvatar name="Extra Large" size="xl" />
+    <div style={{ display: 'flex', gap: 12 }}>
+      <DynAvatar src="https://picsum.photos/24" size="xs" alt="xs" />
+      <DynAvatar src="https://picsum.photos/32" size="sm" alt="sm" />
+      <DynAvatar src="https://picsum.photos/64" size="md" alt="md" />
+      <DynAvatar src="https://picsum.photos/96" size="lg" alt="lg" />
+      <DynAvatar src="https://picsum.photos/144" size="xl" alt="xl" />
     </div>
   ),
-};
-
-export const SquareVariant: Story = {
-  args: {
-    name: 'Square Avatar',
-    size: 'md',
-    shape: 'square',
-  },
 };

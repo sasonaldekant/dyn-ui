@@ -9,13 +9,23 @@ jobs:
   chromatic:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      - name: Install dependencies
-        run: pnpm install
-      - name: Run Storybook & upload to Chromatic
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Storybook & upload to Chromatic (CLI)
         env:
-          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-        run: pnpm exec chromatic --exit-zero-on-changes
+          CHROMATIC_PROJECT_TOKEN: ${secrets.CHROMATIC_PROJECT_TOKEN}
+        run: pnpm dlx chromatic --exit-zero-on-changes
+        # ako već imaš chromatic u devDependencies:
+        # run: pnpm exec chromatic --exit-zero-on-changes

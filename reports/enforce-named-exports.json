@@ -1,0 +1,62 @@
+[
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\Button\\Button.tsx",
+    "action": [
+      "strip-default-line"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynAvatar\\DynAvatar.tsx",
+    "action": [
+      "remove-default-const"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynBadge\\DynBadge.tsx",
+    "action": [
+      "remove-default-const"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynBox\\DynBox.tsx",
+    "action": [
+      "default-fn->named-fn"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynButton\\DynButton.tsx",
+    "action": [
+      "remove-default-const"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynContainer\\DynContainer.tsx",
+    "action": [
+      "remove-default-const"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynDivider\\DynDivider.tsx",
+    "action": [
+      "remove-default-const"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynIcon\\DynIcon.tsx",
+    "action": [
+      "remove-default-const"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynLabel\\DynLabel.tsx",
+    "action": [
+      "remove-default-const"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\ThemeSwitcher\\ThemeSwitcher.tsx",
+    "action": [
+      "default-fn->named-fn"
+    ]
+  }
+]

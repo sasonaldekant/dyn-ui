@@ -18,7 +18,7 @@ module.exports = {
       buildPath: 'build/scss/',
       files: [
         {
-          destination: 'tokens.scss',
+          destination: 'tokens.css',
           format: 'scss/variables'
         }
       ]

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import DynAvatar from './DynAvatar';
+import { DynAvatar } from './DynAvatar';
 import { AVATAR_SIZES } from '../../types/avatar.types';
 
 describe('DynAvatar', () => {

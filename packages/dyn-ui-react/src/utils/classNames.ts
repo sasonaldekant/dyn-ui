@@ -66,7 +66,7 @@ export const cn = classNames;
  * 
  * @example
  * ```typescript
- * import styles from './Button.module.scss';
+ * import { styles } from './Button.module.css';
  * const cx = createClassNameGenerator(styles);
  * 
  * const buttonClasses = cx('button', {
@@ -96,7 +96,7 @@ export function createClassNameGenerator(styles: Record<string, string>) {
  * 
  * @example
  * ```typescript
- * import styles from './Button.module.scss';
+ * import { styles } from './Button.module.css';
  * 
  * const buttonClasses = combineStyles(styles, 'button', {
  *   [styles.primary]: kind === 'primary',

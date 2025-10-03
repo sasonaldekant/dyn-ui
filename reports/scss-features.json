@@ -1,0 +1,54 @@
+[
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\Button\\Button.module.scss",
+    "markers": [
+      "moduleUse"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynAvatar\\DynAvatar.module.scss",
+    "markers": [
+      "functions"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynBadge\\DynBadge.module.scss",
+    "markers": []
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynButton\\DynButton.module.scss",
+    "markers": []
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynButton\\DynButton.optimized.scss",
+    "markers": [
+      "functions"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynContainer\\DynContainer.scss",
+    "markers": [
+      "functions"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynDivider\\DynDivider.scss",
+    "markers": []
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynIcon\\DynIcon.module.scss",
+    "markers": [
+      "functions"
+    ]
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\components\\DynLabel\\DynLabel.module.scss",
+    "markers": []
+  },
+  {
+    "file": "packages\\dyn-ui-react\\src\\styles\\globals.scss",
+    "markers": [
+      "moduleUse"
+    ]
+  }
+]

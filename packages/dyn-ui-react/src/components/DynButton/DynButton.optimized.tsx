@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { React, forwardRef } from 'react';
 import { DynButtonProps } from './DynButton.types';
 import { cn } from '../../utils/classNames';
 import { DynIcon } from '../DynIcon';

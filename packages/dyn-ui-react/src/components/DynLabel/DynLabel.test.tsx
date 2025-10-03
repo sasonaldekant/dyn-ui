@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import DynLabel from './DynLabel';
+import { DynLabel } from './DynLabel';
 
 describe('DynLabel', () => {
   it('renders basic label correctly', () => {

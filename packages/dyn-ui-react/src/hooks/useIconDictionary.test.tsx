@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import React from 'react';
+import { React } from 'react';
 import { useIconDictionary } from './useIconDictionary';
 import { IconDictionaryProvider } from '../providers/IconDictionaryProvider';
 

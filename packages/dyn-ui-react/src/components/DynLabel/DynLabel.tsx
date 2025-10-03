@@ -1,9 +1,9 @@
-import React from 'react';
-import classNames from 'classnames';
+import { React } from 'react';
+import { classNames } from 'classnames';
 import { DynLabelProps } from '../../types/label.types';
-import './DynLabel.module.scss';
+import './DynLabel.module.css';
 
-const DynLabel: React.FC<DynLabelProps> = ({
+export const DynLabel: React.FC<DynLabelProps> = ({
   children,
   htmlFor,
   disabled = false,
@@ -64,6 +64,4 @@ const DynLabel: React.FC<DynLabelProps> = ({
       {renderHelpText()}
     </div>
   );
-};
-
-export default DynLabel;
+};

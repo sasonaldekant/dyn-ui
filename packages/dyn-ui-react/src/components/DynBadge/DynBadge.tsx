@@ -1,11 +1,11 @@
-import React from 'react';
-import classNames from 'classnames';
+import { React } from 'react';
+import { classNames } from 'classnames';
 import { DynBadgeProps, DYN_COLOR_PALETTE } from '../../types/badge.types';
 import { formatBadgeValue, isThemeColor } from '../../utils/dynFormatters';
-import DynIcon from '../DynIcon/DynIcon';
-import './DynBadge.module.scss';
+import { DynIcon } from '../DynIcon/DynIcon';
+import './DynBadge.module.css';
 
-const DynBadge: React.FC<DynBadgeProps> = ({
+export const DynBadge: React.FC<DynBadgeProps> = ({
   value = 0,
   color = 'color-07',
   status,
@@ -78,6 +78,4 @@ const DynBadge: React.FC<DynBadgeProps> = ({
       {renderContent()}
     </span>
   );
-};
-
-export default DynBadge;
+};

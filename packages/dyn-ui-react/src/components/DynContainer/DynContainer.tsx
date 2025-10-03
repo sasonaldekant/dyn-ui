@@ -1,13 +1,13 @@
-import React, { forwardRef } from 'react';
+import { React, forwardRef } from 'react';
 import { DynContainerProps, DynContainerRef } from './DynContainer.types';
 import { classNames } from '../../utils/classNames';
-import './DynContainer.scss';
+import './DynContainer.css';
 
 /**
  * DynContainer - Flexible container component for grouping content
  * Follows DYN UI specification for layout components
  */
-export const DynContainer = forwardRef<DynContainerRef, DynContainerProps>(
+export export const DynContainer = forwardRef<DynContainerRef, DynContainerProps>(
   (
     {
       height,
@@ -66,6 +66,4 @@ export const DynContainer = forwardRef<DynContainerRef, DynContainerProps>(
   }
 );
 
-DynContainer.displayName = 'DynContainer';
-
-export default DynContainer;
+DynContainer.displayName = 'DynContainer';

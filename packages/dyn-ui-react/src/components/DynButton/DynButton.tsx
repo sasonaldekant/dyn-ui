@@ -1,14 +1,14 @@
-import React, { forwardRef } from 'react';
+import { React, forwardRef } from 'react';
 import { DynButtonProps } from './DynButton.types';
 import { classNames } from '../../utils/classNames';
 import { DynIcon } from '../DynIcon';
-import styles from './DynButton.module.scss';
+import { styles } from './DynButton.module.css';
 
 /**
  * DynButton - Production-ready button component following DYN UI specification
  * Updated for CSS Modules compatibility with simplified className logic
  */
-export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
+export export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
   (
     {
       label,
@@ -114,6 +114,4 @@ export const DynButton = forwardRef<HTMLButtonElement, DynButtonProps>(
   }
 );
 
-DynButton.displayName = 'DynButton';
-
-export default DynButton;
+DynButton.displayName = 'DynButton';

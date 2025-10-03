@@ -1,7 +1,7 @@
 // packages/dyn-ui-react/src/components/DynLabel/DynLabel.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
 import { DynLabel } from './DynLabel';
-import { IconDictionaryProvider } from '../IconDictionary/IconDictionaryProvider';
+import { IconDictionaryProvider } from '../../contexts/IconDictionaryContext';
 
 const meta: Meta<typeof DynLabel> = {
   title: 'Display Components/DynLabel',

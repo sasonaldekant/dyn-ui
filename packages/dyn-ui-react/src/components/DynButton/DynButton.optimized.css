@@ -1,0 +1,240 @@
+/**
+ * Modified DynButton Optimized SCSS using design tokens
+ */
+
+.dyn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-all);
+  white-space: nowrap;
+  position: relative;
+  box-sizing: border-box;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+/* Kind variants */
+.dyn-btn--primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border-color: var(--color-primary);
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--color-primary), white 15%);
+    border-color: color-mix(in srgb, var(--color-primary), white 15%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.dyn-btn--secondary {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--color-primary), white 90%);
+    color: color-mix(in srgb, var(--color-primary), black 80%);
+    border-color: color-mix(in srgb, var(--color-primary), black 80%);
+  }
+}
+
+.dyn-btn--tertiary {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: transparent;
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--color-primary), white 90%);
+    color: color-mix(in srgb, var(--color-primary), black 80%);
+  }
+}
+
+/* Size variants */
+.dyn-btn--s {
+  font-size: var(--font-size-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  min-height: 2rem;
+}
+
+.dyn-btn--m {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  min-height: 2.5rem;
+}
+
+.dyn-btn--l {
+  font-size: var(--font-size-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  min-height: 3rem;
+}
+
+/* Danger state */
+.dyn-btn--danger {
+  background-color: var(--color-danger);
+  color: #ffffff;
+  border-color: var(--color-danger);
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--color-danger), black 10%);
+    border-color: color-mix(in srgb, var(--color-danger), black 10%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Danger combinations */
+  &.dyn-btn--secondary {
+    background-color: transparent;
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in srgb, var(--color-danger), white 90%);
+      color: color-mix(in srgb, var(--color-danger), black 80%);
+      border-color: color-mix(in srgb, var(--color-danger), black 80%);
+    }
+  }
+
+  &.dyn-btn--tertiary {
+    background-color: transparent;
+    color: var(--color-danger);
+    border-color: transparent;
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in srgb, var(--color-danger), white 90%);
+      color: color-mix(in srgb, var(--color-danger), black 80%);
+    }
+  }
+}
+
+.dyn-btn--loading {
+  pointer-events: none;
+  .dyn-btn__content {
+    opacity: 0.7;
+  }
+}
+
+.dyn-btn--icon-only {
+  min-width: auto;
+  aspect-ratio: 1;
+  padding: var(--spacing-sm);
+}
+
+.dyn-btn--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Elements */
+.dyn-btn__content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  transition: opacity 0.2s ease;
+}
+
+.dyn-btn__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+    fill: currentColor;
+  }
+}
+
+.dyn-btn__label {
+  display: flex;
+  align-items: center;
+}
+
+.dyn-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: dyn-spin 1s linear infinite;
+  margin-right: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+/* Size specific icon adjustments */
+.dyn-btn--s .dyn-btn__icon svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.dyn-btn--l .dyn-btn__icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+@keyframes dyn-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .dyn-btn--s {
+    min-height: 2.25rem;
+    font-size: var(--font-size-sm);
+  }
+  .dyn-btn--m {
+    min-height: 2.75rem;
+    font-size: var(--font-size-md);
+  }
+  .dyn-btn--l {
+    min-height: 3.25rem;
+    font-size: var(--font-size-lg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dyn-btn {
+    transition: none;
+    &:hover:not(:disabled) {
+      transform: none;
+    }
+  }
+  .dyn-spinner {
+    animation: none;
+  }
+}
+
+@media print {
+  .dyn-btn {
+    background: transparent !important;
+    color: black !important;
+    border: 1px solid black !important;
+    transform: none !important;
+  }
+}
