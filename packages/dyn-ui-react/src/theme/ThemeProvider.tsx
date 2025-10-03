@@ -1,52 +1,58 @@
-import { React } from 'react';
-import type { DynThemeTokens } from './tokens';
-import { applyCssVars } from './applyCssVars';
-import { loadThemeTokens, getAvailableThemes, CSS_VAR_PREFIX } from './bridge/themeLoader.design-tokens';
+import * as React from 'react';
 
 export type ThemeContextValue = {
-  name: string;
-  tokens: DynThemeTokens | null;
-  setTheme: (name: string) => void;
-  available: string[];
+  theme: string;
+  setTheme: (theme: string) => void;
+  availableThemes: string[];
 };
 
 export const ThemeContext = React.createContext<ThemeContextValue>({
-  name: 'light',
-  tokens: null,
+  theme: 'light',
   setTheme: () => {},
-  available: [],
+  availableThemes: ['light', 'dark'],
 });
 
 export type ThemeProviderProps = {
   initialTheme?: string;
-  scope?: HTMLElement | string;
   children: React.ReactNode;
 };
 
-export function ThemeProvider({ initialTheme, scope, children }: ThemeProviderProps) {
-  const options = React.useMemo(() => getAvailableThemes(), []);
-  const defaultName = initialTheme ?? (options.includes('light') ? 'light' : options[0] ?? 'light');
-  const [name, setName] = React.useState(defaultName);
-  const [tokens, setTokens] = React.useState<DynThemeTokens | null>(null);
+const AVAILABLE_THEMES = ['light', 'dark'];
 
+export function ThemeProvider({ initialTheme = 'light', children }: ThemeProviderProps) {
+  const [theme, setThemeState] = React.useState(initialTheme);
+
+  const setTheme = React.useCallback((newTheme: string) => {
+    if (AVAILABLE_THEMES.includes(newTheme)) {
+      setThemeState(newTheme);
+      // Apply theme to document
+      document.documentElement.setAttribute('data-theme', newTheme);
+      document.documentElement.className = `theme-${newTheme}`;
+    }
+  }, []);
+
+  // Set initial theme on mount
   React.useEffect(() => {
-    let alive = true;
-    loadThemeTokens(name).then((t) => {
-      if (!alive) return;
-      setTokens(t);
-      applyCssVars(t, { scope, prefix: CSS_VAR_PREFIX });
-    }).catch((e) => console.error(e));
-    return () => { alive = false; };
-  }, [name, scope]);
+    setTheme(theme);
+  }, [theme, setTheme]);
 
-  const ctx = React.useMemo(() => ({
-    name,
-    tokens,
-    setTheme: setName,
-    available: options,
-  }), [name, tokens, options]);
+  const contextValue = React.useMemo(() => ({
+    theme,
+    setTheme,
+    availableThemes: AVAILABLE_THEMES,
+  }), [theme, setTheme]);
 
-  return <ThemeContext.Provider value={ctx}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={contextValue}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
-export const useTheme = () => React.useContext(ThemeContext);
+export const useTheme = () => {
+  const context = React.useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};
