@@ -1,17 +1,27 @@
 import * as React from 'react';
 import { useTheme } from '../../theme/ThemeProvider';
-import { getAvailableThemes } from '../../theme/bridge/themeLoader.design-tokens';
 
 export type ThemeSwitcherProps = {
   themes?: string[];
   size?: 'sm' | 'md';
   rounded?: 'sm' | 'md' | 'lg' | 'full';
-  onChange?: (name: string) => void;
+  onChange?: (theme: string) => void;
   labels?: Record<string, string>;
 };
 
-const padVar = (size: 'sm'|'md') => size === 'sm' ? 'var(--dyn-spacing-sm)' : 'var(--dyn-spacing-md)';
-const radiusVar = (k: string) => `var(--dyn-radius-${k})`;
+const getSpacing = (size: 'sm' | 'md') => {
+  return size === 'sm' ? '8px' : '12px';
+};
+
+const getBorderRadius = (rounded: string) => {
+  const radiusMap = {
+    sm: '4px',
+    md: '6px',
+    lg: '8px',
+    full: '9999px'
+  };
+  return radiusMap[rounded as keyof typeof radiusMap] || '6px';
+};
 
 export function ThemeSwitcher({
   themes,
@@ -20,33 +30,48 @@ export function ThemeSwitcher({
   onChange,
   labels,
 }: ThemeSwitcherProps) {
-  const discovered = React.useMemo(() => getAvailableThemes(), []);
-  const list = themes && themes.length ? themes : discovered;
-  const { name, setTheme } = useTheme();
+  const { theme, setTheme, availableThemes } = useTheme();
+  const themeList = themes && themes.length ? themes : availableThemes;
 
-  const handle = (t: string) => { setTheme(t); onChange?.(t); };
+  const handleThemeChange = (newTheme: string) => {
+    setTheme(newTheme);
+    onChange?.(newTheme);
+  };
 
   return (
-    <div role="tablist" aria-label="Theme switcher" style={{
-      display: 'inline-flex',
-      border: '1px solid var(--dyn-colors-muted)',
-      borderRadius: radiusVar(rounded),
-      overflow: 'hidden',
-      background: 'var(--dyn-colors-muted)',
-    }}>
-      {list.map((t) => {
-        const active = name === t;
+    <div
+      role="tablist"
+      aria-label="Theme switcher"
+      style={{
+        display: 'inline-flex',
+        border: '1px solid #e5e7eb',
+        borderRadius: getBorderRadius(rounded),
+        overflow: 'hidden',
+        background: '#f9fafb',
+      }}
+    >
+      {themeList.map((t) => {
+        const isActive = theme === t;
         return (
-          <button key={t} role="tab" aria-selected={active} onClick={() => handle(t)} style={{
-            appearance: 'none',
-            cursor: 'pointer',
-            padding: `${padVar(size)} calc(${padVar(size)} * 1.5)`,
-            border: 'none',
-            background: active ? 'var(--dyn-colors-primary)' : 'transparent',
-            color: active ? 'var(--dyn-colors-bg)' : 'var(--dyn-colors-text)',
-            fontWeight: 500, lineHeight: 1.2,
-          }}>
-            {labels?.[t] ?? t}
+          <button
+            key={t}
+            role="tab"
+            aria-selected={isActive}
+            onClick={() => handleThemeChange(t)}
+            style={{
+              appearance: 'none',
+              cursor: 'pointer',
+              padding: `${getSpacing(size)} ${parseInt(getSpacing(size)) * 1.5}px`,
+              border: 'none',
+              background: isActive ? '#3b82f6' : 'transparent',
+              color: isActive ? '#ffffff' : '#374151',
+              fontWeight: 500,
+              lineHeight: 1.2,
+              fontSize: size === 'sm' ? '0.875rem' : '1rem',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            {labels?.[t] ?? t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
         );
       })}
