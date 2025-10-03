@@ -4,15 +4,13 @@ import { DynBadge } from './DynBadge';
 import { DynBadgeProps } from '../../types/badge.types';
 import { IconDictionaryProvider } from '../../providers/IconDictionaryProvider';
 
-type StoryProps = DynBadgeProps & { variant?: 'default' | 'success' | 'warning' | 'error' | 'info' };
-
 const meta: Meta<typeof DynBadge> = {
-  title: 'Display Components/DynBadge',
+  title: 'Display/DynBadge',
   component: DynBadge,
   decorators: [
     (Story) => (
       <IconDictionaryProvider>
-        <div style={{ padding: '1rem' }}>
+        <div style={{ padding: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
           <Story />
         </div>
       </IconDictionaryProvider>
@@ -23,70 +21,95 @@ const meta: Meta<typeof DynBadge> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    children: { control: 'text' },
-    variant: {
-      control: 'select',
-      options: ['default', 'success', 'warning', 'error', 'info'],
-    },
+    value: { control: 'number' },
     size: {
       control: 'select',
-      options: ['sm', 'md', 'lg'],
+      options: ['small', 'medium', 'large'],
     },
-    icon: { control: 'text' },
-    count: { control: 'number' },
-    color: { control: 'color' },
-  } as any,
+    status: {
+      control: 'select',
+      options: ['positive', 'negative', 'warning', 'disabled'],
+    },
+    color: {
+      control: 'select',
+      options: ['color-01', 'color-02', 'color-03', 'color-04', 'color-05', 'color-06', 'color-07', 'color-08', 'color-09', 'color-10', 'color-11', 'color-12'],
+    },
+    showBorder: { control: 'boolean' },
+    children: { control: 'text' },
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Playground: Story = {
   args: {
-    children: 'Badge',
-    variant: 'default' as any,
-  } as StoryProps,
+    value: 99,
+    size: 'medium',
+    color: 'color-07'
+  },
 };
 
-export const AllVariants: Story = {
+export const StatusVariants: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-      <DynBadge variant="default">Default</DynBadge>
-      <DynBadge variant="success">Success</DynBadge>
-      <DynBadge variant="warning">Warning</DynBadge>
-      <DynBadge variant="error">Error</DynBadge>
-      <DynBadge variant="info">Info</DynBadge>
-    </div>
+    <>
+      <DynBadge status="positive" value={5}>Positive</DynBadge>
+      <DynBadge status="negative" value={3}>Negative</DynBadge>
+      <DynBadge status="warning" value={10}>Warning</DynBadge>
+      <DynBadge status="disabled" value={0}>Disabled</DynBadge>
+    </>
   ),
 };
 
-export const WithIcons: Story = {
+export const WithIcon: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-      <DynBadge count={5} variant="success" icon="check">Completed</DynBadge>
-      <DynBadge variant="warning" icon="exclamation-triangle">Warning</DynBadge>
-      <DynBadge variant="error" icon="times">Error</DynBadge>
-      <DynBadge variant="info" icon="info-circle">Info</DynBadge>
-    </div>
+    <>
+      <DynBadge icon="check" status="positive" value={1}>Success</DynBadge>
+      <DynBadge icon="close" status="negative">Error</DynBadge>
+      <DynBadge icon="warning" status="warning" value={5}>Warning</DynBadge>
+    </>
   ),
 };
 
-export const WithCount: Story = {
+export const BorderVariant: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-      <DynBadge count={5}>Messages</DynBadge>
-      <DynBadge count={23} variant="success">Notifications</DynBadge>
-      <DynBadge count={157} variant="error">Errors</DynBadge>
-    </div>
+    <>
+      <DynBadge value={3} showBorder status="positive">With Border</DynBadge>
+      <DynBadge value={7} showBorder color="color-02">Colored Border</DynBadge>
+    </>
   ),
 };
 
 export const AllSizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-      <DynBadge size="sm">Small</DynBadge>
-      <DynBadge size="md">Medium</DynBadge>
-      <DynBadge size="lg">Large</DynBadge>
-    </div>
+    <>
+      <DynBadge size="small" value={5}>Small</DynBadge>
+      <DynBadge size="medium" value={10}>Medium</DynBadge>
+      <DynBadge size="large" value={15}>Large</DynBadge>
+    </>
+  ),
+};
+
+export const ColorPalette: Story = {
+  render: () => (
+    <>
+      <DynBadge color="color-01" value={1}>Color 01</DynBadge>
+      <DynBadge color="color-02" value={2}>Color 02</DynBadge>
+      <DynBadge color="color-03" value={3}>Color 03</DynBadge>
+      <DynBadge color="color-04" value={4}>Color 04</DynBadge>
+      <DynBadge color="color-05" value={5}>Color 05</DynBadge>
+      <DynBadge color="color-06" value={6}>Color 06</DynBadge>
+    </>
+  ),
+};
+
+export const WithChildren: Story = {
+  render: () => (
+    <>
+      <DynBadge>Simple Text</DynBadge>
+      <DynBadge status="positive">Success</DynBadge>
+      <DynBadge status="warning">Warning</DynBadge>
+      <DynBadge status="negative">Error</DynBadge>
+    </>
   ),
 };
