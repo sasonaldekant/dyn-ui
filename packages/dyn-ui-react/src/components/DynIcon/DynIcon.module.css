@@ -1,32 +1,18 @@
-/**
- * DynIcon SCSS Module - Enhanced for dictionary system compatibility
- * Clean selectors that work properly with CSS Module encapsulation
- */
-
-/* Base icon styles */
 .dynIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: inherit;
-  
-  svg {
-    width: 100%;
-    height: 100%;
-    fill: currentColor;
-    display: block;
-  }
+  color: currentColor;
+  vertical-align: middle;
 }
 
-/* Font icon base class */
-.dynFontsIcon {
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
-  line-height: 1;
-  font-family: 'Font Awesome', 'DYN UI Icons', sans-serif;
+.dynIcon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  stroke: currentColor;
+  display: block;
 }
 
 /* Custom React component icons */
@@ -36,94 +22,66 @@
   justify-content: center;
 }
 
-/* Size variants */
-.small {
-  width: 14px;
-  height: 14px;
-  font-size: 0.75rem;
+/* SVG icons from registry */
+.dynIconSvg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.medium {
-  width: 16px;
-  height: 16px;
-  font-size: 1rem;
-}
-
-.large {
-  width: 18px;
-  height: 18px;
-  font-size: 1.25rem;
+/* Fallback text icons */
+.dynIconFallback {
+  font-size: 0.75em;
+  opacity: 0.7;
+  font-weight: bold;
+  font-family: monospace;
 }
 
 /* Interactive icons */
-.clickable {
+.dynIcon:hover {
+  opacity: 0.8;
+}
+
+.dyn-icon-clickable {
   cursor: pointer;
   border-radius: 4px;
   padding: 2px;
   margin: -2px;
   transition: all 0.2s ease;
-  
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    transform: scale(1.1);
-    color: var(--color-action-hover, #0052a3);
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
-  
-  &:focus-visible {
-    outline: 2px solid var(--color-action-focus, #0066cc);
-    outline-offset: 2px;
-  }
 }
 
-/* Global icon classes for dictionary system */
-:global(.dyn-icon) {
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
-  line-height: 1;
-  font-family: 'DYN UI Icons', 'Font Awesome', sans-serif;
-
-  &.dyn-icon-clickable {
-    cursor: pointer;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: var(--color-action-hover, #0052a3);
-    }
-
-    &:focus {
-      outline: 2px solid var(--color-action-focus, #0066cc);
-      outline-offset: 2px;
-    }
-  }
+.dyn-icon-clickable:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
+  opacity: 0.7;
 }
 
-:global(.dyn-fonts-icon) {
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
-  line-height: 1;
-  font-family: 'Font Awesome', 'DYN UI Icons', sans-serif;
+.dyn-icon-clickable:active {
+  transform: scale(0.95);
+}
 
-  &.dyn-icon-clickable {
-    cursor: pointer;
-    transition: color 0.2s ease;
+.dyn-icon-clickable:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
 
-    &:hover {
-      color: var(--color-action-hover, #0052a3);
-    }
+/* Size variants */
+.dyn-icon-size-small {
+  font-size: 0.875rem;
+  width: 14px;
+  height: 14px;
+}
 
-    &:focus {
-      outline: 2px solid var(--color-action-focus, #0066cc);
-      outline-offset: 2px;
-    }
-  }
+.dyn-icon-size-medium {
+  font-size: 1rem;
+  width: 16px;
+  height: 16px;
+}
+
+.dyn-icon-size-large {
+  font-size: 1.25rem;
+  width: 18px;
+  height: 18px;
 }
 
 /* State colors */
@@ -166,16 +124,16 @@
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .clickable {
+  .dyn-icon-clickable {
     transition: none;
-    
-    &:hover {
-      transform: none;
-    }
-    
-    &:active {
-      transform: none;
-    }
+  }
+  
+  .dyn-icon-clickable:hover {
+    transform: none;
+  }
+  
+  .dyn-icon-clickable:active {
+    transform: none;
   }
   
   .spinning {
@@ -183,14 +141,14 @@
   }
 }
 
-/* Print styles */
+/* Print styles - fix deprecated color-adjust */
 @media print {
   .dynIcon {
-    color-adjust: exact;
+    print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
   
-  .clickable {
+  .dyn-icon-clickable {
     background: none !important;
     transform: none !important;
   }
