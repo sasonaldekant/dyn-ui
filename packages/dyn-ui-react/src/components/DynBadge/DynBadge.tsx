@@ -1,9 +1,9 @@
-import  * as React from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
 import { DynBadgeProps, DYN_COLOR_PALETTE } from '../../types/badge.types';
 import { formatBadgeValue, isThemeColor } from '../../utils/dynFormatters';
 import { DynIcon } from '../DynIcon/DynIcon';
-import './DynBadge.module.css';
+import styles from './DynBadge.module.css';
 
 export const DynBadge: React.FC<DynBadgeProps> = ({
   value = 0,
@@ -21,13 +21,13 @@ export const DynBadge: React.FC<DynBadgeProps> = ({
   const customStyle = isCustomColor ? { backgroundColor: color } : undefined;
 
   const badgeClasses = classNames(
-    'dyn-badge',
-    `dyn-badge-${size}`,
-    isThemeColor(color) && `dyn-badge-${color}`,
-    status && `dyn-badge-status-${status}`,
-    showBorder && 'dyn-badge-border',
-    icon && !value && 'dyn-badge-icon-only',
-    value > 0 && 'dyn-badge-with-value',
+    styles['dyn-badge'],
+    styles[`dyn-badge--${size}`],
+    isThemeColor(color) && styles[`dyn-badge--${color}`],
+    status && styles[`dyn-badge--${status}`],
+    showBorder && styles['dyn-badge--border'],
+    icon && !value && styles['dyn-badge--icon-only'],
+    value > 0 && styles['dyn-badge--with-value'],
     className
   );
 
@@ -47,7 +47,7 @@ export const DynBadge: React.FC<DynBadgeProps> = ({
       return <DynIcon icon={icon} />;
     }
 
-    return icon ? <span className="dyn-badge-custom-icon">{icon}</span> : null;
+    return icon ? <span className={styles['dyn-badge-custom-icon']}>{icon}</span> : null;
   };
 
   const renderContent = () => {
@@ -59,14 +59,16 @@ export const DynBadge: React.FC<DynBadgeProps> = ({
       return (
         <>
           {renderIcon()}
-          <span className="dyn-badge-value">{displayValue}</span>
+          <span className={styles['dyn-badge-value']}>{displayValue}</span>
         </>
       );
     }
 
     return value > 0 ? (
-      <span className="dyn-badge-value">{displayValue}</span>
-    ) : null;
+      <span className={styles['dyn-badge-value']}>{displayValue}</span>
+    ) : (
+      children
+    );
   };
 
   return (
@@ -80,6 +82,6 @@ export const DynBadge: React.FC<DynBadgeProps> = ({
     </span>
   );
 };
+
 DynBadge.displayName = 'DynBadge';
 export { DynBadgeProps };
-
