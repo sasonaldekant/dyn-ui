@@ -1,41 +1,57 @@
-// packages/dyn-ui-react/src/components/DynBadge/DynBadge.stories.tsx
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { DynBadge } from './DynBadge';
-import { DynBadgeProps } from '../../types/badge.types';
-import { IconDictionaryProvider } from '../../providers/IconDictionaryProvider';
+import type { Meta, StoryObj } from '@storybook/react';
+import { DynBadge, type DynBadgeProps } from './DynBadge';
 
 const meta: Meta<typeof DynBadge> = {
   title: 'Display/DynBadge',
   component: DynBadge,
-  decorators: [
-    (Story) => (
-      <IconDictionaryProvider>
-        <div style={{ padding: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          <Story />
-        </div>
-      </IconDictionaryProvider>
-    ),
-  ],
   parameters: {
     layout: 'centered',
+    docs: {
+      description: {
+        component: 'DynBadge component for displaying status indicators, counters, and labels with various styling options.',
+      },
+    },
   },
+  decorators: [
+    (Story) => (
+      <div style={{ padding: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+        <Story />
+      </div>
+    ),
+  ],
   tags: ['autodocs'],
   argTypes: {
-    value: { control: 'number' },
+    value: {
+      control: 'number',
+      description: 'Numeric value to display in badge',
+    },
     size: {
       control: 'select',
       options: ['small', 'medium', 'large'],
+      description: 'Badge size variant',
     },
     status: {
       control: 'select',
       options: ['positive', 'negative', 'warning', 'disabled'],
+      description: 'Status color variant',
     },
     color: {
       control: 'select',
       options: ['color-01', 'color-02', 'color-03', 'color-04', 'color-05', 'color-06', 'color-07', 'color-08', 'color-09', 'color-10', 'color-11', 'color-12'],
+      description: 'Color palette selection',
     },
-    showBorder: { control: 'boolean' },
-    children: { control: 'text' },
+    showBorder: {
+      control: 'boolean',
+      description: 'Show white border around badge',
+    },
+    icon: {
+      control: 'text',
+      description: 'Icon name or boolean for status-based icons',
+    },
+    children: {
+      control: 'text',
+      description: 'Badge content (text)',
+    },
   },
 };
 
@@ -67,6 +83,7 @@ export const WithIcon: Story = {
       <DynBadge icon="check" status="positive" value={1}>Success</DynBadge>
       <DynBadge icon="close" status="negative">Error</DynBadge>
       <DynBadge icon="warning" status="warning" value={5}>Warning</DynBadge>
+      <DynBadge icon={true} status="positive" value={3}>Auto Icon</DynBadge>
     </>
   ),
 };
@@ -76,6 +93,7 @@ export const BorderVariant: Story = {
     <>
       <DynBadge value={3} showBorder status="positive">With Border</DynBadge>
       <DynBadge value={7} showBorder color="color-02">Colored Border</DynBadge>
+      <DynBadge showBorder color="color-04">Text Only</DynBadge>
     </>
   ),
 };
@@ -90,26 +108,14 @@ export const AllSizes: Story = {
   ),
 };
 
-export const ColorPalette: Story = {
+export const TextBadges: Story = {
   render: () => (
     <>
-      <DynBadge color="color-01" value={1}>Color 01</DynBadge>
-      <DynBadge color="color-02" value={2}>Color 02</DynBadge>
-      <DynBadge color="color-03" value={3}>Color 03</DynBadge>
-      <DynBadge color="color-04" value={4}>Color 04</DynBadge>
-      <DynBadge color="color-05" value={5}>Color 05</DynBadge>
-      <DynBadge color="color-06" value={6}>Color 06</DynBadge>
-    </>
-  ),
-};
-
-export const WithChildren: Story = {
-  render: () => (
-    <>
-      <DynBadge>Simple Text</DynBadge>
-      <DynBadge status="positive">Success</DynBadge>
-      <DynBadge status="warning">Warning</DynBadge>
-      <DynBadge status="negative">Error</DynBadge>
+      <DynBadge>New</DynBadge>
+      <DynBadge status="positive">Online</DynBadge>
+      <DynBadge status="warning">Beta</DynBadge>
+      <DynBadge status="negative">Offline</DynBadge>
+      <DynBadge color="color-05">Premium</DynBadge>
     </>
   ),
 };
