@@ -20,7 +20,7 @@ const config: StorybookConfig = {
     getAbsolutePath('@chromatic-com/storybook'),
     getAbsolutePath('@storybook/addon-docs'),
     getAbsolutePath("@storybook/addon-a11y"),
-    getAbsolutePath("@storybook/addon-vitest")
+    getAbsolutePath("@storybook/addon-vitest"),
     // Dodaj dodatne addon-e
     // getAbsolutePath("@storybook/addon-essentials"),
     // getAbsolutePath("@storybook/addon-controls"),
@@ -30,7 +30,7 @@ const config: StorybookConfig = {
     "name": getAbsolutePath('@storybook/react-vite'),
     "options": {}
   },
-  
+
   // ===== DODAJ OVDE viteFinal =====
   viteFinal: async (config) => {
     // Dodaj alias za workspace dependency
@@ -39,7 +39,7 @@ const config: StorybookConfig = {
       ...config.resolve.alias,
       'dyn-ui-react': join(__dirname, '../packages/dyn-ui-react/src'),
     };
-    
+
     return config;
   },
 };

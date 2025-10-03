@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynButton } from './DynButton';
 import { DynButtonProps } from './DynButton.types';
 
@@ -16,7 +16,7 @@ Production-ready button component following the DYN UI specification.
 
 ## Features
 - Three kinds: primary, secondary, tertiary
-- Three sizes: small, medium, large  
+- Three sizes: small, medium, large
 - Loading states with spinner animation
 - Icon support (string names or React components)
 - Danger state for destructive actions
@@ -190,14 +190,14 @@ export const Interactive: Story = {
 export const AccessibilityExample: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-      <DynButton 
-        kind="primary" 
-        icon="settings" 
+      <DynButton
+        kind="primary"
+        icon="settings"
         ariaLabel="Open settings menu"
         ariaExpanded={false}
       />
-      <DynButton 
-        kind="secondary" 
+      <DynButton
+        kind="secondary"
         label="Toggle Panel"
         ariaExpanded={true}
       />
@@ -208,13 +208,13 @@ export const AccessibilityExample: Story = {
 // Comprehensive showcase
 export const Showcase: Story = {
   render: () => (
-    <div style={{ 
-      display: 'grid', 
+    <div style={{
+      display: 'grid',
       gap: '2rem',
       padding: '2rem',
       background: 'var(--color-background)'
     }}>
-      
+
       <div>
         <h3 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Button Kinds</h3>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -223,7 +223,7 @@ export const Showcase: Story = {
           <DynButton kind="tertiary" label="Tertiary" />
         </div>
       </div>
-      
+
       <div>
         <h3 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Danger States</h3>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -232,7 +232,7 @@ export const Showcase: Story = {
           <DynButton kind="tertiary" label="Cancel" danger />
         </div>
       </div>
-      
+
       <div>
         <h3 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>Sizes</h3>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -241,7 +241,7 @@ export const Showcase: Story = {
           <DynButton kind="primary" label="Large" size="large" />
         </div>
       </div>
-      
+
       <div>
         <h3 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>States</h3>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -250,7 +250,7 @@ export const Showcase: Story = {
           <DynButton kind="primary" label="Disabled" disabled />
         </div>
       </div>
-      
+
       <div>
         <h3 style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>With Icons</h3>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -259,7 +259,7 @@ export const Showcase: Story = {
           <DynButton kind="tertiary" icon="help" ariaLabel="Help" />
         </div>
       </div>
-      
+
     </div>
   ),
 };
