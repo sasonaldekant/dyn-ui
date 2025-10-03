@@ -1,8 +1,9 @@
-import { React, useState } from 'react';
+import * as React from 'react';
+import { useState } from 'react';
 import classNames from 'classnames';
 import { DynAvatarProps, AVATAR_SIZES } from '../../types/avatar.types';
 import { generateInitials } from '../../utils/dynFormatters';
-import './DynAvatar.module.css';
+import styles from './DynAvatar.module.css';
 
 export const DynAvatar: React.FC<DynAvatarProps> = ({
   src,
@@ -23,11 +24,11 @@ export const DynAvatar: React.FC<DynAvatarProps> = ({
   const displayInitials = initials || (alt !== 'Avatar' ? generateInitials(alt) : '');
 
   const avatarClasses = classNames(
-    'dyn-avatar',
-    `dyn-avatar-${size}`,
-    hasClickEvent && 'dyn-avatar-clickable',
-    imageError && 'dyn-avatar-error',
-    !imageLoaded && !imageError && src && 'dyn-avatar-loading',
+    styles['dyn-avatar'],
+    styles[`dyn-avatar--${size}`],
+    hasClickEvent && styles['dyn-avatar--clickable'],
+    imageError && styles['dyn-avatar--error'],
+    !imageLoaded && !imageError && src && styles['dyn-avatar--loading'],
     className
   );
 
@@ -48,11 +49,11 @@ export const DynAvatar: React.FC<DynAvatarProps> = ({
   };
 
   const renderPlaceholder = () => (
-    <div className="dyn-avatar-placeholder" style={{ width: pixelSize, height: pixelSize }}>
+    <div className={styles['dyn-avatar-placeholder']} style={{ width: pixelSize, height: pixelSize }}>
       {displayInitials ? (
-        <span className="dyn-avatar-initials">{displayInitials}</span>
+        <span className={styles['dyn-avatar-initials']}>{displayInitials}</span>
       ) : (
-        <span className="dyn-avatar-placeholder-icon">👤</span>
+        <span className={styles['dyn-avatar-placeholder-icon']}>👤</span>
       )}
     </div>
   );
@@ -71,7 +72,7 @@ export const DynAvatar: React.FC<DynAvatarProps> = ({
           loading={loading}
           width={pixelSize}
           height={pixelSize}
-          className="dyn-avatar-image"
+          className={styles['dyn-avatar-image']}
           onLoad={handleImageLoad}
           onError={handleImageError}
           style={{ display: imageLoaded ? 'block' : 'none' }}
@@ -91,4 +92,6 @@ export const DynAvatar: React.FC<DynAvatarProps> = ({
       {renderContent()}
     </div>
   );
-};
+};
+
+DynAvatar.displayName = 'DynAvatar';
