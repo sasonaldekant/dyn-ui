@@ -1,0 +1,274 @@
+/* DynTreeView Component Styles */
+.dyn-tree-view {
+  display: flex;
+  flex-direction: column;
+  background: var(--dyn-color-background);
+  border-radius: var(--dyn-border-radius-md);
+  border: 1px solid var(--dyn-color-border);
+  font-family: var(--dyn-font-family-base);
+  overflow: hidden;
+}
+
+/* Search */
+.dyn-tree-view__search {
+  padding: 12px;
+  border-bottom: 1px solid var(--dyn-color-border);
+  background: var(--dyn-color-background-secondary);
+}
+
+.dyn-tree-view__search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--dyn-color-border);
+  border-radius: var(--dyn-border-radius-sm);
+  font-size: var(--dyn-font-size-sm);
+  background: var(--dyn-color-background);
+  color: var(--dyn-color-text-primary);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.dyn-tree-view__search-input:focus {
+  border-color: var(--dyn-color-primary);
+}
+
+.dyn-tree-view__search-input::placeholder {
+  color: var(--dyn-color-text-secondary);
+}
+
+/* Content */
+.dyn-tree-view__content {
+  flex: 1;
+  overflow: auto;
+  padding: 8px;
+}
+
+/* Tree Node */
+.dyn-tree-view__node {
+  width: 100%;
+}
+
+.dyn-tree-view__node-content {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: var(--dyn-border-radius-sm);
+  cursor: default;
+  transition: background-color 0.2s ease;
+  min-height: 32px;
+}
+
+.dyn-tree-view__node-content:hover {
+  background-color: var(--dyn-color-background-hover);
+}
+
+.dyn-tree-view__node-content--selected {
+  background-color: var(--dyn-color-background-selected);
+  color: var(--dyn-color-primary);
+}
+
+.dyn-tree-view__node-content--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dyn-tree-view__node-content--disabled:hover {
+  background-color: transparent;
+}
+
+/* Node Elements */
+.dyn-tree-view__node-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  border-radius: var(--dyn-border-radius-sm);
+  transition: background-color 0.2s ease;
+}
+
+.dyn-tree-view__node-switcher:hover {
+  background-color: var(--dyn-color-background-hover);
+}
+
+.dyn-tree-view__node-switcher--leaf {
+  cursor: default;
+  position: relative;
+}
+
+.dyn-tree-view__expand-icon {
+  font-size: 10px;
+  color: var(--dyn-color-text-secondary);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.dyn-tree-view__node-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.dyn-tree-view__node-checkbox input {
+  margin: 0;
+  cursor: pointer;
+}
+
+.dyn-tree-view__node-checkbox input:disabled {
+  cursor: not-allowed;
+}
+
+.dyn-tree-view__node-icon {
+  display: flex;
+  align-items: center;
+  color: var(--dyn-color-text-secondary);
+  font-size: var(--dyn-font-size-sm);
+}
+
+.dyn-tree-view__node-title {
+  flex: 1;
+  font-size: var(--dyn-font-size-sm);
+  color: var(--dyn-color-text-primary);
+  line-height: var(--dyn-line-height-normal);
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dyn-tree-view__node-title--clickable {
+  cursor: pointer;
+}
+
+.dyn-tree-view__node-children {
+  /* Children are rendered with increased padding-left */
+}
+
+/* Connecting Lines */
+.dyn-tree-view--show-line .dyn-tree-view__line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--dyn-color-border);
+  transform: translateX(-50%);
+}
+
+.dyn-tree-view--show-line .dyn-tree-view__node-switcher--leaf::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 1px;
+  background: var(--dyn-color-border);
+  transform: translate(-50%, -50%);
+}
+
+/* Empty State */
+.dyn-tree-view__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 20px;
+  color: var(--dyn-color-text-secondary);
+  font-size: var(--dyn-font-size-sm);
+  text-align: center;
+}
+
+/* Variants */
+.dyn-tree-view--checkable {
+  /* Checkable variant styles */
+}
+
+.dyn-tree-view--selectable {
+  /* Selectable variant styles */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dyn-tree-view__node-content {
+    padding: 8px;
+    min-height: 40px;
+  }
+  
+  .dyn-tree-view__node-switcher {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .dyn-tree-view__expand-icon {
+    font-size: 12px;
+  }
+  
+  .dyn-tree-view__search {
+    padding: 8px;
+  }
+}
+
+/* Dark Theme Support */
+[data-theme="dark"] .dyn-tree-view {
+  background: var(--dyn-color-background-dark);
+  border-color: var(--dyn-color-border-dark);
+}
+
+[data-theme="dark"] .dyn-tree-view__search {
+  background: var(--dyn-color-background-secondary-dark);
+  border-color: var(--dyn-color-border-dark);
+}
+
+[data-theme="dark"] .dyn-tree-view__search-input {
+  background: var(--dyn-color-background-dark);
+  border-color: var(--dyn-color-border-dark);
+  color: var(--dyn-color-text-primary-dark);
+}
+
+[data-theme="dark"] .dyn-tree-view__search-input::placeholder {
+  color: var(--dyn-color-text-secondary-dark);
+}
+
+[data-theme="dark"] .dyn-tree-view__node-title {
+  color: var(--dyn-color-text-primary-dark);
+}
+
+[data-theme="dark"] .dyn-tree-view__expand-icon,
+[data-theme="dark"] .dyn-tree-view__node-icon {
+  color: var(--dyn-color-text-secondary-dark);
+}
+
+[data-theme="dark"] .dyn-tree-view__empty {
+  color: var(--dyn-color-text-secondary-dark);
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .dyn-tree-view {
+    border-width: 2px;
+  }
+  
+  .dyn-tree-view__node-content {
+    border: 1px solid transparent;
+  }
+  
+  .dyn-tree-view__node-content--selected {
+    border-color: var(--dyn-color-primary);
+  }
+  
+  .dyn-tree-view__search-input:focus {
+    outline: 2px solid var(--dyn-color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .dyn-tree-view__node-content,
+  .dyn-tree-view__node-switcher,
+  .dyn-tree-view__expand-icon,
+  .dyn-tree-view__search-input {
+    transition: none;
+  }
+}
