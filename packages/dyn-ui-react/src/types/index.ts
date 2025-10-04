@@ -1,6 +1,6 @@
 /**
  * Type exports for DYN UI React
- * Updated to include Display Components types - SCOPE 5
+ * Updated to include Layout Components types - SCOPE 7
  */
 
 // Theme types
@@ -11,6 +11,35 @@ export type { DynBadgeProps, BadgeStatus, BadgeSize, BadgeIcon } from './badge.t
 export type { DynAvatarProps, AvatarSize, AvatarLoading } from './avatar.types';
 export type { DynIconProps, IconDictionary, ProcessedIcon } from './icon.types';
 export type { DynLabelProps } from './label.types';
+
+// Form Components types - SCOPE 6
+export type {
+  DynInputProps,
+  DynSelectProps,
+  DynCheckboxProps,
+  DynDatePickerProps,
+  DynFieldContainerProps,
+  ValidationRule,
+  DynFieldRef,
+  DynFieldBase,
+  SelectOption
+} from './field.types';
+
+// Layout Components types - SCOPE 7
+export type {
+  DynContainerProps,
+  DynDividerProps,
+  DynGridProps,
+  DynGridColumn,
+  DynPageProps,
+  DynPageBreadcrumb,
+  DynPageAction,
+  LayoutSize,
+  LayoutSpacing,
+  LayoutDirection,
+  LayoutAlignment,
+  LayoutJustify
+} from './layout.types';
 
 // Constants
 export { DYN_COLOR_PALETTE } from './badge.types';
