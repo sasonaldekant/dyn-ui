@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useEffect } from 'react';
 import classNames from 'classnames';
-import { DynChartProps, ChartSeries, ChartDataPoint } from '../types/data-display.types';
+import { DynChartProps, ChartSeries, ChartDataPoint } from './DynChart.types';
 
 // Simple chart implementation without external dependencies
 const DynChart: React.FC<DynChartProps> = ({
