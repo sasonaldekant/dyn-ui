@@ -1,0 +1,223 @@
+/* DynGauge Component Styles */
+.dyn-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: var(--dyn-color-background);
+  border-radius: var(--dyn-border-radius-md);
+  border: 1px solid var(--dyn-color-border);
+  padding: 16px;
+  font-family: var(--dyn-font-family-base);
+}
+
+/* Header */
+.dyn-gauge__header {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.dyn-gauge__title {
+  margin: 0 0 4px 0;
+  font-size: var(--dyn-font-size-lg);
+  font-weight: var(--dyn-font-weight-semibold);
+  color: var(--dyn-color-text-primary);
+  line-height: var(--dyn-line-height-tight);
+}
+
+.dyn-gauge__subtitle {
+  margin: 0;
+  font-size: var(--dyn-font-size-sm);
+  font-weight: var(--dyn-font-weight-normal);
+  color: var(--dyn-color-text-secondary);
+  line-height: var(--dyn-line-height-normal);
+}
+
+/* Gauge Content */
+.dyn-gauge__content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dyn-gauge__canvas-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dyn-gauge__canvas {
+  display: block;
+}
+
+/* Value Display */
+.dyn-gauge__value {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.dyn-gauge__value-text {
+  font-size: var(--dyn-font-size-xl);
+  font-weight: var(--dyn-font-weight-bold);
+  color: var(--dyn-color-text-primary);
+  line-height: var(--dyn-line-height-tight);
+  margin-bottom: 2px;
+}
+
+.dyn-gauge__value-label {
+  font-size: var(--dyn-font-size-xs);
+  font-weight: var(--dyn-font-weight-medium);
+  color: var(--dyn-color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Legend */
+.dyn-gauge__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.dyn-gauge__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--dyn-font-size-xs);
+  color: var(--dyn-color-text-secondary);
+}
+
+.dyn-gauge__legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.dyn-gauge__legend-label {
+  font-weight: var(--dyn-font-weight-normal);
+  line-height: var(--dyn-line-height-normal);
+}
+
+/* Size Variants */
+.dyn-gauge--small {
+  padding: 12px;
+}
+
+.dyn-gauge--small .dyn-gauge__title {
+  font-size: var(--dyn-font-size-base);
+}
+
+.dyn-gauge--small .dyn-gauge__subtitle {
+  font-size: var(--dyn-font-size-xs);
+}
+
+.dyn-gauge--small .dyn-gauge__value-text {
+  font-size: var(--dyn-font-size-lg);
+}
+
+.dyn-gauge--small .dyn-gauge__value-label {
+  font-size: var(--dyn-font-size-xs);
+}
+
+.dyn-gauge--medium {
+  /* Default styles */
+}
+
+.dyn-gauge--large {
+  padding: 24px;
+}
+
+.dyn-gauge--large .dyn-gauge__title {
+  font-size: var(--dyn-font-size-xl);
+}
+
+.dyn-gauge--large .dyn-gauge__subtitle {
+  font-size: var(--dyn-font-size-base);
+}
+
+.dyn-gauge--large .dyn-gauge__value-text {
+  font-size: var(--dyn-font-size-2xl);
+}
+
+.dyn-gauge--large .dyn-gauge__value-label {
+  font-size: var(--dyn-font-size-sm);
+}
+
+/* Animation */
+.dyn-gauge--animated {
+  /* Animation styles handled in JavaScript */
+}
+
+/* Rounded variant */
+.dyn-gauge--rounded {
+  /* Rounded line caps handled in canvas drawing */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dyn-gauge {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .dyn-gauge__title {
+    font-size: var(--dyn-font-size-base);
+  }
+  
+  .dyn-gauge__subtitle {
+    font-size: var(--dyn-font-size-xs);
+  }
+  
+  .dyn-gauge__legend {
+    gap: 8px;
+  }
+  
+  .dyn-gauge__legend-item {
+    gap: 4px;
+    font-size: var(--dyn-font-size-xs);
+  }
+}
+
+/* Dark Theme Support */
+[data-theme="dark"] .dyn-gauge {
+  background: var(--dyn-color-background-dark);
+  border-color: var(--dyn-color-border-dark);
+}
+
+[data-theme="dark"] .dyn-gauge__title,
+[data-theme="dark"] .dyn-gauge__value-text {
+  color: var(--dyn-color-text-primary-dark);
+}
+
+[data-theme="dark"] .dyn-gauge__subtitle,
+[data-theme="dark"] .dyn-gauge__value-label,
+[data-theme="dark"] .dyn-gauge__legend-item {
+  color: var(--dyn-color-text-secondary-dark);
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .dyn-gauge {
+    border-width: 2px;
+  }
+  
+  .dyn-gauge__legend-color {
+    border: 1px solid var(--dyn-color-border);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .dyn-gauge--animated {
+    /* Disable animations for users who prefer reduced motion */
+  }
+}
