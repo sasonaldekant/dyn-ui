@@ -19,7 +19,7 @@ const config: Config = {
     '!src/setupTests.ts'
   ],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
-  moduleNameMapping: {
+  moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|webp|svg)$': 'jest-transform-stub'
   },

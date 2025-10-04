@@ -1,23 +1,11 @@
 {
   "name": "@dyn-ui/design-tokens",
   "version": "0.1.0",
-  "description": "Design tokens for DYN UI",
-  "main": "build/js/tokens.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-  "build": "style-dictionary build --config style-dictionary.config.js",
-    "clean": "rimraf build",
-    "build:clean": "npm run clean && npm run build"
-  },
-  "files": [
-    "build/**/*"
-  ],
-  "devDependencies": {
-    "style-dictionary": "^3.9.2",
-    "rimraf": "^3.0.2"
-  },
-  "keywords": [
-    "design-tokens",
-    "dyn-ui",
-    "style-dictionary"
-  ]
+    "build": "rollup -c rollup.config.mjs",
+    "test": "vitest run"
+  }
 }

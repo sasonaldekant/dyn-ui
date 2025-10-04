@@ -10,19 +10,23 @@ import { DynToolbar } from './DynToolbar';
 import { ToolbarItem, DynToolbarRef } from './DynToolbar.types';
 
 // Mock child components
-jest.mock('../DynIcon', () => ({
-  DynIcon: ({ icon, className }: { icon: string; className?: string }) => (
-    <i data-testid={`icon-${icon}`} className={className} />
-  )
-}));
+jest.mock('../DynIcon', () => {
+  return {
+    DynIcon: ({ icon, className }: { icon: string; className?: string }) => (
+      <i data-testid={`icon-${icon}`} className={className} />
+    )
+  };
+});
 
-jest.mock('../DynBadge', () => ({
-  DynBadge: ({ value, size }: { value?: string | number; size?: string }) => (
-    <span data-testid="badge" data-value={value} data-size={size}>
-      {value}
-    </span>
-  )
-}));
+jest.mock('../DynBadge', () => {
+  return {
+    DynBadge: ({ value, size }: { value?: string | number; size?: string }) => (
+      <span data-testid="badge" data-value={value} data-size={size}>
+        {value}
+      </span>
+    )
+  };
+});
 
 // Mock ResizeObserver
 global.ResizeObserver = jest.fn().mockImplementation((callback) => ({
@@ -97,7 +101,7 @@ describe('DynToolbar', () => {
 
   it('renders toolbar with items', () => {
     render(<DynToolbar {...defaultProps} />);
-    
+
     expect(screen.getByRole('toolbar')).toBeInTheDocument();
     expect(screen.getByText('Item 1')).toBeInTheDocument();
     expect(screen.getByText('Item 2')).toBeInTheDocument();
@@ -106,14 +110,14 @@ describe('DynToolbar', () => {
 
   it('displays icons for items', () => {
     render(<DynToolbar {...defaultProps} />);
-    
+
     expect(screen.getByTestId('icon-test-icon-1')).toBeInTheDocument();
     expect(screen.getByTestId('icon-test-icon-2')).toBeInTheDocument();
   });
 
   it('displays badges on items', () => {
     render(<DynToolbar {...defaultProps} />);
-    
+
     const badge = screen.getByTestId('badge');
     expect(badge).toBeInTheDocument();
     expect(badge).toHaveAttribute('data-value', '5');
@@ -122,20 +126,20 @@ describe('DynToolbar', () => {
   it('handles item clicks', async () => {
     const user = userEvent.setup();
     render(<DynToolbar {...defaultProps} />);
-    
+
     const item1 = screen.getByText('Item 1');
     await user.click(item1);
-    
+
     expect(basicItems[0].action).toHaveBeenCalled();
   });
 
   it('does not trigger action for disabled items', async () => {
     const user = userEvent.setup();
     render(<DynToolbar {...defaultProps} />);
-    
+
     const item2 = screen.getByText('Item 2');
     await user.click(item2);
-    
+
     expect(basicItems[1].action).not.toHaveBeenCalled();
   });
 
@@ -143,16 +147,16 @@ describe('DynToolbar', () => {
     const onItemClick = jest.fn();
     const user = userEvent.setup();
     render(<DynToolbar items={basicItems} onItemClick={onItemClick} />);
-    
+
     const item1 = screen.getByText('Item 1');
     await user.click(item1);
-    
+
     expect(onItemClick).toHaveBeenCalledWith(basicItems[0]);
   });
 
   it('renders separators', () => {
     render(<DynToolbar {...defaultProps} />);
-    
+
     const separators = document.querySelectorAll('.toolbar-separator');
     expect(separators).toHaveLength(1);
   });
@@ -165,9 +169,9 @@ describe('DynToolbar', () => {
         label: 'Search placeholder'
       }
     ];
-    
+
     render(<DynToolbar items={searchItems} />);
-    
+
     const searchInput = screen.getByRole('searchbox');
     expect(searchInput).toBeInTheDocument();
     expect(searchInput).toHaveAttribute('placeholder', 'Search placeholder');
@@ -181,9 +185,9 @@ describe('DynToolbar', () => {
         component: <div data-testid="custom-component">Custom Content</div>
       }
     ];
-    
+
     render(<DynToolbar items={customItems} />);
-    
+
     expect(screen.getByTestId('custom-component')).toBeInTheDocument();
     expect(screen.getByText('Custom Content')).toBeInTheDocument();
   });
@@ -191,13 +195,13 @@ describe('DynToolbar', () => {
   it('handles dropdown items', async () => {
     const user = userEvent.setup();
     render(<DynToolbar items={dropdownItems} />);
-    
+
     const dropdownButton = screen.getByText('Dropdown');
     expect(dropdownButton).toHaveAttribute('aria-haspopup', 'menu');
     expect(dropdownButton).toHaveAttribute('aria-expanded', 'false');
-    
+
     await user.click(dropdownButton);
-    
+
     expect(dropdownButton).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByRole('menu')).toBeInTheDocument();
     expect(screen.getByText('Sub Item 1')).toBeInTheDocument();
@@ -207,15 +211,15 @@ describe('DynToolbar', () => {
   it('handles dropdown sub-item clicks', async () => {
     const user = userEvent.setup();
     render(<DynToolbar items={dropdownItems} />);
-    
+
     // Open dropdown
     const dropdownButton = screen.getByText('Dropdown');
     await user.click(dropdownButton);
-    
+
     // Click sub-item
     const subItem1 = screen.getByText('Sub Item 1');
     await user.click(subItem1);
-    
+
     expect(dropdownItems[0].items![0].action).toHaveBeenCalled();
   });
 
@@ -223,9 +227,9 @@ describe('DynToolbar', () => {
     const { container, rerender } = render(
       <DynToolbar items={basicItems} variant="minimal" />
     );
-    
+
     expect(container.firstChild).toHaveClass('variant-minimal');
-    
+
     rerender(<DynToolbar items={basicItems} variant="floating" />);
     expect(container.firstChild).toHaveClass('variant-floating');
   });
@@ -234,9 +238,9 @@ describe('DynToolbar', () => {
     const { container, rerender } = render(
       <DynToolbar items={basicItems} size="small" />
     );
-    
+
     expect(container.firstChild).toHaveClass('size-small');
-    
+
     rerender(<DynToolbar items={basicItems} size="large" />);
     expect(container.firstChild).toHaveClass('size-large');
   });
@@ -245,9 +249,9 @@ describe('DynToolbar', () => {
     const { container, rerender } = render(
       <DynToolbar items={basicItems} position="fixed-top" />
     );
-    
+
     expect(container.firstChild).toHaveClass('position-fixed-top');
-    
+
     rerender(<DynToolbar items={basicItems} position="bottom" />);
     expect(container.firstChild).toHaveClass('position-bottom');
   });
@@ -256,7 +260,7 @@ describe('DynToolbar', () => {
     const { container } = render(
       <DynToolbar items={basicItems} showLabels={false} />
     );
-    
+
     expect(container.firstChild).not.toHaveClass('show-labels');
   });
 
@@ -264,7 +268,7 @@ describe('DynToolbar', () => {
     const { container } = render(
       <DynToolbar items={basicItems} showLabels={true} />
     );
-    
+
     expect(container.firstChild).toHaveClass('show-labels');
   });
 
@@ -273,7 +277,7 @@ describe('DynToolbar', () => {
     const { container } = render(
       <DynToolbar items={basicItems} className={customClass} />
     );
-    
+
     expect(container.firstChild).toHaveClass(customClass);
   });
 
@@ -282,7 +286,7 @@ describe('DynToolbar', () => {
     render(
       <DynToolbar items={basicItems} itemClassName={customItemClass} />
     );
-    
+
     const buttons = screen.getAllByRole('button');
     buttons.forEach(button => {
       expect(button).toHaveClass(customItemClass);
@@ -294,9 +298,9 @@ describe('DynToolbar', () => {
       { id: 'visible', label: 'Visible Item', action: jest.fn() },
       { id: 'invisible', label: 'Invisible Item', visible: false, action: jest.fn() }
     ];
-    
+
     render(<DynToolbar items={itemsWithInvisible} />);
-    
+
     expect(screen.getByText('Visible Item')).toBeInTheDocument();
     expect(screen.queryByText('Invisible Item')).not.toBeInTheDocument();
   });
@@ -307,22 +311,22 @@ describe('DynToolbar', () => {
       label: `Item ${i}`,
       action: jest.fn()
     }));
-    
+
     // Mock toolbar width to be small
     Object.defineProperty(HTMLElement.prototype, 'offsetWidth', {
       configurable: true,
       value: 300
     });
-    
+
     render(
-      <DynToolbar 
+      <DynToolbar
         items={manyItems}
         responsive={true}
         overflowMenu={true}
         overflowThreshold={3}
       />
     );
-    
+
     // Should show overflow button
     expect(screen.getByLabelText('More actions')).toBeInTheDocument();
   });
@@ -334,15 +338,15 @@ describe('DynToolbar', () => {
       label: `Item ${i}`,
       action: jest.fn()
     }));
-    
+
     Object.defineProperty(HTMLElement.prototype, 'offsetWidth', {
       configurable: true,
       value: 300
     });
-    
+
     const onOverflowToggle = jest.fn();
     render(
-      <DynToolbar 
+      <DynToolbar
         items={manyItems}
         responsive={true}
         overflowMenu={true}
@@ -350,14 +354,14 @@ describe('DynToolbar', () => {
         onOverflowToggle={onOverflowToggle}
       />
     );
-    
+
     const overflowButton = screen.getByLabelText('More actions');
-    
+
     // Open overflow menu
     await user.click(overflowButton);
     expect(onOverflowToggle).toHaveBeenCalledWith(true);
     expect(screen.getByRole('menu')).toBeInTheDocument();
-    
+
     // Close overflow menu
     await user.click(overflowButton);
     expect(onOverflowToggle).toHaveBeenCalledWith(false);
@@ -366,16 +370,16 @@ describe('DynToolbar', () => {
   it('closes dropdown and overflow menus when clicking outside', async () => {
     const user = userEvent.setup();
     render(<DynToolbar items={dropdownItems} />);
-    
+
     // Open dropdown
     const dropdownButton = screen.getByText('Dropdown');
     await user.click(dropdownButton);
-    
+
     expect(screen.getByRole('menu')).toBeInTheDocument();
-    
+
     // Click outside
     await user.click(document.body);
-    
+
     await waitFor(() => {
       expect(screen.queryByRole('menu')).not.toBeInTheDocument();
     });
@@ -384,15 +388,15 @@ describe('DynToolbar', () => {
   it('handles keyboard navigation', async () => {
     const user = userEvent.setup();
     render(<DynToolbar {...defaultProps} />);
-    
+
     const firstButton = screen.getByText('Item 1');
     firstButton.focus();
-    
+
     await user.keyboard('{Enter}');
     expect(basicItems[0].action).toHaveBeenCalled();
-    
+
     jest.clearAllMocks();
-    
+
     await user.keyboard(' ');
     expect(basicItems[0].action).toHaveBeenCalled();
   });
@@ -401,77 +405,77 @@ describe('DynToolbar', () => {
     it('provides openOverflow method', () => {
       const toolbarRef = React.createRef<DynToolbarRef>();
       const onOverflowToggle = jest.fn();
-      
+
       render(
-        <DynToolbar 
+        <DynToolbar
           ref={toolbarRef}
           items={basicItems}
           onOverflowToggle={onOverflowToggle}
         />
       );
-      
+
       act(() => {
         toolbarRef.current?.openOverflow();
       });
-      
+
       expect(onOverflowToggle).toHaveBeenCalledWith(true);
     });
 
     it('provides closeOverflow method', () => {
       const toolbarRef = React.createRef<DynToolbarRef>();
       const onOverflowToggle = jest.fn();
-      
+
       render(
-        <DynToolbar 
+        <DynToolbar
           ref={toolbarRef}
           items={basicItems}
           onOverflowToggle={onOverflowToggle}
         />
       );
-      
+
       act(() => {
         toolbarRef.current?.closeOverflow();
       });
-      
+
       expect(onOverflowToggle).toHaveBeenCalledWith(false);
     });
 
     it('provides toggleOverflow method', () => {
       const toolbarRef = React.createRef<DynToolbarRef>();
       const onOverflowToggle = jest.fn();
-      
+
       render(
-        <DynToolbar 
+        <DynToolbar
           ref={toolbarRef}
           items={basicItems}
           onOverflowToggle={onOverflowToggle}
         />
       );
-      
+
       act(() => {
         toolbarRef.current?.toggleOverflow();
       });
-      
+
       expect(onOverflowToggle).toHaveBeenCalledWith(true);
-      
+
       act(() => {
         toolbarRef.current?.toggleOverflow();
       });
-      
+
       expect(onOverflowToggle).toHaveBeenCalledWith(false);
     });
 
     it('provides refreshLayout method', () => {
       const toolbarRef = React.createRef<DynToolbarRef>();
-      
+
       render(
-        <DynToolbar 
+        <DynToolbar
           ref={toolbarRef}
           items={basicItems}
           responsive={true}
         />
       );
-      
+
       expect(() => {
         toolbarRef.current?.refreshLayout();
       }).not.toThrow();
@@ -480,7 +484,7 @@ describe('DynToolbar', () => {
 
   it('handles empty items array', () => {
     render(<DynToolbar items={[]} />);
-    
+
     expect(screen.getByRole('toolbar')).toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
@@ -494,9 +498,9 @@ describe('DynToolbar', () => {
         action: jest.fn()
       }
     ];
-    
+
     render(<DynToolbar items={itemsWithTooltip} />);
-    
+
     const button = screen.getByText('Item with Tooltip');
     expect(button).toHaveAttribute('title', 'This is a tooltip');
   });
@@ -509,9 +513,9 @@ describe('DynToolbar', () => {
         action: jest.fn()
       }
     ];
-    
+
     render(<DynToolbar items={itemsWithoutTooltip} />);
-    
+
     const button = screen.getByText('Item without Tooltip');
     expect(button).toHaveAttribute('aria-label', 'Item without Tooltip');
   });
@@ -519,19 +523,19 @@ describe('DynToolbar', () => {
   it('handles ResizeObserver updates', () => {
     const mockObserve = jest.fn();
     const mockDisconnect = jest.fn();
-    
+
     (global.ResizeObserver as jest.Mock).mockImplementation((callback) => ({
       observe: mockObserve,
       unobserve: jest.fn(),
       disconnect: mockDisconnect
     }));
-    
+
     const { unmount } = render(
       <DynToolbar items={basicItems} responsive={true} />
     );
-    
+
     expect(mockObserve).toHaveBeenCalled();
-    
+
     unmount();
     expect(mockDisconnect).toHaveBeenCalled();
   });

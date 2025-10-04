@@ -1,6 +1,6 @@
 /**
  * Do not edit directly
- * Generated on Sat, 04 Oct 2025 02:07:12 GMT
+ * Generated on Sat, 04 Oct 2025 11:57:09 GMT
  */
 
 export const AnimationTransitionAll = "all 0.2s ease-in-out";

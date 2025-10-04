@@ -1,52 +1,24 @@
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript';
 import postcss from 'rollup-plugin-postcss';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('./package.json');
+import dts from 'rollup-plugin-dts';
 
-export default {
-  input: 'src/index.tsx',
-  output: [
-    {
-      file: packageJson.main,
-      format: 'cjs',
-      sourcemap: true,
-      exports: 'named'
-    },
-    {
-      file: packageJson.module,
-      format: 'esm',
-      sourcemap: true
-    }
-  ],
-  plugins: [
-    postcss({
-      extract: true,
-      minimize: true,
-      sourceMap: true,
-    }),
-    resolve({
-      browser: true,
-      preferBuiltins: false
-    }),
-    commonjs(),
-    typescript({ 
-      tsconfig: './tsconfig.json',
-      exclude: ['**/*.stories.tsx', '**/*.test.tsx'] // Exclude Storybook files
-    })
-  ],
-  external: [
-    'react', 
-    'react-dom',
-    /node_modules/
-  ],
-  onwarn: function(warning, warn) {
-    // Skip CSS module warnings for now
-    if (warning.code === 'UNRESOLVED_IMPORT' && warning.message.includes('.scss')) {
-      return;
-    }
-    warn(warning);
+/** @type {import('rollup').RollupOptions[]} */
+const config = [
+  {
+    input: 'src/index.ts',
+    output: [
+      { file: 'dist/index.esm.js', format: 'esm', sourcemap: true },
+      { file: 'dist/index.cjs.js', format: 'cjs', sourcemap: true }
+    ],
+    plugins: [
+      postcss()
+    ],
+    external: ['react', 'react-dom']
+  },
+  {
+    input: 'dist/types/src/index.d.ts',
+    output: [{ file: 'dist/index.d.ts', format: 'es' }],
+    plugins: [dts()]
   }
-};
+];
+
+export default config;

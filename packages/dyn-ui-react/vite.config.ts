@@ -1,30 +1,29 @@
 import { defineConfig } from 'vite';
-import { react } from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  
+
   // CSS Module optimization for shorter class names
   css: {
     modules: {
       // Production: use very short hashes (5 chars)
       // Development: use readable names with short hash (3 chars)
-      generateScopedName: process.env.NODE_ENV === 'production' 
+      generateScopedName: process.env.NODE_ENV === 'production'
         ? 'dyn-[hash:base64:5]'  // e.g., "dyn-a1b2c"
         : '[name]-[local]-[hash:base64:3]', // e.g., "DynButton-primary-abc"
-      
+
       // Don't hash these patterns
       globalModulePaths: [
         /\.global\.(scss|css)$/,
         /node_modules/
       ],
-      
+
       // Export configuration
-      localsConvention: 'camelCaseOnly',
-      exportOnlyLocals: false
+      localsConvention: 'camelCaseOnly'
     },
-    
+
     // SCSS preprocessing
     preprocessorOptions: {
       scss: {
@@ -37,7 +36,7 @@ export default defineConfig({
       }
     }
   },
-  
+
   // Build optimization
   build: {
     lib: {
@@ -65,7 +64,7 @@ export default defineConfig({
       }
     }
   },
-  
+
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),

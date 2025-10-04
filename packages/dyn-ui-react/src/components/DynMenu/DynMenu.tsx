@@ -78,7 +78,7 @@ const DynMenu = forwardRef<DynMenuRef, DynMenuProps>((
           return acc;
         }
 
-        const matchesFilter = 
+        const matchesFilter =
           item.label.toLowerCase().includes(filterText.toLowerCase()) ||
           item.shortLabel?.toLowerCase().includes(filterText.toLowerCase());
 
@@ -175,17 +175,17 @@ const DynMenu = forwardRef<DynMenuRef, DynMenuProps>((
             </span>
             {item.badge && (
               <div className={styles['dyn-menu-item-badge']}>
-                <DynBadge 
-                  value={item.badge.value} 
-                  color={item.badge.color} 
-                  size="small" 
+                <DynBadge
+                  value={item.badge.value}
+                  color={item.badge.color}
+                  size="small"
                 />
               </div>
             )}
             {hasSubItems && (
               <div className={styles['dyn-menu-item-arrow']}>
-                <DynIcon 
-                  icon="dyn-icon-arrow-down" 
+                <DynIcon
+                  icon="dyn-icon-arrow-down"
                   className={classNames({
                     [styles['dyn-menu-arrow-expanded']]: isExpanded
                   })}
@@ -196,7 +196,7 @@ const DynMenu = forwardRef<DynMenuRef, DynMenuProps>((
         </div>
         {hasSubItems && isExpanded && (
           <div className={styles['dyn-menu-subitems']}>
-            {item.subItems!.map(subItem => 
+            {item.subItems!.map(subItem =>
               renderMenuItem(subItem, level + 1, path)
             )}
           </div>
@@ -223,8 +223,8 @@ const DynMenu = forwardRef<DynMenuRef, DynMenuProps>((
             <img src={logo} alt="Logo" className={styles['dyn-menu-logo-image']} />
           ) : null}
         </div>
-        <button 
-          className={styles['dyn-menu-toggle']} 
+        <button
+          className={styles['dyn-menu-toggle']}
           onClick={handleToggleCollapse}
           aria-label={collapsed ? literals.expand : literals.collapse}
         >
