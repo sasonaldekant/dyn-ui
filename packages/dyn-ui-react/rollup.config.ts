@@ -74,3 +74,9 @@ const config: RollupOptions[] = [
 ];
 
 export default config;
+
+// No code changes needed. Just install the missing dependency to fix the error.
+// Run in your terminal:
+// npm install --save-dev @rollup/plugin-terser
+// or
+// yarn add --dev @rollup/plugin-terser
