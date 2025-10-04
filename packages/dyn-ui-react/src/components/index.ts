@@ -1,6 +1,6 @@
 /**
  * Main component exports for DYN UI React
- * Updated to include Data Display Components Group - SCOPE 8
+ * Updated to include Navigation Components Group - SCOPE 6
  */
 
 // Import global theme styles
@@ -41,6 +41,13 @@ export { DynGauge } from './DynGauge';
 export { DynListView } from './DynListView';
 export { DynTable } from './DynTable';
 export { DynTreeView } from './DynTreeView';
+
+// Navigation Components - SCOPE 6
+export { DynMenu } from './DynMenu';
+export { DynBreadcrumb } from './DynBreadcrumb';
+export { DynTabs } from './DynTabs';
+export { DynStepper } from './DynStepper';
+export { DynToolbar } from './DynToolbar';
 
 // Utility components
 export { ThemeSwitcher } from './ThemeSwitcher';
@@ -116,12 +123,44 @@ export type {
   TreeViewActions
 } from './DynTreeView/DynTreeView.types';
 
+// Navigation Components types - SCOPE 6
+export type {
+  DynMenuProps,
+  MenuItem,
+  MenuBadge,
+  MenuLiterals,
+  DynMenuRef
+} from './DynMenu/DynMenu.types';
+export type {
+  DynBreadcrumbProps,
+  BreadcrumbItem,
+  DynBreadcrumbRef
+} from './DynBreadcrumb/DynBreadcrumb.types';
+export type {
+  DynTabsProps,
+  DynTabsHandle,
+  TabItem
+} from './DynTabs/DynTabs.types';
+export type {
+  DynStepperProps,
+  DynStepperHandle,
+  StepItem
+} from './DynStepper/DynStepper.types';
+export type {
+  DynToolbarProps,
+  DynToolbarRef,
+  ToolbarItem
+} from './DynToolbar/DynToolbar.types';
+
 // Utility types
 export type { ThemeSwitcherProps } from './ThemeSwitcher/ThemeSwitcher';
 
 // Constants
 export { DYN_COLOR_PALETTE } from '../types/badge.types';
 export { AVATAR_SIZES } from '../types/avatar.types';
+export { DEFAULT_MENU_LITERALS } from './DynMenu/DynMenu.types';
+export { DEFAULT_SEPARATOR, BREADCRUMB_LITERALS } from './DynBreadcrumb/DynBreadcrumb.types';
+export { TOOLBAR_DEFAULTS, TOOLBAR_ITEM_TYPES } from './DynToolbar/DynToolbar.types';
 
 // Form validation utilities - SCOPE 6
 export { useDynFieldValidation, validators } from '../hooks/useDynFieldValidation';
