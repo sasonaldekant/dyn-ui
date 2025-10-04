@@ -1,6 +1,6 @@
 /**
  * Main component exports for DYN UI React
- * Updated to include Layout Components Group - SCOPE 7
+ * Updated to include Data Display Components Group - SCOPE 8
  */
 
 // Import global theme styles
@@ -34,6 +34,13 @@ export { DynContainer } from './DynContainer';
 export { DynDivider } from './DynDivider';
 export { DynGrid } from './DynGrid';
 export { DynPage } from './DynPage';
+
+// Data Display Components - SCOPE 8
+export { DynChart } from './DynChart';
+export { DynGauge } from './DynGauge';
+export { DynListView } from './DynListView';
+export { DynTable } from './DynTable';
+export { DynTreeView } from './DynTreeView';
 
 // Utility components
 export { ThemeSwitcher } from './ThemeSwitcher';
@@ -79,6 +86,35 @@ export type {
   LayoutAlignment,
   LayoutJustify
 } from '../types/layout.types';
+
+// Data Display Components types - SCOPE 8
+export type {
+  DynChartProps,
+  DynChartData,
+  ChartType,
+  ChartOptions
+} from './DynChart/DynChart.types';
+export type {
+  DynGaugeProps,
+  GaugeType,
+  GaugeSize
+} from './DynGauge/DynGauge.types';
+export type {
+  DynListViewProps,
+  ListViewItem,
+  ListViewTemplate
+} from './DynListView/DynListView.types';
+export type {
+  DynTableProps,
+  TableColumn,
+  TableAction,
+  TableData
+} from './DynTable/DynTable.types';
+export type {
+  DynTreeViewProps,
+  TreeNode,
+  TreeViewActions
+} from './DynTreeView/DynTreeView.types';
 
 // Utility types
 export type { ThemeSwitcherProps } from './ThemeSwitcher/ThemeSwitcher';
