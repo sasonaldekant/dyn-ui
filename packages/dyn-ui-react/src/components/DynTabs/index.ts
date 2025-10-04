@@ -3,7 +3,7 @@
  * Barrel export for clean API surface
  */
 
-export { default as DynTabs, DynTabs } from './DynTabs';
+export { default } from './DynTabs';
 export type { 
   DynTabsProps, 
   DynTabsHandle, 
