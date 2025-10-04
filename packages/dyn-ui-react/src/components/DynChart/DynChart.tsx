@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { DynChartProps, ChartSeries, ChartDataPoint } from './DynChart.types';
+import styles from './DynChart.module.css';
 
 // Simple chart implementation without external dependencies
 const DynChart: React.FC<DynChartProps> = ({
@@ -308,8 +309,8 @@ const DynChart: React.FC<DynChartProps> = ({
   }, [type, normalizedData, chartDimensions, dataRanges, colors, showGrid]);
 
   const chartClasses = classNames(
-    'dyn-chart',
-    `dyn-chart--${type}`,
+    styles['dyn-chart'],
+    styles[`dyn-chart--${type}`],
     className
   );
 
@@ -317,33 +318,33 @@ const DynChart: React.FC<DynChartProps> = ({
     <div className={chartClasses} ref={containerRef}>
       {/* Header */}
       {(title || subtitle) && (
-        <div className="dyn-chart__header">
-          {title && <h3 className="dyn-chart__title">{title}</h3>}
-          {subtitle && <p className="dyn-chart__subtitle">{subtitle}</p>}
+        <div className={styles['dyn-chart__header']}>
+          {title && <h3 className={styles['dyn-chart__title']}>{title}</h3>}
+          {subtitle && <p className={styles['dyn-chart__subtitle']}>{subtitle}</p>}
         </div>
       )}
       
       {/* Chart */}
-      <div className="dyn-chart__content">
+      <div className={styles['dyn-chart__content']}>
         <canvas
           ref={canvasRef}
-          className="dyn-chart__canvas"
+          className={styles['dyn-chart__canvas']}
           style={{ width, height }}
         />
       </div>
       
       {/* Legend */}
       {showLegend && normalizedData.length > 0 && (
-        <div className="dyn-chart__legend">
+        <div className={styles['dyn-chart__legend']}>
           {normalizedData.map((series, index) => (
-            <div key={series.name} className="dyn-chart__legend-item">
+            <div key={series.name} className={styles['dyn-chart__legend-item']}>
               <div
-                className="dyn-chart__legend-color"
+                className={styles['dyn-chart__legend-color']}
                 style={{ 
                   backgroundColor: series.color || colors[index % colors.length] 
                 }}
               />
-              <span className="dyn-chart__legend-label">{series.name}</span>
+              <span className={styles['dyn-chart__legend-label']}>{series.name}</span>
             </div>
           ))}
         </div>
