@@ -1,0 +1,276 @@
+/* DynListView Component Styles */
+.dyn-list-view {
+  display: flex;
+  flex-direction: column;
+  background: var(--dyn-color-background);
+  border-radius: var(--dyn-border-radius-md);
+  border: 1px solid var(--dyn-color-border);
+  font-family: var(--dyn-font-family-base);
+  overflow: hidden;
+}
+
+/* Header */
+.dyn-list-view__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--dyn-color-background-secondary);
+  border-bottom: 1px solid var(--dyn-color-border);
+  font-size: var(--dyn-font-size-sm);
+  font-weight: var(--dyn-font-weight-medium);
+  color: var(--dyn-color-text-secondary);
+}
+
+.dyn-list-view__select-all-text {
+  user-select: none;
+}
+
+/* Content */
+.dyn-list-view__content {
+  flex: 1;
+  overflow: auto;
+}
+
+.dyn-list-view--fixed-height .dyn-list-view__content {
+  max-height: 400px;
+}
+
+/* Items */
+.dyn-list-view__item {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--dyn-color-border-light);
+  transition: background-color 0.2s ease;
+}
+
+.dyn-list-view__item:last-child {
+  border-bottom: none;
+}
+
+.dyn-list-view__item:hover {
+  background-color: var(--dyn-color-background-hover);
+}
+
+.dyn-list-view__item--selected {
+  background-color: var(--dyn-color-background-selected);
+}
+
+.dyn-list-view__item-selection {
+  display: flex;
+  align-items: center;
+  padding: 16px 12px;
+  border-right: 1px solid var(--dyn-color-border-light);
+}
+
+.dyn-list-view__item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Item Content */
+.dyn-list-view__item-content {
+  width: 100%;
+}
+
+.dyn-list-view__item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.dyn-list-view__item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.dyn-list-view__expand-button {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--dyn-color-text-secondary);
+  border-radius: var(--dyn-border-radius-sm);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dyn-list-view__expand-button:hover {
+  background-color: var(--dyn-color-background-hover);
+  color: var(--dyn-color-text-primary);
+}
+
+.dyn-list-view__item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.dyn-list-view__item-title {
+  font-size: var(--dyn-font-size-base);
+  font-weight: var(--dyn-font-weight-medium);
+  color: var(--dyn-color-text-primary);
+  line-height: var(--dyn-line-height-tight);
+  margin-bottom: 2px;
+  word-wrap: break-word;
+}
+
+.dyn-list-view__item-description {
+  font-size: var(--dyn-font-size-sm);
+  color: var(--dyn-color-text-secondary);
+  line-height: var(--dyn-line-height-normal);
+  word-wrap: break-word;
+}
+
+/* Item Actions */
+.dyn-list-view__item-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dyn-list-view__action-button {
+  background: var(--dyn-color-primary);
+  color: var(--dyn-color-background);
+  border: none;
+  border-radius: var(--dyn-border-radius-sm);
+  padding: 6px 12px;
+  font-size: var(--dyn-font-size-sm);
+  font-weight: var(--dyn-font-weight-medium);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.dyn-list-view__action-button:hover {
+  background: var(--dyn-color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.dyn-list-view__action-button:disabled {
+  background: var(--dyn-color-disabled);
+  color: var(--dyn-color-text-disabled);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Item Details (Expanded) */
+.dyn-list-view__item-details {
+  padding: 0 16px 16px 16px;
+  border-top: 1px solid var(--dyn-color-border-light);
+  background: var(--dyn-color-background-secondary);
+}
+
+.dyn-list-view__item-field {
+  margin-bottom: 8px;
+  font-size: var(--dyn-font-size-sm);
+  color: var(--dyn-color-text-secondary);
+}
+
+.dyn-list-view__item-field:last-child {
+  margin-bottom: 0;
+}
+
+.dyn-list-view__item-field strong {
+  color: var(--dyn-color-text-primary);
+  margin-right: 4px;
+}
+
+/* Size Variants */
+.dyn-list-view--small .dyn-list-view__item-header {
+  padding: 12px;
+}
+
+.dyn-list-view--small .dyn-list-view__item-title {
+  font-size: var(--dyn-font-size-sm);
+}
+
+.dyn-list-view--small .dyn-list-view__item-description {
+  font-size: var(--dyn-font-size-xs);
+}
+
+.dyn-list-view--large .dyn-list-view__item-header {
+  padding: 20px;
+}
+
+.dyn-list-view--large .dyn-list-view__item-title {
+  font-size: var(--dyn-font-size-lg);
+}
+
+/* States */
+.dyn-list-view__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 20px;
+  color: var(--dyn-color-text-secondary);
+  font-size: var(--dyn-font-size-sm);
+}
+
+.dyn-list-view__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 20px;
+  color: var(--dyn-color-text-secondary);
+  font-size: var(--dyn-font-size-sm);
+  text-align: center;
+}
+
+/* Bordered variant */
+.dyn-list-view--bordered {
+  /* Already has border by default */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dyn-list-view__item-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .dyn-list-view__item-actions {
+    justify-content: flex-end;
+  }
+  
+  .dyn-list-view__action-button {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* Dark Theme Support */
+[data-theme="dark"] .dyn-list-view {
+  background: var(--dyn-color-background-dark);
+  border-color: var(--dyn-color-border-dark);
+}
+
+[data-theme="dark"] .dyn-list-view__header {
+  background: var(--dyn-color-background-secondary-dark);
+  border-color: var(--dyn-color-border-dark);
+  color: var(--dyn-color-text-secondary-dark);
+}
+
+[data-theme="dark"] .dyn-list-view__item-title {
+  color: var(--dyn-color-text-primary-dark);
+}
+
+[data-theme="dark"] .dyn-list-view__item-description {
+  color: var(--dyn-color-text-secondary-dark);
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .dyn-list-view {
+    border-width: 2px;
+  }
+  
+  .dyn-list-view__item {
+    border-bottom-width: 2px;
+  }
+}
