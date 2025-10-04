@@ -1,16 +1,17 @@
 /**
  * Main component exports for DYN UI React
- * Updated to include Form Components Group - SCOPE 6
+ * Updated to include Layout Components Group - SCOPE 7
  */
 
 // Import global theme styles
 import '../styles/themes.css';
-// Import form component styles
+// Import component styles
 import '../styles/dyn-field-container.css';
 import '../styles/dyn-input.css';
 import '../styles/dyn-select.css';
 import '../styles/dyn-checkbox.css';
 import '../styles/dyn-datepicker.css';
+import '../styles/dyn-layout.css';
 
 // Basic components
 export { DynButton } from './DynButton';
@@ -28,9 +29,11 @@ export { DynCheckbox } from './DynCheckbox';
 export { DynDatePicker } from './DynDatePicker';
 export { DynFieldContainer } from './DynFieldContainer';
 
-// Layout components
+// Layout Components - SCOPE 7
 export { DynContainer } from './DynContainer';
 export { DynDivider } from './DynDivider';
+export { DynGrid } from './DynGrid';
+export { DynPage } from './DynPage';
 
 // Utility components
 export { ThemeSwitcher } from './ThemeSwitcher';
@@ -60,6 +63,22 @@ export type {
   DynFieldBase,
   SelectOption
 } from '../types/field.types';
+
+// Layout Components types - SCOPE 7
+export type {
+  DynContainerProps,
+  DynDividerProps,
+  DynGridProps,
+  DynGridColumn,
+  DynPageProps,
+  DynPageBreadcrumb,
+  DynPageAction,
+  LayoutSize,
+  LayoutSpacing,
+  LayoutDirection,
+  LayoutAlignment,
+  LayoutJustify
+} from '../types/layout.types';
 
 // Utility types
 export type { ThemeSwitcherProps } from './ThemeSwitcher/ThemeSwitcher';
