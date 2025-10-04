@@ -3,7 +3,7 @@
  * Barrel export for clean API surface
  */
 
-export { default as DynStepper, DynStepper } from './DynStepper';
+export { default } from './DynStepper';
 export type { 
   DynStepperProps, 
   DynStepperHandle, 
