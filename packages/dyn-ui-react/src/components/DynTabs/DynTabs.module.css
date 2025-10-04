@@ -1,0 +1,484 @@
+/**
+ * DynTabs CSS Styles
+ * Responsive tab navigation with multiple variants and positions
+ */
+
+/* Tabs Container */
+.dyn-tabs {
+  --tabs-bg: var(--color-surface, #ffffff);
+  --tabs-border: var(--color-border, #e0e0e0);
+  --tab-color: var(--color-text-secondary, #666666);
+  --tab-bg: transparent;
+  --tab-hover-bg: var(--color-surface-hover, #f5f5f5);
+  --tab-active-color: var(--color-primary, #2563eb);
+  --tab-active-bg: var(--color-surface, #ffffff);
+  --tab-active-border: var(--color-primary, #2563eb);
+  --tab-disabled-color: var(--color-text-disabled, #999999);
+  --panel-bg: var(--color-surface, #ffffff);
+  --panel-border: var(--color-border, #e0e0e0);
+  --scroll-button-bg: var(--color-surface-alt, #f8f9fa);
+  
+  display: flex;
+  font-family: var(--font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  background: var(--tabs-bg);
+  border-radius: var(--border-radius, 8px);
+  overflow: hidden;
+}
+
+/* Position Variants */
+.position-top {
+  flex-direction: column;
+}
+
+.position-bottom {
+  flex-direction: column-reverse;
+}
+
+.position-left {
+  flex-direction: row;
+}
+
+.position-right {
+  flex-direction: row-reverse;
+}
+
+/* Tab List Container */
+.tab-list-container {
+  display: flex;
+  align-items: center;
+  background: var(--tabs-bg);
+  border-bottom: 1px solid var(--tabs-border);
+  position: relative;
+}
+
+.position-bottom .tab-list-container {
+  border-bottom: none;
+  border-top: 1px solid var(--tabs-border);
+}
+
+.position-left .tab-list-container,
+.position-right .tab-list-container {
+  flex-direction: column;
+  border-bottom: none;
+  border-right: 1px solid var(--tabs-border);
+  min-width: 200px;
+}
+
+.position-right .tab-list-container {
+  border-right: none;
+  border-left: 1px solid var(--tabs-border);
+}
+
+/* Tab List */
+.tab-list {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.position-left .tab-list,
+.position-right .tab-list {
+  flex-direction: column;
+  width: 100%;
+}
+
+.scrollable .tab-list {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollable .tab-list::-webkit-scrollbar {
+  display: none;
+}
+
+.position-left.scrollable .tab-list,
+.position-right.scrollable .tab-list {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Tab */
+.tab {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs, 8px);
+  padding: var(--spacing-sm, 12px) var(--spacing-md, 16px);
+  background: var(--tab-bg);
+  color: var(--tab-color);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.15s ease);
+  white-space: nowrap;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 500;
+  line-height: 1.4;
+  position: relative;
+  border-radius: 0;
+  min-height: 44px;
+}
+
+.tab:hover:not(.disabled) {
+  background: var(--tab-hover-bg);
+  color: var(--color-text, #333333);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--color-focus, #2563eb);
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+.tab.active {
+  background: var(--tab-active-bg);
+  color: var(--tab-active-color);
+  font-weight: 600;
+}
+
+.tab.disabled {
+  color: var(--tab-disabled-color);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Size Variants */
+.size-small .tab {
+  padding: var(--spacing-xs, 8px) var(--spacing-sm, 12px);
+  font-size: var(--font-size-xs, 0.75rem);
+  min-height: 36px;
+}
+
+.size-large .tab {
+  padding: var(--spacing-md, 16px) var(--spacing-lg, 20px);
+  font-size: var(--font-size-base, 1rem);
+  min-height: 52px;
+}
+
+/* Tab Variants */
+.variant-default .tab {
+  border-bottom: 2px solid transparent;
+}
+
+.variant-default .tab.active {
+  border-bottom-color: var(--tab-active-border);
+}
+
+.variant-pills .tab {
+  border-radius: var(--border-radius-pill, 24px);
+  margin: 0 var(--spacing-xs, 8px);
+}
+
+.variant-pills .tab.active {
+  background: var(--tab-active-border);
+  color: var(--color-primary-contrast, #ffffff);
+}
+
+.variant-underline .tab {
+  border-bottom: 2px solid transparent;
+  background: transparent;
+}
+
+.variant-underline .tab.active {
+  border-bottom-color: var(--tab-active-border);
+  background: transparent;
+}
+
+.variant-cards .tab {
+  background: var(--color-surface-alt, #f8f9fa);
+  border: 1px solid var(--tabs-border);
+  border-bottom: none;
+  border-radius: var(--border-radius, 8px) var(--border-radius, 8px) 0 0;
+  margin-right: var(--spacing-xs, 8px);
+}
+
+.variant-cards .tab.active {
+  background: var(--tab-active-bg);
+  border-bottom: 1px solid var(--tab-active-bg);
+  margin-bottom: -1px;
+}
+
+/* Tab Elements */
+.tab-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.2em;
+  flex-shrink: 0;
+}
+
+.tab-label {
+  flex: 1;
+  text-align: left;
+}
+
+.tab-badge {
+  margin-left: var(--spacing-xs, 8px);
+  flex-shrink: 0;
+}
+
+.tab-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin-left: var(--spacing-xs, 8px);
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--tab-color);
+  transition: all var(--transition-fast, 0.15s ease);
+  flex-shrink: 0;
+}
+
+.tab-close:hover {
+  background: var(--color-danger-lighter, #fee);
+  color: var(--color-danger, #dc3545);
+}
+
+.tab-close:focus-visible {
+  outline: 2px solid var(--color-focus, #2563eb);
+  outline-offset: 1px;
+}
+
+/* Scroll Buttons */
+.scroll-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 44px;
+  padding: 0;
+  background: var(--scroll-button-bg);
+  border: none;
+  border-left: 1px solid var(--tabs-border);
+  cursor: pointer;
+  color: var(--color-text-secondary, #666666);
+  transition: all var(--transition-fast, 0.15s ease);
+  flex-shrink: 0;
+}
+
+.scroll-button:first-child {
+  border-left: none;
+  border-right: 1px solid var(--tabs-border);
+}
+
+.scroll-button:hover {
+  background: var(--tab-hover-bg);
+  color: var(--color-text, #333333);
+}
+
+.scroll-button:focus-visible {
+  outline: 2px solid var(--color-focus, #2563eb);
+  outline-offset: -2px;
+}
+
+.position-left .scroll-button,
+.position-right .scroll-button {
+  width: 100%;
+  height: 32px;
+  border-left: none;
+  border-top: 1px solid var(--tabs-border);
+}
+
+.position-left .scroll-button:first-child,
+.position-right .scroll-button:first-child {
+  border-top: none;
+  border-bottom: 1px solid var(--tabs-border);
+}
+
+/* Add Button */
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 44px;
+  padding: 0;
+  background: var(--color-primary-lighter, #e3f2fd);
+  border: none;
+  border-left: 1px solid var(--tabs-border);
+  cursor: pointer;
+  color: var(--color-primary, #2563eb);
+  transition: all var(--transition-fast, 0.15s ease);
+  flex-shrink: 0;
+}
+
+.add-button:hover {
+  background: var(--color-primary, #2563eb);
+  color: var(--color-primary-contrast, #ffffff);
+}
+
+.add-button:focus-visible {
+  outline: 2px solid var(--color-focus, #2563eb);
+  outline-offset: -2px;
+}
+
+.position-left .add-button,
+.position-right .add-button {
+  width: 100%;
+  height: 32px;
+  border-left: none;
+  border-top: 1px solid var(--tabs-border);
+}
+
+/* Panel */
+.panel {
+  flex: 1;
+  padding: var(--spacing-md, 16px);
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-top: none;
+  min-height: 200px;
+  overflow-y: auto;
+}
+
+.position-bottom .panel {
+  border-top: 1px solid var(--panel-border);
+  border-bottom: none;
+}
+
+.position-left .panel,
+.position-right .panel {
+  border-top: 1px solid var(--panel-border);
+  border-left: none;
+}
+
+.position-right .panel {
+  border-left: 1px solid var(--panel-border);
+  border-right: none;
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm, 12px);
+  padding: var(--spacing-xl, 24px);
+  color: var(--color-text-secondary, #666666);
+  font-size: var(--font-size-sm, 0.875rem);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .position-left,
+  .position-right {
+    flex-direction: column;
+  }
+  
+  .position-left .tab-list-container,
+  .position-right .tab-list-container {
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--tabs-border);
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .position-left .tab-list,
+  .position-right .tab-list {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  
+  .tab {
+    min-width: max-content;
+  }
+  
+  .tab-label {
+    white-space: nowrap;
+  }
+  
+  .scroll-button,
+  .add-button {
+    width: 40px;
+    height: 44px;
+    border-top: none;
+    border-left: 1px solid var(--tabs-border);
+  }
+  
+  .scroll-button:first-child {
+    border-left: none;
+    border-right: 1px solid var(--tabs-border);
+  }
+}
+
+@media (max-width: 480px) {
+  .tab {
+    padding: var(--spacing-xs, 8px) var(--spacing-sm, 12px);
+    min-height: 40px;
+  }
+  
+  .tab-label {
+    font-size: var(--font-size-xs, 0.75rem);
+  }
+  
+  .scroll-button,
+  .add-button {
+    width: 36px;
+    height: 40px;
+  }
+  
+  .panel {
+    padding: var(--spacing-sm, 12px);
+  }
+}
+
+/* Dark Theme */
+@media (prefers-color-scheme: dark) {
+  .dyn-tabs {
+    --tabs-bg: var(--color-surface-dark, #1f2937);
+    --tabs-border: var(--color-border-dark, #374151);
+    --tab-color: var(--color-text-secondary-dark, #9ca3af);
+    --tab-hover-bg: var(--color-surface-hover-dark, #374151);
+    --tab-active-color: var(--color-primary-light, #60a5fa);
+    --tab-active-bg: var(--color-surface-dark, #1f2937);
+    --tab-disabled-color: var(--color-text-disabled-dark, #6b7280);
+    --panel-bg: var(--color-surface-dark, #1f2937);
+    --panel-border: var(--color-border-dark, #374151);
+    --scroll-button-bg: var(--color-surface-alt-dark, #111827);
+  }
+}
+
+/* High Contrast */
+@media (prefers-contrast: high) {
+  .tab {
+    border: 2px solid transparent;
+  }
+  
+  .tab.active {
+    border-color: var(--tab-active-border);
+  }
+  
+  .variant-default .tab.active,
+  .variant-underline .tab.active {
+    border-bottom-width: 3px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .scroll-button,
+  .add-button,
+  .tab-close {
+    transition: none;
+  }
+}
+
+/* Print */
+@media print {
+  .scroll-button,
+  .add-button,
+  .tab-close {
+    display: none;
+  }
+  
+  .tab {
+    color: black !important;
+    background: white !important;
+  }
+}
