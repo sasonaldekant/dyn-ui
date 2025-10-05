@@ -34,15 +34,15 @@ export const DynButton: React.FC<DynButtonProps> = ({
     className
   );
 
-  const handleClick = () => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled && !loading && onClick) {
-      onClick();
+      onClick(event);
     }
   };
 
-  const handleBlur = () => {
+  const handleBlur = (event: React.FocusEvent<HTMLButtonElement>) => {
     if (onBlur) {
-      onBlur();
+      onBlur(event);
     }
   };
 
