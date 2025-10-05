@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { DynButton, ThemeProvider } from 'dyn-ui-react'
+// Correct import path for DynButton from built package or main entry point
+import { DynButton, ThemeProvider } from '../../../packages/dyn-ui-react'
+// or if default export:
+// import DynButton from '../../../packages/dyn-ui-react'
 
-// Import centralized styles from package (single source of truth)
 import '../../../packages/dyn-ui-react/src/styles/dyn-ui.css'
 
 const App = () => {
@@ -14,7 +16,7 @@ const App = () => {
   };
 
   return (
-    <ThemeProvider defaultTheme="light">
+    <ThemeProvider>
       <div className="demo-container">
         <h1 style={{ marginBottom: '2rem', color: 'var(--color-text-primary)' }}>
           🎨 Dyn UI Demo - Centralizovani Stilovi ✅
@@ -99,7 +101,7 @@ const App = () => {
               <DynButton
                 kind="secondary"
                 label="Hover & Focus Test"
-                onFocus={() => console.log('Button focused')}
+                //onFocus={() => console.log('Button focused')}
                 onBlur={() => console.log('Button blurred')}
               />
             </div>
@@ -128,6 +130,17 @@ const App = () => {
           </p>
         </div>
       </div>
+
+        <div className="demo-info">
+          <p>
+            ✅ <strong>CENTRALIZOVANI STILOVI:</strong> CSS se učitava iz <code>packages/dyn-ui-react/src/styles/dyn-ui.css</code><br/>
+            📦 <strong>Single Source of Truth:</strong> Jedan CSS fajl za sve komponente i demo aplikacije<br/>
+            🎨 <strong>Design System:</strong> Kompletni design tokens sa CSS custom properties<br/>
+            🔧 <strong>Best Practice:</strong> Workspace-compatible, Storybook-ready, scalable architecture<br/>
+            ♾️ <strong>Accessibility:</strong> Focus management, reduced motion, high contrast podrška<br/>
+            📱 <strong>Responsive:</strong> Mobile-friendly dizajn sa responsive breakpoints
+          </p>
+        </div>
     </ThemeProvider>
   )
 }

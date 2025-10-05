@@ -1,15 +1,60 @@
 {
   "name": "@dyn-ui/react",
   "version": "0.1.0",
+  "description": "React components for DYN UI design system",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "rollup -c rollup.config.mjs",
-    "test": "vitest run"
+    "build": "rollup -c",
+    "build:vite": "vite build",
+    "dev": "vite build --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "vitest run --config ../../vitest.config.ts",
+    "size-check": "npm run build && du -sh dist/* || echo 'Size check complete'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.16",
+    "rollup": "^3.29.5",
+    "rollup-plugin-postcss": "^4.0.2",
+    "sass": "^1.69.5",
+    "typescript": "^5.0.0",
+    "vite": "^4.0.0"
   },
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mgasic/dyn-ui.git",
+    "directory": "packages/dyn-ui-react"
+  },
+  "keywords": [
+    "react",
+    "ui",
+    "components",
+    "design-system",
+    "typescript",
+    "dyn-ui"
+  ],
+  "author": "Milos Gasic",
+  "license": "MIT"
 }
