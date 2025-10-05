@@ -27,11 +27,14 @@ describe('DynGauge', () => {
   });
 
   it('applies type classes', () => {
-    const { rerender } = render(<DynGauge value={50} type="circular" />);
-    expect(screen.getByTestId('dyn-gauge')).toHaveClass('gauge--circular');
+    const { rerender } = render(<DynGauge value={50} type="circle" />);
+    expect(screen.getByTestId('dyn-gauge')).toHaveClass('gauge--circle');
     
-    rerender(<DynGauge value={50} type="linear" />);
-    expect(screen.getByTestId('dyn-gauge')).toHaveClass('gauge--linear');
+    rerender(<DynGauge value={50} type="line" />);
+    expect(screen.getByTestId('dyn-gauge')).toHaveClass('gauge--line');
+    
+    rerender(<DynGauge value={50} type="arc" />);
+    expect(screen.getByTestId('dyn-gauge')).toHaveClass('gauge--arc');
   });
 
   it('applies custom className', () => {
@@ -66,5 +69,36 @@ describe('DynGauge', () => {
     expect(gauge).toHaveAttribute('aria-valuemin', '0');
     expect(gauge).toHaveAttribute('aria-valuemax', '100');
     expect(gauge).toHaveAttribute('aria-label', 'Progress');
+  });
+
+  it('displays title when provided', () => {
+    render(<DynGauge value={60} title="Progress Gauge" />);
+    expect(screen.getByText('Progress Gauge')).toBeInTheDocument();
+  });
+
+  it('displays subtitle when provided', () => {
+    render(<DynGauge value={60} subtitle="Loading..." />);
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+  });
+
+  it('displays unit when provided', () => {
+    render(<DynGauge value={60} unit="MB/s" />);
+    expect(screen.getByText('60 MB/s')).toBeInTheDocument();
+  });
+
+  it('can hide value display', () => {
+    render(<DynGauge value={75} showValue={false} />);
+    expect(screen.queryByText('75%')).not.toBeInTheDocument();
+  });
+
+  it('supports custom color', () => {
+    render(<DynGauge value={50} color="#ff0000" />);
+    const gauge = screen.getByTestId('dyn-gauge');
+    expect(gauge).toHaveStyle('--gauge-color: #ff0000');
+  });
+
+  it('supports animated transitions', () => {
+    render(<DynGauge value={50} animated={true} />);
+    expect(screen.getByTestId('dyn-gauge')).toHaveClass('gauge--animated');
   });
 });
