@@ -1,4 +1,4 @@
-import { BaseComponentProps } from '../types';
+import { BaseComponentProps } from '../../types';
 
 export interface GaugeRange {
   from: number;
@@ -54,9 +54,6 @@ export interface DynGaugeProps extends BaseComponentProps {
   
   /** Background arc color */
   backgroundColor?: string;
-  
-  /** Additional CSS class name */
-  className?: string;
   
   /** Custom value formatter */
   format?: (value: number) => string;
