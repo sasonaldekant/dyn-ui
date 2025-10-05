@@ -8,6 +8,7 @@ export interface GaugeRange {
 }
 
 export type GaugeSize = 'small' | 'medium' | 'large';
+export type GaugeType = 'arc' | 'circle' | 'line';
 
 export interface DynGaugeProps extends BaseComponentProps {
   /** Current value to display */
@@ -22,8 +23,14 @@ export interface DynGaugeProps extends BaseComponentProps {
   /** Gauge title */
   title?: string;
   
+  /** Gauge label (alias for title) */
+  label?: string;
+  
   /** Gauge subtitle */
   subtitle?: string;
+  
+  /** Gauge type/style */
+  type?: GaugeType;
   
   /** Unit of measurement */
   unit?: string;
@@ -58,5 +65,3 @@ export interface DynGaugeProps extends BaseComponentProps {
   /** Custom value formatter */
   format?: (value: number) => string;
 }
-
-export type DynGaugeType = DynGaugeProps;
