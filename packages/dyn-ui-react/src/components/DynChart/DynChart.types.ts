@@ -1,4 +1,4 @@
-import { BaseComponentProps } from '../types';
+import { BaseComponentProps } from '../../types';
 
 export interface ChartDataPoint {
   label?: string;
@@ -57,9 +57,6 @@ export interface DynChartProps extends BaseComponentProps {
   
   /** Y axis configuration */
   yAxis?: ChartAxis;
-  
-  /** Additional CSS class name */
-  className?: string;
 }
 
 export type DynChartType = DynChartProps;
