@@ -1,6 +1,7 @@
 /**
  * Main component exports for DYN UI React
  * Standardized exports with consistent patterns across all components
+ * Following DYN UI Standards and Naming Conventions
  */
 
 // Import global theme styles
@@ -13,24 +14,26 @@ import '../styles/dyn-checkbox.css';
 import '../styles/dyn-datepicker.css';
 import '../styles/dyn-layout.css';
 
-// Basic components
-export { DynButton, default as DynButtonDefault } from './DynButton';
+// ===== COMPONENT EXPORTS (Grouped by Category) =====
+
+// Basic Components
+export { DynButton } from './DynButton';
 export { DynIcon } from './DynIcon';
 export { DynBox } from './DynBox';
 
-// Display Components
+// Display Components - SCOPE 5
 export { DynBadge } from './DynBadge';
 export { DynAvatar } from './DynAvatar';
 export { DynLabel } from './DynLabel';
 
-// Form Components
+// Form Components - SCOPE 6
 export { DynInput } from './DynInput';
 export { DynSelect } from './DynSelect';
 export { DynCheckbox } from './DynCheckbox';
 export { DynDatePicker } from './DynDatePicker';
 export { DynFieldContainer } from './DynFieldContainer';
 
-// Layout Components
+// Layout Components - SCOPE 7
 export { DynContainer } from './DynContainer';
 export { DynDivider } from './DynDivider';
 export { DynGrid } from './DynGrid';
@@ -50,23 +53,30 @@ export { DynTabs } from './DynTabs';
 export { DynStepper } from './DynStepper';
 export { DynToolbar } from './DynToolbar';
 
-// Utility components
+// Utility Components
 export { ThemeSwitcher } from './ThemeSwitcher';
 
-// Theme system
-export { ThemeProvider, useTheme } from '../theme/ThemeProvider';
-export type { ThemeProviderProps, ThemeContextValue } from '../theme/ThemeProvider';
+// ===== TYPE EXPORTS (Grouped by Category) =====
 
-// Export types
+// Basic Component Types
 export type { DynButtonProps } from './DynButton/DynButton.types';
-export type { DynIconProps as DynIconPropsNew } from '../types/icon.types';
+export type { DynIconProps } from '../types/icon.types';
 
-// Display Components types
-export type { DynBadgeProps, BadgeStatus, BadgeSize } from '../types/badge.types';
-export type { DynAvatarProps, AvatarSize } from '../types/avatar.types';
+// Display Component Types - SCOPE 5
+export type { 
+  DynBadgeProps, 
+  BadgeStatus, 
+  BadgeSize, 
+  BadgeIcon 
+} from '../types/badge.types';
+export type { 
+  DynAvatarProps, 
+  AvatarSize, 
+  AvatarLoading 
+} from '../types/avatar.types';
 export type { DynLabelProps } from '../types/label.types';
 
-// Form Components types
+// Form Component Types - SCOPE 6
 export type {
   DynInputProps,
   DynSelectProps,
@@ -79,7 +89,7 @@ export type {
   SelectOption
 } from '../types/field.types';
 
-// Layout Components types
+// Layout Component Types - SCOPE 7
 export type {
   DynContainerProps,
   DynDividerProps,
@@ -95,17 +105,18 @@ export type {
   LayoutJustify
 } from '../types/layout.types';
 
-// Data Display Components types
+// Data Display Component Types
 export type {
   DynChartProps,
-  DynChartData,
   ChartType,
-  ChartOptions
+  ChartDataPoint,
+  ChartSeries,
+  ChartAxis
 } from './DynChart/DynChart.types';
 export type {
   DynGaugeProps,
-  GaugeType,
-  GaugeSize
+  GaugeSize,
+  GaugeRange
 } from './DynGauge/DynGauge.types';
 export type {
   DynListViewProps,
@@ -114,9 +125,14 @@ export type {
 } from './DynListView/DynListView.types';
 export type {
   DynTableProps,
-  TableColumn,
+  DynTableColumn,
   TableAction,
-  TableData
+  TablePagination,
+  TableSortDirection,
+  TableCellType,
+  TableCellAlign,
+  TableSelectionType,
+  TableSize
 } from './DynTable/DynTable.types';
 export type {
   DynTreeViewProps,
@@ -124,7 +140,7 @@ export type {
   TreeViewActions
 } from './DynTreeView/DynTreeView.types';
 
-// Navigation Components types
+// Navigation Component Types
 export type {
   DynMenuProps,
   MenuItem,
@@ -153,17 +169,28 @@ export type {
   ToolbarItem
 } from './DynToolbar/DynToolbar.types';
 
-// Utility types
+// Utility Component Types
 export type { ThemeSwitcherProps } from './ThemeSwitcher/ThemeSwitcher';
 
-// Constants
+// ===== THEME SYSTEM EXPORTS =====
+export { ThemeProvider, useTheme } from '../theme/ThemeProvider';
+export type { ThemeProviderProps, ThemeContextValue } from '../theme/ThemeProvider';
+
+// ===== PROVIDER EXPORTS =====
+export { IconDictionaryProvider } from '../providers';
+
+// ===== HOOKS EXPORTS =====
+export { useDynFieldValidation, validators } from '../hooks/useDynFieldValidation';
+export { useDynMask, MASK_PATTERNS, getMaskPattern } from '../hooks/useDynMask';
+export { useDynDateParser, DATE_FORMATS, getDateFormat } from '../hooks/useDynDateParser';
+
+// ===== CONSTANTS EXPORTS =====
 export { DYN_COLOR_PALETTE } from '../types/badge.types';
 export { AVATAR_SIZES } from '../types/avatar.types';
 export { DEFAULT_MENU_LITERALS } from './DynMenu/DynMenu.types';
 export { DEFAULT_SEPARATOR, BREADCRUMB_LITERALS } from './DynBreadcrumb/DynBreadcrumb.types';
 export { TOOLBAR_DEFAULTS, TOOLBAR_ITEM_TYPES } from './DynToolbar/DynToolbar.types';
 
-// Form validation utilities
-export { useDynFieldValidation, validators } from '../hooks/useDynFieldValidation';
-export { useDynMask, MASK_PATTERNS, getMaskPattern } from '../hooks/useDynMask';
-export { useDynDateParser, DATE_FORMATS, getDateFormat } from '../hooks/useDynDateParser';
+// ===== UTILITY EXPORTS =====
+export { classNames, createClassNameGenerator, combineClasses } from '../utils/classNames';
+export { generateInitials, formatBadgeValue, isThemeColor, processIconString } from '../utils/dynFormatters';
