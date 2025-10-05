@@ -23,7 +23,9 @@
     "test": "vitest run --config ../../vitest.config.ts",
     "size-check": "npm run build && du -sh dist/* || echo 'Size check complete'"
   },
-  "dependencies": {},
+  "dependencies": {
+    "classnames": "^2.5.1"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
