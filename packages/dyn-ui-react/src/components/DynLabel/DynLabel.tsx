@@ -67,3 +67,6 @@ export const DynLabel: React.FC<DynLabelProps> = ({
 };
 
 DynLabel.displayName = 'DynLabel';
+
+// Add default export
+export default DynLabel;
