@@ -1,21 +1,9 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { BadgeStatus, BadgeSize, DYN_COLOR_PALETTE } from '../../types/badge.types';
+import { DynBadgeProps, BadgeStatus, BadgeSize, DYN_COLOR_PALETTE } from '../../types/badge.types';
 import { formatBadgeValue, isThemeColor } from '../../utils/dynFormatters';
 import { DynIcon } from '../DynIcon/DynIcon';
 import styles from './DynBadge.module.css';
-
-export interface DynBadgeProps {
-  value?: number;
-  color?: string;
-  status?: BadgeStatus;
-  size?: BadgeSize;
-  icon?: string | boolean | React.ReactNode;
-  showBorder?: boolean;
-  ariaLabel?: string;
-  children?: React.ReactNode;
-  className?: string;
-}
 
 export const DynBadge: React.FC<DynBadgeProps> = ({
   value = 0,
@@ -26,7 +14,10 @@ export const DynBadge: React.FC<DynBadgeProps> = ({
   showBorder = false,
   ariaLabel,
   children,
-  className
+  className,
+  'data-testid': testId,
+  id,
+  ...rest
 }: DynBadgeProps) => {
   const displayValue = formatBadgeValue(value);
   const isCustomColor = !isThemeColor(color);
@@ -87,10 +78,13 @@ export const DynBadge: React.FC<DynBadgeProps> = ({
 
   return (
     <span
+      id={id}
       className={badgeClasses}
       style={customStyle}
+      data-testid={testId}
       aria-label={ariaLabel || `Badge with value ${displayValue}`}
       role="status"
+      {...rest}
     >
       {renderContent()}
     </span>
