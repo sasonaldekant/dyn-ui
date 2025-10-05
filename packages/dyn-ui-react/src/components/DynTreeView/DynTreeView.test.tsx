@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import DynTreeView from './DynTreeView';
 import { DynTreeNode } from './DynTreeView.types';
@@ -51,7 +52,7 @@ describe('DynTreeView', () => {
 
     it('renders icons when showIcon is true', () => {
       render(<DynTreeView treeData={sampleTreeData} showIcon />);
-      expect(screen.getByText('📁')).toBeInTheDocument();
+      expect(screen.getAllByText('📁')).toHaveLength(2); // Updated to handle multiple elements
     });
 
     it('does not render icons when showIcon is false', () => {
@@ -97,7 +98,7 @@ describe('DynTreeView', () => {
     });
 
     it('calls onExpand callback', () => {
-      const onExpand = jest.fn();
+      const onExpand = vi.fn(); // Changed from jest.fn()
       render(<DynTreeView treeData={sampleTreeData} onExpand={onExpand} />);
       
       const expandButton = screen.getAllByText('▶')[0];
@@ -109,7 +110,7 @@ describe('DynTreeView', () => {
 
   describe('Selection', () => {
     it('handles single selection', () => {
-      const onSelect = jest.fn();
+      const onSelect = vi.fn(); // Changed from jest.fn()
       render(
         <DynTreeView 
           treeData={sampleTreeData} 
@@ -127,7 +128,7 @@ describe('DynTreeView', () => {
     });
 
     it('handles multiple selection', () => {
-      const onSelect = jest.fn();
+      const onSelect = vi.fn(); // Changed from jest.fn()
       render(
         <DynTreeView 
           treeData={sampleTreeData} 
@@ -145,7 +146,7 @@ describe('DynTreeView', () => {
     });
 
     it('does not select disabled nodes', () => {
-      const onSelect = jest.fn();
+      const onSelect = vi.fn(); // Changed from jest.fn()
       render(
         <DynTreeView 
           treeData={sampleTreeData} 
@@ -169,7 +170,7 @@ describe('DynTreeView', () => {
     });
 
     it('handles checkbox checking', () => {
-      const onCheck = jest.fn();
+      const onCheck = vi.fn(); // Changed from jest.fn()
       render(
         <DynTreeView 
           treeData={sampleTreeData} 
@@ -191,7 +192,7 @@ describe('DynTreeView', () => {
     });
 
     it('checks/unchecks children when parent is checked/unchecked', () => {
-      const onCheck = jest.fn();
+      const onCheck = vi.fn(); // Changed from jest.fn()
       render(
         <DynTreeView 
           treeData={sampleTreeData} 
@@ -228,7 +229,7 @@ describe('DynTreeView', () => {
     });
 
     it('calls onSearch callback', () => {
-      const onSearch = jest.fn();
+      const onSearch = vi.fn(); // Changed from jest.fn()
       render(
         <DynTreeView 
           treeData={sampleTreeData} 
@@ -279,10 +280,10 @@ describe('DynTreeView', () => {
       const { container, rerender } = render(
         <DynTreeView treeData={sampleTreeData} checkable />
       );
-      expect(container.firstChild).toHaveClass('dyn-tree-view--checkable');
+      expect(container.firstChild?.className).toMatch(/checkable/i); // CSS module friendly
       
       rerender(<DynTreeView treeData={sampleTreeData} showLine />);
-      expect(container.firstChild).toHaveClass('dyn-tree-view--show-line');
+      expect(container.firstChild?.className).toMatch(/show-line/i); // CSS module friendly
     });
   });
 });
