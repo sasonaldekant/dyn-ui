@@ -84,3 +84,6 @@ export const DynDivider = React.forwardRef<DynDividerRef, DynDividerProps>(
 );
 
 DynDivider.displayName = 'DynDivider';
+
+// Add default export
+export default DynDivider;
