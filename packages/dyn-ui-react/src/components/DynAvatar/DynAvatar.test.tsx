@@ -16,17 +16,18 @@ describe('DynAvatar', () => {
 
   it('renders image when src is provided', () => {
     render(<DynAvatar src="test-image.jpg" alt="Test Image" />);
-    const image = screen.getByRole('img');
+    const image = screen.getByAltText('Test Image');
     expect(image).toHaveAttribute('src', 'test-image.jpg');
     expect(image).toHaveAttribute('alt', 'Test Image');
   });
 
   it('applies correct size classes', () => {
     const { rerender } = render(<DynAvatar size="sm" alt="Small Avatar" />);
-    expect(screen.getByTestId('dyn-avatar')).toHaveClass('avatar--sm');
+    const avatar = screen.getByTestId('dyn-avatar');
+    expect(avatar.className).toMatch(/_avatar--sm_/);
     
     rerender(<DynAvatar size="lg" alt="Large Avatar" />);
-    expect(screen.getByTestId('dyn-avatar')).toHaveClass('avatar--lg');
+    expect(avatar.className).toMatch(/_avatar--lg_/);
   });
 
   it('handles click events when onClick is provided', () => {
@@ -68,7 +69,7 @@ describe('DynAvatar', () => {
   it('handles image load error', () => {
     render(<DynAvatar src="invalid-image.jpg" alt="Error Avatar" initials="EA" />);
     
-    const image = screen.getByRole('img');
+    const image = screen.getByAltText('Error Avatar');
     fireEvent.error(image);
     
     // Should show initials as fallback
@@ -102,12 +103,14 @@ describe('DynAvatar', () => {
 
   it('applies loading class when image is loading', () => {
     render(<DynAvatar src="loading-image.jpg" alt="Loading Avatar" />);
-    expect(screen.getByTestId('dyn-avatar')).toHaveClass('avatar--loading');
+    const avatar = screen.getByTestId('dyn-avatar');
+    expect(avatar.className).toMatch(/_avatar--loading_/);
   });
 
   it('applies clickable class when onClick is provided', () => {
     render(<DynAvatar alt="Clickable" onClick={() => {}} />);
-    expect(screen.getByTestId('dyn-avatar')).toHaveClass('avatar--clickable');
+    const avatar = screen.getByTestId('dyn-avatar');
+    expect(avatar.className).toMatch(/_avatar--clickable_/);
   });
 
   it('shows placeholder icon when no initials and no meaningful alt', () => {
