@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { DynPage } from './DynPage';
 import type { DynPageBreadcrumb, DynPageAction } from '../../types/layout.types';
 
@@ -17,13 +18,13 @@ const mockActions: DynPageAction[] = [
     key: 'edit',
     title: 'Edit',
     type: 'primary',
-    onClick: jest.fn()
+    onClick: vi.fn()
   },
   {
     key: 'delete',
     title: 'Delete',
     type: 'danger',
-    onClick: jest.fn()
+    onClick: vi.fn()
   }
 ];
 
@@ -66,7 +67,7 @@ describe('DynPage', () => {
   });
 
   it('handles breadcrumb clicks', () => {
-    const onClickMock = jest.fn();
+    const onClickMock = vi.fn();
     const breadcrumbsWithClick: DynPageBreadcrumb[] = [
       { title: 'Home', onClick: onClickMock },
       { title: 'Current' }
