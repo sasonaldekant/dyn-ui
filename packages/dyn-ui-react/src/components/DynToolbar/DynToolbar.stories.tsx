@@ -3,7 +3,7 @@
  * Interactive examples for toolbar component with responsive overflow and variants
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState, useRef } from 'react';
 import { DynToolbar } from './DynToolbar';
 import { ToolbarItem, DynToolbarRef } from './DynToolbar.types';
@@ -314,18 +314,18 @@ export const CustomComponents: Story = {
         id: 'user-avatar',
         type: 'custom',
         component: (
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '8px', 
-            padding: '4px 8px', 
-            borderRadius: '20px', 
-            backgroundColor: '#f0f0f0' 
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '4px 8px',
+            borderRadius: '20px',
+            backgroundColor: '#f0f0f0'
           }}>
-            <div style={{ 
-              width: '24px', 
-              height: '24px', 
-              borderRadius: '50%', 
+            <div style={{
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
               backgroundColor: '#007bff',
               color: 'white',
               display: 'flex',
@@ -351,9 +351,9 @@ export const InteractiveExample: Story = {
       { id: 'decrement', label: 'Subtract', icon: '➖', action: () => {} },
       { id: 'reset', label: 'Reset', icon: '🔄', action: () => {} }
     ]);
-    
+
     const [count, setCount] = useState(0);
-    
+
     // Update items with current count and actions
     const updatedItems = items.map(item => {
       switch (item.id) {
@@ -369,7 +369,7 @@ export const InteractiveExample: Story = {
           return item;
       }
     });
-    
+
     return (
       <div>
         <DynToolbar {...args} items={updatedItems} />
@@ -389,7 +389,7 @@ export const InteractiveExample: Story = {
 export const ImperativeAPI: Story = {
   render: (args) => {
     const toolbarRef = useRef<DynToolbarRef>(null);
-    
+
     return (
       <div>
         <div style={{ marginBottom: '16px', display: 'flex', gap: '8px' }}>
@@ -398,8 +398,8 @@ export const ImperativeAPI: Story = {
           <button onClick={() => toolbarRef.current?.toggleOverflow()}>Toggle Overflow</button>
           <button onClick={() => toolbarRef.current?.refreshLayout()}>Refresh Layout</button>
         </div>
-        <DynToolbar 
-          {...args} 
+        <DynToolbar
+          {...args}
           ref={toolbarRef}
           items={manyItems}
           responsive={true}

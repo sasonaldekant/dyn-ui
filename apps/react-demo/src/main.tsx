@@ -7,7 +7,7 @@ import '../../../packages/dyn-ui-react/src/styles/dyn-ui.css'
 
 const App = () => {
   const [loading, setLoading] = useState(false);
-  
+
   const handleClick = () => {
     setLoading(true);
     setTimeout(() => setLoading(false), 2000);
@@ -19,9 +19,9 @@ const App = () => {
         <h1 style={{ marginBottom: '2rem', color: 'var(--color-text-primary)' }}>
           🎨 Dyn UI Demo - Centralizovani Stilovi ✅
         </h1>
-        
+
         <div style={{ display: 'grid', gap: '2rem' }}>
-          
+
           {/* Button Kinds */}
           <section className="demo-section">
             <h2>Button Kinds</h2>
@@ -31,7 +31,7 @@ const App = () => {
               <DynButton kind="tertiary" label="Tertiary Button" />
             </div>
           </section>
-          
+
           {/* Button Sizes */}
           <section className="demo-section">
             <h2>Button Sizes</h2>
@@ -41,7 +41,7 @@ const App = () => {
               <DynButton kind="primary" label="Large" size="large" />
             </div>
           </section>
-          
+
           {/* Danger States */}
           <section className="demo-section">
             <h2>Danger States</h2>
@@ -51,14 +51,14 @@ const App = () => {
               <DynButton kind="tertiary" label="Cancel" danger />
             </div>
           </section>
-          
+
           {/* Loading States */}
           <section className="demo-section">
             <h2>Loading States</h2>
             <div className="demo-buttons">
-              <DynButton 
-                kind="primary" 
-                label={loading ? "Saving..." : "Click to Test Loading"} 
+              <DynButton
+                kind="primary"
+                label={loading ? "Saving..." : "Click to Test Loading"}
                 loading={loading}
                 onClick={handleClick}
               />
@@ -66,7 +66,7 @@ const App = () => {
               <DynButton kind="tertiary" label="Processing..." loading={true} />
             </div>
           </section>
-          
+
           {/* Disabled States */}
           <section className="demo-section">
             <h2>Disabled States</h2>
@@ -76,7 +76,7 @@ const App = () => {
               <DynButton kind="tertiary" label="Disabled" disabled />
             </div>
           </section>
-          
+
           {/* Icons */}
           <section className="demo-section">
             <h2>With Icons</h2>
@@ -86,25 +86,25 @@ const App = () => {
               <DynButton kind="tertiary" icon="help" ariaLabel="Help Button" />
             </div>
           </section>
-          
+
           {/* Interactive Tests */}
           <section className="demo-section">
             <h2>Interactive Tests</h2>
             <div className="demo-buttons">
-              <DynButton 
-                kind="primary" 
-                label="Click Me!" 
+              <DynButton
+                kind="primary"
+                label="Click Me!"
                 onClick={() => alert('🎉 DynButton clicked successfully!')}
               />
-              <DynButton 
-                kind="secondary" 
-                label="Hover & Focus Test" 
+              <DynButton
+                kind="secondary"
+                label="Hover & Focus Test"
                 onFocus={() => console.log('Button focused')}
                 onBlur={() => console.log('Button blurred')}
               />
             </div>
           </section>
-          
+
           {/* Combined States */}
           <section className="demo-section">
             <h2>Combined States Demo</h2>
@@ -116,7 +116,7 @@ const App = () => {
             </div>
           </section>
         </div>
-        
+
         <div className="demo-info">
           <p>
             ✅ <strong>CENTRALIZOVANI STILOVI:</strong> CSS se učitava iz <code>packages/dyn-ui-react/src/styles/dyn-ui.css</code><br/>

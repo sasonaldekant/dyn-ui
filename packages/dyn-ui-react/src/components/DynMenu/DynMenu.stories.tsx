@@ -3,7 +3,7 @@
  * Interactive examples and documentation for navigation menu component
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynMenu } from './DynMenu';
 import { MenuItem } from './DynMenu.types';
 import React from 'react';

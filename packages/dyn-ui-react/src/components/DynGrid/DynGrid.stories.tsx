@@ -3,7 +3,7 @@
  * Part of DYN UI Layout Components Group - SCOPE 7
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynGrid } from './DynGrid';
 import type { DynGridColumn } from '../../types/layout.types';
 import React from 'react';

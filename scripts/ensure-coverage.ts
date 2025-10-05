@@ -31,7 +31,7 @@ for (const comp of dirs) {
     const extraDecorator = needsIconProvider
       ? `,\n  decorators: [(S) => <IconDictionaryProvider><S/></IconDictionaryProvider>]`
       : '';
-    const story = `import type { Meta, StoryObj } from '@storybook/react';
+    const story = `import type { Meta, StoryObj } from '@storybook/react-vite';
 import React from 'react';
 import ${comp} from '${relImport}';
 import { ThemeProvider } from '../../theme/ThemeProvider';

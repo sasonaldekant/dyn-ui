@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-vite';
 import { ThemeProvider } from '../packages/dyn-ui-react/src/theme/ThemeProvider';
 import '../packages/dyn-ui-react/src/styles/themes.css';
 
@@ -34,7 +34,7 @@ const preview: Preview = {
   decorators: [
     (Story, context) => {
       const theme = context.globals.theme || 'light';
-      
+
       React.useEffect(() => {
         // Apply theme to document
         document.documentElement.setAttribute('data-theme', theme);

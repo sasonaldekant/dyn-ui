@@ -3,7 +3,7 @@
  * Interactive examples and documentation for tab navigation component
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import DynTabs from './DynTabs';
 import { TabItem } from './DynTabs.types';
@@ -333,14 +333,14 @@ export const LazyLoading: Story = {
 export const Controlled: Story = {
   render: (args) => {
     const [activeTab, setActiveTab] = useState('tab1');
-    
+
     return (
       <div>
         <div style={{ marginBottom: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button 
+          <button
             onClick={() => setActiveTab('tab1')}
-            style={{ 
-              padding: '8px 16px', 
+            style={{
+              padding: '8px 16px',
               backgroundColor: activeTab === 'tab1' ? '#2563eb' : '#f8f9fa',
               color: activeTab === 'tab1' ? 'white' : '#333',
               border: '1px solid #dee2e6',
@@ -349,10 +349,10 @@ export const Controlled: Story = {
           >
             Go to Dashboard
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab('tab2')}
-            style={{ 
-              padding: '8px 16px', 
+            style={{
+              padding: '8px 16px',
               backgroundColor: activeTab === 'tab2' ? '#2563eb' : '#f8f9fa',
               color: activeTab === 'tab2' ? 'white' : '#333',
               border: '1px solid #dee2e6',
@@ -361,10 +361,10 @@ export const Controlled: Story = {
           >
             Go to Users
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab('tab3')}
-            style={{ 
-              padding: '8px 16px', 
+            style={{
+              padding: '8px 16px',
               backgroundColor: activeTab === 'tab3' ? '#2563eb' : '#f8f9fa',
               color: activeTab === 'tab3' ? 'white' : '#333',
               border: '1px solid #dee2e6',
@@ -388,20 +388,20 @@ export const Controlled: Story = {
 export const CustomContent: Story = {
   args: {
     tabs: [
-      { 
-        id: 'form', 
-        label: 'Form', 
-        icon: '📝' 
+      {
+        id: 'form',
+        label: 'Form',
+        icon: '📝'
       },
-      { 
-        id: 'table', 
-        label: 'Table', 
-        icon: '📋' 
+      {
+        id: 'table',
+        label: 'Table',
+        icon: '📋'
       },
-      { 
-        id: 'chart', 
-        label: 'Chart', 
-        icon: '📊' 
+      {
+        id: 'chart',
+        label: 'Chart',
+        icon: '📊'
       }
     ],
     defaultActiveTab: 'form',
@@ -470,12 +470,12 @@ export const CustomContent: Story = {
           return (
             <div style={{ padding: '24px' }}>
               <h3>📊 Custom Chart Visualization</h3>
-              <div style={{ 
-                width: '100%', 
-                height: '300px', 
-                background: 'linear-gradient(45deg, #e3f2fd, #bbdefb)', 
-                display: 'flex', 
-                alignItems: 'center', 
+              <div style={{
+                width: '100%',
+                height: '300px',
+                background: 'linear-gradient(45deg, #e3f2fd, #bbdefb)',
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: '8px',
                 marginTop: '16px',
@@ -540,7 +540,7 @@ export const AccessibilityDemo: Story = {
                 <li><kbd>End</kbd> - Go to last tab</li>
                 <li><kbd>Enter/Space</kbd> - Activate focused tab</li>
               </ul>
-              
+
               <h4 style={{ marginTop: '16px' }}>ARIA Support:</h4>
               <ul>
                 <li>Proper ARIA roles (tablist, tab, tabpanel)</li>

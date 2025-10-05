@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynLabel } from './DynLabel';
 import type { DynLabelProps } from '../../types/label.types';
 
@@ -53,9 +53,9 @@ export const WithHtmlFor: Story = {
       <DynLabel htmlFor="example-input" required>
         Email Address
       </DynLabel>
-      <input 
-        id="example-input" 
-        type="email" 
+      <input
+        id="example-input"
+        type="email"
         placeholder="Enter your email"
         style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
       />

@@ -163,7 +163,7 @@ const DynMenu = forwardRef<DynMenuRef, DynMenuProps>(({
           return acc;
         }
 
-        const matchesFilter = 
+        const matchesFilter =
           item.label.toLowerCase().includes(filterText.toLowerCase()) ||
           item.shortLabel?.toLowerCase().includes(filterText.toLowerCase());
 
@@ -260,17 +260,17 @@ const DynMenu = forwardRef<DynMenuRef, DynMenuProps>(({
             </span>
             {item.badge && (
               <div className={styles['dyn-menu-item-badge']}>
-                <DynBadge 
-                  value={item.badge.value} 
-                  color={item.badge.color} 
-                  size="small" 
+                <DynBadge
+                  value={item.badge.value}
+                  color={item.badge.color}
+                  size="small"
                 />
               </div>
             )}
             {hasSubItems && (
               <div className={styles['dyn-menu-item-arrow']}>
-                <DynIcon 
-                  icon="dyn-icon-arrow-down" 
+                <DynIcon
+                  icon="dyn-icon-arrow-down"
                   className={classNames({
                     [styles['dyn-menu-arrow-expanded']]: isExpanded
                   })}
@@ -281,7 +281,7 @@ const DynMenu = forwardRef<DynMenuRef, DynMenuProps>(({
         </div>
         {hasSubItems && isExpanded && (
           <div className={styles['dyn-menu-subitems']}>
-            {item.subItems!.map(subItem => 
+            {item.subItems!.map(subItem =>
               renderMenuItem(subItem, level + 1, path)
             )}
           </div>
@@ -308,8 +308,8 @@ const DynMenu = forwardRef<DynMenuRef, DynMenuProps>(({
             <img src={logo} alt="Logo" className={styles['dyn-menu-logo-image']} />
           ) : null}
         </div>
-        <button 
-          className={styles['dyn-menu-toggle']} 
+        <button
+          className={styles['dyn-menu-toggle']}
           onClick={handleToggleCollapse}
           aria-label={collapsed ? literals.expand : literals.collapse}
         >
@@ -365,7 +365,7 @@ $DynMenuCss = @"
   --menu-item-color: var(--color-action-default, #0066cc);
   --menu-item-bg-hover: var(--color-brand-01-lighter, #e6f3ff);
   --menu-item-bg-active: var(--color-brand-01-light, #cce7ff);
-  
+
   width: var(--menu-width);
   height: 100vh;
   background: var(--menu-bg);
@@ -540,7 +540,7 @@ $DynMenuCss = @"
     transform: translateX(-100%);
     transition: transform 0.3s ease;
   }
-  
+
   .dyn-menu-open {
     transform: translateX(0);
   }
@@ -594,7 +594,7 @@ $DynMenuStories = @"
  * Interactive examples and documentation for navigation menu component
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynMenu } from './DynMenu';
 import { MenuItem } from './DynMenu.types';
 import React from 'react';
@@ -724,7 +724,7 @@ const sampleMenus: MenuItem[] = [
 describe('DynMenu', () => {
   it('renders menu with items', () => {
     render(<DynMenu menus={sampleMenus} />);
-    
+
     expect(screen.getByRole('navigation')).toBeInTheDocument();
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Products')).toBeInTheDocument();
@@ -732,20 +732,20 @@ describe('DynMenu', () => {
 
   it('handles menu item clicks', () => {
     render(<DynMenu menus={sampleMenus} />);
-    
+
     const dashboardItem = screen.getByText('Dashboard');
     fireEvent.click(dashboardItem);
-    
+
     expect(sampleMenus[0].action).toHaveBeenCalled();
   });
 
   it('toggles collapsed state', () => {
     const onCollapse = jest.fn();
     render(<DynMenu menus={sampleMenus} onCollapse={onCollapse} />);
-    
+
     const toggleButton = screen.getByLabelText('Retrair menu');
     fireEvent.click(toggleButton);
-    
+
     expect(onCollapse).toHaveBeenCalledWith(true);
   });
 });
@@ -761,12 +761,12 @@ $DynMenuIndex = @"
  */
 
 export { default as DynMenu, DynMenu } from './DynMenu';
-export type { 
-  DynMenuProps, 
-  DynMenuRef, 
-  MenuItem, 
-  MenuBadge, 
-  MenuLiterals 
+export type {
+  DynMenuProps,
+  DynMenuRef,
+  MenuItem,
+  MenuBadge,
+  MenuLiterals
 } from './DynMenu.types';
 export { DEFAULT_MENU_LITERALS } from './DynMenu.types';
 "@
@@ -868,14 +868,14 @@ const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>(({
 
   const displayItems = useMemo(() => {
     const currentItems = internalItems.length > 0 ? internalItems : items;
-    
+
     if (showAllItems || currentItems.length <= maxItems) {
       return currentItems;
     }
 
     const firstItem = currentItems[0];
     const lastItems = currentItems.slice(-(maxItems - 2));
-    
+
     return [
       firstItem,
       { label: '...', action: () => setShowAllItems(true) },
@@ -893,7 +893,7 @@ const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>(({
 
   const handleFavoriteToggle = useCallback(async () => {
     const newFavorited = !isFavorited;
-    
+
     if (favoriteService) {
       try {
         const response = await fetch(favoriteService, {
@@ -903,7 +903,7 @@ const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>(({
           },
           body: JSON.stringify({ favorited: newFavorited })
         });
-        
+
         if (response.ok) {
           setIsFavorited(newFavorited);
           onFavorite?.(newFavorited);
@@ -939,19 +939,19 @@ const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>(({
         {displayItems.map((item, index) => {
           const isLast = index === displayItems.length - 1;
           const isEllipsis = item.label === '...';
-          
+
           return (
             <li key={`{item.label}-{index}`} className={styles['dyn-breadcrumb-item']}>
               {item.link && !isLast && !isEllipsis ? (
-                <a 
-                  href={item.link} 
+                <a
+                  href={item.link}
                   className={styles['dyn-breadcrumb-link']}
                   onClick={(e) => handleItemClick(item, index, e)}
                 >
                   {item.label}
                 </a>
               ) : (
-                <span 
+                <span
                   className={classNames(
                     styles['dyn-breadcrumb-text'],
                     {
@@ -972,10 +972,10 @@ const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>(({
           );
         })}
       </ol>
-      
+
       {(favorite !== undefined || favoriteService) && (
         <div className={styles['dyn-breadcrumb-favorite']}>
-          <button 
+          <button
             className={classNames(
               styles['dyn-breadcrumb-favorite-button'],
               {
@@ -1016,7 +1016,7 @@ $DynBreadcrumbCss = @"
   --breadcrumb-current-color: var(--color-neutral-dark-70, #666);
   --breadcrumb-hover-color: var(--color-action-hover, #0052a3);
   --breadcrumb-favorite-color: var(--color-warning-default, #ff9800);
-  
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1111,7 +1111,7 @@ $DynBreadcrumbStories = @"
  * DynBreadcrumb Storybook Stories
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynBreadcrumb } from './DynBreadcrumb';
 import { BreadcrumbItem } from './DynBreadcrumb.types';
 
@@ -1172,7 +1172,7 @@ const basicItems: BreadcrumbItem[] = [
 describe('DynBreadcrumb', () => {
   it('renders breadcrumb with items', () => {
     render(<DynBreadcrumb items={basicItems} />);
-    
+
     expect(screen.getByRole('navigation')).toBeInTheDocument();
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Products')).toBeInTheDocument();
@@ -1181,14 +1181,14 @@ describe('DynBreadcrumb', () => {
 
   it('renders separators between items', () => {
     render(<DynBreadcrumb items={basicItems} />);
-    
+
     const separators = screen.getAllByTestId('icon-dyn-icon-arrow-right');
     expect(separators).toHaveLength(2);
   });
 
   it('shows favorite button when favorite prop is provided', () => {
     render(<DynBreadcrumb items={basicItems} favorite={false} />);
-    
+
     const favoriteButton = screen.getByLabelText('Adicionar aos favoritos');
     expect(favoriteButton).toBeInTheDocument();
   });
@@ -1205,10 +1205,10 @@ $DynBreadcrumbIndex = @"
  */
 
 export { default as DynBreadcrumb, DynBreadcrumb } from './DynBreadcrumb';
-export type { 
-  DynBreadcrumbProps, 
-  DynBreadcrumbRef, 
-  BreadcrumbItem 
+export type {
+  DynBreadcrumbProps,
+  DynBreadcrumbRef,
+  BreadcrumbItem
 } from './DynBreadcrumb.types';
 export { DEFAULT_SEPARATOR, BREADCRUMB_LITERALS } from './DynBreadcrumb.types';
 "@
@@ -1227,7 +1227,7 @@ $MainIndexUpdate = @"
 export { DynMenu } from './DynMenu';
 export type { DynMenuProps, MenuItem, DynMenuRef } from './DynMenu';
 
-export { DynBreadcrumb } from './DynBreadcrumb';  
+export { DynBreadcrumb } from './DynBreadcrumb';
 export type { DynBreadcrumbProps, BreadcrumbItem, DynBreadcrumbRef } from './DynBreadcrumb';
 
 // Add more navigation components here as they are created...

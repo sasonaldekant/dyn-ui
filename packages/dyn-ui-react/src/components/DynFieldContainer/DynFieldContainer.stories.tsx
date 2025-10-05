@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynFieldContainer } from './DynFieldContainer';
 import type { DynFieldContainerProps } from '../../types/field.types';
 import { DynInput } from '../DynInput';
@@ -76,7 +76,7 @@ export const WithDynInput: Story = {
         helpText="Enter your name"
         required
       >
-        <DynInput 
+        <DynInput
           name="example-input"
           placeholder="Your name"
         />
@@ -92,7 +92,7 @@ export const WithDynCheckbox: Story = {
         helpText="Check this to agree to terms"
         required
       >
-        <DynCheckbox 
+        <DynCheckbox
           name="terms"
           label="I agree to the terms and conditions"
         />
@@ -107,19 +107,19 @@ export const AllVariants: Story = {
       <DynFieldContainer label="Basic Field">
         <input type="text" placeholder="Basic input" style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }} />
       </DynFieldContainer>
-      
+
       <DynFieldContainer label="Required Field" required>
         <input type="text" placeholder="Required input" style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }} />
       </DynFieldContainer>
-      
+
       <DynFieldContainer label="Optional Field" optional>
         <input type="text" placeholder="Optional input" style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }} />
       </DynFieldContainer>
-      
+
       <DynFieldContainer label="Field with Help" helpText="This field needs some explanation">
         <input type="text" placeholder="Input with help" style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }} />
       </DynFieldContainer>
-      
+
       <DynFieldContainer label="Field with Error" errorText="This field has an error">
         <input type="text" placeholder="Input with error" style={{ padding: '8px', border: '1px solid #e53e3e', borderRadius: '4px' }} />
       </DynFieldContainer>

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynAvatar } from './DynAvatar';
 import { DynAvatarProps } from '../../types/avatar.types';
 
@@ -75,20 +75,20 @@ export const Sizes: Story = {
 export const WithImages: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-      <DynAvatar 
-        size="md" 
+      <DynAvatar
+        size="md"
         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-        alt="John Doe" 
+        alt="John Doe"
       />
-      <DynAvatar 
-        size="md" 
+      <DynAvatar
+        size="md"
         src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
-        alt="Jane Smith" 
+        alt="Jane Smith"
       />
-      <DynAvatar 
-        size="md" 
+      <DynAvatar
+        size="md"
         src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
-        alt="Bob Johnson" 
+        alt="Bob Johnson"
       />
     </div>
   ),
@@ -108,13 +108,13 @@ export const AllVariants: Story = {
       <div>
         <h3>Images</h3>
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <DynAvatar 
+          <DynAvatar
             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-            alt="John Doe" 
+            alt="John Doe"
           />
-          <DynAvatar 
+          <DynAvatar
             src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
-            alt="Jane Smith" 
+            alt="Jane Smith"
           />
         </div>
       </div>
@@ -129,10 +129,10 @@ export const AllVariants: Story = {
       <div>
         <h3>Clickable</h3>
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <DynAvatar 
-            initials="CL" 
-            alt="Clickable Avatar" 
-            onClick={() => alert('Avatar clicked!')} 
+          <DynAvatar
+            initials="CL"
+            alt="Clickable Avatar"
+            onClick={() => alert('Avatar clicked!')}
           />
         </div>
       </div>

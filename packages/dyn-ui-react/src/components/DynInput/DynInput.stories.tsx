@@ -3,7 +3,7 @@
  * Part of DYN UI Form Components Group - SCOPE 6
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynInput } from './DynInput';
 import { MASK_PATTERNS } from '../../hooks/useDynMask';
 import type { ValidationRule } from '../../types/field.types';

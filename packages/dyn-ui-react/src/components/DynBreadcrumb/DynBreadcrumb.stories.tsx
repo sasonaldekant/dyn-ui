@@ -3,7 +3,7 @@
  * Interactive examples for breadcrumb navigation component
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynBreadcrumb } from './DynBreadcrumb';
 import { BreadcrumbItem } from './DynBreadcrumb.types';
 import React from 'react';
@@ -198,22 +198,22 @@ export const EmptyBreadcrumb: Story = {
 export const InteractiveExample: Story = {
   args: {
     items: [
-      { 
-        label: 'Home', 
+      {
+        label: 'Home',
         action: () => {
           console.log('Navigating to Home');
           alert('Would navigate to Home page');
         }
       },
-      { 
-        label: 'Products', 
+      {
+        label: 'Products',
         action: () => {
           console.log('Navigating to Products');
           alert('Would navigate to Products page');
         }
       },
-      { 
-        label: 'Electronics', 
+      {
+        label: 'Electronics',
         action: () => {
           console.log('Navigating to Electronics');
           alert('Would navigate to Electronics page');

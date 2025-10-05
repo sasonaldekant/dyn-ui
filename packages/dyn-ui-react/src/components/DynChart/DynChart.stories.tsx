@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import DynChart from './DynChart';
 import { DynChartProps, ChartDataPoint, ChartSeries } from './DynChart.types';
 

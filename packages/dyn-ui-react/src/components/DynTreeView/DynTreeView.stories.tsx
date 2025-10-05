@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import DynTreeView from './DynTreeView';
 import { DynTreeViewProps, DynTreeNode } from './DynTreeView.types';
 

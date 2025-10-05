@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import DynTable from './DynTable';
 import { DynTableProps, DynTableColumn, TableAction } from './DynTable.types';
 
@@ -79,12 +79,12 @@ const advancedColumns: DynTableColumn[] = [
 ];
 
 const customRenderColumns: DynTableColumn[] = [
-  { 
-    key: 'name', 
-    title: 'Employee', 
+  {
+    key: 'name',
+    title: 'Employee',
     render: (value, record) => (
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <div 
+        <div
           style={{
             width: '32px',
             height: '32px',
@@ -110,12 +110,12 @@ const customRenderColumns: DynTableColumn[] = [
   { key: 'age', title: 'Age', type: 'number', align: 'center' },
   { key: 'email', title: 'Email', type: 'link' },
   { key: 'salary', title: 'Salary', type: 'currency', align: 'right' },
-  { 
-    key: 'active', 
-    title: 'Status', 
+  {
+    key: 'active',
+    title: 'Status',
     align: 'center',
     render: (value) => (
-      <span 
+      <span
         style={{
           padding: '4px 8px',
           borderRadius: '12px',

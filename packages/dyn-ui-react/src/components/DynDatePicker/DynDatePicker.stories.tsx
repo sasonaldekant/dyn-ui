@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynDatePicker } from './DynDatePicker';
 import type { DynDatePickerProps } from '../../types/field.types';
 
@@ -147,7 +147,7 @@ export const Sizes: Story = {
 export const InteractiveExample: Story = {
   render: () => {
     const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
-    
+
     return (
       <div style={{ width: '300px' }}>
         <DynDatePicker
@@ -157,16 +157,16 @@ export const InteractiveExample: Story = {
           value={selectedDate}
           onChange={setSelectedDate}
         />
-        
+
         {selectedDate && (
           <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
             <strong>Selected Date:</strong><br />
             <code>{selectedDate.toISOString().split('T')[0]}</code><br />
-            <small>{selectedDate.toLocaleDateString('pt-BR', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
+            <small>{selectedDate.toLocaleDateString('pt-BR', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
             })}</small>
           </div>
         )}

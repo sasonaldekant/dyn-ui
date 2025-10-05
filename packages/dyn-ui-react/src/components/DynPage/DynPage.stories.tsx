@@ -3,7 +3,7 @@
  * Part of DYN UI Layout Components Group - SCOPE 7
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynPage } from './DynPage';
 import type { DynPageBreadcrumb, DynPageAction } from '../../types/layout.types';
 import React from 'react';
@@ -80,16 +80,16 @@ const SampleContent = () => (
       <h3>User Profile</h3>
       <p>This is sample page content that would typically contain forms, tables, or other UI elements.</p>
     </div>
-    
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
       gap: '1rem',
       marginBottom: '2rem'
     }}>
-      <div style={{ 
-        background: '#f8fafc', 
-        padding: '1.5rem', 
+      <div style={{
+        background: '#f8fafc',
+        padding: '1.5rem',
         borderRadius: '8px',
         border: '1px solid #e2e8f0'
       }}>
@@ -98,10 +98,10 @@ const SampleContent = () => (
         <p>Email: john.doe@example.com</p>
         <p>Role: Administrator</p>
       </div>
-      
-      <div style={{ 
-        background: '#f8fafc', 
-        padding: '1.5rem', 
+
+      <div style={{
+        background: '#f8fafc',
+        padding: '1.5rem',
         borderRadius: '8px',
         border: '1px solid #e2e8f0'
       }}>
@@ -111,10 +111,10 @@ const SampleContent = () => (
         <p>Two-Factor: Enabled</p>
       </div>
     </div>
-    
-    <div style={{ 
-      background: '#ffffff', 
-      padding: '1.5rem', 
+
+    <div style={{
+      background: '#ffffff',
+      padding: '1.5rem',
       borderRadius: '8px',
       border: '1px solid #e2e8f0'
     }}>
@@ -238,7 +238,7 @@ export const CustomPadding: Story = {
     actions,
     padding: 'none',
     children: (
-      <div style={{ 
+      <div style={{
         background: 'linear-gradient(45deg, #f0f9ff, #e0f2fe)',
         minHeight: '400px',
         display: 'flex',

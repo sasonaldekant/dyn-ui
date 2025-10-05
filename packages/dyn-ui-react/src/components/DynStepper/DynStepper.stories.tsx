@@ -3,7 +3,7 @@
  * Interactive examples and documentation for step navigation component
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState, useRef } from 'react';
 import DynStepper from './DynStepper';
 import { DynStepperHandle, StepItem } from './DynStepper.types';
@@ -314,27 +314,27 @@ export const Controlled: Story = {
   render: (args) => {
     const [activeStep, setActiveStep] = useState(0);
     const stepperRef = useRef<DynStepperHandle>(null);
-    
+
     const handleNext = () => {
       stepperRef.current?.nextStep();
     };
-    
+
     const handlePrev = () => {
       stepperRef.current?.prevStep();
     };
-    
+
     const handleReset = () => {
       setActiveStep(0);
     };
-    
+
     return (
       <div>
         <div style={{ marginBottom: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button 
+          <button
             onClick={handlePrev}
             disabled={activeStep === 0}
-            style={{ 
-              padding: '8px 16px', 
+            style={{
+              padding: '8px 16px',
               backgroundColor: activeStep === 0 ? '#f3f4f6' : '#2563eb',
               color: activeStep === 0 ? '#9ca3af' : 'white',
               border: 'none',
@@ -344,11 +344,11 @@ export const Controlled: Story = {
           >
             ← Previous
           </button>
-          <button 
+          <button
             onClick={handleNext}
             disabled={activeStep === sampleSteps.length - 1}
-            style={{ 
-              padding: '8px 16px', 
+            style={{
+              padding: '8px 16px',
               backgroundColor: activeStep === sampleSteps.length - 1 ? '#f3f4f6' : '#2563eb',
               color: activeStep === sampleSteps.length - 1 ? '#9ca3af' : 'white',
               border: 'none',
@@ -358,10 +358,10 @@ export const Controlled: Story = {
           >
             Next →
           </button>
-          <button 
+          <button
             onClick={handleReset}
-            style={{ 
-              padding: '8px 16px', 
+            style={{
+              padding: '8px 16px',
               backgroundColor: '#f3f4f6',
               color: '#333',
               border: '1px solid #d1d5db',
@@ -462,7 +462,7 @@ export const AccessibilityDemo: Story = {
                 <li>Screen reader announcements</li>
                 <li>Progress indication</li>
               </ul>
-              
+
               <h4 style={{ marginTop: '16px' }}>Keyboard Navigation:</h4>
               <ul>
                 <li><kbd>Tab</kbd> - Focus step indicators</li>

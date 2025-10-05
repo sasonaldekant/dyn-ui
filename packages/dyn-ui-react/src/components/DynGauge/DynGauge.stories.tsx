@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynGauge } from './DynGauge';
 import type { DynGaugeProps } from './DynGauge.types';
 
@@ -85,7 +85,7 @@ export const BothTypes: Story = {
           <DynGauge type="circular" value={90} label="High" />
         </div>
       </div>
-      
+
       <div style={{ textAlign: 'center', width: '100%' }}>
         <h3>Linear Gauges</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '300px' }}>

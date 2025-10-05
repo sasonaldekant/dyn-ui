@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynSelect } from './DynSelect';
 import type { DynSelectProps } from '../../types/field.types';
 
@@ -179,17 +179,17 @@ export const AllVariants: Story = {
         <h3>Basic Select</h3>
         <DynSelect name="basic" label="Basic Select" options={sampleOptions} />
       </div>
-      
+
       <div>
         <h3>Multiple Select</h3>
         <DynSelect name="multiple" label="Multiple Select" options={sampleOptions} multiple />
       </div>
-      
+
       <div>
         <h3>Searchable Select</h3>
         <DynSelect name="searchable" label="Searchable Select" options={largeOptionSet.slice(0, 20)} searchable />
       </div>
-      
+
       <div>
         <h3>With States</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

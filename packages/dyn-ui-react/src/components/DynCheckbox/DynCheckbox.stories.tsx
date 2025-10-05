@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DynCheckbox } from './DynCheckbox';
 import type { DynCheckboxProps } from '../../types/field.types';
 
@@ -138,7 +138,7 @@ export const AllStates: Story = {
           <DynCheckbox name="indeterminate" label="Indeterminate" indeterminate />
         </div>
       </div>
-      
+
       <div>
         <h3>Disabled States</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -147,7 +147,7 @@ export const AllStates: Story = {
           <DynCheckbox name="disabled-indeterminate" label="Disabled indeterminate" disabled indeterminate />
         </div>
       </div>
-      
+
       <div>
         <h3>With Validation</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
