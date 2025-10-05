@@ -1,2 +1,3 @@
-export { DynFieldContainer, type DynFieldContainerProps } from './DynFieldContainer';
+// Standardized exports for DynFieldContainer component
+export { DynFieldContainer } from './DynFieldContainer';
 export { default } from './DynFieldContainer';

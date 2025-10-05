@@ -1,2 +1,3 @@
-export * from './DynLabel';
-export type { DynLabelProps } from '../../types/label.types';
+// Standardized exports for DynLabel component
+export { DynLabel } from './DynLabel';
+export { default } from './DynLabel';
