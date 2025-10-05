@@ -1,18 +1,4 @@
-/**
- * DynStepper - Step Navigation Component
- * Barrel export for clean API surface
- */
-
+// Standardized exports for DynStepper component
+export { DynStepper } from './DynStepper';
 export { default } from './DynStepper';
-export type { 
-  DynStepperProps, 
-  DynStepperHandle, 
-  StepItem,
-  StepState 
-} from './DynStepper.types';
-export { 
-  STEPPER_DEFAULTS, 
-  STEPPER_VARIANTS, 
-  STEPPER_ORIENTATIONS,
-  STEP_STATES 
-} from './DynStepper.types';
+export type { DynStepperProps, DynStepperHandle, StepItem } from './DynStepper.types';

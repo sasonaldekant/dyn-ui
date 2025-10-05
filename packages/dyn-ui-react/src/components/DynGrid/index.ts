@@ -1,7 +1,3 @@
-/**
- * DynGrid exports
- * Part of DYN UI Layout Components Group - SCOPE 7
- */
-
+// Standardized exports for DynGrid component
 export { DynGrid } from './DynGrid';
-export type { DynGridProps, DynGridColumn } from '../../types/layout.types';
+export { default } from './DynGrid';

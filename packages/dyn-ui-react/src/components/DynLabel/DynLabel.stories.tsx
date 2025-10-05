@@ -1,36 +1,31 @@
-// packages/dyn-ui-react/src/components/DynLabel/DynLabel.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
 import { DynLabel } from './DynLabel';
-import { IconDictionaryProvider } from '../../providers/IconDictionaryProvider';
+import type { DynLabelProps } from '../../types/label.types';
 
 const meta: Meta<typeof DynLabel> = {
-  title: 'Display Components/DynLabel',
+  title: 'Components/Display/DynLabel',
   component: DynLabel,
-  decorators: [
-    (Story) => (
-      <IconDictionaryProvider>
-        <div style={{ padding: '1rem' }}>
-          <Story />
-        </div>
-      </IconDictionaryProvider>
-    ),
-  ],
   parameters: {
     layout: 'centered',
+    docs: {
+      description: {
+        component: 'Label component for form fields and general text display with semantic styling.',
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {
-    children: { control: 'text' },
-    required: { control: 'boolean' },
-    optional: { control: 'boolean' },
-    helpText: { control: 'text' },
-    disabled: { control: 'boolean' },
-    htmlFor: { control: 'text' },
+    required: {
+      control: 'boolean',
+    },
+    optional: {
+      control: 'boolean',
+    },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<DynLabelProps>;
 
 export const Default: Story = {
   args: {
@@ -40,42 +35,41 @@ export const Default: Story = {
 
 export const Required: Story = {
   args: {
-    children: 'Required Field',
+    children: 'Required Label',
     required: true,
   },
 };
 
 export const Optional: Story = {
   args: {
-    children: 'Optional Field',
+    children: 'Optional Label',
     optional: true,
   },
 };
 
-export const WithHelpText: Story = {
-  args: {
-    children: 'Username',
-    helpText: 'Must be between 3-20 characters',
-    required: true,
-  },
+export const WithHtmlFor: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+      <DynLabel htmlFor="example-input" required>
+        Email Address
+      </DynLabel>
+      <input 
+        id="example-input" 
+        type="email" 
+        placeholder="Enter your email"
+        style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+      />
+    </div>
+  ),
 };
 
-export const Disabled: Story = {
-  args: {
-    children: 'Disabled Label',
-    disabled: true,
-    helpText: 'This field is disabled',
-  },
-};
-
-export const AllStates: Story = {
+export const AllVariants: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <DynLabel>Default Label</DynLabel>
-      <DynLabel required>Required Field</DynLabel>
-      <DynLabel optional>Optional Field</DynLabel>
-      <DynLabel disabled>Disabled Label</DynLabel>
-      <DynLabel required helpText="This field is required">With Help Text</DynLabel>
+      <DynLabel>Basic Label</DynLabel>
+      <DynLabel required>Required Label</DynLabel>
+      <DynLabel optional>Optional Label</DynLabel>
+      <DynLabel className="custom-style" style={{ color: '#007acc' }}>Styled Label</DynLabel>
     </div>
   ),
 };
