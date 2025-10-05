@@ -1,27 +1,34 @@
-import { BaseComponentProps } from '../types';
+import { BaseComponentProps } from '../../types';
 
-export interface DynTreeNode {
+export interface TreeNode {
   key: string;
   title: string;
   icon?: string;
   disabled?: boolean;
-  children?: DynTreeNode[];
+  children?: TreeNode[];
   [key: string]: any; // Allow additional properties
+}
+
+export interface TreeViewActions {
+  expand: (keys: string[]) => void;
+  collapse: (keys: string[]) => void;
+  select: (keys: string[]) => void;
+  check: (keys: string[]) => void;
 }
 
 export interface TreeSelectInfo {
   selected: boolean;
-  node: DynTreeNode;
+  node: TreeNode;
 }
 
 export interface TreeCheckInfo {
   checked: boolean;
-  node: DynTreeNode;
+  node: TreeNode;
 }
 
 export interface DynTreeViewProps extends BaseComponentProps {
   /** Tree data */
-  treeData: DynTreeNode[];
+  treeData: TreeNode[];
   
   /** Show checkboxes for selection */
   checkable?: boolean;
@@ -67,9 +74,7 @@ export interface DynTreeViewProps extends BaseComponentProps {
   
   /** Fixed height for scrollable tree */
   height?: number | string;
-  
-  /** Additional CSS class name */
-  className?: string;
 }
 
-export type DynTreeViewType = DynTreeViewProps;
+// Legacy alias
+export type DynTreeNode = TreeNode;
