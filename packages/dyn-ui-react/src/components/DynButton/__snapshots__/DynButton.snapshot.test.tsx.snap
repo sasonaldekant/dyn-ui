@@ -1,0 +1,10 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DynButton > matches snapshot 1`] = `
+<div>
+  <button
+    class="_dyn-button_c4f507 _dyn-button--primary_c4f507 _dyn-button--medium_c4f507"
+    type="button"
+  />
+</div>
+`;

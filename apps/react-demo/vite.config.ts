@@ -11,10 +11,5 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['dyn-ui-react']
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './test-setup.ts',
   }
 })

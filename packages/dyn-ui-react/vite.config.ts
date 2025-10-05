@@ -73,11 +73,5 @@ export default defineConfig({
       '@utils': resolve(__dirname, 'src/utils'),
       '@types': resolve(__dirname, 'src/types')
     }
-  },
-
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: '../../test-setup.ts',
   }
 });

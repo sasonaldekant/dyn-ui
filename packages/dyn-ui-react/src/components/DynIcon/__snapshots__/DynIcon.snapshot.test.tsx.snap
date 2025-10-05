@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DynIcon > matches snapshot 1`] = `
+<div>
+  <span
+    class="_dyn-icon_760c34 _dyn-icon--empty_760c34"
+  />
+</div>
+`;

@@ -51,7 +51,7 @@ export const isThemeColor = (color: string): boolean => {
  * @returns Processed icon classes
  */
 export const processIconString = (iconStr: string, dictionary: Record<string, string>) => {
-  const iconTokens = iconStr.trim().split(/\s+/).filter(token => token.length > 0);
+  const iconTokens = iconStr.includes(' ') ? iconStr.split(' ') : [iconStr];
   let processedClass = '';
   let baseClass = 'dyn-icon';
   
