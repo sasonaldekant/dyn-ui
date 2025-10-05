@@ -116,12 +116,15 @@ export type {
 export type {
   DynGaugeProps,
   GaugeSize,
-  GaugeRange
+  GaugeRange,
+  GaugeType
 } from './DynGauge/DynGauge.types';
 export type {
   DynListViewProps,
   ListViewItem,
-  ListViewTemplate
+  ListViewTemplate,
+  ListAction,
+  ListViewSize
 } from './DynListView/DynListView.types';
 export type {
   DynTableProps,
@@ -137,7 +140,9 @@ export type {
 export type {
   DynTreeViewProps,
   TreeNode,
-  TreeViewActions
+  TreeViewActions,
+  TreeSelectInfo,
+  TreeCheckInfo
 } from './DynTreeView/DynTreeView.types';
 
 // Navigation Component Types
