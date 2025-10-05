@@ -1,4 +1,4 @@
-import { BaseComponentProps } from '../types';
+import { BaseComponentProps } from '../../types';
 import { ReactNode } from 'react';
 
 export type TableSortDirection = 'asc' | 'desc';
@@ -89,9 +89,6 @@ export interface DynTableProps extends BaseComponentProps {
   
   /** Fixed height for scrollable table */
   height?: number | string;
-  
-  /** Additional CSS class name */
-  className?: string;
 }
 
 export type DynTableType = DynTableProps;
