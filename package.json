@@ -11,6 +11,8 @@
     "build-storybook": "storybook build",
     "check": "node check-implementation.js",
     "check:implementation": "node check-implementation.js",
+    "validate:types": "tsx scripts/validate-component-types.ts",
+    "validate:components": "tsx scripts/validate-component-types.ts",
     "tokens:build": "cd packages/design-tokens && npm run build"
   },
   "devDependencies": {
