@@ -1,9 +1,12 @@
 /**
  * TypeScript interfaces for DynButton component
  * Follows the exact specification from DYN UI documentation
+ * Extends BaseComponentProps for consistency
  */
 
-export interface DynButtonProps {
+import { BaseComponentProps } from '../../types';
+
+export interface DynButtonProps extends BaseComponentProps {
   /** Button text label */
   label?: string;
   
@@ -33,9 +36,6 @@ export interface DynButtonProps {
   
   /** Button size */
   size?: 'small' | 'medium' | 'large';
-  
-  /** Additional CSS classes */
-  className?: string;
   
   /** Blur event handler */
   onBlur?: () => void;
