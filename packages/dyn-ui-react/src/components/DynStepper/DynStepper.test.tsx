@@ -3,19 +3,19 @@
  * Comprehensive test coverage for step navigation component functionality
  */
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynStepper from './DynStepper';
 import { StepItem, DynStepperHandle } from './DynStepper.types';
 
-// Mock child components with proper jest imports
-const mockDynIcon = jest.fn(({ icon, className }: { icon: string; className?: string }) => (
+// Mock child components with proper vitest imports
+const mockDynIcon = vi.fn(({ icon, className }: { icon: string; className?: string }) => (
   <i data-testid={`icon-${icon}`} className={className} />
 ));
 
-jest.mock('../DynIcon', () => ({
+vi.mock('../DynIcon', () => ({
   DynIcon: mockDynIcon
 }));
 
@@ -73,7 +73,7 @@ const defaultProps = {
 
 describe('DynStepper', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders steps correctly', () => {
@@ -104,7 +104,7 @@ describe('DynStepper', () => {
 
   it('calls onStepChange when step is clicked', async () => {
     const user = userEvent.setup();
-    const onStepChange = jest.fn();
+    const onStepChange = vi.fn();
     render(
       <DynStepper 
         steps={mockSteps} 
@@ -121,7 +121,7 @@ describe('DynStepper', () => {
 
   it('calls onStepClick when step is clicked', async () => {
     const user = userEvent.setup();
-    const onStepClick = jest.fn();
+    const onStepClick = vi.fn();
     render(
       <DynStepper 
         steps={mockSteps} 
@@ -138,7 +138,7 @@ describe('DynStepper', () => {
 
   it('prevents navigation to disabled steps', async () => {
     const user = userEvent.setup();
-    const onStepChange = jest.fn();
+    const onStepChange = vi.fn();
     render(
       <DynStepper 
         steps={mockSteps} 
@@ -156,7 +156,7 @@ describe('DynStepper', () => {
 
   it('enforces linear progression when linear=true', async () => {
     const user = userEvent.setup();
-    const onStepChange = jest.fn();
+    const onStepChange = vi.fn();
     render(
       <DynStepper 
         steps={mockSteps} 
@@ -283,7 +283,7 @@ describe('DynStepper', () => {
   });
 
   it('handles custom renderStepContent', () => {
-    const customRender = jest.fn((step, index) => <div>Custom {step.title} - {index}</div>);
+    const customRender = vi.fn((step, index) => <div>Custom {step.title} - {index}</div>);
     
     render(
       <DynStepper 
@@ -297,7 +297,7 @@ describe('DynStepper', () => {
   });
 
   it('handles custom renderStepIcon', () => {
-    const customIconRender = jest.fn((step, index, isActive) => <div>Icon {index}</div>);
+    const customIconRender = vi.fn((step, index, isActive) => <div>Icon {index}</div>);
     
     render(
       <DynStepper 
@@ -348,7 +348,7 @@ describe('DynStepper', () => {
   describe('Imperative API', () => {
     it('provides nextStep method', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
-      const onStepChange = jest.fn();
+      const onStepChange = vi.fn();
       
       render(
         <DynStepper 
@@ -366,7 +366,7 @@ describe('DynStepper', () => {
 
     it('provides prevStep method', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
-      const onStepChange = jest.fn();
+      const onStepChange = vi.fn();
       
       render(
         <DynStepper 
@@ -385,7 +385,7 @@ describe('DynStepper', () => {
 
     it('provides goToStep method', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
-      const onStepChange = jest.fn();
+      const onStepChange = vi.fn();
       
       render(
         <DynStepper 
@@ -511,7 +511,7 @@ describe('DynStepper', () => {
 
   it('prevents clicking when clickableSteps=false', async () => {
     const user = userEvent.setup();
-    const onStepChange = jest.fn();
+    const onStepChange = vi.fn();
     render(
       <DynStepper 
         steps={mockSteps} 
@@ -528,7 +528,7 @@ describe('DynStepper', () => {
   });
 
   it('handles controlled mode correctly', () => {
-    const onStepChange = jest.fn();
+    const onStepChange = vi.fn();
     const { rerender } = render(
       <DynStepper 
         steps={mockSteps} 
