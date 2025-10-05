@@ -1,10 +1,6 @@
-/**
- * DynBreadcrumb - Navigation Breadcrumb Component
- * Barrel export for clean API surface
- */
-
-// Export default as DynBreadcrumb (remove duplicate named export)
-export { default as DynBreadcrumb } from './DynBreadcrumb';
+// Standardized exports for DynBreadcrumb component
+export { DynBreadcrumb } from './DynBreadcrumb';
+export { default } from './DynBreadcrumb';
 export type {
   DynBreadcrumbProps,
   DynBreadcrumbRef,
