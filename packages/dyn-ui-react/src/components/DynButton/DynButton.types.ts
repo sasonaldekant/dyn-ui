@@ -38,8 +38,8 @@ export interface DynButtonProps extends BaseComponentProps {
   size?: 'small' | 'medium' | 'large';
   
   /** Blur event handler */
-  onBlur?: () => void;
+  onBlur?: (event: React.FocusEvent<HTMLButtonElement>) => void;
   
   /** Click event handler */
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
