@@ -1,6 +1,9 @@
 /**
  * Theme type definitions for Dyn UI React library
+ * Includes BaseComponentProps for component standardization
  */
+
+import { ReactNode } from 'react';
 
 export type ThemeName = 'light' | 'dark' | 'high-contrast';
 
@@ -62,16 +65,38 @@ export interface ThemeContextValue {
   toggleTheme: () => void;
 }
 
-// Component prop types
+// ===== STANDARDIZED COMPONENT PROP TYPES =====
+
+/**
+ * Base properties that ALL DYN UI components should inherit
+ * Provides consistent interface across the entire component library
+ */
 export interface BaseComponentProps {
+  /** Unique identifier for the component */
+  id?: string;
+  
+  /** Additional CSS class names to apply */
   className?: string;
+  
+  /** Test identifier for automated testing */
   'data-testid'?: string;
+  
+  /** Child elements to render */
+  children?: ReactNode;
 }
 
+/**
+ * Props for components that support color variants
+ */
 export interface VariantProps {
+  /** Color variant for themed styling */
   variant?: ColorVariant;
 }
 
+/**
+ * Props for components that support different sizes
+ */
 export interface SizeProps {
+  /** Size variant for the component */
   size?: Size;
 }
