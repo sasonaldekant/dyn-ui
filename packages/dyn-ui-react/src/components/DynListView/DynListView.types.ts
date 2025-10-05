@@ -1,5 +1,18 @@
-import { BaseComponentProps } from '../types';
+import { BaseComponentProps } from '../../types';
 import { ReactNode } from 'react';
+
+export interface ListViewItem {
+  id: string | number;
+  [key: string]: any;
+}
+
+export interface ListViewTemplate {
+  primary?: string;
+  secondary?: string;
+  icon?: string;
+  image?: string;
+  actions?: string[];
+}
 
 export interface ListAction {
   key: string;
@@ -15,7 +28,7 @@ export type ListViewSize = 'small' | 'medium' | 'large';
 
 export interface DynListViewProps extends BaseComponentProps {
   /** Data array to display */
-  data: any[];
+  data: ListViewItem[];
   
   /** Available actions for each item */
   actions?: ListAction[];
@@ -36,22 +49,17 @@ export interface DynListViewProps extends BaseComponentProps {
   selectedKeys?: string[];
   
   /** Function to get unique key for each item */
-  itemKey?: string | ((item: any) => string);
+  itemKey?: string | ((item: ListViewItem) => string);
   
   /** Custom item renderer */
-  renderItem?: (item: any, index: number) => ReactNode;
+  renderItem?: (item: ListViewItem, index: number) => ReactNode;
   
   /** Selection change callback */
-  onSelectionChange?: (keys: string[], items: any[]) => void;
+  onSelectionChange?: (keys: string[], items: ListViewItem[]) => void;
   
   /** Text to show when no data */
   emptyText?: string;
   
   /** Fixed height for scrollable list */
   height?: number | string;
-  
-  /** Additional CSS class name */
-  className?: string;
 }
-
-export type DynListViewType = DynListViewProps;
