@@ -1,31 +1,31 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import DynChart from './DynChart';
 import { ChartDataPoint } from './DynChart.types';
 
 // Mock HTMLCanvasElement
-const mockGetContext = jest.fn();
+const mockGetContext = vi.fn();
 Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
   value: mockGetContext,
 });
 
-const mockCanvasContext = {
-  clearRect: jest.fn(),
-  beginPath: jest.fn(),
-  moveTo: jest.fn(),
-  lineTo: jest.fn(),
-  stroke: jest.fn(),
-  fill: jest.fn(),
-  arc: jest.fn(),
-  fillText: jest.fn(),
-  closePath: jest.fn(),
-  save: jest.fn(),
-  restore: jest.fn(),
-  translate: jest.fn(),
-  rotate: jest.fn(),
-  fillRect: jest.fn(),
-  setLineDash: jest.fn(),
+const mockCanvasContext: Record<string, any> = {
+  clearRect: vi.fn(),
+  beginPath: vi.fn(),
+  moveTo: vi.fn(),
+  lineTo: vi.fn(),
+  stroke: vi.fn(),
+  fill: vi.fn(),
+  arc: vi.fn(),
+  fillText: vi.fn(),
+  closePath: vi.fn(),
+  save: vi.fn(),
+  restore: vi.fn(),
+  translate: vi.fn(),
+  rotate: vi.fn(),
+  fillRect: vi.fn(),
+  setLineDash: vi.fn(),
   strokeStyle: '#000',
   fillStyle: '#000',
   lineWidth: 1,
@@ -38,8 +38,8 @@ const mockCanvasContext = {
 beforeEach(() => {
   mockGetContext.mockReturnValue(mockCanvasContext);
   Object.keys(mockCanvasContext).forEach(key => {
-    if (typeof mockCanvasContext[key] === 'function') {
-      mockCanvasContext[key].mockClear();
+    if (typeof mockCanvasContext[key as keyof typeof mockCanvasContext] === 'function') {
+      (mockCanvasContext[key as keyof typeof mockCanvasContext] as any).mockClear();
     }
   });
 });
