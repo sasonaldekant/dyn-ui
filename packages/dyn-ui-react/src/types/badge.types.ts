@@ -1,8 +1,10 @@
+import { BaseComponentProps } from './theme';
+
 export type BadgeStatus = 'disabled' | 'negative' | 'positive' | 'warning';
 export type BadgeSize = 'small' | 'medium' | 'large';
 export type BadgeIcon = string | boolean | React.ReactNode;
 
-export interface DynBadgeProps {
+export interface DynBadgeProps extends BaseComponentProps {
   value?: number;
   color?: string;
   status?: BadgeStatus;
@@ -10,8 +12,6 @@ export interface DynBadgeProps {
   icon?: BadgeIcon;
   showBorder?: boolean;
   ariaLabel?: string;
-  children?: string;
-  className?: string;
 }
 
 // DYN Color Palette
