@@ -1,7 +1,15 @@
 /**
  * Type exports for DYN UI React
  * Updated to include Layout Components types - SCOPE 7
+ * Updated to include standardized BaseComponentProps - TYPE SYSTEM IMPROVEMENT
  */
+
+// Base component props - standardized across all components
+export type {
+  BaseComponentProps,
+  VariantProps,
+  SizeProps
+} from './theme';
 
 // Theme types
 export type { ThemeName, ThemeConfig, ThemeContextValue, ColorVariant, Size } from './theme';
