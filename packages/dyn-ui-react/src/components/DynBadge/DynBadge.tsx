@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { DynBadgeProps, BadgeStatus, BadgeSize, DYN_COLOR_PALETTE } from '../../types/badge.types';
+import { DynBadgeProps, BadgeStatus, BadgeSize } from '../../types/badge.types';
 import { formatBadgeValue, isThemeColor } from '../../utils/dynFormatters';
 import { DynIcon } from '../DynIcon/DynIcon';
 import styles from './DynBadge.module.css';
