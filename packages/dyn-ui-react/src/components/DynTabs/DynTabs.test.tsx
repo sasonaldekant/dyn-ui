@@ -3,29 +3,29 @@
  * Comprehensive test coverage for tab navigation component functionality
  */
 
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynTabs from './DynTabs';
 import { TabItem, DynTabsHandle } from './DynTabs.types';
 
-// Mock child components with proper jest imports
-const mockDynIcon = jest.fn(({ icon, className }: { icon: string; className?: string }) => (
+// Mock child components with proper vitest imports
+const mockDynIcon = vi.fn(({ icon, className }: { icon: string; className?: string }) => (
   <i data-testid={`icon-${icon}`} className={className} />
 ));
 
-const mockDynBadge = jest.fn(({ value, size }: { value?: string | number; size?: string }) => (
+const mockDynBadge = vi.fn(({ value, size }: { value?: string | number; size?: string }) => (
   <span data-testid="badge" data-value={value} data-size={size}>
     {value}
   </span>
 ));
 
-jest.mock('../DynIcon', () => ({
+vi.mock('../DynIcon', () => ({
   DynIcon: mockDynIcon
 }));
 
-jest.mock('../DynBadge', () => ({
+vi.mock('../DynBadge', () => ({
   DynBadge: mockDynBadge
 }));
 
@@ -65,7 +65,7 @@ const defaultProps = {
 
 describe('DynTabs', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders tabs correctly', () => {
@@ -106,7 +106,7 @@ describe('DynTabs', () => {
 
   it('calls onTabChange when tab is clicked', async () => {
     const user = userEvent.setup();
-    const onTabChange = jest.fn();
+    const onTabChange = vi.fn();
     render(<DynTabs tabs={mockTabs} onTabChange={onTabChange} />);
     
     const secondTab = screen.getByRole('tab', { name: /tab 2/i });
@@ -117,7 +117,7 @@ describe('DynTabs', () => {
 
   it('does not switch to disabled tab', async () => {
     const user = userEvent.setup();
-    const onTabChange = jest.fn();
+    const onTabChange = vi.fn();
     render(<DynTabs tabs={mockTabs} onTabChange={onTabChange} />);
     
     const disabledTab = screen.getByRole('tab', { name: /tab 3/i });
@@ -129,7 +129,7 @@ describe('DynTabs', () => {
 
   it('supports keyboard navigation', async () => {
     const user = userEvent.setup();
-    const onTabChange = jest.fn();
+    const onTabChange = vi.fn();
     render(<DynTabs tabs={mockTabs} onTabChange={onTabChange} />);
     
     const firstTab = screen.getByRole('tab', { name: /tab 1/i });
@@ -138,7 +138,7 @@ describe('DynTabs', () => {
     await user.keyboard('{ArrowRight}');
     expect(onTabChange).toHaveBeenCalledWith('tab2');
     
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     await user.keyboard('{ArrowLeft}');
     expect(onTabChange).toHaveBeenCalledWith('tab1');
@@ -146,7 +146,7 @@ describe('DynTabs', () => {
 
   it('supports Home and End keys', async () => {
     const user = userEvent.setup();
-    const onTabChange = jest.fn();
+    const onTabChange = vi.fn();
     render(<DynTabs tabs={mockTabs} onTabChange={onTabChange} />);
     
     const firstTab = screen.getByRole('tab', { name: /tab 1/i });
@@ -155,7 +155,7 @@ describe('DynTabs', () => {
     await user.keyboard('{End}');
     expect(onTabChange).toHaveBeenCalledWith('tab2'); // Last non-disabled tab
     
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     await user.keyboard('{Home}');
     expect(onTabChange).toHaveBeenCalledWith('tab1');
@@ -247,7 +247,7 @@ describe('DynTabs', () => {
 
   it('handles closable tabs', async () => {
     const user = userEvent.setup();
-    const onTabClose = jest.fn();
+    const onTabClose = vi.fn();
     const closableTabs = mockTabs.map(tab => ({ ...tab, closable: true }));
     
     render(
@@ -267,7 +267,7 @@ describe('DynTabs', () => {
 
   it('handles add button', async () => {
     const user = userEvent.setup();
-    const onTabAdd = jest.fn();
+    const onTabAdd = vi.fn();
     
     render(
       <DynTabs 
@@ -309,7 +309,7 @@ describe('DynTabs', () => {
   describe('Imperative API', () => {
     it('provides setActiveTab method', () => {
       const tabsRef = React.createRef<DynTabsHandle>();
-      const onTabChange = jest.fn();
+      const onTabChange = vi.fn();
       
       render(
         <DynTabs 
@@ -339,7 +339,7 @@ describe('DynTabs', () => {
 
     it('provides closeTab method', () => {
       const tabsRef = React.createRef<DynTabsHandle>();
-      const onTabClose = jest.fn();
+      const onTabClose = vi.fn();
       
       render(
         <DynTabs 
@@ -377,7 +377,7 @@ describe('DynTabs', () => {
   });
 
   it('handles custom renderTabContent', () => {
-    const customRender = jest.fn((tab) => <div>Custom {tab.label}</div>);
+    const customRender = vi.fn((tab) => <div>Custom {tab.label}</div>);
     
     render(
       <DynTabs 
