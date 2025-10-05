@@ -1,6 +1,6 @@
 /**
  * Main component exports for DYN UI React
- * Updated to include Navigation Components Group - SCOPE 6
+ * Standardized exports with consistent patterns across all components
  */
 
 // Import global theme styles
@@ -14,35 +14,36 @@ import '../styles/dyn-datepicker.css';
 import '../styles/dyn-layout.css';
 
 // Basic components
-export { DynButton } from './DynButton';
+export { DynButton, default as DynButtonDefault } from './DynButton';
 export { DynIcon } from './DynIcon';
+export { DynBox } from './DynBox';
 
-// Display Components - SCOPE 5
+// Display Components
 export { DynBadge } from './DynBadge';
 export { DynAvatar } from './DynAvatar';
 export { DynLabel } from './DynLabel';
 
-// Form Components - SCOPE 6
+// Form Components
 export { DynInput } from './DynInput';
 export { DynSelect } from './DynSelect';
 export { DynCheckbox } from './DynCheckbox';
 export { DynDatePicker } from './DynDatePicker';
 export { DynFieldContainer } from './DynFieldContainer';
 
-// Layout Components - SCOPE 7
+// Layout Components
 export { DynContainer } from './DynContainer';
 export { DynDivider } from './DynDivider';
 export { DynGrid } from './DynGrid';
 export { DynPage } from './DynPage';
 
-// Data Display Components - SCOPE 8
+// Data Display Components
 export { DynChart } from './DynChart';
 export { DynGauge } from './DynGauge';
 export { DynListView } from './DynListView';
 export { DynTable } from './DynTable';
 export { DynTreeView } from './DynTreeView';
 
-// Navigation Components - SCOPE 6
+// Navigation Components
 export { DynMenu } from './DynMenu';
 export { DynBreadcrumb } from './DynBreadcrumb';
 export { DynTabs } from './DynTabs';
@@ -65,7 +66,7 @@ export type { DynBadgeProps, BadgeStatus, BadgeSize } from '../types/badge.types
 export type { DynAvatarProps, AvatarSize } from '../types/avatar.types';
 export type { DynLabelProps } from '../types/label.types';
 
-// Form Components types - SCOPE 6
+// Form Components types
 export type {
   DynInputProps,
   DynSelectProps,
@@ -78,7 +79,7 @@ export type {
   SelectOption
 } from '../types/field.types';
 
-// Layout Components types - SCOPE 7
+// Layout Components types
 export type {
   DynContainerProps,
   DynDividerProps,
@@ -94,7 +95,7 @@ export type {
   LayoutJustify
 } from '../types/layout.types';
 
-// Data Display Components types - SCOPE 8
+// Data Display Components types
 export type {
   DynChartProps,
   DynChartData,
@@ -123,7 +124,7 @@ export type {
   TreeViewActions
 } from './DynTreeView/DynTreeView.types';
 
-// Navigation Components types - SCOPE 6
+// Navigation Components types
 export type {
   DynMenuProps,
   MenuItem,
@@ -162,7 +163,7 @@ export { DEFAULT_MENU_LITERALS } from './DynMenu/DynMenu.types';
 export { DEFAULT_SEPARATOR, BREADCRUMB_LITERALS } from './DynBreadcrumb/DynBreadcrumb.types';
 export { TOOLBAR_DEFAULTS, TOOLBAR_ITEM_TYPES } from './DynToolbar/DynToolbar.types';
 
-// Form validation utilities - SCOPE 6
+// Form validation utilities
 export { useDynFieldValidation, validators } from '../hooks/useDynFieldValidation';
 export { useDynMask, MASK_PATTERNS, getMaskPattern } from '../hooks/useDynMask';
 export { useDynDateParser, DATE_FORMATS, getDateFormat } from '../hooks/useDynDateParser';
