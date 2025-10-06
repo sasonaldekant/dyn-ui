@@ -1,7 +1,8 @@
-import React from 'react';
+﻿// Removed unused import of React since it's not directly used in this file
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import DynChart from './DynChart';
+import styles from './DynChart.module.css';
 import { ChartDataPoint } from './DynChart.types';
 
 // Mock HTMLCanvasElement
@@ -60,36 +61,36 @@ describe('DynChart', () => {
 
     it('renders with title and subtitle', () => {
       render(
-        <DynChart 
-          data={sampleData} 
-          title="Sales Chart" 
+        <DynChart
+          data={sampleData}
+          title="Sales Chart"
           subtitle="Monthly sales data"
         />
       );
-      
+
       expect(screen.getByText('Sales Chart')).toBeInTheDocument();
       expect(screen.getByText('Monthly sales data')).toBeInTheDocument();
     });
 
     it('renders legend when showLegend is true', () => {
       render(
-        <DynChart 
-          data={[{ name: 'Series 1', data: sampleData }]} 
+        <DynChart
+          data={[{ name: 'Series 1', data: sampleData }]}
           showLegend={true}
         />
       );
-      
+
       expect(screen.getByText('Series 1')).toBeInTheDocument();
     });
 
     it('does not render legend when showLegend is false', () => {
       render(
-        <DynChart 
-          data={[{ name: 'Series 1', data: sampleData }]} 
+        <DynChart
+          data={[{ name: 'Series 1', data: sampleData }]}
           showLegend={false}
         />
       );
-      
+
       expect(screen.queryByText('Series 1')).not.toBeInTheDocument();
     });
   });
@@ -99,19 +100,19 @@ describe('DynChart', () => {
       const { container } = render(
         <DynChart data={sampleData} className="custom-chart" />
       );
-      
+
       expect(container.firstChild).toHaveClass('custom-chart');
     });
 
     it('sets canvas dimensions', () => {
       render(
-        <DynChart 
-          data={sampleData} 
-          width={500} 
+        <DynChart
+          data={sampleData}
+          width={500}
           height={400}
         />
       );
-      
+
       const canvas = screen.getByRole('presentation', { hidden: true }) as HTMLCanvasElement;
       expect(canvas).toHaveStyle({ width: '500px', height: '400px' });
     });
@@ -125,22 +126,22 @@ describe('DynChart', () => {
   describe('Chart Types', () => {
     it('renders line chart by default', () => {
       const { container } = render(<DynChart data={sampleData} />);
-      expect(container.firstChild).toHaveClass('dyn-chart--line');
+      expect(container.firstChild).toHaveClass(styles['dyn-chart--line']!);
     });
 
     it('renders bar chart when type is bar', () => {
       const { container } = render(<DynChart data={sampleData} type="bar" />);
-      expect(container.firstChild).toHaveClass('dyn-chart--bar');
+      expect(container.firstChild).toHaveClass(styles['dyn-chart--bar'] ?? '');
     });
 
     it('renders pie chart when type is pie', () => {
       const { container } = render(<DynChart data={sampleData} type="pie" />);
-      expect(container.firstChild).toHaveClass('dyn-chart--pie');
+      expect(container.firstChild).toHaveClass(styles['dyn-chart--pie'] ?? '');
     });
 
     it('renders area chart when type is area', () => {
       const { container } = render(<DynChart data={sampleData} type="area" />);
-      expect(container.firstChild).toHaveClass('dyn-chart--area');
+      expect(container.firstChild).toHaveClass(styles['dyn-chart--area'] ?? '');
     });
   });
 
@@ -172,22 +173,34 @@ describe('DynChart', () => {
         { name: 'Series 1', data: sampleData },
         { name: 'Series 2', data: sampleData.map(d => ({ ...d, value: d.value * 2 })) },
       ];
-      
+
       render(<DynChart data={seriesData} />);
       expect(screen.getByText('Series 1')).toBeInTheDocument();
       expect(screen.getByText('Series 2')).toBeInTheDocument();
     });
   });
 
+  describe('Tooltip', () => {
+    it('renders tooltip container when enabled', () => {
+      const { container } = render(<DynChart data={sampleData} showTooltip />);
+      expect(container.querySelector(`.${styles['dyn-chart__tooltip']}`)).toBeInTheDocument();
+    });
+
+    it('does not render tooltip container when disabled', () => {
+      const { container } = render(<DynChart data={sampleData} showTooltip={false} />);
+      expect(container.querySelector(`.${styles['dyn-chart__tooltip']}`)).toBeNull();
+    });
+  });
+
   describe('Accessibility', () => {
     it('has appropriate ARIA attributes', () => {
       render(
-        <DynChart 
-          data={sampleData} 
+        <DynChart
+          data={sampleData}
           title="Sales Chart"
         />
       );
-      
+
       const canvas = screen.getByRole('presentation', { hidden: true });
       expect(canvas).toBeInTheDocument();
     });
