@@ -396,3 +396,4 @@ const DynTable: React.FC<DynTableProps> = ({
 DynTable.displayName = 'DynTable';
 
 export default DynTable;
+export { DynTable };

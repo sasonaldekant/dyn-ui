@@ -663,3 +663,4 @@ const DynChart: React.FC<DynChartProps> = ({
 DynChart.displayName = 'DynChart';
 
 export default DynChart;
+export { DynChart };

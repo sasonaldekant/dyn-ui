@@ -289,3 +289,4 @@ const DynTreeView: React.FC<DynTreeViewProps> = ({
 DynTreeView.displayName = 'DynTreeView';
 
 export default DynTreeView;
+export { DynTreeView };

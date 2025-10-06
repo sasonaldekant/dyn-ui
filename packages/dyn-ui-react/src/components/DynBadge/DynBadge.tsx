@@ -95,3 +95,4 @@ DynBadge.displayName = 'DynBadge';
 
 // Re-export types for convenience
 export type { BadgeStatus, BadgeSize };
+export default DynBadge;
