@@ -2,6 +2,10 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
+<<<<<<< HEAD
+=======
+import '@testing-library/jest-dom';
+>>>>>>> 511b8af6c52aafb37b68d3460a6972558915db4f
 import DynTreeView from './DynTreeView';
 
 describe('DynTreeView', () => {
@@ -34,7 +38,22 @@ describe('DynTreeView', () => {
 
     it('renders icons when showIcon is true', () => {
       render(<DynTreeView treeData={sampleTreeData} showIcon />);
+<<<<<<< HEAD
       expect(screen.getAllByText('📁')).toHaveLength(2); // Use getAllByText for multiple elements
+=======
+      expect(screen.getAllByText('📁')).toHaveLength(2); // Updated to handle multiple elements
+    });
+
+    it('does not render icons when showIcon is false', () => {
+      render(<DynTreeView treeData={sampleTreeData} showIcon={false} />);
+      expect(screen.queryByText('📁')).not.toBeInTheDocument();
+    });
+
+    it('renders expand/collapse icons for parent nodes', () => {
+      render(<DynTreeView treeData={sampleTreeData} />);
+      const expandButtons = screen.getAllByText('▶');
+      expect(expandButtons.length).toBeGreaterThan(0);
+>>>>>>> 511b8af6c52aafb37b68d3460a6972558915db4f
     });
   });
 
@@ -167,10 +186,17 @@ describe('DynTreeView', () => {
       const { container, rerender } = render(
         <DynTreeView treeData={sampleTreeData} checkable />
       );
+<<<<<<< HEAD
       expect(container.firstChild).toHaveClass(expect.stringContaining('checkable')); // CSS module friendly
 
       rerender(<DynTreeView treeData={sampleTreeData} showLine />);
       expect(container.firstChild).toHaveClass(expect.stringContaining('show-line')); // CSS module friendly
+=======
+      expect(container.firstChild?.className).toMatch(/checkable/i); // CSS module friendly
+      
+      rerender(<DynTreeView treeData={sampleTreeData} showLine />);
+      expect(container.firstChild?.className).toMatch(/show-line/i); // CSS module friendly
+>>>>>>> 511b8af6c52aafb37b68d3460a6972558915db4f
     });
   });
 });

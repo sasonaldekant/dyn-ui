@@ -98,7 +98,8 @@ describe('DynFieldContainer', () => {
       </DynFieldContainer>
     );
     
-    expect(container.firstChild).toHaveClass('field-container--error');
+    // CSS module friendly assertion
+    expect(container.firstChild?.className).toMatch(/error/i);
   });
 
   it('renders without label when not provided', () => {

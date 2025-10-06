@@ -60,7 +60,8 @@ describe('DynPage', () => {
     
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Users')).toBeInTheDocument();
-    expect(screen.getByText('Profile')).toBeInTheDocument();
+    // Use getAllByText since Profile appears in both breadcrumb and title
+    expect(screen.getAllByText('Profile')).toHaveLength(2);
     
     // Should have navigation landmark
     expect(screen.getByRole('navigation')).toBeInTheDocument();
@@ -137,7 +138,8 @@ describe('DynPage', () => {
       </DynPage>
     );
     
-    expect(container.firstChild).toHaveClass('dyn-page--large');
+    // CSS module friendly assertion
+    expect(container.firstChild?.className).toMatch(/large/i);
   });
 
   it('applies padding classes', () => {
@@ -147,7 +149,8 @@ describe('DynPage', () => {
       </DynPage>
     );
     
-    expect(container.firstChild).toHaveClass('dyn-page--padding-lg');
+    // CSS module friendly assertion
+    expect(container.firstChild?.className).toMatch(/padding.*lg/i);
   });
 
   it('applies background classes', () => {
@@ -157,7 +160,8 @@ describe('DynPage', () => {
       </DynPage>
     );
     
-    expect(container.firstChild).toHaveClass('dyn-page--surface');
+    // CSS module friendly assertion
+    expect(container.firstChild?.className).toMatch(/surface/i);
   });
 
   it('has proper semantic structure', () => {
