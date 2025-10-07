@@ -1,6 +1,7 @@
 // Standardized exports for DynBreadcrumb component
 export { DynBreadcrumb } from './DynBreadcrumb';
 export { default } from './DynBreadcrumb';
+
 export type {
   DynBreadcrumbProps,
   DynBreadcrumbRef,
