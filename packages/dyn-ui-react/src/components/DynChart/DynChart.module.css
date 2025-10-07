@@ -1,23 +1,28 @@
-﻿/* DynChart Component Styles */
-.dyn-chart {
+.root {
   display: flex;
   flex-direction: column;
-  gap: 16px;
   background: var(--dyn-color-background);
   border-radius: var(--dyn-border-radius-md);
   border: 1px solid var(--dyn-color-border);
   padding: 16px;
   font-family: var(--dyn-font-family-base);
+  gap: 16px;
 }
 
-/* Header */
-.dyn-chart__header {
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+}
+
+.header {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.dyn-chart__title {
+.title {
   margin: 0;
   font-size: var(--dyn-font-size-lg);
   font-weight: var(--dyn-font-weight-semibold);
@@ -25,7 +30,7 @@
   line-height: var(--dyn-line-height-tight);
 }
 
-.dyn-chart__subtitle {
+.subtitle {
   margin: 0;
   font-size: var(--dyn-font-size-sm);
   font-weight: var(--dyn-font-weight-normal);
@@ -33,21 +38,20 @@
   line-height: var(--dyn-line-height-normal);
 }
 
-/* Chart Content */
-.dyn-chart__content {
+.content {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.dyn-chart__canvas {
+.canvas {
   display: block;
   max-width: 100%;
   height: auto;
 }
 
-.dyn-chart__tooltip {
+.tooltip {
   position: absolute;
   max-width: 220px;
   padding: 8px 12px;
@@ -67,48 +71,47 @@
   word-break: break-word;
 }
 
-.dyn-chart__tooltip[data-visible='true'] {
+.tooltip[data-visible='true'] {
   opacity: 1;
   visibility: visible;
 }
 
-.dyn-chart__tooltip-header {
+.tooltipHeader {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
 }
 
-.dyn-chart__tooltip-color {
+.tooltipColor {
   width: 10px;
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.dyn-chart__tooltip-series {
+.tooltipSeries {
   font-weight: var(--dyn-font-weight-semibold);
 }
 
-.dyn-chart__tooltip-percentage {
+.tooltipPercentage {
   margin-left: auto;
   font-size: var(--dyn-font-size-xs);
   opacity: 0.85;
 }
 
-.dyn-chart__tooltip-value {
+.tooltipValue {
   font-weight: var(--dyn-font-weight-semibold);
   font-size: var(--dyn-font-size-sm);
   margin-bottom: 2px;
 }
 
-.dyn-chart__tooltip-label {
+.tooltipLabel {
   font-size: var(--dyn-font-size-xs);
   opacity: 0.85;
 }
 
-/* Legend */
-.dyn-chart__legend {
+.legend {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
@@ -117,7 +120,7 @@
   padding: 8px 0;
 }
 
-.dyn-chart__legend-item {
+.legendItem {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -125,88 +128,117 @@
   color: var(--dyn-color-text-secondary);
 }
 
-.dyn-chart__legend-color {
+.legendColor {
   width: 12px;
   height: 12px;
   border-radius: 2px;
   flex-shrink: 0;
 }
 
-.dyn-chart__legend-label {
+.legendLabel {
   font-weight: var(--dyn-font-weight-normal);
   line-height: var(--dyn-line-height-normal);
 }
 
-/* Chart Type Variants */
-.dyn-chart--line {
-  /* Line chart specific styles */
+.typeLine {
+  --dyn-chart-marker-shape: circle;
 }
 
-.dyn-chart--bar {
-  /* Bar chart specific styles */
+.typeLine .legendColor,
+.typeLine .tooltipColor {
+  border-radius: 999px;
 }
 
-.dyn-chart--pie {
-  /* Pie chart specific styles */
+.typeBar {
+  --dyn-chart-marker-shape: square;
 }
 
-.dyn-chart--area {
-  /* Area chart specific styles */
+.typeBar .legendColor,
+.typeBar .tooltipColor {
+  border-radius: 2px;
 }
 
-/* Responsive Design */
+.typePie {
+  --dyn-chart-marker-shape: pie;
+}
+
+.typePie .legendColor,
+.typePie .tooltipColor {
+  border-radius: 50%;
+}
+
+.typeArea {
+  --dyn-chart-marker-shape: soft;
+}
+
+.typeArea .legendColor,
+.typeArea .tooltipColor {
+  border-radius: 4px;
+  opacity: 0.9;
+}
+
+.emptyState {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--dyn-font-size-sm);
+  color: var(--dyn-color-text-secondary);
+  pointer-events: none;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 @media (max-width: 768px) {
-  .dyn-chart {
+  .root {
     padding: 12px;
   }
 
-  .dyn-chart__title {
+  .title {
     font-size: var(--dyn-font-size-base);
   }
 
-  .dyn-chart__subtitle {
+  .subtitle {
     font-size: var(--dyn-font-size-xs);
   }
 
-  .dyn-chart__legend {
+  .legend {
     gap: 12px;
   }
 
-  .dyn-chart__legend-item {
+  .legendItem {
     gap: 6px;
     font-size: var(--dyn-font-size-xs);
   }
 }
 
-/* Dark Theme Support */
-[data-theme="dark"] .dyn-chart {
+[data-theme='dark'] .root {
   background: var(--dyn-color-background-dark);
   border-color: var(--dyn-color-border-dark);
 }
 
-[data-theme="dark"] .dyn-chart__title {
+[data-theme='dark'] .title {
   color: var(--dyn-color-text-primary-dark);
 }
 
-[data-theme="dark"] .dyn-chart__subtitle,
-[data-theme="dark"] .dyn-chart__legend-item {
+[data-theme='dark'] .subtitle,
+[data-theme='dark'] .legendItem {
   color: var(--dyn-color-text-secondary-dark);
 }
 
-/* High Contrast Mode */
 @media (prefers-contrast: high) {
-  .dyn-chart {
+  .root {
     border-width: 2px;
-  }
-
-  .dyn-chart__legend-color {
-    border: 1px solid var(--dyn-color-border);
-  }
-}
-
-/* Reduced Motion */
-@media (prefers-reduced-motion: reduce) {
-  .dyn-chart__canvas {
-    /* Disable any potential animations */
   }
 }
