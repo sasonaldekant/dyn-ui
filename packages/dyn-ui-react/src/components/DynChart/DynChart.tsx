@@ -232,7 +232,19 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
       }
 
       setTooltipState(prev => {
-        const nextState = createTooltipState(target, offsetX, offsetY);
+        const nextState: TooltipState = {
+          visible: true,
+          x: offsetX + 12,
+          y: offsetY - 12,
+          value: target.value,
+          series: target.series,
+          color: target.color,
+          percentage: target.kind === 'slice' ? target.percentage : undefined,
+        };
+
+        if (typeof target.label === 'string' && target.label.length > 0) {
+          nextState.label = target.label;
+        }
 
         if (
           prev.visible &&
@@ -417,15 +429,13 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
           ctx.fill();
 
           if (showTooltip) {
-            const label = point.label ?? `Point ${index + 1}`;
-
             tooltipTargetsRef.current.push({
               kind: 'point',
               x,
               y,
               radius: 6,
               value: point.value,
-              label,
+              label: point.label ?? `Point ${index + 1}`,
               series: series.name,
               color,
             });
@@ -467,8 +477,6 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
           ctx.fillRect(x, y, individualWidth, barHeight);
 
           if (showTooltip) {
-            const label = point.label ?? `Category ${index + 1}`;
-
             tooltipTargetsRef.current.push({
               kind: 'bar',
               x,
@@ -476,7 +484,7 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
               width: individualWidth,
               height: barHeight,
               value: point.value,
-              label,
+              label: point.label ?? `Category ${index + 1}`,
               series: series.name,
               color,
             });
@@ -529,9 +537,6 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
         }
 
         if (showTooltip) {
-          const sliceLabel = point.label ?? series?.name ?? `Slice ${index + 1}`;
-          const sliceSeries = series?.name ?? 'Series 1';
-
           tooltipTargetsRef.current.push({
             kind: 'slice',
             startAngle: currentAngle,
@@ -540,8 +545,8 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
             centerY,
             radius,
             value: point.value,
-            label: sliceLabel,
-            series: sliceSeries,
+            label: point.label,
+            series: series?.name ?? 'Series 1',
             color,
             percentage,
           });

@@ -1,5 +1,7 @@
 import React from 'react';
 
-export default function DynIcon() {
+export const DynIcon: React.FC = () => {
   return <span>DynIcon placeholder</span>;
-}
+};
+
+export default DynIcon;

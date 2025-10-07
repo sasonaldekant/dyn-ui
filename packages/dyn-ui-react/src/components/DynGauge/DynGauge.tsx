@@ -323,3 +323,4 @@ const DynGauge: React.FC<DynGaugeProps> = ({
 DynGauge.displayName = 'DynGauge';
 
 export default DynGauge;
+export { DynGauge };
