@@ -1,5 +1,7 @@
 import React from 'react';
 
-export default function DynButton() {
+export const DynButton: React.FC = () => {
   return <button>DynButton placeholder</button>;
-}
+};
+
+export default DynButton;

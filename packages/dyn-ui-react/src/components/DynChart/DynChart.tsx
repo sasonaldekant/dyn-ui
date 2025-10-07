@@ -206,19 +206,10 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
           x: offsetX + 12,
           y: offsetY - 12,
           value: target.value,
+          series: target.series,
+          color: target.color,
+          percentage: target.kind === 'slice' ? target.percentage : undefined,
         };
-
-        if (typeof target.series === 'string' && target.series.length > 0) {
-          nextState.series = target.series;
-        }
-
-        if (typeof target.color === 'string' && target.color.length > 0) {
-          nextState.color = target.color;
-        }
-
-        if (target.kind === 'slice') {
-          nextState.percentage = target.percentage;
-        }
 
         if (typeof target.label === 'string' && target.label.length > 0) {
           nextState.label = target.label;
@@ -523,7 +514,7 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
             centerY,
             radius,
             value: point.value,
-            label: point.label ?? series?.name ?? `Slice ${index + 1}`,
+            label: point.label,
             series: series?.name ?? 'Series 1',
             color,
             percentage,

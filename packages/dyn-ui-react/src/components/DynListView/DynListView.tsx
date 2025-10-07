@@ -277,3 +277,4 @@ const DynListView: React.FC<DynListViewProps> = ({
 DynListView.displayName = 'DynListView';
 
 export default DynListView;
+export { DynListView };
