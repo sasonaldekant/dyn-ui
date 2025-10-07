@@ -49,7 +49,7 @@ export function normalizeSeries(
     return data.map((series, index) => ({
       ...series,
       color: series.color ?? palette[index % palette.length] ?? FALLBACK_COLORS[index % FALLBACK_COLORS.length],
-    }));
+    } as NormalizedChartSeries));
   }
 
   const fallbackColor = palette[0] ?? FALLBACK_COLORS[0];
@@ -58,7 +58,7 @@ export function normalizeSeries(
     {
       name: 'Series 1',
       data: data as ChartDataPoint[],
-      color: fallbackColor,
+      color: fallbackColor!,
     },
   ];
 }

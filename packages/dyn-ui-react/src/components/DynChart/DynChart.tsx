@@ -66,6 +66,12 @@ interface TooltipState {
   percentage?: number;
 }
 
+const normalizeAngle = (angle: number) => {
+  const twoPi = Math.PI * 2;
+  const normalized = angle % twoPi;
+  return normalized >= 0 ? normalized : normalized + twoPi;
+};
+
 const createTooltipState = (
   target: TooltipTarget,
   offsetX: number,
@@ -95,12 +101,6 @@ const createTooltipState = (
   }
 
   return nextState;
-};
-
-const normalizeAngle = (angle: number) => {
-  const twoPi = Math.PI * 2;
-  const normalized = angle % twoPi;
-  return normalized >= 0 ? normalized : normalized + twoPi;
 };
 
 const typeClassNameMap: Record<'line' | 'bar' | 'pie' | 'area', string | undefined> = {
@@ -239,8 +239,10 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
           value: target.value,
           series: target.series,
           color: target.color,
-          percentage: target.kind === 'slice' ? target.percentage : undefined,
         };
+        if (target.kind === 'slice') {
+          nextState.percentage = target.percentage;
+        }
 
         if (typeof target.label === 'string' && target.label.length > 0) {
           nextState.label = target.label;
@@ -545,7 +547,7 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
             centerY,
             radius,
             value: point.value,
-            label: point.label,
+            label: point.label ?? '',
             series: series?.name ?? 'Series 1',
             color,
             percentage,

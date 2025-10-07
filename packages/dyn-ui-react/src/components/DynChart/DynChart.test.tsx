@@ -72,14 +72,14 @@ describe('DynChart', () => {
       <DynChart data={sampleData} className="custom-chart" />
     );
 
-    expect(container.firstChild).toHaveClass(styles.root);
+    expect(container.firstChild).toHaveClass(styles.root!);
     expect(container.firstChild).toHaveClass('custom-chart');
   });
 
   it('applies variant class names for each chart type', () => {
     (['line', 'bar', 'pie', 'area'] as const).forEach(type => {
       const { container, unmount } = render(<DynChart data={sampleData} type={type} />);
-      expect(container.firstChild).toHaveClass(styles.root);
+      expect(container.firstChild).toHaveClass(styles.root!);
       const expectedClass =
         type === 'line'
           ? styles.typeLine
@@ -88,7 +88,7 @@ describe('DynChart', () => {
           : type === 'pie'
           ? styles.typePie
           : styles.typeArea;
-      expect(container.firstChild).toHaveClass(expectedClass ?? '');
+      expect(container.firstChild).toHaveClass(expectedClass!);
       unmount();
     });
   });

@@ -6,7 +6,7 @@ export type {
   DynChartProps,
   DynChartData,
   ChartType,
-  ChartOptions
+  ChartOptions,
   ChartAxis,
   ChartDataPoint,
   ChartSeries,
