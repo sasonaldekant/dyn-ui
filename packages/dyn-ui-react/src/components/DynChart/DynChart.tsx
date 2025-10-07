@@ -694,4 +694,3 @@ DynChart.displayName = 'DynChart';
 
 export { DynChart };
 export default DynChart;
-export { DynChart };
