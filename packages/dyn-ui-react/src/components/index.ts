@@ -108,10 +108,13 @@ export type {
 // Data Display Component Types
 export type {
   DynChartProps,
+  DynChartData,
   ChartType,
   ChartDataPoint,
   ChartSeries,
-  ChartAxis
+  ChartAxis,
+  DynChartOptions,
+  DynChartLegendItem
 } from './DynChart/DynChart.types';
 export type {
   DynGaugeProps,
