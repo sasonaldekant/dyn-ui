@@ -514,7 +514,7 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
             centerY,
             radius,
             value: point.value,
-            label: point.label ?? series?.name ?? `Slice ${index + 1}`,
+            label: point.label,
             series: series?.name ?? 'Series 1',
             color,
             percentage,
