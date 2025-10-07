@@ -6,6 +6,6 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rollup -c rollup.config.mjs",
-    "test": "vitest run"
+    "test": "vitest run --passWithNoTests"
   }
 }
