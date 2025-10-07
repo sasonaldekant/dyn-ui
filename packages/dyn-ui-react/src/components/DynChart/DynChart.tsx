@@ -1,6 +1,22 @@
-﻿import React, { useMemo, useRef, useEffect, useState, useCallback } from 'react';
-import classNames from 'classnames';
-import { DynChartProps, ChartSeries, ChartDataPoint } from './DynChart.types';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import type { MouseEvent } from 'react';
+import { cn } from '../../utils/classNames';
+import { DYN_CHART_DEFAULT_PROPS, DynChartProps } from './DynChart.types';
+import {
+  buildLegendItems,
+  calculateChartDimensions,
+  calculateDataRanges,
+  getEmptyStateMessage,
+  normalizeSeries,
+} from './DynChart.utils';
 import styles from './DynChart.module.css';
 
 type TooltipTarget =
@@ -44,10 +60,10 @@ interface TooltipState {
   x: number;
   y: number;
   value: number;
-  label: string | undefined;
-  series: string | undefined;
-  color: string | undefined;
-  percentage: number | undefined;
+  label?: string;
+  series?: string;
+  color?: string;
+  percentage?: number;
 }
 
 const normalizeAngle = (angle: number) => {
@@ -56,105 +72,73 @@ const normalizeAngle = (angle: number) => {
   return normalized >= 0 ? normalized : normalized + twoPi;
 };
 
-// Simple chart implementation without external dependencies
-const DynChart: React.FC<DynChartProps> = ({
-  type = 'line',
-  data = [],
-  title,
-  subtitle,
-  width = 400,
-  height = 300,
-  colors = ['#0066cc', '#00b248', '#f44336', '#ff9800', '#9c27b0'],
-  showLegend = true,
-  showTooltip = true,
-  showGrid = true,
-  xAxis,
-  yAxis,
-  className,
-}) => {
+const typeClassNameMap: Record<'line' | 'bar' | 'pie' | 'area', string | undefined> = {
+  line: styles.typeLine,
+  bar: styles.typeBar,
+  pie: styles.typePie,
+  area: styles.typeArea,
+};
+
+const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
+  const {
+    type = DYN_CHART_DEFAULT_PROPS.type,
+    data = DYN_CHART_DEFAULT_PROPS.data,
+    title,
+    subtitle,
+    width = DYN_CHART_DEFAULT_PROPS.width,
+    height = DYN_CHART_DEFAULT_PROPS.height,
+    colors = DYN_CHART_DEFAULT_PROPS.colors,
+    showLegend = DYN_CHART_DEFAULT_PROPS.showLegend,
+    showTooltip = DYN_CHART_DEFAULT_PROPS.showTooltip,
+    showGrid = DYN_CHART_DEFAULT_PROPS.showGrid,
+    xAxis,
+    yAxis,
+    ariaDescription,
+    className,
+    id,
+    children,
+    'data-testid': dataTestId,
+    ...rest
+  } = props;
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const tooltipTargetsRef = useRef<TooltipTarget[]>([]);
   const [tooltipState, setTooltipState] = useState<TooltipState>({
     visible: false,
     x: 0,
     y: 0,
     value: 0,
-    label: undefined,
-    series: undefined,
-    color: undefined,
-    percentage: undefined,
   });
 
-  // Normalize data to series format
-  const normalizedData: ChartSeries[] = useMemo(() => {
-    if (!data.length) return [];
+  const instanceId = useId();
+  const titleId = title ? `${id ?? instanceId}-title` : undefined;
+  const subtitleId = subtitle ? `${id ?? instanceId}-subtitle` : undefined;
+  const descriptionId = ariaDescription ? `${id ?? instanceId}-description` : undefined;
 
-    // If data is already in series format
-    if (Array.isArray(data) && data[0] && 'name' in data[0]) {
-      return data as ChartSeries[];
-    }
+  const normalizedData = useMemo(
+    () => normalizeSeries(data, colors),
+    [data, colors]
+  );
 
-    // Convert data points to single series
-    return [
-      {
-        name: 'Series 1',
-        data: data as ChartDataPoint[],
-        color: colors[0] || '#0066cc',
-      },
-    ];
-  }, [data, colors]);
+  const chartDimensions = useMemo(
+    () => calculateChartDimensions(width, height),
+    [width, height]
+  );
 
-  // Calculate chart dimensions
-  const chartDimensions = useMemo(() => {
-    const padding = { top: 20, right: 20, bottom: 60, left: 60 };
-    const chartWidth = width - padding.left - padding.right;
-    const chartHeight = height - padding.top - padding.bottom;
+  const dataRanges = useMemo(
+    () => calculateDataRanges(normalizedData, yAxis),
+    [normalizedData, yAxis]
+  );
 
-    return {
-      padding,
-      chartWidth,
-      chartHeight,
-      totalWidth: width,
-      totalHeight: height,
-    };
-  }, [width, height]);
+  const legendItems = useMemo(
+    () => buildLegendItems(normalizedData),
+    [normalizedData]
+  );
 
-  // Calculate data ranges
-  const dataRanges = useMemo(() => {
-    if (!normalizedData.length) return { minX: 0, maxX: 0, minY: 0, maxY: 0 };
-
-    let minY = yAxis?.min ?? Infinity;
-    let maxY = yAxis?.max ?? -Infinity;
-    let minX = 0;
-    let maxX = 0;
-
-    normalizedData.forEach(series => {
-      series.data.forEach((point, index) => {
-        if (yAxis?.min === undefined) {
-          minY = Math.min(minY, point.value);
-        }
-        if (yAxis?.max === undefined) {
-          maxY = Math.max(maxY, point.value);
-        }
-        maxX = Math.max(maxX, index);
-      });
-    });
-
-    // Add some padding to Y axis
-    if (yAxis?.min === undefined) {
-      minY = Math.max(0, minY * 0.9);
-    }
-    if (yAxis?.max === undefined) {
-      maxY = maxY * 1.1;
-    }
-
-    if (!Number.isFinite(minY) || !Number.isFinite(maxY)) {
-      return { minX, maxX, minY: 0, maxY: 1 };
-    }
-
-    return { minX, maxX, minY, maxY };
-  }, [normalizedData, yAxis]);
+  const emptyStateMessage = useMemo(
+    () => getEmptyStateMessage(normalizedData),
+    [normalizedData]
+  );
 
   const hideTooltip = useCallback(() => {
     setTooltipState(prev => (prev.visible ? { ...prev, visible: false } : prev));
@@ -199,11 +183,11 @@ const DynChart: React.FC<DynChartProps> = ({
       }
     }
 
-    return null;
+    return undefined;
   }, []);
 
   const handleMouseMove = useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
+    (event: MouseEvent<HTMLCanvasElement>) => {
       if (!showTooltip) {
         return;
       }
@@ -222,11 +206,23 @@ const DynChart: React.FC<DynChartProps> = ({
           x: offsetX + 12,
           y: offsetY - 12,
           value: target.value,
-          label: target.label,
-          series: target.series,
-          color: target.color,
-          percentage: target.kind === 'slice' ? target.percentage : undefined,
         };
+
+        if (typeof target.series === 'string' && target.series.length > 0) {
+          nextState.series = target.series;
+        }
+
+        if (typeof target.color === 'string' && target.color.length > 0) {
+          nextState.color = target.color;
+        }
+
+        if (target.kind === 'slice') {
+          nextState.percentage = target.percentage;
+        }
+
+        if (typeof target.label === 'string' && target.label.length > 0) {
+          nextState.label = target.label;
+        }
 
         if (
           prev.visible &&
@@ -261,405 +257,449 @@ const DynChart: React.FC<DynChartProps> = ({
     }
   }, [hideTooltip, showTooltip]);
 
-  // Drawing functions
-  const drawGrid = (ctx: CanvasRenderingContext2D) => {
-    if (!showGrid) return;
+  useEffect(() => () => hideTooltip(), [hideTooltip]);
 
-    const { padding, chartWidth, chartHeight } = chartDimensions;
+  const drawGrid = useCallback(
+    (ctx: CanvasRenderingContext2D) => {
+      if (!showGrid || type === 'pie') return;
 
-    ctx.strokeStyle = '#e0e0e0';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([2, 2]);
+      const { padding, chartWidth, chartHeight } = chartDimensions;
 
-    // Horizontal grid lines
-    for (let i = 0; i <= 5; i++) {
-      const y = padding.top + (chartHeight / 5) * i;
-      ctx.beginPath();
-      ctx.moveTo(padding.left, y);
-      ctx.lineTo(padding.left + chartWidth, y);
-      ctx.stroke();
-    }
+      ctx.save();
+      ctx.strokeStyle = '#e0e0e0';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 2]);
 
-    const maxDataPoints = normalizedData.length
-      ? Math.max(...normalizedData.map(s => s.data.length))
-      : 0;
-
-    if (maxDataPoints > 1) {
-      const stepCount = Math.min(maxDataPoints - 1, 10);
-      for (let i = 0; i <= stepCount; i++) {
-        const x = padding.left + (chartWidth / stepCount) * i;
+      for (let i = 0; i <= 5; i++) {
+        const y = padding.top + (chartHeight / 5) * i;
         ctx.beginPath();
-        ctx.moveTo(x, padding.top);
-        ctx.lineTo(x, padding.top + chartHeight);
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(padding.left + chartWidth, y);
         ctx.stroke();
       }
-    }
 
-    ctx.setLineDash([]);
-  };
+      const maxDataPoints = normalizedData.length
+        ? Math.max(...normalizedData.map(series => series.data.length))
+        : 0;
 
-  const drawAxes = (ctx: CanvasRenderingContext2D) => {
-    const { padding, chartWidth, chartHeight } = chartDimensions;
+      if (maxDataPoints > 1) {
+        const stepCount = Math.min(maxDataPoints - 1, 10);
+        for (let i = 0; i <= stepCount; i++) {
+          const x = padding.left + (chartWidth / stepCount) * i;
+          ctx.beginPath();
+          ctx.moveTo(x, padding.top);
+          ctx.lineTo(x, padding.top + chartHeight);
+          ctx.stroke();
+        }
+      }
 
-    ctx.strokeStyle = '#333';
-    ctx.lineWidth = 2;
-
-    // X axis
-    ctx.beginPath();
-    ctx.moveTo(padding.left, padding.top + chartHeight);
-    ctx.lineTo(padding.left + chartWidth, padding.top + chartHeight);
-    ctx.stroke();
-
-    // Y axis
-    ctx.beginPath();
-    ctx.moveTo(padding.left, padding.top);
-    ctx.lineTo(padding.left, padding.top + chartHeight);
-    ctx.stroke();
-
-    // Axis labels
-    ctx.fillStyle = '#666';
-    ctx.font = '12px Arial';
-    ctx.textAlign = 'center';
-
-    // X axis title
-    if (xAxis?.title) {
-      ctx.fillText(xAxis.title, padding.left + chartWidth / 2, height - 10);
-    }
-
-    // Y axis title
-    if (yAxis?.title) {
-      ctx.save();
-      ctx.translate(15, padding.top + chartHeight / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillText(yAxis.title, 0, 0);
       ctx.restore();
-    }
+    },
+    [chartDimensions, normalizedData, showGrid, type]
+  );
 
-    // Y axis values
-    ctx.textAlign = 'right';
-    for (let i = 0; i <= 5; i++) {
-      const value =
-        dataRanges.minY + ((dataRanges.maxY - dataRanges.minY) / 5) * (5 - i);
-      const y = padding.top + (chartHeight / 5) * i;
-      ctx.fillText(value.toFixed(1), padding.left - 10, y + 5);
-    }
-  };
+  const drawAxes = useCallback(
+    (ctx: CanvasRenderingContext2D) => {
+      if (type === 'pie') return;
 
-  const drawLineChart = (ctx: CanvasRenderingContext2D) => {
-    const { padding, chartWidth, chartHeight } = chartDimensions;
-    const yRange = Math.max(dataRanges.maxY - dataRanges.minY || 0, 1);
+      const { padding, chartWidth, chartHeight } = chartDimensions;
 
-    normalizedData.forEach((series, seriesIndex) => {
-      const color = series.color || colors[seriesIndex % colors.length] || '#0066cc';
-
-      ctx.strokeStyle = color || '#000';
-      ctx.fillStyle = color || '#000';
-      ctx.lineWidth = 3;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
-      if (series.data.length === 0) return;
+      ctx.save();
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
 
       ctx.beginPath();
-
-      series.data.forEach((point, index) => {
-        const x =
-          padding.left + (chartWidth / Math.max(series.data.length - 1, 1)) * index;
-        const y =
-          padding.top +
-          chartHeight -
-          ((point.value - dataRanges.minY) / yRange) * chartHeight;
-
-        if (index === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
-      });
-
+      ctx.moveTo(padding.left, padding.top + chartHeight);
+      ctx.lineTo(padding.left + chartWidth, padding.top + chartHeight);
       ctx.stroke();
 
-      series.data.forEach((point, index) => {
-        const x =
-          padding.left + (chartWidth / Math.max(series.data.length - 1, 1)) * index;
-        const y =
-          padding.top +
-          chartHeight -
-          ((point.value - dataRanges.minY) / yRange) * chartHeight;
+      ctx.beginPath();
+      ctx.moveTo(padding.left, padding.top);
+      ctx.lineTo(padding.left, padding.top + chartHeight);
+      ctx.stroke();
+
+      ctx.fillStyle = '#666';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'center';
+
+      if (xAxis?.title) {
+        ctx.fillText(xAxis.title, padding.left + chartWidth / 2, chartDimensions.totalHeight - 10);
+      }
+
+      if (yAxis?.title) {
+        ctx.save();
+        ctx.translate(15, padding.top + chartHeight / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText(yAxis.title, 0, 0);
+        ctx.restore();
+      }
+
+      ctx.textAlign = 'right';
+      for (let i = 0; i <= 5; i++) {
+        const value = dataRanges.minY + ((dataRanges.maxY - dataRanges.minY) / 5) * (5 - i);
+        const y = padding.top + (chartHeight / 5) * i;
+        ctx.fillText(value.toFixed(1), padding.left - 10, y + 5);
+      }
+
+      ctx.restore();
+    },
+    [chartDimensions, dataRanges, type, xAxis?.title, yAxis?.title]
+  );
+
+  const drawLineOrAreaChart = useCallback(
+    (ctx: CanvasRenderingContext2D, variant: 'line' | 'area') => {
+      const { padding, chartWidth, chartHeight } = chartDimensions;
+      const yRange = Math.max(dataRanges.maxY - dataRanges.minY || 0, 1);
+
+      normalizedData.forEach((series, seriesIndex) => {
+        const color = series.color || colors[seriesIndex % colors.length] || '#0066cc';
+
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        if (series.data.length === 0) return;
 
         ctx.beginPath();
-        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+
+        series.data.forEach((point, index) => {
+          const x = padding.left + (chartWidth / Math.max(series.data.length - 1, 1)) * index;
+          const y =
+            padding.top +
+            chartHeight -
+            ((point.value - dataRanges.minY) / yRange) * chartHeight;
+
+          if (index === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+
+        if (variant === 'area') {
+          const lastX =
+            padding.left +
+            (chartWidth / Math.max(series.data.length - 1, 1)) * (series.data.length - 1);
+          const firstX = padding.left;
+          const baseY = padding.top + chartHeight;
+
+          ctx.lineTo(lastX, baseY);
+          ctx.lineTo(firstX, baseY);
+          ctx.closePath();
+          ctx.globalAlpha = 0.15;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+
+        ctx.stroke();
+
+        series.data.forEach((point, index) => {
+          const x = padding.left + (chartWidth / Math.max(series.data.length - 1, 1)) * index;
+          const y =
+            padding.top +
+            chartHeight -
+            ((point.value - dataRanges.minY) / yRange) * chartHeight;
+
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, 2 * Math.PI);
+          ctx.fill();
+
+          if (showTooltip) {
+            tooltipTargetsRef.current.push({
+              kind: 'point',
+              x,
+              y,
+              radius: 6,
+              value: point.value,
+              label: point.label ?? `Point ${index + 1}`,
+              series: series.name,
+              color,
+            });
+          }
+        });
+      });
+    },
+    [chartDimensions, colors, dataRanges, normalizedData, showTooltip]
+  );
+
+  const drawBarChart = useCallback(
+    (ctx: CanvasRenderingContext2D) => {
+      const { padding, chartWidth, chartHeight } = chartDimensions;
+      const yRange = Math.max(dataRanges.maxY - dataRanges.minY || 0, 1);
+
+      if (!normalizedData.length) return;
+
+      const maxDataPoints = normalizedData[0]?.data.length || 0;
+      if (maxDataPoints === 0) return;
+
+      const groupWidth = chartWidth / maxDataPoints;
+      const barWidth = groupWidth * 0.8;
+      const barSpacing = groupWidth * 0.2;
+
+      normalizedData.forEach((series, seriesIndex) => {
+        const color = series.color || colors[seriesIndex % colors.length] || '#0066cc';
+        ctx.fillStyle = color;
+
+        series.data.forEach((point, index) => {
+          const x =
+            padding.left +
+            groupWidth * index +
+            barSpacing / 2 +
+            (barWidth / normalizedData.length) * seriesIndex;
+          const individualWidth = barWidth / Math.max(normalizedData.length, 1);
+          const barHeight = ((point.value - dataRanges.minY) / yRange) * chartHeight;
+          const y = padding.top + chartHeight - barHeight;
+
+          ctx.fillRect(x, y, individualWidth, barHeight);
+
+          if (showTooltip) {
+            tooltipTargetsRef.current.push({
+              kind: 'bar',
+              x,
+              y,
+              width: individualWidth,
+              height: barHeight,
+              value: point.value,
+              label: point.label ?? `Category ${index + 1}`,
+              series: series.name,
+              color,
+            });
+          }
+        });
+      });
+    },
+    [chartDimensions, colors, dataRanges, normalizedData, showTooltip]
+  );
+
+  const drawPieChart = useCallback(
+    (ctx: CanvasRenderingContext2D) => {
+      const { chartWidth, chartHeight } = chartDimensions;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const radius = Math.min(chartWidth, chartHeight) / 3;
+
+      if (!normalizedData.length) return;
+
+      const series = normalizedData[0];
+      const dataPoints = series?.data ?? [];
+      const total = dataPoints.reduce((sum, point) => sum + point.value, 0);
+
+      if (total === 0) return;
+
+      let currentAngle = -Math.PI / 2;
+
+      dataPoints.forEach((point, index) => {
+        const sliceAngle = (point.value / total) * 2 * Math.PI;
+        const color = point.color || colors[index % colors.length] || '#0066cc';
+        const nextAngle = currentAngle + sliceAngle;
+        const percentage = total ? (point.value / total) * 100 : 0;
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, currentAngle, nextAngle);
+        ctx.closePath();
         ctx.fill();
 
-        if (showTooltip) {
-          tooltipTargetsRef.current.push({
-            kind: 'point',
-            x,
-            y,
-            radius: 6,
-            value: point.value,
-            label: point.label ?? `Point ${index + 1}`,
-            series: series.name,
-            color,
-          });
+        if (point.value / total > 0.05) {
+          const labelAngle = currentAngle + sliceAngle / 2;
+          const labelX = centerX + Math.cos(labelAngle) * (radius * 0.7);
+          const labelY = centerY + Math.sin(labelAngle) * (radius * 0.7);
+
+          ctx.fillStyle = '#fff';
+          ctx.font = '12px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText(`${percentage.toFixed(1)}%`, labelX, labelY);
         }
-      });
-    });
-  };
-
-  const drawBarChart = (ctx: CanvasRenderingContext2D) => {
-    const { padding, chartWidth, chartHeight } = chartDimensions;
-    const yRange = Math.max(dataRanges.maxY - dataRanges.minY || 0, 1);
-
-    if (!normalizedData.length) return;
-
-    const maxDataPoints = normalizedData[0]?.data.length || 0;
-    if (maxDataPoints === 0) return;
-
-    const groupWidth = chartWidth / maxDataPoints;
-    const barWidth = groupWidth * 0.8;
-    const barSpacing = groupWidth * 0.2;
-
-    normalizedData.forEach((series, seriesIndex) => {
-      const color = series.color || colors[seriesIndex % colors.length] || '#0066cc';
-      ctx.fillStyle = color || '#000';
-
-      series.data.forEach((point, index) => {
-        const x =
-          padding.left +
-          groupWidth * index +
-          barSpacing / 2 +
-          (barWidth / normalizedData.length) * seriesIndex;
-        const individualWidth = barWidth / Math.max(normalizedData.length, 1);
-        const barHeight = ((point.value - dataRanges.minY) / yRange) * chartHeight;
-        const y = padding.top + chartHeight - barHeight;
-
-        ctx.fillRect(x, y, individualWidth, barHeight);
 
         if (showTooltip) {
           tooltipTargetsRef.current.push({
-            kind: 'bar',
-            x,
-            y,
-            width: individualWidth,
-            height: barHeight,
+            kind: 'slice',
+            startAngle: currentAngle,
+            endAngle: nextAngle,
+            centerX,
+            centerY,
+            radius,
             value: point.value,
-            label: point.label ?? `Category ${index + 1}`,
-            series: series.name,
+            label: point.label ?? series?.name ?? `Slice ${index + 1}`,
+            series: series?.name ?? 'Series 1',
             color,
+            percentage,
           });
         }
+
+        currentAngle = nextAngle;
       });
-    });
-  };
+    },
+    [chartDimensions, colors, height, normalizedData, showTooltip, width]
+  );
 
-  const drawPieChart = (ctx: CanvasRenderingContext2D) => {
-    const { chartWidth, chartHeight } = chartDimensions;
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const radius = Math.min(chartWidth, chartHeight) / 3;
-
-    if (!normalizedData.length) return;
-
-    const data = normalizedData[0]?.data || [];
-    const total = data.reduce((sum, point) => sum + point.value, 0);
-
-    if (total === 0) return;
-
-    let currentAngle = -Math.PI / 2;
-
-    data.forEach((point, index) => {
-      const sliceAngle = (point.value / total) * 2 * Math.PI;
-      const color = point.color || colors[index % colors.length] || '#0066cc';
-      const nextAngle = currentAngle + sliceAngle;
-      const percentage = total ? (point.value / total) * 100 : 0;
-
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.arc(centerX, centerY, radius, currentAngle, nextAngle);
-      ctx.closePath();
-      ctx.fill();
-
-      if (point.value / total > 0.05) {
-        const labelAngle = currentAngle + sliceAngle / 2;
-        const labelX = centerX + Math.cos(labelAngle) * (radius * 0.7);
-        const labelY = centerY + Math.sin(labelAngle) * (radius * 0.7);
-
-        ctx.fillStyle = '#fff';
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(`${((point.value / total) * 100).toFixed(1)}%`, labelX, labelY);
-      }
-
-      if (showTooltip) {
-        const sliceTooltipTarget: TooltipTarget = {
-          kind: 'slice',
-          startAngle: currentAngle,
-          endAngle: nextAngle,
-          centerX,
-          centerY,
-          radius,
-          value: point.value,
-          series: normalizedData[0]?.name || 'Series 1',
-          color,
-          percentage,
-        };
-        if (point.label !== undefined) {
-          sliceTooltipTarget.label = point.label;
-        }
-        tooltipTargetsRef.current.push(sliceTooltipTarget);
-      }
-
-      currentAngle = nextAngle;
-    });
-  };
-
-  // Draw chart
   useEffect(() => {
-    tooltipTargetsRef.current = [];
-    hideTooltip();
-
     const canvas = canvasRef.current;
     if (!canvas) {
       return;
     }
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
+    const context = canvas.getContext('2d');
+    if (!context) {
       return;
     }
 
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = chartDimensions.totalWidth;
+    canvas.height = chartDimensions.totalHeight;
 
-    ctx.clearRect(0, 0, width, height);
+    tooltipTargetsRef.current = [];
+    hideTooltip();
 
-    if (type !== 'pie') {
-      drawGrid(ctx);
-      drawAxes(ctx);
+    context.clearRect(0, 0, chartDimensions.totalWidth, chartDimensions.totalHeight);
+
+    if (!normalizedData.length) {
+      return;
     }
+
+    drawGrid(context);
+    drawAxes(context);
 
     switch (type) {
       case 'line':
+        drawLineOrAreaChart(context, 'line');
+        break;
       case 'area':
-        drawLineChart(ctx);
+        drawLineOrAreaChart(context, 'area');
         break;
       case 'bar':
-        drawBarChart(ctx);
+        drawBarChart(context);
         break;
       case 'pie':
-        drawPieChart(ctx);
+        drawPieChart(context);
         break;
       default:
-        drawLineChart(ctx);
+        drawLineOrAreaChart(context, 'line');
     }
   }, [
-    type,
-    normalizedData,
     chartDimensions,
-    dataRanges,
-    colors,
-    showGrid,
+    drawAxes,
+    drawBarChart,
+    drawGrid,
+    drawLineOrAreaChart,
+    drawPieChart,
     hideTooltip,
-    width,
-    height,
-    showTooltip,
+    normalizedData,
+    type,
   ]);
 
-  const chartClasses = classNames(
-    styles['dyn-chart'],
-    styles[`dyn-chart--${type}`],
-    className
-  );
+  const canvasAriaLabel = title ?? 'Chart visualization';
+  const describedBy = [subtitle ? subtitleId : undefined, ariaDescription ? descriptionId : undefined]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <div className={chartClasses} ref={containerRef}>
-      {(title || subtitle) && (
-        <div className={styles['dyn-chart__header']}>
-          {title && <h3 className={styles['dyn-chart__title']}>{title}</h3>}
-          {subtitle && (
-            <p className={styles['dyn-chart__subtitle']}>{subtitle}</p>
+    <div
+      {...rest}
+      ref={ref}
+      id={id}
+      data-testid={dataTestId}
+      className={cn(styles.root, typeClassNameMap[type], className)}
+    >
+      <figure className={styles.figure} aria-labelledby={titleId} aria-describedby={describedBy || undefined}>
+        {(title || subtitle) && (
+          <header className={styles.header}>
+            {title && (
+              <h3 id={titleId} className={styles.title}>
+                {title}
+              </h3>
+            )}
+            {subtitle && (
+              <p id={subtitleId} className={styles.subtitle}>
+                {subtitle}
+              </p>
+            )}
+          </header>
+        )}
+
+        <div className={styles.content}>
+          <canvas
+            ref={canvasRef}
+            className={styles.canvas}
+            role="img"
+            aria-label={canvasAriaLabel}
+            aria-describedby={describedBy || undefined}
+            width={chartDimensions.totalWidth}
+            height={chartDimensions.totalHeight}
+            style={{ width, height }}
+            onMouseMove={showTooltip ? handleMouseMove : undefined}
+            onMouseLeave={showTooltip ? handleMouseLeave : undefined}
+          />
+
+          {showTooltip && (
+            <div
+              className={styles.tooltip}
+              data-visible={tooltipState.visible}
+              aria-hidden={!tooltipState.visible}
+              style={{
+                left: `${tooltipState.x}px`,
+                top: `${tooltipState.y}px`,
+              }}
+            >
+              {(tooltipState.series || tooltipState.color || typeof tooltipState.percentage === 'number') && (
+                <div className={styles.tooltipHeader}>
+                  {tooltipState.color && (
+                    <span
+                      className={styles.tooltipColor}
+                      style={{ backgroundColor: tooltipState.color }}
+                    />
+                  )}
+                  {tooltipState.series && (
+                    <span className={styles.tooltipSeries}>{tooltipState.series}</span>
+                  )}
+                  {typeof tooltipState.percentage === 'number' && (
+                    <span className={styles.tooltipPercentage}>
+                      {tooltipState.percentage.toFixed(1)}%
+                    </span>
+                  )}
+                </div>
+              )}
+              <div className={styles.tooltipValue}>{tooltipState.value}</div>
+              {tooltipState.label && <div className={styles.tooltipLabel}>{tooltipState.label}</div>}
+            </div>
+          )}
+
+          {emptyStateMessage && (
+            <p className={styles.emptyState} role="status">
+              {emptyStateMessage}
+            </p>
           )}
         </div>
-      )}
 
-      <div className={styles['dyn-chart__content']}>
-        <canvas
-          ref={canvasRef}
-          className={styles['dyn-chart__canvas']}
-          role="presentation"
-          aria-hidden={true}
-          style={{ width, height }}
-          onMouseMove={showTooltip ? handleMouseMove : undefined}
-          onMouseLeave={showTooltip ? handleMouseLeave : undefined}
-        />
-        {showTooltip && (
-          <div
-            className={styles['dyn-chart__tooltip']}
-            data-visible={tooltipState.visible}
-            aria-hidden={!tooltipState.visible}
-            style={{
-              left: `${tooltipState.x}px`,
-              top: `${tooltipState.y}px`,
-            }}
-          >
-            {(tooltipState.series ||
-              tooltipState.color ||
-              typeof tooltipState.percentage === 'number') && (
-              <div className={styles['dyn-chart__tooltip-header']}>
-                {tooltipState.color && (
-                  <span
-                    className={styles['dyn-chart__tooltip-color']}
-                    style={{ backgroundColor: tooltipState.color }}
-                  />
-                )}
-                {tooltipState.series && (
-                  <span className={styles['dyn-chart__tooltip-series']}>
-                    {tooltipState.series}
-                  </span>
-                )}
-                {typeof tooltipState.percentage === 'number' && (
-                  <span className={styles['dyn-chart__tooltip-percentage']}>
-                    {tooltipState.percentage.toFixed(1)}%
-                  </span>
-                )}
+        {showLegend && legendItems.length > 0 && (
+          <div className={styles.legend} role="list">
+            {legendItems.map(item => (
+              <div key={item.id} className={styles.legendItem} role="listitem">
+                <span
+                  className={styles.legendColor}
+                  style={{ backgroundColor: normalizedData[item.seriesIndex]?.color }}
+                />
+                <span className={styles.legendLabel}>{item.label}</span>
               </div>
-            )}
-            <div className={styles['dyn-chart__tooltip-value']}>
-              {tooltipState.value}
-            </div>
-            {tooltipState.label && (
-              <div className={styles['dyn-chart__tooltip-label']}>
-                {tooltipState.label}
-              </div>
-            )}
+            ))}
           </div>
         )}
-      </div>
 
-      {showLegend && normalizedData.length > 0 && (
-        <div className={styles['dyn-chart__legend']}>
-          {normalizedData.map((series, index) => (
-            <div key={series.name} className={styles['dyn-chart__legend-item']}>
-              <div
-                className={styles['dyn-chart__legend-color']}
-                style={{
-                  backgroundColor:
-                    series.color || colors[index % colors.length],
-                }}
-              />
-              <span className={styles['dyn-chart__legend-label']}>
-                {series.name}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
+        {children}
+
+        {ariaDescription && (
+          <figcaption id={descriptionId} className={styles.visuallyHidden}>
+            {ariaDescription}
+          </figcaption>
+        )}
+      </figure>
     </div>
   );
-};
+});
 
 DynChart.displayName = 'DynChart';
 
+export { DynChart };
 export default DynChart;
