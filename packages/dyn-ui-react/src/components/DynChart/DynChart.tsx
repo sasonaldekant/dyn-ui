@@ -72,6 +72,37 @@ const normalizeAngle = (angle: number) => {
   return normalized >= 0 ? normalized : normalized + twoPi;
 };
 
+// const createTooltipState = (
+//   target: TooltipTarget,
+//   offsetX: number,
+//   offsetY: number
+// ): TooltipState => {
+//   const nextState: TooltipState = {
+//     visible: true,
+//     x: offsetX + 12,
+//     y: offsetY - 12,
+//     value: target.value,
+//   };
+
+//   if (typeof target.series === 'string' && target.series.length > 0) {
+//     nextState.series = target.series;
+//   }
+
+//   if (typeof target.color === 'string' && target.color.length > 0) {
+//     nextState.color = target.color;
+//   }
+
+//   if (typeof target.label === 'string' && target.label.length > 0) {
+//     nextState.label = target.label;
+//   }
+
+//   if (target.kind === 'slice') {
+//     nextState.percentage = target.percentage;
+//   }
+
+//   return nextState;
+// };
+
 const typeClassNameMap: Record<'line' | 'bar' | 'pie' | 'area', string | undefined> = {
   line: styles.typeLine,
   bar: styles.typeBar,
@@ -208,8 +239,10 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
           value: target.value,
           series: target.series,
           color: target.color,
-          percentage: target.kind === 'slice' ? target.percentage : undefined,
         };
+        if (target.kind === 'slice') {
+          nextState.percentage = target.percentage;
+        }
 
         if (typeof target.label === 'string' && target.label.length > 0) {
           nextState.label = target.label;
@@ -514,7 +547,7 @@ const DynChart = forwardRef<HTMLDivElement, DynChartProps>((props, ref) => {
             centerY,
             radius,
             value: point.value,
-            label: point.label,
+            label: point.label ?? '',
             series: series?.name ?? 'Series 1',
             color,
             percentage,
@@ -694,4 +727,3 @@ DynChart.displayName = 'DynChart';
 
 export { DynChart };
 export default DynChart;
-export { DynChart };

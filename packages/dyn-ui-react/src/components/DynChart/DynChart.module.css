@@ -139,14 +139,44 @@
   font-weight: var(--dyn-font-weight-normal);
   line-height: var(--dyn-line-height-normal);
 }
+/* .typeLine {}
 
-.typeLine {}
+.typeLine {
+  --dyn-chart-marker-shape: circle;
+}
 
-.typeBar {}
+.typeLine .legendColor,
+.typeLine .tooltipColor {
+  border-radius: 999px;
+}
 
-.typePie {}
+.typeBar {
+  --dyn-chart-marker-shape: square;
+}
 
-.typeArea {}
+.typeBar .legendColor,
+.typeBar .tooltipColor {
+  border-radius: 2px;
+}
+
+.typePie {
+  --dyn-chart-marker-shape: pie;
+}
+
+.typePie .legendColor,
+.typePie .tooltipColor {
+  border-radius: 50%;
+}
+
+.typeArea {
+  --dyn-chart-marker-shape: soft;
+}
+
+.typeArea .legendColor,
+.typeArea .tooltipColor {
+  border-radius: 4px;
+  opacity: 0.9;
+}
 
 .emptyState {
   position: absolute;
