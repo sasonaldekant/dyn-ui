@@ -72,23 +72,23 @@ describe('DynChart', () => {
       <DynChart data={sampleData} className="custom-chart" />
     );
 
-    expect(container.firstChild).toHaveClass(styles.root);
+    expect(container.firstChild).toHaveClass(styles.root!);
     expect(container.firstChild).toHaveClass('custom-chart');
   });
 
   it('applies variant class names for each chart type', () => {
-    const variantClassMap: Record<'line' | 'bar' | 'pie' | 'area', string> = {
-      line: styles.typeLine,
-      bar: styles.typeBar,
-      pie: styles.typePie,
-      area: styles.typeArea,
-    };
-
     (['line', 'bar', 'pie', 'area'] as const).forEach(type => {
       const { container, unmount } = render(<DynChart data={sampleData} type={type} />);
-      expect(container.firstChild).toHaveClass(styles.root);
-      const expectedClass = variantClassMap[type];
-      expect(container.firstChild).toHaveClass(expectedClass);
+      expect(container.firstChild).toHaveClass(styles.root!);
+      const expectedClass =
+        type === 'line'
+          ? styles.typeLine
+          : type === 'bar'
+          ? styles.typeBar
+          : type === 'pie'
+          ? styles.typePie
+          : styles.typeArea;
+      expect(container.firstChild).toHaveClass(expectedClass!);
       unmount();
     });
   });

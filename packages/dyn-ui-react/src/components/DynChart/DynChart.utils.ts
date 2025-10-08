@@ -45,38 +45,20 @@ export function normalizeSeries(
     return [];
   }
 
-  const resolveColor = (preferred: string | undefined, index: number) => {
-    if (preferred && preferred.length > 0) {
-      return preferred;
-    }
-
-    if (palette.length > 0) {
-      const paletteIndex = index % palette.length;
-      const paletteColor = palette[paletteIndex];
-      if (paletteColor && paletteColor.length > 0) {
-        return paletteColor;
-      }
-    }
-
-    const fallbackIndex = index % FALLBACK_COLORS.length;
-    return FALLBACK_COLORS[fallbackIndex];
-  };
-
   if (isSeriesCollection(data)) {
     return data.map((series, index) => ({
-      name: series.name,
-      data: series.data,
-      color: resolveColor(series.color, index),
-    }));
+      ...series,
+      color: series.color ?? palette[index % palette.length] ?? FALLBACK_COLORS[index % FALLBACK_COLORS.length],
+    } as NormalizedChartSeries));
   }
 
-  const fallbackColor = resolveColor(undefined, 0);
+  const fallbackColor = palette[0] ?? FALLBACK_COLORS[0];
 
   return [
     {
       name: 'Series 1',
       data: data as ChartDataPoint[],
-      color: fallbackColor,
+      color: fallbackColor!,
     },
   ];
 }

@@ -64,6 +64,12 @@ export { default } from './[ComponentName]';
 // Additional type exports as needed
 ```
 
+### 6. Tooling Enforcement
+
+- Custom ESLint rules enforce the standardized export pattern for every component `index.ts` file.
+- Lint checks ensure each component directory includes matching `.stories.tsx` and `.test.tsx` files.
+- CI will fail if either requirement is missing, keeping Storybook and Vitest coverage aligned with the standards.
+
 ## Steps
 
 1. **Complete Remaining Components**: Apply the same standardization pattern to the remaining 19 components
