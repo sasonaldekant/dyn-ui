@@ -66,6 +66,37 @@ interface TooltipState {
   percentage?: number;
 }
 
+const createTooltipState = (
+  target: TooltipTarget,
+  offsetX: number,
+  offsetY: number
+): TooltipState => {
+  const nextState: TooltipState = {
+    visible: true,
+    x: offsetX + 12,
+    y: offsetY - 12,
+    value: target.value,
+  };
+
+  if (typeof target.series === 'string' && target.series.length > 0) {
+    nextState.series = target.series;
+  }
+
+  if (typeof target.color === 'string' && target.color.length > 0) {
+    nextState.color = target.color;
+  }
+
+  if (typeof target.label === 'string' && target.label.length > 0) {
+    nextState.label = target.label;
+  }
+
+  if (target.kind === 'slice') {
+    nextState.percentage = target.percentage;
+  }
+
+  return nextState;
+};
+
 const normalizeAngle = (angle: number) => {
   const twoPi = Math.PI * 2;
   const normalized = angle % twoPi;
