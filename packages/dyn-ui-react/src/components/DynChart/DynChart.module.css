@@ -139,14 +139,13 @@
   font-weight: var(--dyn-font-weight-normal);
   line-height: var(--dyn-line-height-normal);
 }
-
-.typeLine {}
+/* .typeLine {}
 
 .typeBar {}
 
 .typePie {}
 
-.typeArea {}
+.typeArea {} */
 
 .emptyState {
   position: absolute;
