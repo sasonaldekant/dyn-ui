@@ -1,12 +1,13 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { DynAvatar } from './DynAvatar';
+import styles from './DynAvatar.module.css';
 
 describe('DynAvatar', () => {
   it('renders with default props', () => {
     render(<DynAvatar alt="Test Avatar" />);
     expect(screen.getByTestId('dyn-avatar')).toBeInTheDocument();
-    expect(screen.getByText('TA')).toBeInTheDocument(); // Generated initials
+    expect(screen.getByText('TA')).toBeInTheDocument();
   });
 
   it('renders with provided initials', () => {
@@ -24,20 +25,20 @@ describe('DynAvatar', () => {
   it('applies correct size classes', () => {
     const { rerender } = render(<DynAvatar size="sm" alt="Small Avatar" />);
     const avatar = screen.getByTestId('dyn-avatar');
-    expect(avatar.className).toMatch(/_avatar--sm_/);
-    
+    expect(avatar).toHaveClass(styles.sizeSm!);
+
     rerender(<DynAvatar size="lg" alt="Large Avatar" />);
-    expect(avatar.className).toMatch(/_avatar--lg_/);
+    expect(screen.getByTestId('dyn-avatar')).toHaveClass(styles.sizeLg!);
   });
 
   it('handles click events when onClick is provided', () => {
     const handleClick = vi.fn();
     render(<DynAvatar alt="Clickable Avatar" onClick={handleClick} />);
-    
+
     const avatar = screen.getByTestId('dyn-avatar');
     expect(avatar).toHaveAttribute('role', 'button');
     expect(avatar).toHaveAttribute('tabIndex', '0');
-    
+
     fireEvent.click(avatar);
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -45,22 +46,22 @@ describe('DynAvatar', () => {
   it('handles keyboard events when onClick is provided', () => {
     const handleClick = vi.fn();
     render(<DynAvatar alt="Keyboard Avatar" onClick={handleClick} />);
-    
+
     const avatar = screen.getByTestId('dyn-avatar');
-    
+
     fireEvent.keyDown(avatar, { key: 'Enter' });
     expect(handleClick).toHaveBeenCalledTimes(1);
-    
+
     fireEvent.keyDown(avatar, { key: ' ' });
     expect(handleClick).toHaveBeenCalledTimes(2);
-    
+
     fireEvent.keyDown(avatar, { key: 'Escape' });
-    expect(handleClick).toHaveBeenCalledTimes(2); // Should not trigger
+    expect(handleClick).toHaveBeenCalledTimes(2);
   });
 
   it('does not have interactive attributes when onClick is not provided', () => {
     render(<DynAvatar alt="Static Avatar" />);
-    
+
     const avatar = screen.getByTestId('dyn-avatar');
     expect(avatar).not.toHaveAttribute('role');
     expect(avatar).not.toHaveAttribute('tabIndex');
@@ -68,17 +69,16 @@ describe('DynAvatar', () => {
 
   it('handles image load error', () => {
     render(<DynAvatar src="invalid-image.jpg" alt="Error Avatar" initials="EA" />);
-    
+
     const image = screen.getByAltText('Error Avatar');
     fireEvent.error(image);
-    
-    // Should show initials as fallback
+
     expect(screen.getByText('EA')).toBeInTheDocument();
   });
 
   it('generates initials from alt text', () => {
     render(<DynAvatar alt="John Doe Smith" />);
-    expect(screen.getByText('JD')).toBeInTheDocument(); // First two initials
+    expect(screen.getByText('JD')).toBeInTheDocument();
   });
 
   it('applies custom className', () => {
@@ -104,17 +104,17 @@ describe('DynAvatar', () => {
   it('applies loading class when image is loading', () => {
     render(<DynAvatar src="loading-image.jpg" alt="Loading Avatar" />);
     const avatar = screen.getByTestId('dyn-avatar');
-    expect(avatar.className).toMatch(/_avatar--loading_/);
+    expect(avatar).toHaveClass(styles.loading!);
   });
 
   it('applies clickable class when onClick is provided', () => {
     render(<DynAvatar alt="Clickable" onClick={() => {}} />);
     const avatar = screen.getByTestId('dyn-avatar');
-    expect(avatar.className).toMatch(/_avatar--clickable_/);
+    expect(avatar).toHaveClass(styles.clickable!);
   });
 
   it('shows placeholder icon when no initials and no meaningful alt', () => {
-    render(<DynAvatar alt="Avatar" />); // Generic alt text
+    render(<DynAvatar alt="Avatar" />);
     expect(screen.getByText('👤')).toBeInTheDocument();
   });
 });

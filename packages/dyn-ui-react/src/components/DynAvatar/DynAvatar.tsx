@@ -1,87 +1,126 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { DynAvatarProps, AVATAR_SIZES } from '../../types/avatar.types';
+import { forwardRef, useMemo, useState } from 'react';
+import type { KeyboardEvent, MouseEvent } from 'react';
+import type {
+  AvatarSize,
+  DynAvatarProps,
+} from '../../types/avatar.types';
+import { AVATAR_SIZES } from '../../types/avatar.types';
 import { cn } from '../../utils/classNames';
-import styles from './DynAvatar.module.scss';
+import styles from './DynAvatar.module.css';
 
-/**
- * DynAvatar - Avatar component with image fallback to initials
- * Supports different sizes, click handlers, and accessibility features
- */
-export const DynAvatar: React.FC<DynAvatarProps> = ({
-  src,
-  size = 'md',
-  loading = 'eager',
-  alt = 'Avatar',
-  initials,
-  className,
-  onClick,
-  ...rest
-}) => {
-  const [imageError, setImageError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  
-  const hasClickEvent = !!onClick;
-  const pixelSize = AVATAR_SIZES[size as keyof typeof AVATAR_SIZES];
-  
-  // Generate initials if not provided and alt is meaningful
-  const displayInitials = initials || (alt !== 'Avatar' ? generateInitials(alt) : '');
+const sizeClassNameMap: Record<AvatarSize, string> = {
+  xs: styles.sizeXs!,
+  sm: styles.sizeSm!,
+  md: styles.sizeMd!,
+  lg: styles.sizeLg!,
+  xl: styles.sizeXl!,
+};
 
-  const avatarClasses = cn(
-    styles.avatar,
-    styles[`avatar--${size}`],
+const generateInitials = (name: string): string =>
+  name
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(word => word.charAt(0))
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
+export const DynAvatar = forwardRef<HTMLDivElement, DynAvatarProps>((props, ref) => {
+  const {
+    src,
+    size = 'md',
+    loading = 'eager',
+    alt = 'Avatar',
+    initials,
+    className,
+    onClick,
+    children,
+    'data-testid': dataTestId,
+    ...rest
+  } = props;
+
+  const [hasError, setHasError] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const pixelSize = AVATAR_SIZES[size] ?? AVATAR_SIZES.md;
+  const isInteractive = typeof onClick === 'function';
+
+  const fallbackInitials = useMemo(() => {
+    if (typeof initials === 'string' && initials.trim().length > 0) {
+      return initials.trim().slice(0, 2).toUpperCase();
+    }
+
+    if (alt && alt !== 'Avatar') {
+      return generateInitials(alt);
+    }
+
+    return '';
+  }, [initials, alt]);
+
+  const containerClassName = cn(
+    styles.root,
+    sizeClassNameMap[size] ?? styles.sizeMd,
     {
-      [styles['avatar--clickable']]: hasClickEvent,
-      [styles['avatar--error']]: imageError,
-      [styles['avatar--loading']]: !imageLoaded && !imageError && src,
+      [styles.clickable!]: isInteractive,
+      [styles.loading!]: Boolean(src) && !isLoaded && !hasError,
+      [styles.error!]: hasError,
     },
     className
   );
 
   const handleImageLoad = () => {
-    setImageLoaded(true);
-    setImageError(false);
+    setIsLoaded(true);
+    setHasError(false);
   };
 
   const handleImageError = () => {
-    setImageError(true);
-    setImageLoaded(false);
+    setHasError(true);
+    setIsLoaded(false);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (hasClickEvent) {
-      onClick?.(event);
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!isInteractive) {
+      return;
     }
-  };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (hasClickEvent && (event.key === 'Enter' || event.key === ' ')) {
+    if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      onClick?.(event as any);
+      onClick?.(event as unknown as MouseEvent<HTMLDivElement>);
     }
   };
 
-  const renderPlaceholder = () => (
-    <div 
-      className={styles.placeholder} 
-      style={{ width: pixelSize, height: pixelSize }}
+  const shouldHidePlaceholderFromAccessibility = Boolean(src) && !hasError;
+
+  return (
+    <div
+      ref={ref}
+      className={containerClassName}
+      role={isInteractive ? 'button' : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
+      aria-label={isInteractive ? `Avatar - ${alt}` : alt}
+      onClick={isInteractive ? onClick : undefined}
+      onKeyDown={isInteractive ? handleKeyDown : undefined}
+      data-testid={dataTestId ?? 'dyn-avatar'}
+      {...rest}
     >
-      {displayInitials ? (
-        <span className={styles.initials}>{displayInitials}</span>
-      ) : (
-        <span className={styles.icon} aria-hidden="true">👤</span>
+      {(!src || hasError || !isLoaded) && (
+        <div
+          className={styles.placeholder}
+          aria-hidden={shouldHidePlaceholderFromAccessibility ? 'true' : undefined}
+        >
+          {children ??
+            (fallbackInitials ? (
+              <span className={styles.initials}>{fallbackInitials}</span>
+            ) : (
+              <span className={styles.icon} aria-hidden="true">
+                👤
+              </span>
+            ))}
+        </div>
       )}
-    </div>
-  );
 
-  const renderContent = () => {
-    if (imageError || !src) {
-      return renderPlaceholder();
-    }
-
-    return (
-      <>
-        {!imageLoaded && renderPlaceholder()}
+      {src && !hasError ? (
         <img
           src={src}
           alt={alt}
@@ -91,38 +130,13 @@ export const DynAvatar: React.FC<DynAvatarProps> = ({
           className={styles.image}
           onLoad={handleImageLoad}
           onError={handleImageError}
-          style={{ display: imageLoaded ? 'block' : 'none' }}
+          style={{ opacity: isLoaded ? 1 : 0 }}
         />
-      </>
-    );
-  };
-
-  return (
-    <div
-      className={avatarClasses}
-      onClick={hasClickEvent ? handleClick : undefined}
-      onKeyDown={hasClickEvent ? handleKeyDown : undefined}
-      role={hasClickEvent ? 'button' : undefined}
-      tabIndex={hasClickEvent ? 0 : undefined}
-      aria-label={hasClickEvent ? `Avatar - ${alt}` : alt}
-      data-testid="dyn-avatar"
-      {...rest}
-    >
-      {renderContent()}
+      ) : null}
     </div>
   );
-};
+});
 
 DynAvatar.displayName = 'DynAvatar';
 
 export default DynAvatar;
-
-// Helper function to generate initials from name
-function generateInitials(name: string): string {
-  return name
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .substring(0, 2);
-}
