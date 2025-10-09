@@ -1,6 +1,7 @@
 /**
  * Utility functions for formatting data in DYN UI components
  */
+//import type { BadgeThemeColor } from '../components/DynBadge/DynBadge.types';
 import { DYN_BADGE_COLORS } from '../components/DynBadge/DynBadge.types';
 import type { IconDictionary, ProcessedIcon } from '../types/icon.types';
 
@@ -95,10 +96,7 @@ export const processIconString = (
       if (!baseClass) {
         baseClass = 'dyn-icon';
       }
-      return;
-    }
-
-    if (token.startsWith('fa') || token.startsWith('fas') || token.startsWith('far')) {
+    } else if (token.startsWith('fa') || token.startsWith('fas') || token.startsWith('far')) {
       baseClass = 'dyn-fonts-icon';
       processedClass = index === 0 ? token : `${processedClass} ${token}`;
       return;

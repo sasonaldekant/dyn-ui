@@ -6,18 +6,23 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi, type Mock } from 'vitest';
+
 import { DynBreadcrumb } from './DynBreadcrumb';
 import { BreadcrumbItem } from './DynBreadcrumb.types';
 
 // Mock child components
-jest.mock('../DynIcon', () => ({
-  DynIcon: ({ icon, className }: { icon: string; className?: string }) => (
-    <i data-testid={`icon-${icon}`} className={className} />
-  )
+vi.mock('../DynIcon', () => ({
+  DynIcon: ({ icon, className }: { icon: string; className?: string }) => {
+    const mergedClassName = [icon, className].filter(Boolean).join(' ');
+
+    return <i data-testid={`icon-${icon}`} className={mergedClassName || undefined} />;
+  },
 }));
 
 // Mock fetch for favorite service
-global.fetch = jest.fn();
+const fetchMock = vi.fn();
+global.fetch = fetchMock as unknown as typeof fetch;
 
 // Sample test data
 const basicItems: BreadcrumbItem[] = [
@@ -37,8 +42,8 @@ const longItems: BreadcrumbItem[] = [
 ];
 
 const actionItems: BreadcrumbItem[] = [
-  { label: 'Dashboard', action: jest.fn() },
-  { label: 'Users', action: jest.fn() },
+  { label: 'Dashboard', action: vi.fn() },
+  { label: 'Users', action: vi.fn() },
   { label: 'Profile' }
 ];
 
@@ -48,8 +53,8 @@ const defaultProps = {
 
 describe('DynBreadcrumb', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    (global.fetch as jest.Mock).mockClear();
+    vi.clearAllMocks();
+    (global.fetch as Mock).mockClear();
   });
 
   it('renders breadcrumb with items', () => {
@@ -77,16 +82,16 @@ describe('DynBreadcrumb', () => {
   });
 
   it('renders separators between items', () => {
-    render(<DynBreadcrumb {...defaultProps} />);
+    const { container } = render(<DynBreadcrumb {...defaultProps} />);
     
-    const separators = screen.getAllByTestId('icon-dyn-icon-arrow-right');
+    const separators = container.querySelectorAll('.dyn-icon-arrow-right');
     expect(separators).toHaveLength(2); // 3 items = 2 separators
   });
 
   it('renders custom separator', () => {
-    render(<DynBreadcrumb items={basicItems} separator="dyn-icon-chevron-right" />);
+    const { container } = render(<DynBreadcrumb items={basicItems} separator="dyn-icon-chevron-right" />);
     
-    const separators = screen.getAllByTestId('icon-dyn-icon-chevron-right');
+    const separators = container.querySelectorAll('.dyn-icon-chevron-right');
     expect(separators).toHaveLength(2);
   });
 
@@ -109,7 +114,7 @@ describe('DynBreadcrumb', () => {
   });
 
   it('handles item clicks with onItemClick callback', async () => {
-    const onItemClick = jest.fn();
+    const onItemClick = vi.fn();
     const user = userEvent.setup();
     render(<DynBreadcrumb items={basicItems} onItemClick={onItemClick} />);
     
@@ -150,7 +155,9 @@ describe('DynBreadcrumb', () => {
     
     const favoriteButton = screen.getByLabelText('Adicionar aos favoritos');
     expect(favoriteButton).toBeInTheDocument();
-    expect(screen.getByTestId('icon-dyn-icon-star')).toBeInTheDocument();
+
+    const icon = favoriteButton.querySelector('.dyn-icon-star');
+    expect(icon).toBeInTheDocument();
   });
 
   it('shows filled star when favorited', () => {
@@ -158,11 +165,13 @@ describe('DynBreadcrumb', () => {
     
     const favoriteButton = screen.getByLabelText('Remover dos favoritos');
     expect(favoriteButton).toBeInTheDocument();
-    expect(screen.getByTestId('icon-dyn-icon-star-filled')).toBeInTheDocument();
+
+    const icon = favoriteButton.querySelector('.dyn-icon-star-filled');
+    expect(icon).toBeInTheDocument();
   });
 
   it('toggles favorite status when clicked', async () => {
-    const onFavorite = jest.fn();
+    const onFavorite = vi.fn();
     const user = userEvent.setup();
     render(<DynBreadcrumb items={basicItems} favorite={false} onFavorite={onFavorite} />);
     
@@ -173,10 +182,10 @@ describe('DynBreadcrumb', () => {
   });
 
   it('calls favorite service API when provided', async () => {
-    const mockFetch = global.fetch as jest.Mock;
+    const mockFetch = global.fetch as Mock;
     mockFetch.mockResolvedValueOnce({ ok: true });
     
-    const onFavorite = jest.fn();
+    const onFavorite = vi.fn();
     const user = userEvent.setup();
     render(
       <DynBreadcrumb 
@@ -204,10 +213,10 @@ describe('DynBreadcrumb', () => {
   });
 
   it('handles favorite service API error gracefully', async () => {
-    const mockFetch = global.fetch as jest.Mock;
+    const mockFetch = global.fetch as Mock;
     mockFetch.mockRejectedValueOnce(new Error('Network error'));
     
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const user = userEvent.setup();
     render(
       <DynBreadcrumb 
@@ -234,7 +243,7 @@ describe('DynBreadcrumb', () => {
     const customClass = 'custom-breadcrumb-class';
     const { container } = render(<DynBreadcrumb items={basicItems} className={customClass} />);
     
-    const breadcrumbElement = container.querySelector('.dyn-breadcrumb');
+    const breadcrumbElement = screen.getByRole('navigation');
     expect(breadcrumbElement).toHaveClass(customClass);
   });
 
@@ -292,11 +301,11 @@ describe('DynBreadcrumb', () => {
   });
 
   it('prevents default on link click when action is provided', async () => {
-    const preventDefault = jest.fn();
+    const preventDefault = vi.fn();
     const user = userEvent.setup();
     
     const itemsWithAction = [
-      { label: 'Home', link: '/', action: jest.fn() },
+      { label: 'Home', link: '/', action: vi.fn() },
       { label: 'Current' }
     ];
     
