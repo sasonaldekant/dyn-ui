@@ -1,6 +1,7 @@
 /**
  * Utility functions for formatting data in DYN UI components
  */
+import type { BadgeThemeColor } from '../components/DynBadge/DynBadge.types';
 import { DYN_BADGE_COLORS } from '../components/DynBadge/DynBadge.types';
 
 /**
@@ -9,16 +10,35 @@ import { DYN_BADGE_COLORS } from '../components/DynBadge/DynBadge.types';
  * @returns Initials (e.g., "JD")
  */
 export const generateInitials = (name: string): string => {
-  if (!name || typeof name !== 'string') return '';
-  
-  const words = name.trim().split(/\s+/);
-  if (words.length === 0) return '';
-  
-  if (words.length === 1) {
-    return words[0].charAt(0).toUpperCase();
+  if (!name || typeof name !== 'string') {
+    return '';
   }
-  
-  return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
+
+  const trimmed = name.trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  const words = trimmed.split(/\s+/).filter(Boolean);
+  if (words.length === 0) {
+    return '';
+  }
+
+  const [firstWord, ...restWords] = words;
+  if (!firstWord) {
+    return '';
+  }
+
+  if (restWords.length === 0) {
+    return firstWord.charAt(0).toUpperCase();
+  }
+
+  const lastWord = restWords[restWords.length - 1];
+  if (!lastWord) {
+    return firstWord.charAt(0).toUpperCase();
+  }
+
+  return (firstWord.charAt(0) + lastWord.charAt(0)).toUpperCase();
 };
 
 /**
@@ -48,10 +68,14 @@ export const isThemeColor = (color: string): boolean => {
  * @returns Processed icon classes
  */
 export const processIconString = (iconStr: string, dictionary: Record<string, string>) => {
-  const iconTokens = iconStr.includes(' ') ? iconStr.split(' ') : [iconStr];
+  const iconTokens = iconStr
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter(Boolean);
+
   let processedClass = '';
   let baseClass = 'dyn-icon';
-  
+
   iconTokens.forEach((token, index) => {
     if (dictionary[token]) {
       const dictValue = dictionary[token];
@@ -68,7 +92,7 @@ export const processIconString = (iconStr: string, dictionary: Record<string, st
       processedClass = index === 0 ? token : `${processedClass} ${token}`;
     }
   });
-  
+
   return {
     baseClass,
     iconClass: processedClass.trim()
