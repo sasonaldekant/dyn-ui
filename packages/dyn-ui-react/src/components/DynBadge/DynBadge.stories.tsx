@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { DynBadge, type DynBadgeProps } from './DynBadge';
+import { DynBadge } from './DynBadge';
 
 const meta: Meta<typeof DynBadge> = {
   title: 'Display/DynBadge',
