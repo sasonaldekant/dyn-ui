@@ -1,7 +1,7 @@
 /**
  * Utility functions for formatting data in DYN UI components
  */
-import type { BadgeThemeColor } from '../components/DynBadge/DynBadge.types';
+//import type { BadgeThemeColor } from '../components/DynBadge/DynBadge.types';
 import { DYN_BADGE_COLORS } from '../components/DynBadge/DynBadge.types';
 
 /**
