@@ -1,5 +1,4 @@
-.dyn-badge {
-  /* CSS Custom Properties from Design Tokens */
+.root {
   --badge-height-small: 16px;
   --badge-height-medium: 20px;
   --badge-height-large: 24px;
@@ -11,127 +10,77 @@
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1;
-  color: white;
+  color: #ffffff;
   white-space: nowrap;
   vertical-align: middle;
-  background-color: #6b7280; /* default gray */
+  background-color: #6b7280;
   height: var(--badge-height-medium);
   min-width: var(--badge-height-medium);
   padding: 0 6px;
+  gap: 4px;
 }
 
-/* Size variants */
-.dyn-badge--small {
+.sizeSmall {
   height: var(--badge-height-small);
   min-width: var(--badge-height-small);
   padding: 0 4px;
   font-size: 0.625rem;
 }
 
-.dyn-badge--medium {
+.sizeMedium {
   height: var(--badge-height-medium);
   min-width: var(--badge-height-medium);
   padding: 0 6px;
 }
 
-.dyn-badge--large {
+.sizeLarge {
   height: var(--badge-height-large);
   min-width: var(--badge-height-large);
   padding: 0 8px;
   font-size: 0.875rem;
 }
 
-/* Theme colors */
-.dyn-badge--color-01 {
-  background-color: #3f51b5;
-}
-
-.dyn-badge--color-02 {
-  background-color: #009688;
-}
-
-.dyn-badge--color-03 {
-  background-color: #f44336;
-}
-
-.dyn-badge--color-04 {
-  background-color: #ff9800;
-}
-
-.dyn-badge--color-05 {
-  background-color: #9c27b0;
-}
-
-.dyn-badge--color-06 {
-  background-color: #e91e63;
-}
-
-.dyn-badge--color-07 {
-  background-color: #795548;
-}
-
-.dyn-badge--color-08 {
-  background-color: #607d8b;
-}
-
-.dyn-badge--color-09 {
-  background-color: #ff5722;
-}
-
-.dyn-badge--color-10 {
-  background-color: #3f51b5;
-}
-
-.dyn-badge--color-11 {
-  background-color: #009688;
-}
-
-.dyn-badge--color-12 {
+.color01 { background-color: #3f51b5; }
+.color02 { background-color: #009688; }
+.color03 { background-color: #f44336; }
+.color04 { background-color: #ff9800; }
+.color05 { background-color: #9c27b0; }
+.color06 { background-color: #e91e63; }
+.color07 { background-color: #795548; }
+.color08 { background-color: #607d8b; }
+.color09 { background-color: #ff5722; }
+.color10 { background-color: #3f51b5; }
+.color11 { background-color: #009688; }
+.color12 {
   background-color: #ffc107;
-  color: #333;
+  color: #333333;
 }
 
-/* Status colors */
-.dyn-badge--positive {
-  background-color: #4caf50;
+.statusPositive { background-color: #4caf50; }
+.statusNegative { background-color: #f44336; }
+.statusWarning { background-color: #ff9800; }
+.statusDisabled { background-color: #666666; }
+
+.withBorder {
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #333333;
 }
 
-.dyn-badge--negative {
-  background-color: #f44336;
-}
-
-.dyn-badge--warning {
-  background-color: #ff9800;
-}
-
-.dyn-badge--disabled {
-  background-color: #666;
-}
-
-/* Border variant */
-.dyn-badge--border {
-  border: 2px solid white;
-  box-shadow: 0 0 0 1px #333;
-}
-
-/* Icon only variant */
-.dyn-badge--icon-only {
+.iconOnly {
   padding: 2px;
   aspect-ratio: 1;
 }
 
-/* With value */
-.dyn-badge--with-value {
-  /* Additional styles for badges with values */
+.withValue {
+  gap: 4px;
 }
 
-/* Icon styles */
-.dyn-badge-custom-icon {
-  display: flex;
+.customIcon {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.dyn-badge-value {
+.value {
   font-weight: inherit;
 }

@@ -1,117 +1,129 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
+import type { ReactNode } from 'react';
 import { DynBadge } from './DynBadge';
+import styles from './DynBadge.module.css';
 import { IconDictionaryProvider } from '../../providers/IconDictionaryProvider';
 
-// Test wrapper with required providers
-const TestWrapper = ({ children }: { children: React.ReactNode }) => (
+type WrapperProps = {
+  children: ReactNode;
+};
+
+const TestWrapper = ({ children }: WrapperProps) => (
   <IconDictionaryProvider>
     {children}
   </IconDictionaryProvider>
 );
 
 describe('DynBadge', () => {
-  it('renders with default props', () => {
-    render(<DynBadge />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    expect(badge).toBeInTheDocument();
-    expect(badge).toHaveClass('dyn-badge');
-    expect(badge).toHaveClass('dyn-badge-medium');
+  it('renders with base class and medium size by default', () => {
+    const { container } = render(<DynBadge />, { wrapper: TestWrapper });
+
+    const badge = container.querySelector('span');
+    expect(badge).toHaveClass(styles.root!);
+    expect(badge).toHaveClass(styles.sizeMedium!);
   });
 
-  it('displays numeric value correctly', () => {
+  it('renders children when provided', () => {
+    render(<DynBadge>New</DynBadge>, { wrapper: TestWrapper });
+    expect(screen.getByRole('status')).toHaveTextContent('New');
+  });
+
+  it('displays numeric value when explicitly provided', () => {
     render(<DynBadge value={5} />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    expect(badge).toHaveTextContent('5');
+    expect(screen.getByText('5')).toBeInTheDocument();
   });
 
   it('formats values over 99 as "99+"', () => {
     render(<DynBadge value={150} />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    expect(badge).toHaveTextContent('99+');
+    expect(screen.getByText('99+')).toBeInTheDocument();
   });
 
   it('applies size classes correctly', () => {
-    const { rerender } = render(<DynBadge size="small" />, { wrapper: TestWrapper });
-    let badge = screen.getByRole('status');
-    expect(badge).toHaveClass('dyn-badge-small');
+    const { rerender, getByRole } = render(<DynBadge size="small" />, {
+      wrapper: TestWrapper,
+    });
+
+    expect(getByRole('status')).toHaveClass(styles.sizeSmall!);
 
     rerender(<DynBadge size="large" />);
-    badge = screen.getByRole('status');
-    expect(badge).toHaveClass('dyn-badge-large');
+    expect(getByRole('status')).toHaveClass(styles.sizeLarge!);
   });
 
   it('applies status classes correctly', () => {
-    const { rerender } = render(<DynBadge status="positive" />, { wrapper: TestWrapper });
-    let badge = screen.getByRole('status');
-    expect(badge).toHaveClass('dyn-badge-status-positive');
+    const { rerender, getByRole } = render(<DynBadge status="positive" />, {
+      wrapper: TestWrapper,
+    });
+
+    expect(getByRole('status')).toHaveClass(styles.statusPositive!);
 
     rerender(<DynBadge status="negative" />);
-    badge = screen.getByRole('status');
-    expect(badge).toHaveClass('dyn-badge-status-negative');
+    expect(getByRole('status')).toHaveClass(styles.statusNegative!);
   });
 
   it('applies theme color classes', () => {
-    render(<DynBadge color="color-01" />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    expect(badge).toHaveClass('dyn-badge-color-01');
+    const { getByRole } = render(<DynBadge color="color-01" />, {
+      wrapper: TestWrapper,
+    });
+
+    expect(getByRole('status')).toHaveClass(styles.color01!);
   });
 
   it('applies custom colors via inline styles', () => {
-    render(<DynBadge color="#ff0000" />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    expect(badge).toHaveStyle({ backgroundColor: '#ff0000' });
+    const { getByRole } = render(<DynBadge color="#ff0000" />, {
+      wrapper: TestWrapper,
+    });
+
+    expect(getByRole('status')).toHaveStyle({ backgroundColor: '#ff0000' });
   });
 
   it('shows border when showBorder is true', () => {
-    render(<DynBadge showBorder={true} />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    expect(badge).toHaveClass('dyn-badge-border');
+    const { getByRole } = render(<DynBadge showBorder />, { wrapper: TestWrapper });
+    expect(getByRole('status')).toHaveClass(styles.withBorder!);
   });
 
-  it('renders icon-only badge correctly', () => {
-    render(<DynBadge icon="ok" />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    expect(badge).toHaveClass('dyn-badge-icon-only');
+  it('renders icon-only badge when no value is provided', () => {
+    const { getByRole } = render(<DynBadge icon="ok" />, { wrapper: TestWrapper });
+    expect(getByRole('status')).toHaveClass(styles.iconOnly!);
   });
 
   it('renders auto status icons', () => {
-    render(<DynBadge status="positive" icon={true} />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    // Icon should be rendered (specific implementation may vary)
-    expect(badge).toBeInTheDocument();
+    render(<DynBadge status="positive" icon />, { wrapper: TestWrapper });
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
-  it('renders both icon and value', () => {
+  it('renders both icon and value when provided', () => {
     render(<DynBadge icon="user" value={5} />, { wrapper: TestWrapper });
     const badge = screen.getByRole('status');
     expect(badge).toHaveTextContent('5');
-    expect(badge).toHaveClass('dyn-badge-with-value');
+    expect(badge).toHaveClass(styles.withValue!);
   });
 
   it('provides proper accessibility attributes', () => {
-    render(<DynBadge value={5} ariaLabel="Custom badge label" />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    expect(badge).toHaveAttribute('aria-label', 'Custom badge label');
+    render(
+      <DynBadge value={5} ariaLabel="Custom badge label" />,
+      { wrapper: TestWrapper }
+    );
+
+    expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Custom badge label');
   });
 
-  it('has default aria-label when none provided', () => {
+  it('generates default aria-label when value is provided', () => {
     render(<DynBadge value={10} />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    expect(badge).toHaveAttribute('aria-label', 'Badge with value 10');
+    expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Badge with value 10');
   });
 
   it('accepts custom className', () => {
-    render(<DynBadge className="custom-badge" />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    expect(badge).toHaveClass('custom-badge');
-    expect(badge).toHaveClass('dyn-badge');
+    const { getByRole } = render(<DynBadge className="custom-badge" />, {
+      wrapper: TestWrapper,
+    });
+
+    expect(getByRole('status')).toHaveClass(styles.root!, 'custom-badge');
   });
 
   it('handles zero value correctly', () => {
     render(<DynBadge value={0} />, { wrapper: TestWrapper });
-    const badge = screen.getByRole('status');
-    expect(badge).toHaveTextContent('0');
+    expect(screen.getByRole('status')).toHaveTextContent('0');
   });
 
   it('handles React component icon', () => {
@@ -121,4 +133,3 @@ describe('DynBadge', () => {
     expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
   });
 });
-

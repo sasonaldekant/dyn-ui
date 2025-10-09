@@ -1,6 +1,7 @@
 /**
  * Utility functions for formatting data in DYN UI components
  */
+import { DYN_BADGE_COLORS } from '../components/DynBadge/DynBadge.types';
 
 /**
  * Generates initials from a full name
@@ -37,11 +38,7 @@ export const formatBadgeValue = (value: number): string => {
  * @returns Boolean indicating if it's a theme color
  */
 export const isThemeColor = (color: string): boolean => {
-  const themeColors = [
-    'color-01', 'color-02', 'color-03', 'color-04', 'color-05', 'color-06',
-    'color-07', 'color-08', 'color-09', 'color-10', 'color-11', 'color-12'
-  ];
-  return themeColors.includes(color);
+  return (DYN_BADGE_COLORS as readonly string[]).includes(color);
 };
 
 /**
