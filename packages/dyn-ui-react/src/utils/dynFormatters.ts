@@ -1,8 +1,8 @@
 /**
  * Utility functions for formatting data in DYN UI components
  */
-import type { BadgeThemeColor } from '../components/DynBadge/DynBadge.types';
 import { DYN_BADGE_COLORS } from '../components/DynBadge/DynBadge.types';
+import type { IconDictionary, ProcessedIcon } from '../types/icon.types';
 
 /**
  * Generates initials from a full name
@@ -67,34 +67,48 @@ export const isThemeColor = (color: string): boolean => {
  * @param dictionary - Icon dictionary mapping
  * @returns Processed icon classes
  */
-export const processIconString = (iconStr: string, dictionary: Record<string, string>) => {
+export const processIconString = (
+  iconStr: string,
+  dictionary: IconDictionary
+): ProcessedIcon => {
   const iconTokens = iconStr
     .split(/\s+/)
     .map((token) => token.trim())
     .filter(Boolean);
 
   let processedClass = '';
-  let baseClass = 'dyn-icon';
+  let baseClass: string | undefined;
 
   iconTokens.forEach((token, index) => {
-    if (dictionary[token]) {
-      const dictValue = dictionary[token];
+    const dictValue = dictionary[token];
+
+    if (dictValue) {
       processedClass = index === 0 ? dictValue : `${processedClass} ${dictValue}`;
-      if (dictValue.startsWith('dyn-icon')) {
-        // Keep dyn-icon as base class
+      if (!baseClass && dictValue.startsWith('dyn-icon')) {
+        baseClass = 'dyn-icon';
       }
-    } else if (token.startsWith('dyn-icon-')) {
+      return;
+    }
+
+    if (token.startsWith('dyn-icon-')) {
       processedClass = index === 0 ? token : `${processedClass} ${token}`;
-    } else if (token.startsWith('fa') || token.startsWith('fas') || token.startsWith('far')) {
+      if (!baseClass) {
+        baseClass = 'dyn-icon';
+      }
+      return;
+    }
+
+    if (token.startsWith('fa') || token.startsWith('fas') || token.startsWith('far')) {
       baseClass = 'dyn-fonts-icon';
       processedClass = index === 0 ? token : `${processedClass} ${token}`;
-    } else {
-      processedClass = index === 0 ? token : `${processedClass} ${token}`;
+      return;
     }
+
+    processedClass = index === 0 ? token : `${processedClass} ${token}`;
   });
 
   return {
-    baseClass,
+    baseClass: baseClass ?? 'dyn-icon',
     iconClass: processedClass.trim()
   };
 };
