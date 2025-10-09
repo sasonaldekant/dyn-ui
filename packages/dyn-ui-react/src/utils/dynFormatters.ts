@@ -57,10 +57,8 @@ export const formatBadgeValue = (value: number): string => {
  * @param color - Color string
  * @returns Boolean indicating if it's a theme color
  */
-const THEME_COLOR_SET = new Set<string>(DYN_BADGE_COLORS);
-
-export const isThemeColor = (color: string): color is BadgeThemeColor => {
-  return THEME_COLOR_SET.has(color);
+export const isThemeColor = (color: string): boolean => {
+  return (DYN_BADGE_COLORS as readonly string[]).includes(color);
 };
 
 /**

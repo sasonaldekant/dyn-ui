@@ -103,7 +103,7 @@ const DynBadgeComponent = (
   }, [color]);
 
   const themeColorClass = isThemeColor(color)
-    ? COLOR_CLASS_MAP[color]
+    ? COLOR_CLASS_MAP[color as BadgeThemeColor]
     : undefined;
 
   const badgeClasses = cn(
