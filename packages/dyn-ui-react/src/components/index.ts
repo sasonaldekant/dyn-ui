@@ -59,6 +59,7 @@ export { ThemeSwitcher } from './ThemeSwitcher';
 // ===== TYPE EXPORTS (Grouped by Category) =====
 
 // Basic Component Types
+export type { DynBoxProps, DynBoxRef } from './DynBox/DynBox.types';
 export type { DynButtonProps } from './DynButton/DynButton.types';
 export type { DynIconProps } from '../types/icon.types';
 
