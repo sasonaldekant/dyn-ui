@@ -81,13 +81,17 @@ export const processIconString = (
   let baseClass: string | undefined;
 
   iconTokens.forEach((token, index) => {
-    if (dictionary[token]) {
-      const dictValue = dictionary[token];
+    const dictValue = dictionary[token];
+
+    if (dictValue) {
       processedClass = index === 0 ? dictValue : `${processedClass} ${dictValue}`;
       if (!baseClass && dictValue.startsWith('dyn-icon')) {
         baseClass = 'dyn-icon';
       }
-    } else if (token.startsWith('dyn-icon-')) {
+      return;
+    }
+
+    if (token.startsWith('dyn-icon-')) {
       processedClass = index === 0 ? token : `${processedClass} ${token}`;
       if (!baseClass) {
         baseClass = 'dyn-icon';
@@ -95,9 +99,10 @@ export const processIconString = (
     } else if (token.startsWith('fa') || token.startsWith('fas') || token.startsWith('far')) {
       baseClass = 'dyn-fonts-icon';
       processedClass = index === 0 ? token : `${processedClass} ${token}`;
-    } else {
-      processedClass = index === 0 ? token : `${processedClass} ${token}`;
+      return;
     }
+
+    processedClass = index === 0 ? token : `${processedClass} ${token}`;
   });
 
   return {
