@@ -1,5 +1,4 @@
 import { createContext, useEffect, useMemo, useState } from 'react';
-import type { PropsWithChildren } from 'react';
 import type { IconDictionary } from '../types/icon.types';
 
 export type IconDictionaryContextValue = IconDictionary;
@@ -29,14 +28,15 @@ const DEFAULT_ICON_DICTIONARY: IconDictionary = Object.freeze({
 
 export const IconDictionaryContext = createContext<IconDictionaryContextValue | undefined>(undefined);
 
-export interface IconDictionaryProviderProps {
-  customDictionary?: IconDictionary | null | undefined;
+interface IconDictionaryProviderProps {
+  children: React.ReactNode;
+  customDictionary?: IconDictionary;
 }
 
-export const IconDictionaryProvider = ({
+export const IconDictionaryProvider: React.FC<IconDictionaryProviderProps> = ({
   children,
   customDictionary,
-}: PropsWithChildren<IconDictionaryProviderProps>) => {
+}: IconDictionaryProviderProps) => {
   const [dictionary, setDictionary] = useState<IconDictionaryContextValue>(DEFAULT_ICON_DICTIONARY);
 
   useEffect(() => {
@@ -51,7 +51,10 @@ export const IconDictionaryProvider = ({
     });
   }, [customDictionary]);
 
-  const value = useMemo<IconDictionaryContextValue>(() => dictionary, [dictionary]);
+  const value = useMemo<IconDictionaryContextValue>(
+    () => ({ ...dictionary }),
+    [dictionary]
+  );
 
   return (
     <IconDictionaryContext.Provider value={value}>

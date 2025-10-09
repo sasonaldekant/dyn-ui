@@ -1,72 +1,138 @@
-/**
- * DynBreadcrumb - Navigation Breadcrumb Component
- * Displays navigation path with favorites support and overflow handling
- */
-
-import React, { forwardRef, useImperativeHandle, useState, useCallback, useMemo } from 'react';
-import classNames from 'classnames';
-import { DynBreadcrumbProps, BreadcrumbItem, DynBreadcrumbRef, DEFAULT_SEPARATOR, BREADCRUMB_LITERALS } from './DynBreadcrumb.types';
+import {
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  useCallback,
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react';
+import type {
+  KeyboardEvent,
+  MouseEvent,
+  ReactElement,
+} from 'react';
+import { cn } from '../../utils/classNames';
 import { DynIcon } from '../DynIcon';
+import type { BreadcrumbItem, DynBreadcrumbProps, DynBreadcrumbRef } from './DynBreadcrumb.types';
+import {
+  BREADCRUMB_LITERALS,
+  DYN_BREADCRUMB_DEFAULT_PROPS,
+} from './DynBreadcrumb.types';
 import styles from './DynBreadcrumb.module.css';
 
-const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>((
-  {
-    items = [],
-    favorite = false,
-    favoriteService,
-    separator = DEFAULT_SEPARATOR,
-    maxItems = 5,
-    className,
-    onFavorite,
-    onItemClick
-  },
-  ref
-) => {
-  const [isFavorited, setIsFavorited] = useState(favorite);
-  const [internalItems, setInternalItems] = useState(items);
-  const [showAllItems, setShowAllItems] = useState(false);
+const ELLIPSIS_LABEL = '...';
 
-  useImperativeHandle(ref, () => ({
-    addItem: (item: BreadcrumbItem) => {
-      setInternalItems(prev => [...prev, item]);
-    },
-    removeItem: (index: number) => {
-      setInternalItems(prev => prev.filter((_, i) => i !== index));
-    },
-    clear: () => {
-      setInternalItems([]);
+const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>((props, ref) => {
+  const {
+    items: itemsProp = DYN_BREADCRUMB_DEFAULT_PROPS.items,
+    favorite,
+    favoriteService,
+    separator = DYN_BREADCRUMB_DEFAULT_PROPS.separator,
+    maxItems = DYN_BREADCRUMB_DEFAULT_PROPS.maxItems,
+    onFavorite,
+    onItemClick,
+    ariaLabel = DYN_BREADCRUMB_DEFAULT_PROPS.ariaLabel,
+    className,
+    id,
+    children,
+    'data-testid': dataTestId,
+    ...rest
+  } = props;
+
+  const [internalItems, setInternalItems] = useState<BreadcrumbItem[]>(() => itemsProp);
+  const [showAllItems, setShowAllItems] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(Boolean(favorite));
+
+  const instanceId = useId();
+  const navId = id ?? instanceId;
+
+  useEffect(() => {
+    setInternalItems(itemsProp);
+    setShowAllItems(false);
+  }, [itemsProp]);
+
+  useEffect(() => {
+    if (typeof favorite === 'boolean') {
+      setIsFavorited(favorite);
     }
-  }));
+  }, [favorite]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      addItem: (item: BreadcrumbItem) => {
+        setInternalItems(prevItems => [...prevItems, item]);
+      },
+      removeItem: (index: number) => {
+        setInternalItems(prevItems => prevItems.filter((_, itemIndex) => itemIndex !== index));
+      },
+      clear: () => {
+        setInternalItems([]);
+        setShowAllItems(false);
+      },
+    }),
+    []
+  );
+
+  const handleShowAllItems = useCallback(() => {
+    setShowAllItems(true);
+  }, []);
+
+  const shouldRenderFavorite = favoriteService !== undefined || typeof favorite === 'boolean';
 
   const displayItems = useMemo(() => {
-    const currentItems = internalItems.length > 0 ? internalItems : items;
-    
-    if (showAllItems || currentItems.length <= maxItems) {
-      return currentItems;
+    if (showAllItems || internalItems.length <= maxItems) {
+      return internalItems;
     }
 
-    // Show first item, ellipsis, and last (maxItems - 2) items
-    const firstItem = currentItems[0];
-    const lastItems = currentItems.slice(-(maxItems - 2));
-    
-    return [
-      firstItem,
-      { label: '...', action: () => setShowAllItems(true) },
-      ...lastItems
-    ];
-  }, [internalItems, items, maxItems, showAllItems]);
-
-  const handleItemClick = useCallback((item: BreadcrumbItem, index: number, e: React.MouseEvent) => {
-    if (item.action) {
-      e.preventDefault();
-      item.action();
+    if (internalItems.length === 0) {
+      return internalItems;
     }
-    onItemClick?.(item, index);
-  }, [onItemClick]);
+
+    const firstItem = internalItems[0];
+    const lastItems = internalItems.slice(-(maxItems - 2));
+
+    const ellipsisItem: BreadcrumbItem = {
+      label: ELLIPSIS_LABEL,
+      action: handleShowAllItems,
+    };
+
+    return [firstItem, ellipsisItem, ...lastItems];
+  }, [handleShowAllItems, internalItems, maxItems, showAllItems]);
+
+  const handleItemActivate = useCallback(
+    (
+      item: BreadcrumbItem,
+      index: number,
+      event: MouseEvent<HTMLAnchorElement | HTMLSpanElement> | KeyboardEvent<HTMLSpanElement>
+    ) => {
+      if (item.action) {
+        event.preventDefault();
+        item.action();
+      }
+
+      onItemClick?.(item, index);
+    },
+    [onItemClick]
+  );
+
+  const handleKeyDown = useCallback(
+    (item: BreadcrumbItem, index: number) =>
+      (event: KeyboardEvent<HTMLSpanElement>) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          handleItemActivate(item, index, event);
+        }
+      },
+    [handleItemActivate]
+  );
 
   const handleFavoriteToggle = useCallback(async () => {
-    const newFavorited = !isFavorited;
-    
+    const nextFavorited = !isFavorited;
+
     if (favoriteService) {
       try {
         const response = await fetch(favoriteService, {
@@ -74,104 +140,141 @@ const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>((
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ favorited: newFavorited })
+          body: JSON.stringify({ favorited: nextFavorited }),
         });
-        
-        if (response.ok) {
-          setIsFavorited(newFavorited);
-          onFavorite?.(newFavorited);
+
+        if (!response.ok) {
+          throw new Error('Failed to update favorite status');
         }
+
+        setIsFavorited(nextFavorited);
+        onFavorite?.(nextFavorited);
       } catch (error) {
         console.error('Failed to update favorite status:', error);
       }
-    } else {
-      setIsFavorited(newFavorited);
-      onFavorite?.(newFavorited);
-    }
-  }, [isFavorited, favoriteService, onFavorite]);
 
-  const breadcrumbClasses = classNames(
-    styles['dyn-breadcrumb'],
-    className
+      return;
+    }
+
+    setIsFavorited(nextFavorited);
+    onFavorite?.(nextFavorited);
+  }, [favoriteService, isFavorited, onFavorite]);
+
+  const renderSeparator = useCallback(
+    (separatorIndex: number) => {
+      const key = `separator-${separatorIndex}`;
+
+      if (typeof separator === 'string') {
+        return (
+          <DynIcon
+            key={key}
+            icon={separator}
+            className={styles['dyn-breadcrumb-separator']}
+          />
+        );
+      }
+
+      if (separator == null) {
+        return null;
+      }
+
+      if (isValidElement(separator)) {
+        return cloneElement(separator as ReactElement, {
+          key,
+          className: cn(styles['dyn-breadcrumb-separator'], separator.props.className),
+        });
+      }
+
+      return (
+        <span key={key} className={styles['dyn-breadcrumb-separator']}>
+          {separator}
+        </span>
+      );
+    },
+    [separator]
   );
+
+  const breadcrumbClasses = cn(styles['dyn-breadcrumb'], className);
 
   if (displayItems.length === 0) {
     return null;
   }
 
-  const renderSeparator = () => {
-    if (typeof separator === 'string') {
-      return <DynIcon icon={separator} className={styles['dyn-breadcrumb-separator']} />;
-    }
-    return <span className={styles['dyn-breadcrumb-separator']}>{separator}</span>;
-  };
-
   return (
-    <nav className={breadcrumbClasses} aria-label="Breadcrumb">
+    <nav
+      id={navId}
+      className={breadcrumbClasses}
+      aria-label={ariaLabel}
+      data-testid={dataTestId}
+      {...rest}
+    >
       <ol className={styles['dyn-breadcrumb-list']}>
         {displayItems.map((item, index) => {
-          const isLast = index === displayItems.length - 1;
-          const isEllipsis = item.label === '...';
-          
+          const isLastItem = index === displayItems.length - 1;
+          const isEllipsis = item.label === ELLIPSIS_LABEL;
+          const isInteractive = isEllipsis || Boolean(item.action);
+
           return (
             <li key={`${item.label}-${index}`} className={styles['dyn-breadcrumb-item']}>
-              {item.link && !isLast && !isEllipsis ? (
-                <a 
-                  href={item.link} 
+              {!isLastItem && item.link && !isEllipsis ? (
+                <a
+                  href={item.link}
                   className={styles['dyn-breadcrumb-link']}
-                  onClick={(e) => handleItemClick(item, index, e)}
+                  onClick={(event: MouseEvent<HTMLAnchorElement>) => handleItemActivate(item, index, event)}
                 >
                   {item.label}
                 </a>
               ) : (
-                <span 
-                  className={classNames(
-                    styles['dyn-breadcrumb-text'],
-                    {
-                      [styles['dyn-breadcrumb-current']]: isLast,
-                      [styles['dyn-breadcrumb-ellipsis']]: isEllipsis,
-                      [styles['dyn-breadcrumb-clickable']]: isEllipsis || item.action
-                    }
-                  )}
-                  onClick={isEllipsis || item.action ? (e) => handleItemClick(item, index, e) : undefined}
-                  role={isEllipsis || item.action ? 'button' : undefined}
-                  tabIndex={isEllipsis || item.action ? 0 : undefined}
-                  onKeyDown={isEllipsis || item.action ? (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      handleItemClick(item, index, e as any);
-                    }
-                  } : undefined}
+                <span
+                  className={cn(styles['dyn-breadcrumb-text'], {
+                    [styles['dyn-breadcrumb-current']]: isLastItem,
+                    [styles['dyn-breadcrumb-ellipsis']]: isEllipsis,
+                    [styles['dyn-breadcrumb-clickable']]: isInteractive,
+                  })}
+                  onClick={
+                    isInteractive
+                      ? (event: MouseEvent<HTMLSpanElement>) => handleItemActivate(item, index, event)
+                      : undefined
+                  }
+                  role={isInteractive ? 'button' : undefined}
+                  tabIndex={isInteractive ? 0 : undefined}
+                  onKeyDown={isInteractive ? handleKeyDown(item, index) : undefined}
+                  aria-label={isEllipsis ? BREADCRUMB_LITERALS.showMore : undefined}
+                  aria-current={isLastItem ? 'page' : undefined}
                 >
                   {item.label}
                 </span>
               )}
-              {!isLast && (
-                renderSeparator()
-              )}
+              {!isLastItem && renderSeparator(index)}
             </li>
           );
         })}
       </ol>
-      
-      {/* Favorite button */}
-      {(favorite !== undefined || favoriteService) && (
+
+      {shouldRenderFavorite && (
         <div className={styles['dyn-breadcrumb-favorite']}>
-          <button 
-            className={classNames(
-              styles['dyn-breadcrumb-favorite-button'],
-              {
-                [styles['dyn-breadcrumb-favorite-active']]: isFavorited
-              }
-            )}
+          <button
+            type="button"
+            className={cn(styles['dyn-breadcrumb-favorite-button'], {
+              [styles['dyn-breadcrumb-favorite-active']]: isFavorited,
+            })}
             onClick={handleFavoriteToggle}
-            aria-label={isFavorited ? BREADCRUMB_LITERALS.removeFromFavorites : BREADCRUMB_LITERALS.addToFavorites}
-            title={isFavorited ? BREADCRUMB_LITERALS.removeFromFavorites : BREADCRUMB_LITERALS.addToFavorites}
+            aria-label={
+              isFavorited
+                ? BREADCRUMB_LITERALS.removeFromFavorites
+                : BREADCRUMB_LITERALS.addToFavorites
+            }
+            title={
+              isFavorited
+                ? BREADCRUMB_LITERALS.removeFromFavorites
+                : BREADCRUMB_LITERALS.addToFavorites
+            }
           >
             <DynIcon icon={isFavorited ? 'dyn-icon-star-filled' : 'dyn-icon-star'} />
           </button>
         </div>
       )}
+      {children}
     </nav>
   );
 });

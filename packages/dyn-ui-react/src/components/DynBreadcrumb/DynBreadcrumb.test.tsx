@@ -77,16 +77,16 @@ describe('DynBreadcrumb', () => {
   });
 
   it('renders separators between items', () => {
-    render(<DynBreadcrumb {...defaultProps} />);
+    const { container } = render(<DynBreadcrumb {...defaultProps} />);
     
-    const separators = screen.getAllByTestId('icon-dyn-icon-arrow-right');
+    const separators = container.querySelectorAll('.dyn-icon-arrow-right');
     expect(separators).toHaveLength(2); // 3 items = 2 separators
   });
 
   it('renders custom separator', () => {
-    render(<DynBreadcrumb items={basicItems} separator="dyn-icon-chevron-right" />);
+    const { container } = render(<DynBreadcrumb items={basicItems} separator="dyn-icon-chevron-right" />);
     
-    const separators = screen.getAllByTestId('icon-dyn-icon-chevron-right');
+    const separators = container.querySelectorAll('.dyn-icon-chevron-right');
     expect(separators).toHaveLength(2);
   });
 
@@ -150,7 +150,9 @@ describe('DynBreadcrumb', () => {
     
     const favoriteButton = screen.getByLabelText('Adicionar aos favoritos');
     expect(favoriteButton).toBeInTheDocument();
-    expect(screen.getByTestId('icon-dyn-icon-star')).toBeInTheDocument();
+
+    const icon = favoriteButton.querySelector('.dyn-icon-star');
+    expect(icon).toBeInTheDocument();
   });
 
   it('shows filled star when favorited', () => {
@@ -158,7 +160,9 @@ describe('DynBreadcrumb', () => {
     
     const favoriteButton = screen.getByLabelText('Remover dos favoritos');
     expect(favoriteButton).toBeInTheDocument();
-    expect(screen.getByTestId('icon-dyn-icon-star-filled')).toBeInTheDocument();
+
+    const icon = favoriteButton.querySelector('.dyn-icon-star-filled');
+    expect(icon).toBeInTheDocument();
   });
 
   it('toggles favorite status when clicked', async () => {
@@ -234,7 +238,7 @@ describe('DynBreadcrumb', () => {
     const customClass = 'custom-breadcrumb-class';
     const { container } = render(<DynBreadcrumb items={basicItems} className={customClass} />);
     
-    const breadcrumbElement = container.querySelector('.dyn-breadcrumb');
+    const breadcrumbElement = screen.getByRole('navigation');
     expect(breadcrumbElement).toHaveClass(customClass);
   });
 

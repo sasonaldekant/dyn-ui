@@ -1,10 +1,10 @@
-// Standardized exports for DynBreadcrumb component
 export { DynBreadcrumb } from './DynBreadcrumb';
 export { default } from './DynBreadcrumb';
 
+export { DEFAULT_SEPARATOR, BREADCRUMB_LITERALS, DYN_BREADCRUMB_DEFAULT_PROPS } from './DynBreadcrumb.types';
 export type {
   DynBreadcrumbProps,
   DynBreadcrumbRef,
-  BreadcrumbItem
+  BreadcrumbItem,
+  DynBreadcrumbDefaultProps,
 } from './DynBreadcrumb.types';
-export { DEFAULT_SEPARATOR, BREADCRUMB_LITERALS } from './DynBreadcrumb.types';
