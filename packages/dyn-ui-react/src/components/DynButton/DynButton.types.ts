@@ -1,45 +1,82 @@
-/**
- * TypeScript interfaces for DynButton component
- * Follows the exact specification from DYN UI documentation
- * Extends BaseComponentProps for consistency
- */
+import type {
+  ButtonHTMLAttributes,
+  FocusEventHandler,
+  MouseEventHandler,
+  ReactNode,
+} from 'react';
+import type { BaseComponentProps } from '../../types';
 
-import { BaseComponentProps } from '../../types';
+export type DynButtonKind = 'primary' | 'secondary' | 'tertiary';
 
-export interface DynButtonProps extends BaseComponentProps {
+export type DynButtonSize = 'small' | 'medium' | 'large';
+
+export interface DynButtonProps
+  extends BaseComponentProps,
+    Omit<
+      ButtonHTMLAttributes<HTMLButtonElement>,
+      | 'type'
+      | 'onBlur'
+      | 'onClick'
+      | 'children'
+      | 'aria-label'
+      | 'aria-expanded'
+      | keyof BaseComponentProps
+    > {
   /** Button text label */
   label?: string;
-  
-  /** Icon - can be string (icon name) or React component */
-  icon?: string | React.ReactNode;
-  
+
+  /** Icon - can be string (icon name) or React node */
+  icon?: string | ReactNode;
+
   /** HTML button type */
   type?: 'button' | 'submit' | 'reset';
-  
-  /** Loading state with spinner */
+
+  /** Loading state indicator */
   loading?: boolean;
-  
+
   /** Danger/destructive state styling */
   danger?: boolean;
-  
+
   /** Button kind/variant */
-  kind?: 'primary' | 'secondary' | 'tertiary';
-  
+  kind?: DynButtonKind;
+
   /** Disabled state */
   disabled?: boolean;
-  
-  /** ARIA label for accessibility */
+
+  /** Accessible label override */
   ariaLabel?: string;
-  
-  /** ARIA expanded state */
+
+  /** Accessible expanded state */
   ariaExpanded?: boolean;
-  
+
   /** Button size */
-  size?: 'small' | 'medium' | 'large';
-  
+  size?: DynButtonSize;
+
+  /** Expand button to full width */
+  fullWidth?: boolean;
+
   /** Blur event handler */
-  onBlur?: (event: React.FocusEvent<HTMLButtonElement>) => void;
-  
+  onBlur?: FocusEventHandler<HTMLButtonElement>;
+
   /** Click event handler */
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
 }
+
+export type DynButtonRef = HTMLButtonElement;
+
+export type DynButtonDefaultProps = Required<
+  Pick<
+    DynButtonProps,
+    'type' | 'kind' | 'size' | 'loading' | 'danger' | 'disabled' | 'fullWidth'
+  >
+>;
+
+export const DYN_BUTTON_DEFAULT_PROPS: DynButtonDefaultProps = {
+  type: 'button',
+  kind: 'primary',
+  size: 'medium',
+  loading: false,
+  danger: false,
+  disabled: false,
+  fullWidth: false,
+};
