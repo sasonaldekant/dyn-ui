@@ -75,7 +75,6 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
     value,
     ...(required ? { required } : {}),
     ...(validation ? { validation } : {}),
-    ...(errorMessage !== undefined ? { customError: errorMessage } : {}),
   });
 
   const {
@@ -241,11 +240,13 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
     return null;
   }
 
+  const fieldError = errorMessage ?? (error || undefined);
+
   const inputClasses = cn(
     styles.input,
     sizeClassMap[size],
     focused && styles.stateFocused,
-    Boolean(error) && styles.stateError,
+    Boolean(fieldError) && styles.stateError,
     disabled && styles.stateDisabled,
     readonly && styles.stateReadonly,
     isOpen && styles.stateOpen
@@ -253,7 +254,7 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
 
   const describedBy =
     [
-      error ? `${inputId}-error` : null,
+      fieldError ? `${inputId}-error` : null,
       help ? `${inputId}-help` : null,
     ]
       .filter(Boolean)
@@ -270,7 +271,7 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
       {...(help !== undefined ? { helpText: help } : {})}
       {...(required ? { required } : {})}
       {...(optional ? { optional } : {})}
-      {...(error ? { errorText: error } : {})}
+      {...(fieldError ? { errorText: fieldError } : {})}
       {...(className !== undefined ? { className } : {})}
       htmlFor={inputId}
     >
@@ -290,7 +291,7 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
             onBlur={handleBlur}
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
-            aria-invalid={Boolean(error)}
+            aria-invalid={Boolean(fieldError)}
             aria-describedby={describedBy}
             aria-expanded={isOpen}
             aria-controls={isOpen ? dropdownId : undefined}
