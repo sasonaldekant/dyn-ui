@@ -21,6 +21,9 @@ export const useDynDateParser = ({
   locale = 'pt-BR',
   customParser
 }: DateParserOptions = {}) => {
+  // Locale support is reserved for future enhancements; consume the value to satisfy linting.
+  void locale;
+
   const [displayValue, setDisplayValue] = useState<string>('');
 
   const formatDate = useCallback((date: Date | null, formatStr: string = format): string => {
