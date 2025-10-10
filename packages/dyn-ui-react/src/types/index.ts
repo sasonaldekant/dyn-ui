@@ -36,6 +36,8 @@ export type {
 // Layout Components types - SCOPE 7
 export type {
   DynContainerProps,
+  DynContainerOwnProps,
+  DynContainerBackground,
   DynDividerProps,
   DynGridProps,
   DynGridColumn,
