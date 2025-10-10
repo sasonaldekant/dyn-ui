@@ -7,17 +7,20 @@ vi.mock('../../hooks/useDynDateParser', () => ({
   useDynDateParser: () => ({
     displayValue: '',
     setDisplayValue: vi.fn(),
-    formatDate: (date: Date) => date.toLocaleDateString('pt-BR'),
+    formatDate: (date: Date | null) =>
+      date ? date.toLocaleDateString('pt-BR') : '',
     parseDate: (str: string) => {
       if (str === 'hoje') return new Date();
       if (str.match(/\d{2}\/\d{2}\/\d{4}/)) {
-        const [day, month, year] = str.split('/');
+        const [day, month, year] = str.split('/') as [string, string, string];
         return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
       }
       return null;
     },
-    isValidDate: (date: Date) => date instanceof Date && !isNaN(date.getTime()),
-    getRelativeDescription: (date: Date) => `Selected: ${date.toLocaleDateString()}`,
+    isValidDate: (date: Date | null) =>
+      date instanceof Date && !isNaN(date.getTime()),
+    getRelativeDescription: (date: Date | null) =>
+      date ? `Selected: ${date.toLocaleDateString()}` : null,
   }),
 }));
 

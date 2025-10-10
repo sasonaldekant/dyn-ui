@@ -73,9 +73,9 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
 
   const { error, validate, clearError } = useDynFieldValidation({
     value,
-    required,
-    validation,
-    customError: errorMessage,
+    ...(required ? { required } : {}),
+    ...(validation ? { validation } : {}),
+    ...(errorMessage !== undefined ? { customError: errorMessage } : {}),
   });
 
   const {
@@ -85,7 +85,11 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
     parseDate,
     isValidDate,
     getRelativeDescription,
-  } = useDynDateParser({ format, locale, customParser });
+  } = useDynDateParser({
+    format,
+    locale,
+    ...(customParser ? { customParser } : {}),
+  });
 
   const parseExternalValue = useCallback(
     (input: DynDatePickerProps['value']): Date | null => {
@@ -237,13 +241,15 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
     return null;
   }
 
-  const inputClasses = cn(styles.input, sizeClassMap[size], {
-    [styles.stateFocused]: focused,
-    [styles.stateError]: Boolean(error),
-    [styles.stateDisabled]: disabled,
-    [styles.stateReadonly]: readonly,
-    [styles.stateOpen]: isOpen,
-  });
+  const inputClasses = cn(
+    styles.input,
+    sizeClassMap[size],
+    focused && styles.stateFocused,
+    Boolean(error) && styles.stateError,
+    disabled && styles.stateDisabled,
+    readonly && styles.stateReadonly,
+    isOpen && styles.stateOpen
+  );
 
   const describedBy =
     [
@@ -260,12 +266,12 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
 
   return (
     <DynFieldContainer
-      label={label}
-      helpText={help}
-      required={required}
-      optional={optional}
-      errorText={error}
-      className={className}
+      {...(label !== undefined ? { label } : {})}
+      {...(help !== undefined ? { helpText: help } : {})}
+      {...(required ? { required } : {})}
+      {...(optional ? { optional } : {})}
+      {...(error ? { errorText: error } : {})}
+      {...(className !== undefined ? { className } : {})}
       htmlFor={inputId}
     >
       <div ref={containerRef} className={styles.container} data-testid={dataTestId}>
