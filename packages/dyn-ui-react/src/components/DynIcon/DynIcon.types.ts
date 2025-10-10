@@ -1,14 +1,14 @@
-import type { HTMLAttributes, ReactNode } from 'react';
-import type { BaseComponentProps } from '../../types';
+import type { HTMLAttributes, MouseEvent, ReactNode } from 'react';
+import type { BaseComponentProps } from '../../types/theme';
 
 export type DynIconTone = 'success' | 'warning' | 'danger' | 'info';
 export type DynIconSizeToken = 'small' | 'medium' | 'large';
 
 export interface DynIconProps
-  extends Omit<HTMLAttributes<HTMLSpanElement>, 'color'>,
+  extends Omit<HTMLAttributes<HTMLSpanElement>, 'children' | 'onClick' | 'color'>,
     Omit<BaseComponentProps, 'children'> {
   /** Icon identifier - string (dictionary key, class names) or React node */
-  icon?: string | ReactNode;
+  icon: string | ReactNode;
 
   /** Icon size token or explicit dimension */
   size?: DynIconSizeToken | number | string;
@@ -25,8 +25,8 @@ export interface DynIconProps
   /** Disabled state prevents interaction */
   disabled?: boolean;
 
-  /** Icon content fallback */
-  children?: ReactNode;
+  /** Click event handler */
+  onClick?: (event: MouseEvent<HTMLSpanElement>) => void;
 }
 
 export interface DynIconDefaultProps {

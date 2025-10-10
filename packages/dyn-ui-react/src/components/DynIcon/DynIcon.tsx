@@ -12,7 +12,6 @@ import { cn } from '../../utils/classNames';
 import { processIconString } from '../../utils/dynFormatters';
 import { useIconDictionary } from '../../hooks/useIconDictionary';
 import { DEFAULT_ICON_DICTIONARY } from '../../providers/IconDictionaryProvider';
-import type { IconDictionary } from '../../types';
 import { iconRegistry } from './icons';
 import type {
   DynIconProps,
@@ -75,7 +74,7 @@ const DynIconComponent = (
 
   const { tabIndex, ...domProps } = rest;
 
-  let dictionary: IconDictionary;
+  let dictionary = DEFAULT_ICON_DICTIONARY;
   try {
     dictionary = useIconDictionary();
   } catch (error) {
