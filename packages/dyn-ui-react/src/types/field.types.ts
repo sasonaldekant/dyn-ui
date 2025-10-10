@@ -32,7 +32,7 @@ export interface DynFieldBase extends BaseComponentProps {
 
 export interface DynFieldRef {
   focus: () => void;
-  validate: () => boolean;
+  validate: () => Promise<boolean>;
   clear: () => void;
   getValue: () => any;
   setValue: (value: any) => void;
@@ -70,13 +70,6 @@ export interface DynSelectProps extends DynFieldBase {
   searchable?: boolean;
   virtualScroll?: boolean;
   loading?: boolean;
-  size?: InputSize;
-}
-
-// Checkbox specific types
-export interface DynCheckboxProps extends Omit<DynFieldBase, 'value'> {
-  checked?: boolean;
-  indeterminate?: boolean;
   size?: InputSize;
 }
 

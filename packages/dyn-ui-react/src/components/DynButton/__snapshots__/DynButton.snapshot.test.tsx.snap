@@ -3,8 +3,19 @@
 exports[`DynButton > matches snapshot 1`] = `
 <div>
   <button
-    class="_dyn-button_c4f507 _dyn-button--primary_c4f507 _dyn-button--medium_c4f507"
+    class="_root_c4f507 _kindPrimary_c4f507 _sizeMedium_c4f507"
+    data-testid="dyn-button"
     type="button"
-  />
+  >
+    <span
+      class="_content_c4f507"
+    >
+      <span
+        class="_label_c4f507"
+      >
+        Snapshot
+      </span>
+    </span>
+  </button>
 </div>
 `;

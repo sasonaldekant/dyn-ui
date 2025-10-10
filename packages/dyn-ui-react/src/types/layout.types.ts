@@ -3,7 +3,8 @@
  * Part of DYN UI Layout Components Group - SCOPE 7
  */
 
-import { ReactNode } from 'react';
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
+import type { BaseComponentProps } from './theme';
 
 // Common layout types
 export type LayoutSize = 'small' | 'medium' | 'large';
@@ -13,23 +14,33 @@ export type LayoutAlignment = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutJustify = 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
 
 // DynContainer Props
-export interface DynContainerProps {
-  children: ReactNode;
+export type DynContainerBackground = 'none' | 'surface' | 'card';
+
+export interface DynContainerOwnProps {
+  children?: ReactNode;
   title?: string;
   subtitle?: string;
-  size?: LayoutSize;
-  spacing?: LayoutSpacing;
-  bordered?: boolean;
-  shadow?: boolean;
-  background?: 'none' | 'surface' | 'card';
   direction?: LayoutDirection;
   align?: LayoutAlignment;
   justify?: LayoutJustify;
-  maxWidth?: string;
-  className?: string;
-  id?: string;
-  'data-testid'?: string;
+  spacing?: LayoutSpacing;
+  size?: LayoutSize;
+  bordered?: boolean;
+  shadow?: boolean;
+  background?: DynContainerBackground;
+  height?: number | string;
+  maxWidth?: number | string;
+  noBorder?: boolean;
+  noPadding?: boolean;
+  style?: CSSProperties;
 }
+
+export type DynContainerProps = BaseComponentProps &
+  DynContainerOwnProps &
+  Omit<
+    HTMLAttributes<HTMLDivElement>,
+    keyof BaseComponentProps | keyof DynContainerOwnProps
+  >;
 
 // DynDivider Props
 export interface DynDividerProps {
