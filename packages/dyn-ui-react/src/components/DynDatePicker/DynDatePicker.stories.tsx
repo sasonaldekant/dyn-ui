@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import React from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { DynDatePicker } from './DynDatePicker';
 import type { DynDatePickerProps } from '../../types/field.types';
 
