@@ -4,6 +4,7 @@
  */
 
 import type { BaseComponentProps } from './theme';
+export type { DynFieldContainerProps } from '../components/DynFieldContainer/DynFieldContainer.types';
 
 export interface ValidationRule {
   type: 'required' | 'email' | 'url' | 'pattern' | 'minLength' | 'maxLength' | 'custom';
@@ -83,15 +84,4 @@ export interface DynDatePickerProps extends DynFieldBase {
   size?: InputSize;
 }
 
-// FieldContainer specific types
-export interface DynFieldContainerProps {
-  children: React.ReactElement;
-  label?: string;
-  required?: boolean;
-  optional?: boolean;
-  helpText?: string;
-  errorText?: string;
-  showValidation?: boolean;
-  className?: string;
-  htmlFor?: string;
-}
+// FieldContainer specific types are exported from the component package
