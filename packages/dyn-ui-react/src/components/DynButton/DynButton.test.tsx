@@ -11,9 +11,9 @@ describe('DynButton', () => {
 
     const button = screen.getByTestId('dyn-button');
     expect(button).toHaveTextContent('Save');
-    expect(button).toHaveClass(classes.root);
-    expect(button).toHaveClass(classes.kindPrimary);
-    expect(button).toHaveClass(classes.sizeMedium);
+    expect(button).toHaveClass(classes.root!);
+    expect(button).toHaveClass(classes.kindPrimary!);
+    expect(button).toHaveClass(classes.sizeMedium!);
   });
 
   it('fires onClick handler when enabled', () => {
@@ -42,7 +42,7 @@ describe('DynButton', () => {
     render(<DynButton icon="download" ariaLabel="Download file" />);
 
     const button = screen.getByRole('button', { name: 'Download file' });
-    expect(button).toHaveClass(classes.iconOnly);
+    expect(button).toHaveClass(classes.iconOnly!);
     expect(button.querySelector(`.${classes.icon}`)).toBeInTheDocument();
   });
 
@@ -59,7 +59,7 @@ describe('DynButton', () => {
     render(<DynButton label="Delete" kind="secondary" danger />);
 
     const button = screen.getByRole('button', { name: 'Delete' });
-    expect(button).toHaveClass(classes.danger);
-    expect(button).toHaveClass(classes.kindSecondary);
+    expect(button).toHaveClass(classes.danger!);
+    expect(button).toHaveClass(classes.kindSecondary!);
   });
 });
