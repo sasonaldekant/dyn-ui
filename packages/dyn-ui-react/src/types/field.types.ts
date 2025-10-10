@@ -31,7 +31,7 @@ export interface DynFieldBase {
 
 export interface DynFieldRef {
   focus: () => void;
-  validate: () => boolean;
+  validate: () => Promise<boolean>;
   clear: () => void;
   getValue: () => any;
   setValue: (value: any) => void;

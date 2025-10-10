@@ -8,6 +8,7 @@ import {
 } from 'react';
 import type { ChangeEvent, ForwardedRef, KeyboardEvent } from 'react';
 import { DynFieldContainer } from '../DynFieldContainer';
+import type { DynFieldContainerProps } from '../DynFieldContainer/DynFieldContainer';
 import { useDynFieldValidation } from '../../hooks/useDynFieldValidation';
 import { cn } from '../../utils/classNames';
 import type { DynCheckboxProps, DynCheckboxRef } from './DynCheckbox.types';
@@ -43,14 +44,22 @@ const DynCheckboxComponent = (
   const fallbackId = useId();
   const fieldId = id ?? name ?? `${fallbackId}-checkbox`;
 
-  const { error, validate, clearError } = useDynFieldValidation({
+  const validationOptions: Parameters<typeof useDynFieldValidation>[0] = {
     value: checked ? 'checked' : '',
     required,
-    validation,
-    customError: errorMessage,
-  });
+  };
 
-  const resolvedError = errorMessage ?? error;
+  if (validation) {
+    validationOptions.validation = validation;
+  }
+
+  if (errorMessage) {
+    validationOptions.customError = errorMessage;
+  }
+
+  const { error, validate, clearError } = useDynFieldValidation(validationOptions);
+
+  const resolvedError = errorMessage ?? (error || undefined);
 
   useImperativeHandle(
     ref,
@@ -124,27 +133,28 @@ const DynCheckboxComponent = (
     large: styles.boxLarge,
   };
 
-  const checkboxClasses = cn(styles.box, sizeClassMap[size], {
-    [styles.boxChecked]: checked && !indeterminate,
-    [styles.boxIndeterminate]: indeterminate,
-    [styles.boxError]: Boolean(resolvedError),
-    [styles.boxDisabled]: disabled,
-    [styles.boxReadonly]: readonly,
-  });
+  const checkboxClasses = cn(
+    styles.box,
+    sizeClassMap[size],
+    checked && !indeterminate && styles.boxChecked,
+    indeterminate && styles.boxIndeterminate,
+    resolvedError && styles.boxError,
+    disabled && styles.boxDisabled,
+    readonly && styles.boxReadonly
+  );
 
   const containerClasses = cn(
     styles.container,
-    {
-      [styles.containerDisabled]: disabled,
-      [styles.containerReadonly]: readonly,
-    },
+    disabled && styles.containerDisabled,
+    readonly && styles.containerReadonly,
     className
   );
 
-  const wrapperClasses = cn(styles.wrapper, {
-    [styles.wrapperDisabled]: disabled,
-    [styles.wrapperReadonly]: readonly,
-  });
+  const wrapperClasses = cn(
+    styles.wrapper,
+    disabled && styles.wrapperDisabled,
+    readonly && styles.wrapperReadonly
+  );
 
   const describedById = resolvedError
     ? `${fieldId}-error`
@@ -154,15 +164,23 @@ const DynCheckboxComponent = (
 
   const visualState = indeterminate ? 'indeterminate' : checked ? 'checked' : 'unchecked';
 
+  const fieldContainerProps: Omit<DynFieldContainerProps, 'children'> = {
+    required,
+    optional,
+    className: containerClasses,
+    htmlFor: fieldId,
+  };
+
+  if (help) {
+    fieldContainerProps.helpText = help;
+  }
+
+  if (resolvedError) {
+    fieldContainerProps.errorText = resolvedError;
+  }
+
   return (
-    <DynFieldContainer
-      helpText={help}
-      required={required}
-      optional={optional}
-      errorText={resolvedError}
-      className={containerClasses}
-      htmlFor={fieldId}
-    >
+    <DynFieldContainer {...fieldContainerProps}>
       <label className={wrapperClasses} htmlFor={fieldId}>
         <input
           ref={checkboxRef}
