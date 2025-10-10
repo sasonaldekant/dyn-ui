@@ -3,305 +3,349 @@
  * Part of DYN UI Form Components Group - SCOPE 6
  */
 
-import React, {
+import {
   forwardRef,
+  useCallback,
+  useEffect,
+  useId,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
-  useEffect
 } from 'react';
-import classNames from 'classnames';
-import type { DynDatePickerProps, DynFieldRef } from '../../types/field.types';
+import type { ChangeEvent, KeyboardEvent } from 'react';
+import { cn } from '../../utils/classNames';
+import type { DynDatePickerProps, DynFieldRef, InputSize } from '../../types/field.types';
 import { DynFieldContainer } from '../DynFieldContainer';
 import { useDynFieldValidation } from '../../hooks/useDynFieldValidation';
 import { useDynDateParser } from '../../hooks/useDynDateParser';
 import { DynIcon } from '../DynIcon';
-import './DynDatePicker.module.scss';
+import styles from './DynDatePicker.module.scss';
 
-export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>(
-  (
-    {
-      name,
-      label,
-      help,
-      placeholder = 'dd/mm/aaaa',
-      disabled = false,
-      readonly = false,
-      required = false,
-      optional = false,
-      visible = true,
-      value: propValue,
-      errorMessage,
-      validation,
-      className,
-      format = 'dd/MM/yyyy',
-      locale = 'pt-BR',
-      minDate,
-      maxDate,
-      customParser,
-      size = 'medium',
-      onChange,
-      onBlur,
-      onFocus
+const MAX_DATE_LENGTH = 10;
+
+const sizeClassMap: Record<InputSize, string | undefined> = {
+  small: styles.sizeSmall,
+  medium: undefined,
+  large: styles.sizeLarge,
+};
+
+export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props, ref) => {
+  const {
+    id: idProp,
+    name,
+    label,
+    help,
+    placeholder = 'dd/mm/aaaa',
+    disabled = false,
+    readonly = false,
+    required = false,
+    optional = false,
+    visible = true,
+    value: propValue,
+    errorMessage,
+    validation,
+    className,
+    format = 'dd/MM/yyyy',
+    locale = 'pt-BR',
+    minDate,
+    maxDate,
+    customParser,
+    size = 'medium',
+    onChange,
+    onBlur,
+    onFocus,
+    children: _children,
+    'data-testid': dataTestId,
+    ...rest
+  } = props;
+
+  const instanceId = useId();
+  const inputId = idProp ?? name ?? instanceId;
+  const dropdownId = `${inputId}-dropdown`;
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const [value, setValue] = useState<Date | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [focused, setFocused] = useState(false);
+
+  const { error, validate, clearError } = useDynFieldValidation({
+    value,
+    required,
+    validation,
+    customError: errorMessage,
+  });
+
+  const {
+    displayValue,
+    setDisplayValue,
+    formatDate,
+    parseDate,
+    isValidDate,
+    getRelativeDescription,
+  } = useDynDateParser({ format, locale, customParser });
+
+  const parseExternalValue = useCallback(
+    (input: DynDatePickerProps['value']): Date | null => {
+      if (!input) {
+        return null;
+      }
+
+      const candidate = input instanceof Date ? input : new Date(input);
+      return isValidDate(candidate) ? candidate : null;
     },
-    ref
-  ) => {
-    const [value, setValue] = useState<Date | null>(
-      propValue ? (propValue instanceof Date ? propValue : new Date(propValue)) : null
-    );
-    const [isOpen, setIsOpen] = useState(false);
-    const [focused, setFocused] = useState(false);
-    const inputRef = useRef<HTMLInputElement>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
+    [isValidDate]
+  );
 
-    const { error, validate, clearError } = useDynFieldValidation({
-      value,
-      required,
-      validation,
-      customError: errorMessage
+  useEffect(() => {
+    const nextValue = parseExternalValue(propValue);
+    setValue(prev => {
+      const prevTime = prev?.getTime();
+      const nextTime = nextValue?.getTime();
+      return prevTime === nextTime ? prev : nextValue;
     });
+    setDisplayValue(nextValue ? formatDate(nextValue) : '');
+  }, [propValue, formatDate, parseExternalValue, setDisplayValue]);
 
-    const {
-      displayValue,
-      setDisplayValue,
-      formatDate,
-      parseDate,
-      isValidDate,
-      getRelativeDescription
-    } = useDynDateParser({ format, locale, customParser });
-
-    useImperativeHandle(ref, () => ({
-      focus: () => inputRef.current?.focus(),
-      validate: () => validate(),
-      clear: () => {
-        setValue(null);
-        setDisplayValue('');
-        onChange?.(null);
-        clearError();
-      },
-      getValue: () => value,
-      setValue: (newValue: any) => {
-        const date = newValue ? (newValue instanceof Date ? newValue : new Date(newValue)) : null;
-        setValue(date);
-        setDisplayValue(date ? formatDate(date, format) : '');
-        onChange?.(date);
-      }
-    }));
-
-    useEffect(() => {
-      if (propValue) {
-        const date = propValue instanceof Date ? propValue : new Date(propValue);
-        setValue(date);
-        setDisplayValue(formatDate(date, format));
-      } else {
-        setValue(null);
-        setDisplayValue('');
-      }
-    }, [propValue, format, formatDate]);
-
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-          setIsOpen(false);
-        }
-      };
-
-      if (isOpen) {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-      }
-    }, [isOpen]);
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const inputValue = e.target.value;
-      setDisplayValue(inputValue);
-
-      const parsedDate = parseDate(inputValue);
-      if (parsedDate && isValidDate(parsedDate)) {
-        // Validate date range
-        if (minDate && parsedDate < minDate) {
-          return; // Don't update if before min date
-        }
-        if (maxDate && parsedDate > maxDate) {
-          return; // Don't update if after max date
-        }
-
-        setValue(parsedDate);
-        onChange?.(parsedDate);
-        clearError();
-      } else if (!inputValue) {
-        setValue(null);
-        onChange?.(null);
-        clearError();
-      }
-    };
-
-    const handleCalendarToggle = () => {
-      if (!disabled && !readonly) {
-        setIsOpen(prev => !prev);
-      }
-    };
-
-    const handleTodayClick = () => {
-      const today = new Date();
-      setValue(today);
-      setDisplayValue(formatDate(today, format));
-      onChange?.(today);
-      clearError();
+  const handleDocumentClick = useCallback((event: MouseEvent) => {
+    if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
       setIsOpen(false);
-    };
+    }
+  }, []);
 
-    const handleClearClick = () => {
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    document.addEventListener('mousedown', handleDocumentClick);
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentClick);
+    };
+  }, [isOpen, handleDocumentClick]);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => inputRef.current?.focus(),
+    validate: () => validate(),
+    clear: () => {
       setValue(null);
       setDisplayValue('');
       onChange?.(null);
       clearError();
-      inputRef.current?.focus();
-    };
+    },
+    getValue: () => value,
+    setValue: (newValue: any) => {
+      const nextValue = parseExternalValue(newValue);
+      setValue(nextValue);
+      setDisplayValue(nextValue ? formatDate(nextValue) : '');
+      onChange?.(nextValue);
+    },
+  }));
 
-    const handleBlur = () => {
-      setFocused(false);
-      validate();
-      onBlur?.();
-    };
+  const emitChange = useCallback(
+    (nextValue: Date | null) => {
+      setValue(nextValue);
+      setDisplayValue(nextValue ? formatDate(nextValue) : '');
+      onChange?.(nextValue);
+    },
+    [formatDate, onChange, setDisplayValue]
+  );
 
-    const handleFocus = () => {
-      setFocused(true);
-      clearError();
-      onFocus?.();
-    };
+  const handleInputChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const inputValue = event.target.value;
+      setDisplayValue(inputValue);
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-      switch (e.key) {
+      const parsedDate = parseDate(inputValue);
+      if (parsedDate && isValidDate(parsedDate)) {
+        if (minDate && parsedDate < minDate) {
+          return;
+        }
+        if (maxDate && parsedDate > maxDate) {
+          return;
+        }
+
+        emitChange(parsedDate);
+        clearError();
+      } else if (!inputValue) {
+        emitChange(null);
+        clearError();
+      }
+    },
+    [parseDate, isValidDate, minDate, maxDate, emitChange, clearError]
+  );
+
+  const handleCalendarToggle = useCallback(() => {
+    if (disabled || readonly) {
+      return;
+    }
+    setIsOpen(prev => !prev);
+    inputRef.current?.focus();
+  }, [disabled, readonly]);
+
+  const handleTodayClick = useCallback(() => {
+    const today = new Date();
+    emitChange(today);
+    clearError();
+    setIsOpen(false);
+  }, [emitChange, clearError]);
+
+  const handleClearClick = useCallback(() => {
+    emitChange(null);
+    clearError();
+    inputRef.current?.focus();
+  }, [emitChange, clearError]);
+
+  const handleBlur = useCallback(() => {
+    setFocused(false);
+    validate();
+    onBlur?.();
+  }, [validate, onBlur]);
+
+  const handleFocus = useCallback(() => {
+    setFocused(true);
+    clearError();
+    onFocus?.();
+  }, [clearError, onFocus]);
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLInputElement>) => {
+      switch (event.key) {
         case 'Enter':
-          if (!isOpen) {
-            setIsOpen(true);
-            e.preventDefault();
-          }
-          break;
-        case 'Escape':
-          setIsOpen(false);
-          break;
         case 'ArrowDown':
           if (!isOpen) {
             setIsOpen(true);
-            e.preventDefault();
+            event.preventDefault();
           }
           break;
+        case 'Escape':
+          if (isOpen) {
+            setIsOpen(false);
+            event.preventDefault();
+          }
+          break;
+        default:
+          break;
       }
-    };
+    },
+    [isOpen]
+  );
 
-    if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
-    const inputClasses = classNames(
-      'dyn-datepicker-input',
-      `dyn-datepicker--${size}`,
-      {
-        'dyn-datepicker--focused': focused,
-        'dyn-datepicker--error': !!error,
-        'dyn-datepicker--disabled': disabled,
-        'dyn-datepicker--readonly': readonly,
-        'dyn-datepicker--open': isOpen
-      }
-    );
+  const inputClasses = cn(styles.input, sizeClassMap[size], {
+    [styles.stateFocused]: focused,
+    [styles.stateError]: Boolean(error),
+    [styles.stateDisabled]: disabled,
+    [styles.stateReadonly]: readonly,
+    [styles.stateOpen]: isOpen,
+  });
 
-    const relativeText = value ? getRelativeDescription(value) : null;
+  const describedBy =
+    [
+      error ? `${inputId}-error` : null,
+      help ? `${inputId}-help` : null,
+    ]
+      .filter(Boolean)
+      .join(' ') || undefined;
 
-    return (
-      <DynFieldContainer
-        label={label}
-        helpText={help}
-        required={required}
-        optional={optional}
-        errorText={error}
-        className={className}
-        htmlFor={name}
-      >
-        <div ref={containerRef} className="dyn-datepicker-container">
-          <div className="dyn-datepicker-input-container">
-            <input
-              ref={inputRef}
-              id={name}
-              name={name}
-              type="text"
-              className={inputClasses}
-              placeholder={placeholder}
-              value={displayValue}
-              disabled={disabled}
-              readOnly={readonly}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              onFocus={handleFocus}
-              onKeyDown={handleKeyDown}
-              aria-invalid={!!error}
-              aria-describedby={error ? `${name}-error` : undefined}
-              maxLength={10}
-            />
-            
+  const relativeText = useMemo(
+    () => (value ? getRelativeDescription(value) : null),
+    [value, getRelativeDescription]
+  );
+
+  return (
+    <DynFieldContainer
+      label={label}
+      helpText={help}
+      required={required}
+      optional={optional}
+      errorText={error}
+      className={className}
+      htmlFor={inputId}
+    >
+      <div ref={containerRef} className={styles.container} data-testid={dataTestId}>
+        <div className={styles.inputContainer}>
+          <input
+            ref={inputRef}
+            id={inputId}
+            name={name ?? inputId}
+            type="text"
+            className={inputClasses}
+            placeholder={placeholder}
+            value={displayValue}
+            disabled={disabled}
+            readOnly={readonly}
+            onChange={handleInputChange}
+            onBlur={handleBlur}
+            onFocus={handleFocus}
+            onKeyDown={handleKeyDown}
+            aria-invalid={Boolean(error)}
+            aria-describedby={describedBy}
+            aria-expanded={isOpen}
+            aria-controls={isOpen ? dropdownId : undefined}
+            maxLength={MAX_DATE_LENGTH}
+            data-size={size}
+            {...rest}
+          />
+
+          <button
+            type="button"
+            className={styles.calendarButton}
+            onClick={handleCalendarToggle}
+            disabled={disabled}
+            tabIndex={-1}
+            aria-label="Abrir calendário"
+            aria-expanded={isOpen}
+            aria-controls={isOpen ? dropdownId : undefined}
+          >
+            <DynIcon icon="dyn-icon-calendar" />
+          </button>
+
+          {displayValue && !readonly && !disabled && (
             <button
               type="button"
-              className="dyn-datepicker-calendar-button"
-              onClick={handleCalendarToggle}
-              disabled={disabled}
+              className={styles.clearButton}
+              onClick={handleClearClick}
               tabIndex={-1}
-              aria-label="Abrir calendário"
+              aria-label="Limpar data"
             >
-              <DynIcon icon="dyn-icon-calendar" />
+              <DynIcon icon="dyn-icon-close" />
             </button>
-            
-            {displayValue && !readonly && !disabled && (
-              <button
-                type="button"
-                className="dyn-datepicker-clear-button"
-                onClick={handleClearClick}
-                tabIndex={-1}
-                aria-label="Limpar data"
-              >
-                <DynIcon icon="dyn-icon-close" />
-              </button>
-            )}
-          </div>
-          
-          {relativeText && (
-            <div className="dyn-datepicker-relative-text">
-              {relativeText}
-            </div>
-          )}
-          
-          {isOpen && (
-            <div className="dyn-datepicker-dropdown">
-              <div className="dyn-datepicker-shortcuts">
-                <button
-                  type="button"
-                  className="dyn-datepicker-shortcut"
-                  onClick={handleTodayClick}
-                >
-                  Hoje
-                </button>
-                <button
-                  type="button"
-                  className="dyn-datepicker-shortcut"
-                  onClick={handleClearClick}
-                >
-                  Limpar
-                </button>
-              </div>
-              
-              <div className="dyn-datepicker-help">
-                <div className="dyn-datepicker-help-title">Formatos aceitos:</div>
-                <ul className="dyn-datepicker-help-list">
-                  <li>dd/mm/aaaa (ex: 25/12/2023)</li>
-                  <li>hoje, amanhã, ontem</li>
-                  <li>Texto natural</li>
-                </ul>
-              </div>
-            </div>
           )}
         </div>
-      </DynFieldContainer>
-    );
-  }
-);
+
+        {relativeText && <div className={styles.relativeText}>{relativeText}</div>}
+
+        {isOpen && (
+          <div id={dropdownId} className={styles.dropdown} role="dialog">
+            <div className={styles.shortcuts}>
+              <button type="button" className={styles.shortcut} onClick={handleTodayClick}>
+                Hoje
+              </button>
+              <button type="button" className={styles.shortcut} onClick={handleClearClick}>
+                Limpar
+              </button>
+            </div>
+
+            <div>
+              <div className={styles.helpTitle}>Formatos aceitos:</div>
+              <ul className={styles.helpList}>
+                <li className={styles.helpListItem}>dd/mm/aaaa (ex: 25/12/2023)</li>
+                <li className={styles.helpListItem}>hoje, amanhã, ontem</li>
+                <li className={styles.helpListItem}>Texto natural</li>
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
+    </DynFieldContainer>
+  );
+});
 
 DynDatePicker.displayName = 'DynDatePicker';
 

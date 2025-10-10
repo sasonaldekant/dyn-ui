@@ -133,7 +133,7 @@ describe('DynDatePicker', () => {
   it('applies size classes', () => {
     render(<DynDatePicker name="test" label="Test" size="large" />);
     const input = screen.getByRole('textbox');
-    expect(input).toHaveClass('dyn-datepicker--large');
+    expect(input).toHaveAttribute('data-size', 'large');
   });
 
   it('applies custom className', () => {
