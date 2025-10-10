@@ -1,20 +1,18 @@
-/**
- * DynCheckbox - SCSS Styles
- * Part of DYN UI Form Components Group - SCOPE 6
- */
-
-.dyn-checkbox-container {
-  &--disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  &--readonly {
-    pointer-events: none;
-  }
+.container {
+  display: inline-flex;
+  flex-direction: column;
 }
 
-.dyn-checkbox-wrapper {
+.containerDisabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.containerReadonly {
+  pointer-events: none;
+}
+
+.wrapper {
   display: inline-flex;
   align-items: flex-start;
   gap: var(--dyn-spacing-sm, 8px);
@@ -22,12 +20,25 @@
   font-family: var(--dyn-font-family, system-ui, -apple-system, sans-serif);
   line-height: 1.5;
 
-  &:hover:not(.dyn-checkbox-container--disabled) .dyn-checkbox {
+  &:hover .box {
     border-color: var(--dyn-color-primary, #0066cc);
   }
 }
 
-.dyn-checkbox-input {
+.wrapperDisabled {
+  cursor: not-allowed;
+
+  &:hover .box {
+    border-color: var(--dyn-color-border, #d1d5db);
+  }
+}
+
+.wrapperReadonly {
+  cursor: default;
+  pointer-events: none;
+}
+
+.input {
   position: absolute;
   opacity: 0;
   width: 0;
@@ -35,16 +46,16 @@
   margin: 0;
   padding: 0;
 
-  &:focus + .dyn-checkbox {
+  &:focus + .box {
     box-shadow: 0 0 0 3px var(--dyn-color-primary-alpha, rgba(0, 102, 204, 0.1));
   }
 
-  &:focus:not(:focus-visible) + .dyn-checkbox {
+  &:focus:not(:focus-visible) + .box {
     box-shadow: none;
   }
 }
 
-.dyn-checkbox {
+.box {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -56,54 +67,69 @@
   border-radius: var(--dyn-border-radius-sm, 3px);
   transition: all 0.2s ease;
   flex-shrink: 0;
-  margin-top: 1px; // Align with text baseline
+  margin-top: 1px;
 
-  &--checked,
-  &--indeterminate {
+  &.boxChecked,
+  &.boxIndeterminate {
     background-color: var(--dyn-color-primary, #0066cc);
     border-color: var(--dyn-color-primary, #0066cc);
   }
 
-  &--error {
+  &.boxError {
     border-color: var(--dyn-color-error, #f44336);
 
-    &.dyn-checkbox--checked,
-    &.dyn-checkbox--indeterminate {
+    &.boxChecked,
+    &.boxIndeterminate {
       background-color: var(--dyn-color-error, #f44336);
       border-color: var(--dyn-color-error, #f44336);
     }
   }
 
-  &--disabled {
+  &.boxDisabled {
     background-color: var(--dyn-color-surface-disabled, #f3f4f6);
     border-color: var(--dyn-color-border-disabled, #e5e7eb);
     cursor: not-allowed;
 
-    &.dyn-checkbox--checked,
-    &.dyn-checkbox--indeterminate {
+    &.boxChecked,
+    &.boxIndeterminate {
       background-color: var(--dyn-color-text-disabled, #9ca3af);
       border-color: var(--dyn-color-text-disabled, #9ca3af);
     }
   }
 
-  &--readonly {
+  &.boxReadonly {
     cursor: default;
-  }
-
-  // Size variants
-  &--small {
-    width: 14px;
-    height: 14px;
-    border-width: 1px;
-  }
-
-  &--large {
-    width: 22px;
-    height: 22px;
   }
 }
 
-.dyn-checkbox-checkmark {
+.boxSmall {
+  width: 14px;
+  height: 14px;
+  border-width: 1px;
+
+  .checkMark {
+    font-size: 10px;
+  }
+
+  .indeterminateMark {
+    font-size: 12px;
+  }
+}
+
+.boxLarge {
+  width: 22px;
+  height: 22px;
+
+  .checkMark {
+    font-size: 14px;
+  }
+
+  .indeterminateMark {
+    font-size: 16px;
+  }
+}
+
+.checkmark {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -115,51 +141,48 @@
   height: 100%;
 }
 
-.dyn-checkbox-check-mark {
+.checkMark {
   color: var(--dyn-color-surface, #fff);
   font-size: 12px;
   font-weight: bold;
   line-height: 1;
-  
-  .dyn-checkbox--small & {
-    font-size: 10px;
-  }
-
-  .dyn-checkbox--large & {
-    font-size: 14px;
-  }
 }
 
-.dyn-checkbox-indeterminate-mark {
+.indeterminateMark {
   color: var(--dyn-color-surface, #fff);
   font-size: 14px;
   font-weight: bold;
   line-height: 1;
-  
-  .dyn-checkbox--small & {
-    font-size: 12px;
-  }
-
-  .dyn-checkbox--large & {
-    font-size: 16px;
-  }
 }
 
-.dyn-checkbox-label {
+.label {
   color: var(--dyn-color-text-primary, #333);
   font-size: var(--dyn-font-size-base, 16px);
   user-select: none;
   flex: 1;
-  
-  .dyn-checkbox--small & {
-    font-size: var(--dyn-font-size-sm, 14px);
-  }
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dyn-spacing-xs, 4px);
+}
 
-  .dyn-checkbox--large & {
-    font-size: var(--dyn-font-size-lg, 18px);
-  }
+.containerDisabled .label {
+  color: var(--dyn-color-text-disabled, #9ca3af);
+}
 
-  .dyn-checkbox-container--disabled & {
-    color: var(--dyn-color-text-disabled, #9ca3af);
-  }
+.boxSmall ~ .label {
+  font-size: var(--dyn-font-size-sm, 14px);
+}
+
+.boxLarge ~ .label {
+  font-size: var(--dyn-font-size-lg, 18px);
+}
+
+.requiredIndicator {
+  color: var(--dyn-color-error, #f44336);
+  font-weight: bold;
+}
+
+.optionalIndicator {
+  color: var(--dyn-color-text-secondary, #666);
+  font-size: var(--dyn-font-size-sm, 14px);
 }

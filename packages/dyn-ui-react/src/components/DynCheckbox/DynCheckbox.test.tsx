@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { DynCheckbox } from './DynCheckbox';
 
@@ -81,7 +81,7 @@ describe('DynCheckbox', () => {
 
   it('applies size classes', () => {
     const { container } = render(<DynCheckbox name="test" label="Test" size="large" />);
-    expect(container.querySelector('.dyn-checkbox--large')).toBeInTheDocument();
+    expect(container.querySelector('[data-size="large"]')).toBeInTheDocument();
   });
 
   it('applies custom className', () => {
@@ -115,12 +115,12 @@ describe('DynCheckbox', () => {
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
 
-  it('handles validation with required prop', () => {
+  it('handles validation with required prop', async () => {
     render(<DynCheckbox name="test" label="Test" required />);
     const checkbox = screen.getByRole('checkbox');
-    
+
     fireEvent.blur(checkbox);
     // Should show validation error for unchecked required checkbox
-    expect(checkbox).toHaveAttribute('aria-invalid', 'true');
+    await waitFor(() => expect(checkbox).toHaveAttribute('aria-invalid', 'true'));
   });
 });
