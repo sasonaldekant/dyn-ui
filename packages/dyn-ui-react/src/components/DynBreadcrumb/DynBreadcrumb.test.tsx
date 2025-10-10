@@ -3,7 +3,6 @@
  * Comprehensive test coverage for breadcrumb navigation component
  */
 
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
@@ -120,9 +119,14 @@ describe('DynBreadcrumb', () => {
   });
 
   it('handles item clicks with onItemClick callback', async () => {
-    const onItemClick = vi.fn<[BreadcrumbItem, number], void>();
+    const onItemClick = vi.fn<(item: BreadcrumbItem, index: number) => void>();
     const user = userEvent.setup();
-    render(<DynBreadcrumb items={basicItems} onItemClick={onItemClick} />);
+    render(
+      <DynBreadcrumb
+        items={basicItems}
+        onItemClick={(item, index) => onItemClick(item, index)}
+      />
+    );
 
     const homeLink = screen.getByRole('link', { name: 'Home' });
     await user.click(homeLink);
@@ -177,9 +181,15 @@ describe('DynBreadcrumb', () => {
   });
 
   it('toggles favorite status when clicked', async () => {
-    const onFavorite = vi.fn<[boolean], void>();
+    const onFavorite = vi.fn<(favorited: boolean) => void>();
     const user = userEvent.setup();
-    render(<DynBreadcrumb items={basicItems} favorite={false} onFavorite={onFavorite} />);
+    render(
+      <DynBreadcrumb
+        items={basicItems}
+        favorite={false}
+        onFavorite={favorited => onFavorite(favorited)}
+      />
+    );
     
     const favoriteButton = screen.getByLabelText('Adicionar aos favoritos');
     await user.click(favoriteButton);
@@ -190,14 +200,14 @@ describe('DynBreadcrumb', () => {
   it('calls favorite service API when provided', async () => {
     fetchMock.mockResolvedValueOnce({ ok: true } as Response);
 
-    const onFavorite = vi.fn<[boolean], void>();
+    const onFavorite = vi.fn<(favorited: boolean) => void>();
     const user = userEvent.setup();
     render(
-      <DynBreadcrumb 
-        items={basicItems} 
-        favorite={false} 
+      <DynBreadcrumb
+        items={basicItems}
+        favorite={false}
         favoriteService="/api/favorites"
-        onFavorite={onFavorite} 
+        onFavorite={favorited => onFavorite(favorited)}
       />
     );
     

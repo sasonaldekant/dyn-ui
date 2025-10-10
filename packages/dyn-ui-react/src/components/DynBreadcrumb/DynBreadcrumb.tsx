@@ -83,7 +83,7 @@ const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>((props, r
 
   const shouldRenderFavorite = favoriteService !== undefined || typeof favorite === 'boolean';
 
-  const displayItems = useMemo(() => {
+  const displayItems = useMemo<ReadonlyArray<BreadcrumbItem>>(() => {
     if (showAllItems || internalItems.length <= maxItems) {
       return internalItems;
     }
@@ -93,6 +93,9 @@ const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>((props, r
     }
 
     const firstItem = internalItems[0];
+    if (!firstItem) {
+      return internalItems;
+    }
     const lastItems = internalItems.slice(-(maxItems - 2));
 
     const ellipsisItem: BreadcrumbItem = {
@@ -212,39 +215,44 @@ const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>((props, r
         {displayItems.map((item, index) => {
           const isLastItem = index === displayItems.length - 1;
           const isEllipsis = item.label === ELLIPSIS_LABEL;
+          const link = typeof item.link === 'string' ? item.link : undefined;
+          const shouldRenderLink = !isLastItem && !isEllipsis && link !== undefined;
           const isInteractive = isEllipsis || Boolean(item.action);
+
+          const itemContent = shouldRenderLink ? (
+            <a
+              href={link}
+              className={styles['dyn-breadcrumb-link']}
+              onClick={(event: MouseEvent<HTMLAnchorElement>) => handleItemActivate(item, index, event)}
+            >
+              {item.label}
+            </a>
+          ) : (
+            <span
+              className={cn(
+                styles['dyn-breadcrumb-text'],
+                isLastItem && styles['dyn-breadcrumb-current'],
+                isEllipsis && styles['dyn-breadcrumb-ellipsis'],
+                isInteractive && styles['dyn-breadcrumb-clickable']
+              )}
+              onClick={
+                isInteractive
+                  ? (event: MouseEvent<HTMLSpanElement>) => handleItemActivate(item, index, event)
+                  : undefined
+              }
+              role={isInteractive ? 'button' : undefined}
+              tabIndex={isInteractive ? 0 : undefined}
+              onKeyDown={isInteractive ? handleKeyDown(item, index) : undefined}
+              aria-label={isEllipsis ? BREADCRUMB_LITERALS.showMore : undefined}
+              aria-current={isLastItem ? 'page' : undefined}
+            >
+              {item.label}
+            </span>
+          );
 
           return (
             <li key={`${item.label}-${index}`} className={styles['dyn-breadcrumb-item']}>
-              {!isLastItem && item.link && !isEllipsis ? (
-                <a
-                  href={item.link}
-                  className={styles['dyn-breadcrumb-link']}
-                  onClick={(event: MouseEvent<HTMLAnchorElement>) => handleItemActivate(item, index, event)}
-                >
-                  {item.label}
-                </a>
-              ) : (
-                <span
-                  className={cn(styles['dyn-breadcrumb-text'], {
-                    [styles['dyn-breadcrumb-current']]: isLastItem,
-                    [styles['dyn-breadcrumb-ellipsis']]: isEllipsis,
-                    [styles['dyn-breadcrumb-clickable']]: isInteractive,
-                  })}
-                  onClick={
-                    isInteractive
-                      ? (event: MouseEvent<HTMLSpanElement>) => handleItemActivate(item, index, event)
-                      : undefined
-                  }
-                  role={isInteractive ? 'button' : undefined}
-                  tabIndex={isInteractive ? 0 : undefined}
-                  onKeyDown={isInteractive ? handleKeyDown(item, index) : undefined}
-                  aria-label={isEllipsis ? BREADCRUMB_LITERALS.showMore : undefined}
-                  aria-current={isLastItem ? 'page' : undefined}
-                >
-                  {item.label}
-                </span>
-              )}
+              {itemContent}
               {!isLastItem && renderSeparator(index)}
             </li>
           );
@@ -255,9 +263,10 @@ const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>((props, r
         <div className={styles['dyn-breadcrumb-favorite']}>
           <button
             type="button"
-            className={cn(styles['dyn-breadcrumb-favorite-button'], {
-              [styles['dyn-breadcrumb-favorite-active']]: isFavorited,
-            })}
+            className={cn(
+              styles['dyn-breadcrumb-favorite-button'],
+              isFavorited && styles['dyn-breadcrumb-favorite-active']
+            )}
             onClick={handleFavoriteToggle}
             aria-label={
               isFavorited
