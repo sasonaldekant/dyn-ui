@@ -64,6 +64,10 @@ const breadcrumbItems = [
       description: 'Custom separator icon or element between items',
       control: { type: 'text' }
     },
+    ariaLabel: {
+      description: 'ARIA label for the breadcrumb navigation region',
+      control: { type: 'text' }
+    },
     onFavorite: {
       description: 'Callback fired when favorite status changes',
       action: 'favoriteToggled'
