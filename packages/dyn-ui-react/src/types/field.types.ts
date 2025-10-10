@@ -72,13 +72,6 @@ export interface DynSelectProps extends DynFieldBase {
   size?: InputSize;
 }
 
-// Checkbox specific types
-export interface DynCheckboxProps extends Omit<DynFieldBase, 'value'> {
-  checked?: boolean;
-  indeterminate?: boolean;
-  size?: InputSize;
-}
-
 // DatePicker specific types
 export interface DynDatePickerProps extends DynFieldBase {
   format?: string;
