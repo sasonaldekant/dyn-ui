@@ -79,12 +79,10 @@ const DynContainerComponent = (
     backgroundClass,
     alignClass,
     justifyClass,
-    {
-      [styles.bordered]: resolvedBordered,
-      [styles.shadow]: shadow,
-      [styles.noPadding]: !!noPadding,
-      [styles.withTitle]: Boolean(title || subtitle),
-    },
+    resolvedBordered && styles.bordered,
+    shadow && styles.shadow,
+    noPadding && styles.noPadding,
+    (title || subtitle) && styles.withTitle,
     className
   );
 
