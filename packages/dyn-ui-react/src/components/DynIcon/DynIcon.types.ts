@@ -1,12 +1,9 @@
 import type { HTMLAttributes, ReactNode } from 'react';
-import type { BaseComponentProps } from '../../types';
 
 export type DynIconTone = 'success' | 'warning' | 'danger' | 'info';
 export type DynIconSizeToken = 'small' | 'medium' | 'large';
 
-type DynIconBaseProps = Partial<Pick<BaseComponentProps, 'id' | 'className' | 'data-testid'>>;
-
-export interface DynIconProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'color'>, DynIconBaseProps {
+export interface DynIconProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'color'> {
   /** Icon identifier - string (dictionary key, class names) or React node */
   icon?: string | ReactNode;
 
@@ -27,6 +24,9 @@ export interface DynIconProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'col
 
   /** Icon content fallback */
   children?: ReactNode;
+
+  /** Test identifier for automated testing */
+  'data-testid'?: string;
 }
 
 export interface DynIconDefaultProps {
