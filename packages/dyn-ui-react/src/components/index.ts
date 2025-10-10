@@ -10,7 +10,6 @@ import '../styles/themes.css';
 import '../styles/dyn-field-container.css';
 import '../styles/dyn-input.css';
 import '../styles/dyn-select.css';
-import '../styles/dyn-checkbox.css';
 import '../styles/dyn-datepicker.css';
 import '../styles/dyn-layout.css';
 
@@ -87,7 +86,6 @@ export type { DynLabelProps } from '../types/label.types';
 export type {
   DynInputProps,
   DynSelectProps,
-  DynCheckboxProps,
   DynDatePickerProps,
   DynFieldContainerProps,
   ValidationRule,
@@ -95,6 +93,12 @@ export type {
   DynFieldBase,
   SelectOption
 } from '../types/field.types';
+export type {
+  DynCheckboxProps,
+  DynCheckboxRef,
+  DynCheckboxSize,
+} from './DynCheckbox/DynCheckbox.types';
+export { DYN_CHECKBOX_DEFAULT_PROPS } from './DynCheckbox/DynCheckbox.types';
 
 // Layout Component Types - SCOPE 7
 export type {
