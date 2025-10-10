@@ -3,7 +3,8 @@
  * Part of DYN UI Layout Components Group - SCOPE 7
  */
 
-import { ReactNode } from 'react';
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
+import type { BaseComponentProps } from './theme';
 
 // Common layout types
 export type LayoutSize = 'small' | 'medium' | 'large';
@@ -13,37 +14,64 @@ export type LayoutAlignment = 'start' | 'center' | 'end' | 'stretch';
 export type LayoutJustify = 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
 
 // DynContainer Props
-export interface DynContainerProps {
-  children: ReactNode;
+export type DynContainerBackground = 'none' | 'surface' | 'card';
+
+export interface DynContainerOwnProps {
+  children?: ReactNode;
   title?: string;
   subtitle?: string;
-  size?: LayoutSize;
-  spacing?: LayoutSpacing;
-  bordered?: boolean;
-  shadow?: boolean;
-  background?: 'none' | 'surface' | 'card';
   direction?: LayoutDirection;
   align?: LayoutAlignment;
   justify?: LayoutJustify;
-  maxWidth?: string;
-  className?: string;
-  id?: string;
-  'data-testid'?: string;
+  spacing?: LayoutSpacing;
+  size?: LayoutSize;
+  bordered?: boolean;
+  shadow?: boolean;
+  background?: DynContainerBackground;
+  height?: number | string;
+  maxWidth?: number | string;
+  noBorder?: boolean;
+  noPadding?: boolean;
+  style?: CSSProperties;
 }
 
-// DynDivider Props
-export interface DynDividerProps {
+export type DynContainerProps = BaseComponentProps &
+  DynContainerOwnProps &
+  Omit<
+    HTMLAttributes<HTMLDivElement>,
+    keyof BaseComponentProps | keyof DynContainerOwnProps
+  >;
+
+export type DynDividerLabelPosition = 'left' | 'center' | 'right';
+export type DynDividerThickness = 'thin' | 'medium' | 'thick';
+export type DynDividerLineStyle = 'solid' | 'dashed' | 'dotted';
+export type DynDividerColor = 'default' | 'primary' | 'secondary' | 'muted';
+
+export interface DynDividerOwnProps {
+  /** Optional label rendered between the divider lines */
   label?: string;
-  labelPosition?: 'left' | 'center' | 'right';
+  /** Placement for the optional label */
+  labelPosition?: DynDividerLabelPosition;
+  /** Orientation of the divider */
   direction?: LayoutDirection;
-  thickness?: 'thin' | 'medium' | 'thick';
-  style?: 'solid' | 'dashed' | 'dotted';
-  color?: 'default' | 'primary' | 'secondary' | 'muted';
+  /** Line thickness */
+  thickness?: DynDividerThickness;
+  /** Line visual style */
+  lineStyle?: DynDividerLineStyle;
+  /** Color variant */
+  color?: DynDividerColor;
+  /** External spacing around the divider */
   spacing?: LayoutSpacing;
-  className?: string;
-  id?: string;
-  'data-testid'?: string;
+  /** Optional custom content rendered instead of the label */
+  children?: ReactNode;
 }
+
+export type DynDividerProps = BaseComponentProps &
+  DynDividerOwnProps &
+  Omit<
+    HTMLAttributes<HTMLDivElement>,
+    keyof BaseComponentProps | keyof DynDividerOwnProps | 'color'
+  >;
 
 // DynGrid Props
 export interface DynGridColumn {

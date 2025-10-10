@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { DynCheckbox } from './DynCheckbox';
-import type { DynCheckboxProps } from '../../types/field.types';
+import type { DynCheckboxProps } from './DynCheckbox.types';
 
 const meta: Meta<typeof DynCheckbox> = {
   title: 'Components/Form/DynCheckbox',

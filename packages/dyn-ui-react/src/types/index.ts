@@ -24,7 +24,6 @@ export type { DynLabelProps } from './label.types';
 export type {
   DynInputProps,
   DynSelectProps,
-  DynCheckboxProps,
   DynDatePickerProps,
   DynFieldContainerProps,
   ValidationRule,
@@ -33,10 +32,26 @@ export type {
   SelectOption
 } from './field.types';
 
+export type {
+  DynCheckboxProps,
+  DynCheckboxRef,
+  DynCheckboxSize,
+} from '../components/DynCheckbox/DynCheckbox.types';
+export {
+  DYN_CHECKBOX_DEFAULT_PROPS,
+} from '../components/DynCheckbox/DynCheckbox.types';
+
 // Layout Components types - SCOPE 7
 export type {
   DynContainerProps,
+  DynContainerOwnProps,
+  DynContainerBackground,
   DynDividerProps,
+  DynDividerOwnProps,
+  DynDividerColor,
+  DynDividerLabelPosition,
+  DynDividerLineStyle,
+  DynDividerThickness,
   DynGridProps,
   DynGridColumn,
   DynPageProps,
