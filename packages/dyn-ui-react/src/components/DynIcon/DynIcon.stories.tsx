@@ -59,7 +59,6 @@ export const FontAwesome: Story = {
   args: {
     icon: 'fa-solid fa-user',
     size: 'medium',
-    tone: undefined,
   },
 };
 

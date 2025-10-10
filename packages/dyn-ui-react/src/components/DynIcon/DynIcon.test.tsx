@@ -5,13 +5,19 @@ import DynIcon from './DynIcon';
 import { IconDictionaryProvider } from '../../providers/IconDictionaryProvider';
 import styles from './DynIcon.module.css';
 
+const successClassName = styles.success ?? 'success';
+const largeSizeClassName = styles['dyn-icon-size-large'] ?? 'dyn-icon-size-large';
+const spinningClassName = styles.spinning ?? 'spinning';
+
 const renderIcon = (
   icon: ReactNode,
   props: Partial<ComponentProps<typeof DynIcon>> = {},
   customDictionary?: Record<string, string>
 ) => {
+  const providerProps = customDictionary ? { customDictionary } : {};
+
   return render(
-    <IconDictionaryProvider customDictionary={customDictionary}>
+    <IconDictionaryProvider {...providerProps}>
       <DynIcon icon={icon as string | ReactNode} data-testid="dyn-icon" {...props} />
     </IconDictionaryProvider>
   );
@@ -67,14 +73,14 @@ describe('DynIcon', () => {
     renderIcon('ok', { tone: 'success' });
 
     const icon = screen.getByTestId('dyn-icon');
-    expect(icon).toHaveClass(styles.success);
+    expect(icon).toHaveClass(successClassName);
   });
 
   it('applies predefined size classes', () => {
     renderIcon('ok', { size: 'large' });
 
     const icon = screen.getByTestId('dyn-icon');
-    expect(icon).toHaveClass(styles['dyn-icon-size-large']);
+    expect(icon).toHaveClass(largeSizeClassName);
   });
 
   it('applies inline styles for numeric sizes', () => {
@@ -89,7 +95,7 @@ describe('DynIcon', () => {
     renderIcon('ok', { spin: true });
 
     const icon = screen.getByTestId('dyn-icon');
-    expect(icon).toHaveClass(styles.spinning);
+    expect(icon).toHaveClass(spinningClassName);
   });
 
   it('handles click interactions when onClick is provided', () => {
@@ -128,5 +134,16 @@ describe('DynIcon', () => {
     const icon = screen.getByTestId('dyn-icon');
     expect(icon).not.toHaveAttribute('aria-hidden');
     expect(icon).toHaveAttribute('aria-label', 'Status OK');
+  });
+
+  it('renders children when icon is omitted', () => {
+    render(
+      <IconDictionaryProvider>
+        <DynIcon data-testid="dyn-icon">Fallback</DynIcon>
+      </IconDictionaryProvider>
+    );
+
+    const icon = screen.getByTestId('dyn-icon');
+    expect(icon).toHaveTextContent('Fallback');
   });
 });
