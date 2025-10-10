@@ -1,7 +1,7 @@
 import type {
   ButtonHTMLAttributes,
-  FocusEvent,
-  MouseEvent,
+  FocusEventHandler,
+  MouseEventHandler,
   ReactNode,
 } from 'react';
 import type { BaseComponentProps } from '../../types';
@@ -11,7 +11,8 @@ export type DynButtonKind = 'primary' | 'secondary' | 'tertiary';
 export type DynButtonSize = 'small' | 'medium' | 'large';
 
 export interface DynButtonProps
-  extends Omit<
+  extends BaseComponentProps,
+    Omit<
       ButtonHTMLAttributes<HTMLButtonElement>,
       | 'type'
       | 'onBlur'
@@ -19,8 +20,8 @@ export interface DynButtonProps
       | 'children'
       | 'aria-label'
       | 'aria-expanded'
-    >,
-    BaseComponentProps {
+      | keyof BaseComponentProps
+    > {
   /** Button text label */
   label?: string;
 
@@ -55,10 +56,10 @@ export interface DynButtonProps
   fullWidth?: boolean;
 
   /** Blur event handler */
-  onBlur?: (event: FocusEvent<HTMLButtonElement>) => void;
+  onBlur?: FocusEventHandler<HTMLButtonElement>;
 
   /** Click event handler */
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
 export type DynButtonRef = HTMLButtonElement;
