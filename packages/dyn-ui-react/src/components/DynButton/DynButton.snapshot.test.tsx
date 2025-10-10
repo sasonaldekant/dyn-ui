@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 
 describe('DynButton', () => {
   it('matches snapshot', () => {
-    const { container } = render(<DynButton />);
+    const { container } = render(<DynButton label="Snapshot" />);
     expect(container).toMatchSnapshot();
   });
 });
