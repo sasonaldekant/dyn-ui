@@ -12,6 +12,7 @@ import { cn } from '../../utils/classNames';
 import { processIconString } from '../../utils/dynFormatters';
 import { useIconDictionary } from '../../hooks/useIconDictionary';
 import { DEFAULT_ICON_DICTIONARY } from '../../providers/IconDictionaryProvider';
+import type { IconDictionary } from '../../types';
 import { iconRegistry } from './icons';
 import type {
   DynIconProps,
@@ -19,8 +20,6 @@ import type {
 } from './DynIcon.types';
 import { DYN_ICON_DEFAULT_PROPS } from './DynIcon.types';
 import styles from './DynIcon.module.css';
-
-type DynIconComponentProps = DynIconProps & Readonly<typeof DYN_ICON_DEFAULT_PROPS>;
 
 type RegistryIcon = ReactElement | null;
 
@@ -70,11 +69,11 @@ const DynIconComponent = (
     role,
     children,
     ...rest
-  } = props as DynIconComponentProps;
+  } = props;
 
   const { tabIndex, ...domProps } = rest;
 
-  let dictionary = DEFAULT_ICON_DICTIONARY;
+  let dictionary: IconDictionary;
   try {
     dictionary = useIconDictionary();
   } catch (error) {
