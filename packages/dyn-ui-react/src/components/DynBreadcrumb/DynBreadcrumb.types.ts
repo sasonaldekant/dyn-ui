@@ -1,7 +1,5 @@
-/**
- * DynBreadcrumb TypeScript type definitions
- * Navigation breadcrumb component types for path indication
- */
+import type { ReactNode } from 'react';
+import type { BaseComponentProps } from '../../types';
 
 export interface BreadcrumbItem {
   label: string;
@@ -9,15 +7,15 @@ export interface BreadcrumbItem {
   action?: () => void;
 }
 
-export interface DynBreadcrumbProps {
-  items: BreadcrumbItem[];
+export interface DynBreadcrumbProps extends BaseComponentProps {
+  items?: BreadcrumbItem[];
   favorite?: boolean;
   favoriteService?: string;
-  separator?: string | React.ReactNode;
+  separator?: string | ReactNode;
   maxItems?: number;
-  className?: string;
   onFavorite?: (favorited: boolean) => void;
   onItemClick?: (item: BreadcrumbItem, index: number) => void;
+  ariaLabel?: string;
 }
 
 export interface DynBreadcrumbRef {
@@ -26,13 +24,24 @@ export interface DynBreadcrumbRef {
   clear: () => void;
 }
 
-// Default separator
 export const DEFAULT_SEPARATOR = 'dyn-icon-arrow-right';
 
-// Default literals
 export const BREADCRUMB_LITERALS = {
   addToFavorites: 'Adicionar aos favoritos',
   removeFromFavorites: 'Remover dos favoritos',
   showMore: 'Mostrar mais itens',
-  home: 'Início'
+  home: 'Início',
+} as const;
+
+export type DynBreadcrumbDefaultProps = Required<
+  Pick<DynBreadcrumbProps, 'separator' | 'maxItems' | 'ariaLabel'>
+> & {
+  items: BreadcrumbItem[];
+};
+
+export const DYN_BREADCRUMB_DEFAULT_PROPS: DynBreadcrumbDefaultProps = {
+  items: [],
+  separator: DEFAULT_SEPARATOR,
+  maxItems: 5,
+  ariaLabel: 'Breadcrumb',
 };

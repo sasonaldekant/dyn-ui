@@ -3,10 +3,9 @@
  * Interactive examples for breadcrumb navigation component
  */
 
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { DynBreadcrumb } from './DynBreadcrumb';
 import { BreadcrumbItem } from './DynBreadcrumb.types';
-import React from 'react';
 
 const meta: Meta<typeof DynBreadcrumb> = {
   title: 'Navigation/DynBreadcrumb',
@@ -63,6 +62,10 @@ const breadcrumbItems = [
     },
     separator: {
       description: 'Custom separator icon or element between items',
+      control: { type: 'text' }
+    },
+    ariaLabel: {
+      description: 'ARIA label for the breadcrumb navigation region',
       control: { type: 'text' }
     },
     onFavorite: {
