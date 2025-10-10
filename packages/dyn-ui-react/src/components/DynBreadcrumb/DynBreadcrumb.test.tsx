@@ -6,7 +6,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi, type Mock } from 'vitest';
+import { vi } from 'vitest';
 
 import { DynBreadcrumb } from './DynBreadcrumb';
 import { BreadcrumbItem } from './DynBreadcrumb.types';
@@ -21,7 +21,7 @@ vi.mock('../DynIcon', () => ({
 }));
 
 // Mock fetch for favorite service
-const fetchMock = vi.fn();
+const fetchMock = vi.fn<typeof fetch>();
 global.fetch = fetchMock as unknown as typeof fetch;
 
 // Sample test data
@@ -41,20 +41,28 @@ const longItems: BreadcrumbItem[] = [
   { label: 'Current' }
 ];
 
-const actionItems: BreadcrumbItem[] = [
-  { label: 'Dashboard', action: vi.fn() },
-  { label: 'Users', action: vi.fn() },
-  { label: 'Profile' }
-];
-
 const defaultProps = {
   items: basicItems
+};
+
+const createActionItems = () => {
+  const dashboardAction = vi.fn();
+  const usersAction = vi.fn();
+
+  return {
+    items: [
+      { label: 'Dashboard', action: dashboardAction },
+      { label: 'Users', action: usersAction },
+      { label: 'Profile' }
+    ] satisfies BreadcrumbItem[],
+    dashboardAction,
+  };
 };
 
 describe('DynBreadcrumb', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (global.fetch as Mock).mockClear();
+    fetchMock.mockClear();
   });
 
   it('renders breadcrumb with items', () => {
@@ -69,16 +77,12 @@ describe('DynBreadcrumb', () => {
   it('renders links for non-last items with links', () => {
     render(<DynBreadcrumb {...defaultProps} />);
     
-    const homeLink = screen.getByText('Home').closest('a');
-    const productsLink = screen.getByText('Products').closest('a');
-    const laptopsSpan = screen.getByText('Laptops').closest('span');
-    
-    expect(homeLink).toBeInTheDocument();
+    const homeLink = screen.getByRole('link', { name: 'Home' });
+    const productsLink = screen.getByRole('link', { name: 'Products' });
+
     expect(homeLink).toHaveAttribute('href', '/');
-    expect(productsLink).toBeInTheDocument();
     expect(productsLink).toHaveAttribute('href', '/products');
-    expect(laptopsSpan).toBeInTheDocument();
-    expect(laptopsSpan).not.toHaveAttribute('href');
+    expect(screen.queryByRole('link', { name: 'Laptops' })).not.toBeInTheDocument();
   });
 
   it('renders separators between items', () => {
@@ -105,22 +109,24 @@ describe('DynBreadcrumb', () => {
 
   it('handles item clicks with actions', async () => {
     const user = userEvent.setup();
-    render(<DynBreadcrumb items={actionItems} />);
-    
+    const { items, dashboardAction } = createActionItems();
+
+    render(<DynBreadcrumb items={items} />);
+
     const dashboardItem = screen.getByText('Dashboard');
     await user.click(dashboardItem);
-    
-    expect(actionItems[0].action).toHaveBeenCalled();
+
+    expect(dashboardAction).toHaveBeenCalled();
   });
 
   it('handles item clicks with onItemClick callback', async () => {
-    const onItemClick = vi.fn();
+    const onItemClick = vi.fn<[BreadcrumbItem, number], void>();
     const user = userEvent.setup();
     render(<DynBreadcrumb items={basicItems} onItemClick={onItemClick} />);
-    
-    const homeLink = screen.getByText('Home');
+
+    const homeLink = screen.getByRole('link', { name: 'Home' });
     await user.click(homeLink);
-    
+
     expect(onItemClick).toHaveBeenCalledWith(basicItems[0], 0);
   });
 
@@ -157,7 +163,7 @@ describe('DynBreadcrumb', () => {
     expect(favoriteButton).toBeInTheDocument();
 
     const icon = favoriteButton.querySelector('.dyn-icon-star');
-    expect(icon).toBeInTheDocument();
+    expect(icon).not.toBeNull();
   });
 
   it('shows filled star when favorited', () => {
@@ -167,11 +173,11 @@ describe('DynBreadcrumb', () => {
     expect(favoriteButton).toBeInTheDocument();
 
     const icon = favoriteButton.querySelector('.dyn-icon-star-filled');
-    expect(icon).toBeInTheDocument();
+    expect(icon).not.toBeNull();
   });
 
   it('toggles favorite status when clicked', async () => {
-    const onFavorite = vi.fn();
+    const onFavorite = vi.fn<[boolean], void>();
     const user = userEvent.setup();
     render(<DynBreadcrumb items={basicItems} favorite={false} onFavorite={onFavorite} />);
     
@@ -182,10 +188,9 @@ describe('DynBreadcrumb', () => {
   });
 
   it('calls favorite service API when provided', async () => {
-    const mockFetch = global.fetch as Mock;
-    mockFetch.mockResolvedValueOnce({ ok: true });
-    
-    const onFavorite = vi.fn();
+    fetchMock.mockResolvedValueOnce({ ok: true } as Response);
+
+    const onFavorite = vi.fn<[boolean], void>();
     const user = userEvent.setup();
     render(
       <DynBreadcrumb 
@@ -199,7 +204,7 @@ describe('DynBreadcrumb', () => {
     const favoriteButton = screen.getByLabelText('Adicionar aos favoritos');
     await user.click(favoriteButton);
     
-    expect(mockFetch).toHaveBeenCalledWith('/api/favorites', {
+    expect(fetchMock).toHaveBeenCalledWith('/api/favorites', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -213,8 +218,7 @@ describe('DynBreadcrumb', () => {
   });
 
   it('handles favorite service API error gracefully', async () => {
-    const mockFetch = global.fetch as Mock;
-    mockFetch.mockRejectedValueOnce(new Error('Network error'));
+    fetchMock.mockRejectedValueOnce(new Error('Network error'));
     
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const user = userEvent.setup();
@@ -241,8 +245,8 @@ describe('DynBreadcrumb', () => {
 
   it('applies custom className', () => {
     const customClass = 'custom-breadcrumb-class';
-    const { container } = render(<DynBreadcrumb items={basicItems} className={customClass} />);
-    
+    render(<DynBreadcrumb items={basicItems} className={customClass} />);
+
     const breadcrumbElement = screen.getByRole('navigation');
     expect(breadcrumbElement).toHaveClass(customClass);
   });
@@ -260,21 +264,25 @@ describe('DynBreadcrumb', () => {
   });
 
   it('handles keyboard navigation for action items', async () => {
-    render(<DynBreadcrumb items={actionItems} />);
-    
+    const { items, dashboardAction } = createActionItems();
+
+    render(<DynBreadcrumb items={items} />);
+
     const dashboardItem = screen.getByText('Dashboard');
     fireEvent.keyDown(dashboardItem, { key: 'Enter' });
-    
-    expect(actionItems[0].action).toHaveBeenCalled();
+
+    expect(dashboardAction).toHaveBeenCalled();
   });
 
   it('handles space key for keyboard navigation', async () => {
-    render(<DynBreadcrumb items={actionItems} />);
-    
+    const { items, dashboardAction } = createActionItems();
+
+    render(<DynBreadcrumb items={items} />);
+
     const dashboardItem = screen.getByText('Dashboard');
     fireEvent.keyDown(dashboardItem, { key: ' ' });
-    
-    expect(actionItems[0].action).toHaveBeenCalled();
+
+    expect(dashboardAction).toHaveBeenCalled();
   });
 
   it('shows correct ARIA labels', () => {
@@ -301,17 +309,18 @@ describe('DynBreadcrumb', () => {
   });
 
   it('prevents default on link click when action is provided', async () => {
-    const preventDefault = vi.fn();
+    const preventDefault = vi.fn<Event['preventDefault']>();
     const user = userEvent.setup();
-    
-    const itemsWithAction = [
-      { label: 'Home', link: '/', action: vi.fn() },
+    const actionSpy = vi.fn();
+
+    const itemsWithAction: BreadcrumbItem[] = [
+      { label: 'Home', link: '/', action: actionSpy },
       { label: 'Current' }
     ];
     
     render(<DynBreadcrumb items={itemsWithAction} />);
     
-    const homeLink = screen.getByText('Home');
+    const homeLink = screen.getByRole('link', { name: 'Home' });
     
     // Mock preventDefault
     const originalPreventDefault = Event.prototype.preventDefault;
@@ -320,7 +329,7 @@ describe('DynBreadcrumb', () => {
     await user.click(homeLink);
     
     expect(preventDefault).toHaveBeenCalled();
-    expect(itemsWithAction[0].action).toHaveBeenCalled();
+    expect(actionSpy).toHaveBeenCalled();
     
     // Restore
     Event.prototype.preventDefault = originalPreventDefault;
