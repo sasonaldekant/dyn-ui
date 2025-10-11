@@ -65,3 +65,36 @@ export interface DynGaugeProps extends BaseComponentProps {
   /** Custom value formatter */
   format?: (value: number) => string;
 }
+
+export type DynGaugeDefaultProps = Required<
+  Pick<
+    DynGaugeProps,
+    | 'min'
+    | 'max'
+    | 'type'
+    | 'unit'
+    | 'ranges'
+    | 'showValue'
+    | 'showRanges'
+    | 'size'
+    | 'thickness'
+    | 'rounded'
+    | 'animated'
+    | 'backgroundColor'
+  >
+>;
+
+export const DYN_GAUGE_DEFAULT_PROPS: DynGaugeDefaultProps = {
+  min: 0,
+  max: 100,
+  type: 'arc',
+  unit: '%',
+  ranges: [],
+  showValue: true,
+  showRanges: true,
+  size: 'medium',
+  thickness: 20,
+  rounded: true,
+  animated: true,
+  backgroundColor: '#e0e0e0',
+};

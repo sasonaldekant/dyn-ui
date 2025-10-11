@@ -2,4 +2,11 @@
 export { DynGauge } from './DynGauge';
 export { default } from './DynGauge';
 
-export type { DynGaugeProps, GaugeType, GaugeSize } from './DynGauge.types';
+export { DYN_GAUGE_DEFAULT_PROPS } from './DynGauge.types';
+export type {
+  DynGaugeProps,
+  GaugeType,
+  GaugeSize,
+  DynGaugeDefaultProps,
+  GaugeRange,
+} from './DynGauge.types';
