@@ -3,6 +3,7 @@
  * Part of DYN UI Form Components Group - SCOPE 6
  */
 
+import type { ReactNode } from 'react';
 import type { BaseComponentProps } from './theme';
 export type { DynFieldContainerProps } from '../components/DynFieldContainer/DynFieldContainer.types';
 
@@ -14,6 +15,10 @@ export interface ValidationRule {
 }
 
 export interface DynFieldBase extends BaseComponentProps {
+  id?: string;
+  className?: string;
+  'data-testid'?: string;
+  children?: ReactNode;
   name?: string;
   label?: string;
   help?: string;

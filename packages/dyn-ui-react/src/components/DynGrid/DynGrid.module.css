@@ -1,0 +1,228 @@
+.root {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--dyn-layout-bg-card);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bordered {
+  border: 1px solid var(--dyn-layout-border);
+}
+
+.loading {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--dyn-layout-text-secondary);
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--dyn-layout-border);
+  border-top: 2px solid var(--color-primary);
+  border-radius: 50%;
+  animation: dyn-spin 1s linear infinite;
+}
+
+.emptyState {
+  padding: 3rem;
+  text-align: center;
+  color: var(--dyn-layout-text-muted);
+}
+
+.wrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.header {
+  background: var(--dyn-layout-bg-surface);
+  border-bottom: 2px solid var(--dyn-layout-border);
+}
+
+.headerRow {
+  border-bottom: 1px solid var(--dyn-layout-border);
+}
+
+.headerCell {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--dyn-layout-text-primary);
+  border-right: 1px solid var(--dyn-layout-border);
+  position: relative;
+  user-select: none;
+}
+
+.headerCell:last-child {
+  border-right: none;
+}
+
+.headerCellSortable {
+  cursor: pointer;
+}
+
+.headerCellSortable:hover {
+  background: var(--dyn-layout-bg-card);
+}
+
+.headerCellSorted {
+  color: var(--color-primary);
+}
+
+.headerCellAlignCenter {
+  text-align: center;
+}
+
+.headerCellAlignRight {
+  text-align: right;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sortIndicator {
+  color: var(--dyn-layout-text-muted);
+  font-size: 0.75rem;
+}
+
+.selectionCell {
+  width: 48px;
+  text-align: center;
+}
+
+.body {
+  background: var(--dyn-layout-bg-card);
+}
+
+.row {
+  border-bottom: 1px solid var(--dyn-layout-border);
+  transition: background-color 0.2s ease;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowSelected {
+  background: rgba(59, 130, 246, 0.1) !important;
+}
+
+.rowEven {
+  background: transparent;
+}
+
+.rowOdd {
+  background: transparent;
+}
+
+.hoverable .row:hover {
+  background: var(--dyn-layout-bg-surface);
+}
+
+.striped .rowEven {
+  background: var(--dyn-layout-bg-surface);
+}
+
+.cell {
+  padding: 0.75rem 1rem;
+  border-right: 1px solid var(--dyn-layout-border);
+  color: var(--dyn-layout-text-primary);
+}
+
+.cell:last-child {
+  border-right: none;
+}
+
+.cellAlignCenter {
+  text-align: center;
+}
+
+.cellAlignRight {
+  text-align: right;
+}
+
+.checkbox {
+  accent-color: var(--color-primary);
+}
+
+.sizeSmall .headerCell,
+.sizeSmall .cell {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.sizeLarge .headerCell,
+.sizeLarge .cell {
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-top: 1px solid var(--dyn-layout-border);
+  background: var(--dyn-layout-bg-surface);
+}
+
+.paginationInfo {
+  color: var(--dyn-layout-text-secondary);
+  font-size: 0.875rem;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--dyn-layout-text-secondary);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    overflow-x: scroll;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+
+  .spinner {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .bordered {
+    border-width: 2px;
+    border-color: currentColor;
+  }
+
+  .header {
+    border-bottom-width: 3px;
+  }
+}

@@ -47,8 +47,6 @@ export type {
   DynContainerOwnProps,
   DynContainerBackground,
   DynDividerProps,
-  DynGridProps,
-  DynGridColumn,
   DynPageProps,
   DynPageBreadcrumb,
   DynPageAction,
@@ -58,6 +56,15 @@ export type {
   LayoutAlignment,
   LayoutJustify
 } from './layout.types';
+
+export type {
+  DynGridProps,
+  DynGridColumn,
+  DynGridPagination,
+  DynGridSelectable,
+  DynGridSortDirection,
+} from '../components/DynGrid/DynGrid.types';
+export { DYN_GRID_DEFAULT_PROPS } from '../components/DynGrid/DynGrid.types';
 
 // Constants
 export { DYN_COLOR_PALETTE } from './badge.types';

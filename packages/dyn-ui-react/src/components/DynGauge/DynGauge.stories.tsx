@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { DynGauge } from './DynGauge';
 import type { DynGaugeProps } from './DynGauge.types';
 
@@ -17,7 +17,7 @@ const meta: Meta<typeof DynGauge> = {
   argTypes: {
     type: {
       control: 'select',
-      options: ['circular', 'linear'],
+      options: ['arc', 'circle', 'line'],
     },
     size: {
       control: 'select',
@@ -47,7 +47,7 @@ export const WithLabel: Story = {
 
 export const Linear: Story = {
   args: {
-    type: 'linear',
+    type: 'line',
     value: 45,
     label: 'Linear Gauge',
   },
@@ -80,18 +80,18 @@ export const BothTypes: Story = {
       <div style={{ textAlign: 'center' }}>
         <h3>Circular Gauges</h3>
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <DynGauge type="circular" value={30} label="Low" />
-          <DynGauge type="circular" value={65} label="Medium" />
-          <DynGauge type="circular" value={90} label="High" />
+          <DynGauge type="circle" value={30} label="Low" />
+          <DynGauge type="circle" value={65} label="Medium" />
+          <DynGauge type="circle" value={90} label="High" />
         </div>
       </div>
 
       <div style={{ textAlign: 'center', width: '100%' }}>
         <h3>Linear Gauges</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '300px' }}>
-          <DynGauge type="linear" value={30} label="CPU Usage" />
-          <DynGauge type="linear" value={65} label="Memory" />
-          <DynGauge type="linear" value={90} label="Storage" />
+          <DynGauge type="line" value={30} label="CPU Usage" />
+          <DynGauge type="line" value={65} label="Memory" />
+          <DynGauge type="line" value={90} label="Storage" />
         </div>
       </div>
     </div>

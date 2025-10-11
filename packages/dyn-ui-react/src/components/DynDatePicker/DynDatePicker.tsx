@@ -20,7 +20,7 @@ import { DynFieldContainer } from '../DynFieldContainer';
 import { useDynFieldValidation } from '../../hooks/useDynFieldValidation';
 import { useDynDateParser } from '../../hooks/useDynDateParser';
 import { DynIcon } from '../DynIcon';
-import styles from './DynDatePicker.module.scss';
+import styles from './DynDatePicker.module.css';
 
 const MAX_DATE_LENGTH = 10;
 
@@ -73,9 +73,8 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
 
   const { error, validate, clearError } = useDynFieldValidation({
     value,
-    required,
-    validation,
-    customError: errorMessage,
+    ...(required ? { required } : {}),
+    ...(validation ? { validation } : {}),
   });
 
   const {
@@ -85,7 +84,11 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
     parseDate,
     isValidDate,
     getRelativeDescription,
-  } = useDynDateParser({ format, locale, customParser });
+  } = useDynDateParser({
+    format,
+    locale,
+    ...(customParser ? { customParser } : {}),
+  });
 
   const parseExternalValue = useCallback(
     (input: DynDatePickerProps['value']): Date | null => {

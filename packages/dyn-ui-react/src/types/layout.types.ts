@@ -42,63 +42,28 @@ export type DynContainerProps = BaseComponentProps &
     keyof BaseComponentProps | keyof DynContainerOwnProps
   >;
 
-// DynDivider Props
-export interface DynDividerProps {
+export type DynDividerLabelPosition = 'left' | 'center' | 'right';
+export type DynDividerThickness = 'thin' | 'medium' | 'thick';
+export type DynDividerLineStyle = 'solid' | 'dashed' | 'dotted';
+export type DynDividerColor = 'default' | 'primary' | 'secondary' | 'muted';
+
+export interface DynDividerOwnProps {
+  /** Optional label rendered between the divider lines */
   label?: string;
-  labelPosition?: 'left' | 'center' | 'right';
+  /** Placement for the optional label */
+  labelPosition?: DynDividerLabelPosition;
+  /** Orientation of the divider */
   direction?: LayoutDirection;
-  thickness?: 'thin' | 'medium' | 'thick';
-  style?: 'solid' | 'dashed' | 'dotted';
-  color?: 'default' | 'primary' | 'secondary' | 'muted';
+  /** Line thickness */
+  thickness?: DynDividerThickness;
+  /** Line visual style */
+  lineStyle?: DynDividerLineStyle;
+  /** Color variant */
+  color?: DynDividerColor;
+  /** External spacing around the divider */
   spacing?: LayoutSpacing;
-  className?: string;
-  id?: string;
-  'data-testid'?: string;
-}
-
-// DynGrid Props
-export interface DynGridColumn {
-  key: string;
-  title: string;
-  width?: string | number;
-  minWidth?: string | number;
-  sortable?: boolean;
-  filterable?: boolean;
-  resizable?: boolean;
-  render?: (value: any, record: any, index: number) => ReactNode;
-  align?: 'left' | 'center' | 'right';
-  fixed?: 'left' | 'right';
-  hidden?: boolean;
-}
-
-export interface DynGridProps {
-  columns: DynGridColumn[];
-  data: any[];
-  loading?: boolean;
-  size?: LayoutSize;
-  bordered?: boolean;
-  striped?: boolean;
-  hoverable?: boolean;
-  sortable?: boolean;
-  filterable?: boolean;
-  selectable?: boolean | 'single' | 'multiple';
-  selectedKeys?: string[];
-  onSelectionChange?: (selectedKeys: string[], selectedRows: any[]) => void;
-  onSort?: (column: string, direction: 'asc' | 'desc') => void;
-  onFilter?: (filters: Record<string, any>) => void;
-  pagination?: {
-    current: number;
-    pageSize: number;
-    total: number;
-    showSizeChanger?: boolean;
-    showQuickJumper?: boolean;
-    showTotal?: (total: number, range: [number, number]) => ReactNode;
-    onChange?: (page: number, pageSize: number) => void;
-  };
-  emptyText?: ReactNode;
-  className?: string;
-  id?: string;
-  'data-testid'?: string;
+  /** Optional custom content rendered instead of the label */
+  children?: ReactNode;
 }
 
 // DynPage Props
