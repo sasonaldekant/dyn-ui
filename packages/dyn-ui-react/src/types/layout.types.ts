@@ -66,58 +66,6 @@ export interface DynDividerOwnProps {
   children?: ReactNode;
 }
 
-export type DynDividerProps = BaseComponentProps &
-  DynDividerOwnProps &
-  Omit<
-    HTMLAttributes<HTMLDivElement>,
-    keyof BaseComponentProps | keyof DynDividerOwnProps | 'color'
-  >;
-
-// DynGrid Props
-export interface DynGridColumn {
-  key: string;
-  title: string;
-  width?: string | number;
-  minWidth?: string | number;
-  sortable?: boolean;
-  filterable?: boolean;
-  resizable?: boolean;
-  render?: (value: any, record: any, index: number) => ReactNode;
-  align?: 'left' | 'center' | 'right';
-  fixed?: 'left' | 'right';
-  hidden?: boolean;
-}
-
-export interface DynGridProps {
-  columns: DynGridColumn[];
-  data: any[];
-  loading?: boolean;
-  size?: LayoutSize;
-  bordered?: boolean;
-  striped?: boolean;
-  hoverable?: boolean;
-  sortable?: boolean;
-  filterable?: boolean;
-  selectable?: boolean | 'single' | 'multiple';
-  selectedKeys?: string[];
-  onSelectionChange?: (selectedKeys: string[], selectedRows: any[]) => void;
-  onSort?: (column: string, direction: 'asc' | 'desc') => void;
-  onFilter?: (filters: Record<string, any>) => void;
-  pagination?: {
-    current: number;
-    pageSize: number;
-    total: number;
-    showSizeChanger?: boolean;
-    showQuickJumper?: boolean;
-    showTotal?: (total: number, range: [number, number]) => ReactNode;
-    onChange?: (page: number, pageSize: number) => void;
-  };
-  emptyText?: ReactNode;
-  className?: string;
-  id?: string;
-  'data-testid'?: string;
-}
-
 // DynPage Props
 export interface DynPageBreadcrumb {
   title: string;
