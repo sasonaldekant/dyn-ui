@@ -28,9 +28,11 @@ const mockColumns: DynGridColumn[] = [
     key: 'status',
     title: 'Status',
     align: 'center',
-    render: (value) => (
-      <span className={`status-${value}`}>{value}</span>
-    )
+    render: value => {
+      const status = typeof value === 'string' ? value : '';
+
+      return <span className={`status-${status}`}>{status}</span>;
+    }
   }
 ];
 

@@ -62,8 +62,9 @@ export interface DynDividerOwnProps {
   color?: DynDividerColor;
   /** External spacing around the divider */
   spacing?: LayoutSpacing;
-  /** Optional custom content rendered instead of the label */
-  children?: ReactNode;
+  className?: string;
+  id?: string;
+  'data-testid'?: string;
 }
 
 export type DynDividerProps = BaseComponentProps &
