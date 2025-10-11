@@ -2,25 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { DynDatePicker } from './DynDatePicker';
 
-// Mock the date parser hook
-vi.mock('../../hooks/useDynDateParser', () => ({
-  useDynDateParser: () => ({
-    displayValue: '',
-    setDisplayValue: vi.fn(),
-    formatDate: (date: Date) => date.toLocaleDateString('pt-BR'),
-    parseDate: (str: string) => {
-      if (str === 'hoje') return new Date();
-      if (str.match(/\d{2}\/\d{2}\/\d{4}/)) {
-        const [day, month, year] = str.split('/');
-        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      }
-      return null;
-    },
-    isValidDate: (date: Date) => date instanceof Date && !isNaN(date.getTime()),
-    getRelativeDescription: (date: Date) => `Selected: ${date.toLocaleDateString()}`,
-  }),
-}));
-
 describe('DynDatePicker', () => {
   it('renders with label', () => {
     render(<DynDatePicker name="test" label="Test Date Picker" />);
@@ -133,7 +114,7 @@ describe('DynDatePicker', () => {
   it('applies size classes', () => {
     render(<DynDatePicker name="test" label="Test" size="large" />);
     const input = screen.getByRole('textbox');
-    expect(input).toHaveClass('dyn-datepicker--large');
+    expect(input).toHaveAttribute('data-size', 'large');
   });
 
   it('applies custom className', () => {

@@ -3,6 +3,9 @@
  * Part of DYN UI Form Components Group - SCOPE 6
  */
 
+import type { ReactNode } from 'react';
+import type { BaseComponentProps } from './theme';
+
 export interface ValidationRule {
   type: 'required' | 'email' | 'url' | 'pattern' | 'minLength' | 'maxLength' | 'custom';
   message: string;
@@ -10,7 +13,11 @@ export interface ValidationRule {
   validator?: (value: any) => boolean | Promise<boolean>;
 }
 
-export interface DynFieldBase {
+export interface DynFieldBase extends BaseComponentProps {
+  id?: string;
+  className?: string;
+  'data-testid'?: string;
+  children?: ReactNode;
   name?: string;
   label?: string;
   help?: string;
@@ -23,7 +30,6 @@ export interface DynFieldBase {
   value?: any;
   errorMessage?: string;
   validation?: ValidationRule[];
-  className?: string;
   onChange?: (value: any) => void;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -31,7 +37,7 @@ export interface DynFieldBase {
 
 export interface DynFieldRef {
   focus: () => void;
-  validate: () => boolean;
+  validate: () => Promise<boolean>;
   clear: () => void;
   getValue: () => any;
   setValue: (value: any) => void;
