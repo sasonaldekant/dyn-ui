@@ -21,6 +21,7 @@ export type { DynIconProps, IconDictionary, ProcessedIcon } from './icon.types';
 export type { DynLabelProps } from './label.types';
 
 // Form Components types - SCOPE 6
+// Form Components types - SCOPE 6
 export type {
   DynInputProps,
   DynSelectProps,
@@ -47,6 +48,11 @@ export type {
   DynContainerOwnProps,
   DynContainerBackground,
   DynDividerProps,
+  DynDividerOwnProps,
+  DynDividerColor,
+  DynDividerLabelPosition,
+  DynDividerLineStyle,
+  DynDividerThickness,
   DynPageProps,
   DynPageBreadcrumb,
   DynPageAction,

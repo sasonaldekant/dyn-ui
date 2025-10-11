@@ -63,27 +63,50 @@ const columns: DynGridColumn[] = [
     title: 'Role',
     sortable: true,
     align: 'center',
-    render: (value) => (
-      <span className={`role-badge role-${value}`}>
-        {value.charAt(0).toUpperCase() + value.slice(1)}
-      </span>
-    )
+    render: value => {
+      const role = typeof value === 'string' ? value : '';
+      const label = role ? role.charAt(0).toUpperCase() + role.slice(1) : '';
+
+      return (
+        <span className={`role-badge role-${role}`}>
+          {label || '—'}
+        </span>
+      );
+    }
   },
   {
     key: 'status',
     title: 'Status',
     align: 'center',
-    render: (value) => (
-      <span className={`status-indicator ${value}`}>
-        {value === 'active' ? '🟢' : '🔴'} {value}
-      </span>
-    )
+    render: value => {
+      const status = typeof value === 'string' ? value : '';
+      const icon = status === 'active' ? '🟢' : '🔴';
+
+      return (
+        <span className={`status-indicator ${status}`}>
+          {icon} {status || 'unknown'}
+        </span>
+      );
+    }
   },
   {
     key: 'lastLogin',
     title: 'Last Login',
     width: 150,
-    render: (value) => new Date(value).toLocaleDateString()
+    render: value => {
+      const resolvedValue =
+        value instanceof Date || typeof value === 'number' || typeof value === 'string'
+          ? value
+          : undefined;
+      if (resolvedValue === undefined) {
+        return '—';
+      }
+
+      const date =
+        resolvedValue instanceof Date ? resolvedValue : new Date(resolvedValue);
+
+      return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString();
+    }
   }
 ];
 

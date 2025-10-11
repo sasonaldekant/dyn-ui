@@ -66,6 +66,14 @@ export interface DynDividerOwnProps {
   children?: ReactNode;
 }
 
+export type DynDividerProps = BaseComponentProps &
+  DynDividerOwnProps &
+  Omit<
+    HTMLAttributes<HTMLDivElement>,
+    keyof BaseComponentProps | keyof DynDividerOwnProps | 'color'
+  >;
+
+
 // DynPage Props
 export interface DynPageBreadcrumb {
   title: string;
