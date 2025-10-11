@@ -12,7 +12,7 @@ export interface ValidationRule {
   validator?: (value: any) => boolean | Promise<boolean>;
 }
 
-export interface DynFieldBase extends BaseComponentProps {
+export interface DynFieldBase {
   name?: string;
   label?: string;
   help?: string;
@@ -25,6 +25,7 @@ export interface DynFieldBase extends BaseComponentProps {
   value?: any;
   errorMessage?: string;
   validation?: ValidationRule[];
+  className?: string;
   onChange?: (value: any) => void;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -32,7 +33,7 @@ export interface DynFieldBase extends BaseComponentProps {
 
 export interface DynFieldRef {
   focus: () => void;
-  validate: () => Promise<boolean>;
+  validate: () => boolean;
   clear: () => void;
   getValue: () => any;
   setValue: (value: any) => void;
@@ -73,13 +74,6 @@ export interface DynSelectProps extends DynFieldBase {
   size?: InputSize;
 }
 
-// Checkbox specific types
-export interface DynCheckboxProps extends Omit<DynFieldBase, 'value'> {
-  checked?: boolean;
-  indeterminate?: boolean;
-  size?: InputSize;
-}
-
 // DatePicker specific types
 export interface DynDatePickerProps extends DynFieldBase {
   format?: string;
@@ -90,15 +84,4 @@ export interface DynDatePickerProps extends DynFieldBase {
   size?: InputSize;
 }
 
-// FieldContainer specific types
-export interface DynFieldContainerProps {
-  children: React.ReactElement;
-  label?: string;
-  required?: boolean;
-  optional?: boolean;
-  helpText?: string;
-  errorText?: string;
-  showValidation?: boolean;
-  className?: string;
-  htmlFor?: string;
-}
+// FieldContainer specific types are exported from the component package

@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { DynFieldContainer } from './DynFieldContainer';
-import type { DynFieldContainerProps } from '../../types/field.types';
+import type { DynFieldContainerProps } from './DynFieldContainer.types';
 import { DynInput } from '../DynInput';
 import { DynCheckbox } from '../DynCheckbox';
 
