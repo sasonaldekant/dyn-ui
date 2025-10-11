@@ -1,326 +1,435 @@
-import React, { useMemo, useRef, useEffect, useCallback } from 'react';
-import classNames from 'classnames';
-import { DynGaugeProps } from './DynGauge.types';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+} from 'react';
+
+import { cn } from '../../utils/classNames';
+import {
+  DYN_GAUGE_DEFAULT_PROPS,
+  DynGaugeProps,
+  GaugeRange,
+  GaugeSize,
+  GaugeType,
+} from './DynGauge.types';
 import styles from './DynGauge.module.css';
 
-const DynGauge: React.FC<DynGaugeProps> = ({
-  value,
-  min = 0,
-  max = 100,
-  title,
-  subtitle,
-  unit = '',
-  ranges = [],
-  showValue = true,
-  showRanges = true,
-  size = 'medium',
-  thickness = 20,
-  rounded = true,
-  animated = true,
-  color,
-  backgroundColor = '#e0e0e0',
-  className,
-  format,
-}) => {
+const gaugeDimensionsMap: Record<GaugeSize, { width: number; height: number }> = {
+  small: { width: 120, height: 120 },
+  medium: { width: 200, height: 200 },
+  large: { width: 280, height: 280 },
+};
+
+const sizeClassNameMap: Partial<Record<GaugeSize, string | undefined>> = {
+  small: styles.sizeSmall,
+  medium: styles.sizeMedium,
+  large: styles.sizeLarge,
+};
+
+const typeClassNameMap: Partial<Record<GaugeType, string | undefined>> = {
+  arc: styles.typeArc,
+  circle: styles.typeCircle,
+  line: styles.typeLine,
+};
+
+const clampGaugeValue = (value: number, min: number, max: number): number => {
+  if (!Number.isFinite(value)) {
+    return min;
+  }
+
+  if (max <= min) {
+    return min;
+  }
+
+  return Math.min(max, Math.max(min, value));
+};
+
+const findRangeForValue = (ranges: GaugeRange[], value: number) =>
+  ranges.find(range => value >= range.from && value <= range.to);
+
+export const DynGauge = forwardRef<HTMLDivElement, DynGaugeProps>((props, ref) => {
+  const {
+    value,
+    min = DYN_GAUGE_DEFAULT_PROPS.min,
+    max = DYN_GAUGE_DEFAULT_PROPS.max,
+    title,
+    label,
+    subtitle,
+    type = DYN_GAUGE_DEFAULT_PROPS.type,
+    unit = DYN_GAUGE_DEFAULT_PROPS.unit,
+    ranges = DYN_GAUGE_DEFAULT_PROPS.ranges,
+    showValue = DYN_GAUGE_DEFAULT_PROPS.showValue,
+    showRanges = DYN_GAUGE_DEFAULT_PROPS.showRanges,
+    size = DYN_GAUGE_DEFAULT_PROPS.size,
+    thickness = DYN_GAUGE_DEFAULT_PROPS.thickness,
+    rounded = DYN_GAUGE_DEFAULT_PROPS.rounded,
+    animated = DYN_GAUGE_DEFAULT_PROPS.animated,
+    color,
+    backgroundColor = DYN_GAUGE_DEFAULT_PROPS.backgroundColor,
+    className,
+    format,
+    id,
+    'data-testid': dataTestId,
+    ...rest
+  } = props;
+
+  const instanceId = useId();
+  const componentId = id ?? instanceId;
+  const titleId = title || label ? `${componentId}-title` : undefined;
+  const subtitleId = subtitle ? `${componentId}-subtitle` : undefined;
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
-  const currentValueRef = useRef<number>(min);
+  const animationFrameRef = useRef<number>();
+  const currentValueRef = useRef<number>(clampGaugeValue(value, min, max));
 
-  // Calculate dimensions based on size
-  const dimensions = useMemo(() => {
-    const sizes = {
-      small: { width: 120, height: 120 },
-      medium: { width: 200, height: 200 },
-      large: { width: 280, height: 280 },
-    };
-    return sizes[size];
-  }, [size]);
+  const gaugeDimensions = gaugeDimensionsMap[size] ?? gaugeDimensionsMap.medium;
+  const resolvedTitle = title ?? label;
+  const safeValue = clampGaugeValue(value, min, max);
 
-  // Normalize value between 0 and 1
-  const normalizedValue = useMemo(() => {
-    return Math.max(0, Math.min(1, (value - min) / (max - min)));
-  }, [value, min, max]);
-
-  // Find current range
-  const currentRange = useMemo(() => {
-    if (!ranges.length) return null;
-    return ranges.find(range => value >= range.from && value <= range.to) || null;
-  }, [value, ranges]);
-
-  // Get current color
-  const currentColor = useMemo(() => {
-    if (color) return color;
-    if (currentRange) return currentRange.color;
-    return '#0066cc'; // Default blue
-  }, [color, currentRange]);
-
-  // Format value function
-  const formatValue = useCallback(
-    (val: number): string => {
-      if (format) return format(val);
-      return `${val.toFixed(1)}${unit}`;
-    },
-    [format, unit]
+  const numberFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat(undefined, {
+        maximumFractionDigits: 1,
+      }),
+    []
   );
 
-  // Animation function
+  const formatValue = useCallback(
+    (val: number): string => {
+      if (typeof format === 'function') {
+        return format(val);
+      }
+
+      const formattedNumber = numberFormatter.format(val);
+
+      if (!unit) {
+        return formattedNumber;
+      }
+
+      const trimmedUnit = unit.trim();
+      const shouldJoin = trimmedUnit.startsWith('%') || trimmedUnit.startsWith('°');
+
+      return shouldJoin
+        ? `${formattedNumber}${trimmedUnit}`
+        : `${formattedNumber} ${trimmedUnit}`;
+    },
+    [format, numberFormatter, unit]
+  );
+
+  const getColorForValue = useCallback(
+    (val: number) => {
+      if (typeof color === 'string' && color.length > 0) {
+        return color;
+      }
+
+      return findRangeForValue(ranges, val)?.color ?? '#0066cc';
+    },
+    [color, ranges]
+  );
+
+  const drawGauge = useCallback(
+    (displayValue: number) => {
+      const canvas = canvasRef.current;
+      if (!canvas) {
+        return;
+      }
+
+      const context = canvas.getContext('2d');
+      if (!context) {
+        return;
+      }
+
+      const { width, height } = gaugeDimensions;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const radius = Math.min(width, height) / 2 - thickness / 2 - 10;
+      const startAngle = -Math.PI * 0.75;
+      const sweepAngle = Math.PI * 1.5;
+      const span = Math.max(max - min, Number.EPSILON);
+      const normalizedValue = (clampGaugeValue(displayValue, min, max) - min) / span;
+      const currentColor = getColorForValue(displayValue);
+
+      canvas.width = width;
+      canvas.height = height;
+
+      context.clearRect(0, 0, width, height);
+
+      context.beginPath();
+      context.arc(centerX, centerY, radius, startAngle, startAngle + sweepAngle);
+      context.strokeStyle = backgroundColor;
+      context.lineWidth = thickness;
+      context.lineCap = rounded ? 'round' : 'butt';
+      context.stroke();
+
+      if (showRanges && ranges.length > 0) {
+        for (const range of ranges) {
+          const rangeStart = startAngle + ((range.from - min) / span) * sweepAngle;
+          const rangeEnd = startAngle + ((range.to - min) / span) * sweepAngle;
+
+          context.beginPath();
+          context.arc(centerX, centerY, radius, rangeStart, rangeEnd);
+          context.strokeStyle = range.color;
+          context.lineWidth = thickness * 0.3;
+          context.lineCap = rounded ? 'round' : 'butt';
+          context.stroke();
+        }
+      }
+
+      if (normalizedValue > 0) {
+        const endAngle = startAngle + normalizedValue * sweepAngle;
+
+        context.beginPath();
+        context.arc(centerX, centerY, radius, startAngle, endAngle);
+        context.strokeStyle = currentColor;
+        context.lineWidth = thickness;
+        context.lineCap = rounded ? 'round' : 'butt';
+        context.stroke();
+      }
+
+      const tickCount = 11;
+      for (let index = 0; index < tickCount; index += 1) {
+        const angle = startAngle + (index / (tickCount - 1)) * sweepAngle;
+        const isMajorTick = index % 2 === 0;
+        const tickLength = isMajorTick ? 15 : 8;
+        const tickWidth = isMajorTick ? 2 : 1;
+
+        const outerRadius = radius + thickness / 2 + 5;
+        const innerRadius = outerRadius + tickLength;
+
+        const startX = centerX + Math.cos(angle) * outerRadius;
+        const startY = centerY + Math.sin(angle) * outerRadius;
+        const endX = centerX + Math.cos(angle) * innerRadius;
+        const endY = centerY + Math.sin(angle) * innerRadius;
+
+        context.beginPath();
+        context.moveTo(startX, startY);
+        context.lineTo(endX, endY);
+        context.strokeStyle = '#666666';
+        context.lineWidth = tickWidth;
+        context.lineCap = 'round';
+        context.stroke();
+
+        if (isMajorTick) {
+          const labelRadius = innerRadius + 15;
+          const labelX = centerX + Math.cos(angle) * labelRadius;
+          const labelY = centerY + Math.sin(angle) * labelRadius;
+          const tickValue = min + (index / (tickCount - 1)) * span;
+
+          context.fillStyle = '#666666';
+          context.font =
+            size === 'small'
+              ? '10px Arial'
+              : size === 'large'
+                ? '14px Arial'
+                : '12px Arial';
+          context.textAlign = 'center';
+          context.textBaseline = 'middle';
+          context.fillText(numberFormatter.format(tickValue), labelX, labelY);
+        }
+      }
+
+      const needleAngle = startAngle + normalizedValue * sweepAngle;
+      const needleLength = radius - 20;
+      const needleX = centerX + Math.cos(needleAngle) * needleLength;
+      const needleY = centerY + Math.sin(needleAngle) * needleLength;
+
+      context.beginPath();
+      context.arc(centerX, centerY, 8, 0, Math.PI * 2);
+      context.fillStyle = currentColor;
+      context.fill();
+
+      context.beginPath();
+      context.moveTo(centerX, centerY);
+      context.lineTo(needleX, needleY);
+      context.strokeStyle = currentColor;
+      context.lineWidth = 3;
+      context.lineCap = 'round';
+      context.stroke();
+
+      context.beginPath();
+      context.arc(centerX, centerY, 4, 0, Math.PI * 2);
+      context.fillStyle = '#ffffff';
+      context.fill();
+      context.strokeStyle = currentColor;
+      context.lineWidth = 2;
+      context.stroke();
+    },
+    [
+      backgroundColor,
+      gaugeDimensions,
+      getColorForValue,
+      max,
+      min,
+      numberFormatter,
+      ranges,
+      rounded,
+      showRanges,
+      size,
+      thickness,
+    ]
+  );
+
   const animateToValue = useCallback(
-    (targetValue: number) => {
+    (target: number) => {
+      const clampedTarget = clampGaugeValue(target, min, max);
+
       if (!animated) {
-        currentValueRef.current = targetValue;
+        currentValueRef.current = clampedTarget;
+        drawGauge(clampedTarget);
         return;
       }
 
       const startValue = currentValueRef.current;
-      const distance = targetValue - startValue;
-      const duration = 1000; // 1 second
-      let startTime: number;
+      const distance = clampedTarget - startValue;
 
-      const animate = (timestamp: number) => {
-        if (!startTime) startTime = timestamp;
+      if (Math.abs(distance) <= 0.001) {
+        currentValueRef.current = clampedTarget;
+        drawGauge(clampedTarget);
+        return;
+      }
+
+      let startTime: number | null = null;
+      const duration = 800;
+
+      const step = (timestamp: number) => {
+        if (startTime === null) {
+          startTime = timestamp;
+        }
+
         const elapsed = timestamp - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        
-        // Easing function (ease-out)
-        const eased = 1 - Math.pow(1 - progress, 3);
-        
-        currentValueRef.current = startValue + (distance * eased);
-        
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        const nextValue = startValue + distance * easedProgress;
+
+        currentValueRef.current = nextValue;
+        drawGauge(nextValue);
+
         if (progress < 1) {
-          animationRef.current = requestAnimationFrame(animate);
+          animationFrameRef.current = requestAnimationFrame(step);
+        } else {
+          currentValueRef.current = clampedTarget;
+          drawGauge(clampedTarget);
         }
       };
 
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
-      animationRef.current = requestAnimationFrame(animate);
+
+      animationFrameRef.current = requestAnimationFrame(step);
     },
-    [animated]
+    [animated, drawGauge, max, min]
   );
 
-  // Draw gauge
-  const drawGauge = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    const { width, height } = dimensions;
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const radius = Math.min(width, height) / 2 - thickness / 2 - 10;
-    
-    // Set canvas size
-    canvas.width = width;
-    canvas.height = height;
-    
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-    
-    // Draw background arc
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, -Math.PI * 0.75, Math.PI * 0.75);
-    ctx.strokeStyle = backgroundColor;
-    ctx.lineWidth = thickness;
-    ctx.lineCap = rounded ? 'round' : 'butt';
-    ctx.stroke();
-    
-    // Draw range arcs if enabled
-    if (showRanges && ranges.length > 0) {
-      ranges.forEach(range => {
-        const startAngle = -Math.PI * 0.75 + 
-          ((range.from - min) / (max - min)) * (Math.PI * 1.5);
-        const endAngle = -Math.PI * 0.75 + 
-          ((range.to - min) / (max - min)) * (Math.PI * 1.5);
-        
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-        ctx.strokeStyle = range.color;
-        ctx.lineWidth = thickness * 0.3;
-        ctx.stroke();
-      });
-    }
-    
-    // Draw value arc
-    const currentNormalized = (currentValueRef.current - min) / (max - min);
-    const endAngle = -Math.PI * 0.75 + currentNormalized * (Math.PI * 1.5);
-    
-    if (currentNormalized > 0) {
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, -Math.PI * 0.75, endAngle);
-      ctx.strokeStyle = currentColor;
-      ctx.lineWidth = thickness;
-      ctx.lineCap = rounded ? 'round' : 'butt';
-      ctx.stroke();
-    }
-    
-    // Draw tick marks
-    const tickCount = 11;
-    for (let i = 0; i < tickCount; i++) {
-      const angle = -Math.PI * 0.75 + (i / (tickCount - 1)) * (Math.PI * 1.5);
-      const isMainTick = i % 2 === 0;
-      const tickLength = isMainTick ? 15 : 8;
-      const tickWidth = isMainTick ? 2 : 1;
-      
-      const startRadius = radius + thickness / 2 + 5;
-      const endRadius = startRadius + tickLength;
-      
-      const startX = centerX + Math.cos(angle) * startRadius;
-      const startY = centerY + Math.sin(angle) * startRadius;
-      const endX = centerX + Math.cos(angle) * endRadius;
-      const endY = centerY + Math.sin(angle) * endRadius;
-      
-      ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      ctx.lineTo(endX, endY);
-      ctx.strokeStyle = '#666';
-      ctx.lineWidth = tickWidth;
-      ctx.lineCap = 'round';
-      ctx.stroke();
-      
-      // Draw tick labels for main ticks
-      if (isMainTick) {
-        const tickValue = min + (i / (tickCount - 1)) * (max - min);
-        const labelRadius = endRadius + 15;
-        const labelX = centerX + Math.cos(angle) * labelRadius;
-        const labelY = centerY + Math.sin(angle) * labelRadius;
-        
-        ctx.fillStyle = '#666';
-        ctx.font = `${size === 'small' ? '10' : size === 'medium' ? '12' : '14'}px Arial`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(tickValue.toFixed(0), labelX, labelY);
-      }
-    }
-    
-    // Draw needle
-    const needleAngle = -Math.PI * 0.75 + currentNormalized * (Math.PI * 1.5);
-    const needleLength = radius - 20;
-    const needleX = centerX + Math.cos(needleAngle) * needleLength;
-    const needleY = centerY + Math.sin(needleAngle) * needleLength;
-    
-    // Needle base
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
-    ctx.fillStyle = currentColor;
-    ctx.fill();
-    
-    // Needle line
-    ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
-    ctx.lineTo(needleX, needleY);
-    ctx.strokeStyle = currentColor;
-    ctx.lineWidth = 3;
-    ctx.lineCap = 'round';
-    ctx.stroke();
-    
-    // Center dot
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, 4, 0, 2 * Math.PI);
-    ctx.fillStyle = '#fff';
-    ctx.fill();
-    ctx.strokeStyle = currentColor;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }, [dimensions, thickness, rounded, backgroundColor, showRanges, ranges, min, max, currentColor]);
-
-  // Animation loop
-  useEffect(() => {
-    let frameId: number;
-    
-    const animate = () => {
-      drawGauge();
-      frameId = requestAnimationFrame(animate);
-    };
-    
-    animate();
-    
-    return () => {
-      if (frameId) {
-        cancelAnimationFrame(frameId);
-      }
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [drawGauge]);
-
-  // Animate to new value
   useEffect(() => {
     animateToValue(value);
-  }, [value, animateToValue]);
 
-  const gaugeClasses = classNames(
-    styles['dyn-gauge'],
-    styles[`dyn-gauge--${size}`],
-    {
-      [styles['dyn-gauge--animated']]: animated,
-      [styles['dyn-gauge--rounded']]: rounded,
-    },
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [animateToValue, value]);
+
+  useEffect(() => {
+    drawGauge(currentValueRef.current);
+  }, [drawGauge]);
+
+  const currentRange = useMemo(
+    () => findRangeForValue(ranges, safeValue),
+    [ranges, safeValue]
+  );
+
+  const rootClassName = cn(
+    styles.root,
+    sizeClassNameMap[size] ?? styles.sizeMedium,
+    typeClassNameMap[type],
+    animated && styles.animated,
+    rounded && styles.rounded,
     className
   );
 
   return (
-    <div className={gaugeClasses}>
-      {/* Header */}
-      {(title || subtitle) && (
-        <div className={styles['dyn-gauge__header']}>
-          {title && <h3 className={styles['dyn-gauge__title']}>{title}</h3>}
-          {subtitle && <p className={styles['dyn-gauge__subtitle']}>{subtitle}</p>}
-        </div>
-      )}
-      
-      {/* Gauge */}
-      <div className={styles['dyn-gauge__content']}>
-        <div className={styles['dyn-gauge__canvas-container']}>
-          <canvas
-            ref={canvasRef}
-            className={styles['dyn-gauge__canvas']}
-            style={{
-              width: dimensions.width,
-              height: dimensions.height,
-            }}
-          />
-          
-          {/* Value display */}
-          {showValue && (
-            <div className={styles['dyn-gauge__value']}>
-              <div className={styles['dyn-gauge__value-text']}>
-                {formatValue(value)}
+    <div
+      ref={ref}
+      id={componentId}
+      role="progressbar"
+      aria-valuemin={min}
+      aria-valuemax={max}
+      aria-valuenow={safeValue}
+      aria-labelledby={titleId}
+      aria-describedby={subtitleId}
+      data-testid={dataTestId ?? 'dyn-gauge'}
+      data-size={size}
+      data-type={type}
+      className={rootClassName}
+      {...rest}
+    >
+      <figure className={styles.figure}>
+        {(resolvedTitle || subtitle) && (
+          <header className={styles.header}>
+            {resolvedTitle ? (
+              <h3 id={titleId} className={styles.title}>
+                {resolvedTitle}
+              </h3>
+            ) : null}
+            {subtitle ? (
+              <p id={subtitleId} className={styles.subtitle}>
+                {subtitle}
+              </p>
+            ) : null}
+          </header>
+        )}
+
+        <div className={styles.content}>
+          <div className={styles.canvasContainer}>
+            <canvas
+              ref={canvasRef}
+              className={styles.canvas}
+              style={{
+                width: gaugeDimensions.width,
+                height: gaugeDimensions.height,
+              }}
+            />
+
+            {showValue ? (
+              <div className={styles.value}>
+                <span className={styles.valueText}>{formatValue(safeValue)}</span>
+                {currentRange?.label ? (
+                  <span className={styles.valueLabel}>{currentRange.label}</span>
+                ) : null}
               </div>
-              {currentRange?.label && (
-                <div className={styles['dyn-gauge__value-label']}>
-                  {currentRange.label}
-                </div>
-              )}
-            </div>
-          )}
+            ) : null}
+          </div>
         </div>
-      </div>
-      
-      {/* Ranges legend */}
-      {showRanges && ranges.length > 0 && (
-        <div className={styles['dyn-gauge__legend']}>
-          {ranges.map((range, index) => (
-            <div key={index} className={styles['dyn-gauge__legend-item']}>
+
+        {showRanges && ranges.length > 0 ? (
+          <figcaption className={styles.legend}>
+            {ranges.map((range, index) => (
               <div
-                className={styles['dyn-gauge__legend-color']}
-                style={{ backgroundColor: range.color }}
-              />
-              <span className={styles['dyn-gauge__legend-label']}>
-                {range.label || `${range.from}-${range.to}`}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
+                key={`${range.from}-${range.to}-${index}`}
+                className={styles.legendItem}
+              >
+                <span
+                  className={styles.legendColor}
+                  style={{ backgroundColor: range.color }}
+                  aria-hidden="true"
+                />
+                <span className={styles.legendLabel}>
+                  {range.label ?? `${formatValue(range.from)} - ${formatValue(range.to)}`}
+                </span>
+              </div>
+            ))}
+          </figcaption>
+        ) : null}
+      </figure>
     </div>
   );
-};
+});
 
 DynGauge.displayName = 'DynGauge';
 
 export default DynGauge;
-export { DynGauge };
