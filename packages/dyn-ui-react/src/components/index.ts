@@ -104,8 +104,6 @@ export { DYN_CHECKBOX_DEFAULT_PROPS } from './DynCheckbox/DynCheckbox.types';
 export type {
   DynContainerProps,
   DynDividerProps,
-  DynGridProps,
-  DynGridColumn,
   DynPageProps,
   DynPageBreadcrumb,
   DynPageAction,
@@ -115,6 +113,15 @@ export type {
   LayoutAlignment,
   LayoutJustify
 } from '../types/layout.types';
+
+export type {
+  DynGridProps,
+  DynGridColumn,
+  DynGridPagination,
+  DynGridSelectable,
+  DynGridSortDirection,
+} from './DynGrid';
+export { DYN_GRID_DEFAULT_PROPS } from './DynGrid';
 
 // Data Display Component Types
 export type {

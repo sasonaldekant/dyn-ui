@@ -93,188 +93,6 @@
   flex: 1;
 }
 
-/* ===== DynGrid Styles ===== */
-.dyn-grid {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: var(--dyn-layout-bg-card);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.dyn-grid--bordered {
-  border: 1px solid var(--dyn-layout-border);
-}
-
-.dyn-grid--loading {
-  min-height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dyn-grid-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  color: var(--dyn-layout-text-secondary);
-}
-
-.dyn-grid-spinner {
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--dyn-layout-border);
-  border-top: 2px solid var(--color-primary);
-  border-radius: 50%;
-  animation: dyn-spin 1s linear infinite;
-}
-
-.dyn-grid-empty {
-  padding: 3rem;
-  text-align: center;
-  color: var(--dyn-layout-text-muted);
-}
-
-.dyn-grid-wrapper {
-  overflow-x: auto;
-}
-
-.dyn-grid-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.875rem;
-}
-
-.dyn-grid-header {
-  background: var(--dyn-layout-bg-surface);
-  border-bottom: 2px solid var(--dyn-layout-border);
-}
-
-.dyn-grid-header-row {
-  border-bottom: 1px solid var(--dyn-layout-border);
-}
-
-.dyn-grid-header-cell {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  font-weight: 600;
-  color: var(--dyn-layout-text-primary);
-  border-right: 1px solid var(--dyn-layout-border);
-  position: relative;
-}
-
-.dyn-grid-header-cell:last-child {
-  border-right: none;
-}
-
-.dyn-grid-header-cell--sortable {
-  cursor: pointer;
-  user-select: none;
-}
-
-.dyn-grid-header-cell--sortable:hover {
-  background: var(--dyn-layout-bg-card);
-}
-
-.dyn-grid-header-cell--align-center { text-align: center; }
-.dyn-grid-header-cell--align-right { text-align: right; }
-
-.dyn-grid-header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.dyn-grid-sort-indicator {
-  color: var(--dyn-layout-text-muted);
-  font-size: 0.75rem;
-}
-
-.dyn-grid-select-cell {
-  width: 48px;
-  text-align: center;
-}
-
-.dyn-grid-body {
-  background: var(--dyn-layout-bg-card);
-}
-
-.dyn-grid-row {
-  border-bottom: 1px solid var(--dyn-layout-border);
-  transition: background-color 0.2s ease;
-}
-
-.dyn-grid-row:last-child {
-  border-bottom: none;
-}
-
-.dyn-grid--hoverable .dyn-grid-row:hover {
-  background: var(--dyn-layout-bg-surface);
-}
-
-.dyn-grid--striped .dyn-grid-row--even {
-  background: var(--dyn-layout-bg-surface);
-}
-
-.dyn-grid-row--selected {
-  background: rgba(59, 130, 246, 0.1) !important;
-}
-
-.dyn-grid-cell {
-  padding: 0.75rem 1rem;
-  border-right: 1px solid var(--dyn-layout-border);
-  color: var(--dyn-layout-text-primary);
-}
-
-.dyn-grid-cell:last-child {
-  border-right: none;
-}
-
-.dyn-grid-cell--align-center { text-align: center; }
-.dyn-grid-cell--align-right { text-align: right; }
-
-.dyn-grid-checkbox {
-  accent-color: var(--color-primary);
-}
-
-/* Grid sizes */
-.dyn-grid--small .dyn-grid-header-cell,
-.dyn-grid--small .dyn-grid-cell {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.75rem;
-}
-
-.dyn-grid--large .dyn-grid-header-cell,
-.dyn-grid--large .dyn-grid-cell {
-  padding: 1rem 1.25rem;
-  font-size: 1rem;
-}
-
-.dyn-grid-pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  border-top: 1px solid var(--dyn-layout-border);
-  background: var(--dyn-layout-bg-surface);
-}
-
-.dyn-grid-pagination-info {
-  color: var(--dyn-layout-text-secondary);
-  font-size: 0.875rem;
-}
-
-.dyn-grid-pagination-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--dyn-layout-text-secondary);
-  font-size: 0.875rem;
-}
-
 /* ===== DynPage Styles ===== */
 .dyn-page {
   display: flex;
@@ -480,33 +298,23 @@
     padding: 1rem;
   }
   
-  .dyn-grid-wrapper {
-    overflow-x: scroll;
-  }
 }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .dyn-container,
-  .dyn-grid-row,
   .dyn-page-breadcrumb-link {
     transition: none;
   }
-  
-  .dyn-grid-spinner,
+
   .dyn-page-spinner {
     animation: none;
   }
 }
 
 @media (prefers-contrast: high) {
-  .dyn-container--bordered,
-  .dyn-grid--bordered {
+  .dyn-container--bordered {
     border-width: 2px;
     border-color: currentColor;
-  }
-  
-  .dyn-grid-header {
-    border-bottom-width: 3px;
   }
 }
