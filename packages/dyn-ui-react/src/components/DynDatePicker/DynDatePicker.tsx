@@ -240,19 +240,21 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
     return null;
   }
 
-  const resolvedError = errorMessage ?? (error || undefined);
+  const fieldError = errorMessage ?? (error || undefined);
 
-  const inputClasses = cn(styles.input, sizeClassMap[size], {
-    [styles.stateFocused]: focused,
-    [styles.stateError]: Boolean(resolvedError),
-    [styles.stateDisabled]: disabled,
-    [styles.stateReadonly]: readonly,
-    [styles.stateOpen]: isOpen,
-  });
+  const inputClasses = cn(
+    styles.input,
+    sizeClassMap[size],
+    focused && styles.stateFocused,
+    Boolean(fieldError) && styles.stateError,
+    disabled && styles.stateDisabled,
+    readonly && styles.stateReadonly,
+    isOpen && styles.stateOpen
+  );
 
   const describedBy =
     [
-      resolvedError ? `${inputId}-error` : null,
+      fieldError ? `${inputId}-error` : null,
       help ? `${inputId}-help` : null,
     ]
       .filter(Boolean)
@@ -265,12 +267,12 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
 
   return (
     <DynFieldContainer
-      label={label}
-      helpText={help}
-      required={required}
-      optional={optional}
-      errorText={resolvedError}
-      className={className}
+      {...(label !== undefined ? { label } : {})}
+      {...(help !== undefined ? { helpText: help } : {})}
+      {...(required ? { required } : {})}
+      {...(optional ? { optional } : {})}
+      {...(fieldError ? { errorText: fieldError } : {})}
+      {...(className !== undefined ? { className } : {})}
       htmlFor={inputId}
     >
       <div ref={containerRef} className={styles.container} data-testid={dataTestId}>
@@ -289,7 +291,7 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
             onBlur={handleBlur}
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
-            aria-invalid={Boolean(resolvedError)}
+            aria-invalid={Boolean(fieldError)}
             aria-describedby={describedBy}
             aria-expanded={isOpen}
             aria-controls={isOpen ? dropdownId : undefined}
