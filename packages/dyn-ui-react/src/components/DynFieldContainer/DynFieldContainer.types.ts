@@ -1,9 +1,9 @@
-import type { ReactElement } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 import type { BaseComponentProps } from '../../types';
 
 export interface DynFieldContainerOwnProps {
   /** Form field element that should be wrapped */
-  children: ReactElement;
+  children: ReactNode;
   /** Optional label to display above the field */
   label?: string;
   /** Indicates the field is required */
@@ -21,7 +21,8 @@ export interface DynFieldContainerOwnProps {
 }
 
 export type DynFieldContainerProps = Omit<BaseComponentProps, 'children'> &
-  DynFieldContainerOwnProps;
+  DynFieldContainerOwnProps &
+  Omit<HTMLAttributes<HTMLDivElement>, 'children'>;
 
 export interface DynFieldContainerDefaultProps {
   showValidation: boolean;
