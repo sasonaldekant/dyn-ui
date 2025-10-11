@@ -8,7 +8,7 @@ import {
 } from 'react';
 import type { ChangeEvent, ForwardedRef, KeyboardEvent } from 'react';
 import { DynFieldContainer } from '../DynFieldContainer';
-import type { DynFieldContainerProps } from '../DynFieldContainer/DynFieldContainer';
+import type { DynFieldContainerProps } from '../DynFieldContainer';
 import { useDynFieldValidation } from '../../hooks/useDynFieldValidation';
 import { cn } from '../../utils/classNames';
 import type { DynCheckboxProps, DynCheckboxRef } from './DynCheckbox.types';

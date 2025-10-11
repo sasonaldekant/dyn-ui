@@ -73,9 +73,8 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
 
   const { error, validate, clearError } = useDynFieldValidation({
     value,
-    required,
-    validation,
-    customError: errorMessage,
+    ...(required ? { required } : {}),
+    ...(validation ? { validation } : {}),
   });
 
   const {
@@ -85,7 +84,11 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
     parseDate,
     isValidDate,
     getRelativeDescription,
-  } = useDynDateParser({ format, locale, customParser });
+  } = useDynDateParser({
+    format,
+    locale,
+    ...(customParser ? { customParser } : {}),
+  });
 
   const parseExternalValue = useCallback(
     (input: DynDatePickerProps['value']): Date | null => {
@@ -237,9 +240,11 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
     return null;
   }
 
+  const resolvedError = errorMessage ?? (error || undefined);
+
   const inputClasses = cn(styles.input, sizeClassMap[size], {
     [styles.stateFocused]: focused,
-    [styles.stateError]: Boolean(error),
+    [styles.stateError]: Boolean(resolvedError),
     [styles.stateDisabled]: disabled,
     [styles.stateReadonly]: readonly,
     [styles.stateOpen]: isOpen,
@@ -247,7 +252,7 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
 
   const describedBy =
     [
-      error ? `${inputId}-error` : null,
+      resolvedError ? `${inputId}-error` : null,
       help ? `${inputId}-help` : null,
     ]
       .filter(Boolean)
@@ -264,7 +269,7 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
       helpText={help}
       required={required}
       optional={optional}
-      errorText={error}
+      errorText={resolvedError}
       className={className}
       htmlFor={inputId}
     >
@@ -284,7 +289,7 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
             onBlur={handleBlur}
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
-            aria-invalid={Boolean(error)}
+            aria-invalid={Boolean(resolvedError)}
             aria-describedby={describedBy}
             aria-expanded={isOpen}
             aria-controls={isOpen ? dropdownId : undefined}
