@@ -1,152 +1,170 @@
-/* DynDivider Styles - Following DYN UI specification */
-.dyn-divider {
-  /* CSS Custom Properties (Design Tokens) */
-  --divider-color: var(--color-neutral-mid-40, #999);
-  --divider-stroke-linecap: round;
-  --divider-margin: 1rem 0;
-  --divider-label-bg: var(--color-neutral-light-00, #fff);
-  --divider-label-color: var(--color-neutral-dark-70, #666);
-  --divider-label-padding: 0 1rem;
-  --divider-label-font-size: 0.875rem;
-  --divider-label-font-weight: 500;
+.root {
+  --dyn-divider-color: var(--dyn-color-border, rgba(15, 23, 42, 0.12));
+  --dyn-divider-text-color: var(--dyn-color-text-secondary, #475569);
+  --dyn-divider-gap: 0;
+  --dyn-divider-thickness: 1px;
+  --dyn-divider-line-style: solid;
+  --dyn-divider-spacing-block: 1rem;
+  --dyn-divider-spacing-inline: 1rem;
 
-  /* Base styles */
-  position: relative;
-  margin: var(--divider-margin);
-  width: 100%;
-}
-
-/* SVG line divider (simple) */
-.dyn-divider__svg {
-  width: 100%;
-  height: 1px;
-  display: block;
-}
-
-.dyn-divider__svg-line {
-  stroke: var(--divider-color);
-  stroke-linecap: var(--divider-stroke-linecap);
-}
-
-/* Size variants for SVG line */
-.dyn-divider--small .dyn-divider__svg-line {
-  stroke-width: 1;
-}
-
-.dyn-divider--medium .dyn-divider__svg-line {
-  stroke-width: 2;
-}
-
-.dyn-divider--large .dyn-divider__svg-line {
-  stroke-width: 3;
-}
-
-/* Divider with label */
-.dyn-divider--with-label {
-  display: flex;
-  align-items: center;
-  text-align: center;
-}
-
-.dyn-divider__content {
   display: flex;
   align-items: center;
   width: 100%;
+  min-width: 0;
+  gap: var(--dyn-divider-gap);
+  color: var(--dyn-divider-text-color);
+  font-size: var(--dyn-font-size-xs, 0.75rem);
+  font-weight: var(--dyn-font-weight-medium, 500);
+  letter-spacing: 0.02em;
 }
 
-.dyn-divider__line {
-  flex: 1;
-  height: 1px;
-  background-color: var(--divider-color);
+.directionHorizontal {
+  margin-block: var(--dyn-divider-spacing-block);
 }
 
-.dyn-divider__line--left {
-  margin-right: 1rem;
+.directionVertical {
+  flex-direction: column;
+  justify-content: center;
+  width: auto;
+  min-height: 100%;
+  align-self: stretch;
+  margin-inline: var(--dyn-divider-spacing-inline);
 }
 
-.dyn-divider__line--right {
-  margin-left: 1rem;
+.withLabel {
+  --dyn-divider-gap: 0.75rem;
 }
 
-.dyn-divider__label {
-  background-color: var(--divider-label-bg);
-  color: var(--divider-label-color);
-  padding: var(--divider-label-padding);
-  font-size: var(--divider-label-font-size);
-  font-weight: var(--divider-label-font-weight);
+.line {
+  flex: 1 1 0%;
+  border-top: var(--dyn-divider-thickness) var(--dyn-divider-line-style)
+    var(--dyn-divider-color);
+  min-width: 0;
+}
+
+.directionVertical .line {
+  width: 0;
+  min-height: 16px;
+  border-top: none;
+  border-left: var(--dyn-divider-thickness) var(--dyn-divider-line-style)
+    var(--dyn-divider-color);
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.75rem;
   white-space: nowrap;
-  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--dyn-color-background, #ffffff);
+  color: inherit;
 }
 
-/* Size variants for label lines */
-.dyn-divider--small .dyn-divider__line {
-  height: 1px;
+.directionVertical .label {
+  padding: 0.5rem 0;
+  border-radius: 0;
 }
 
-.dyn-divider--medium .dyn-divider__line {
-  height: 2px;
+.labelLeft .line:first-of-type {
+  flex: 0 1 32px;
 }
 
-.dyn-divider--large .dyn-divider__line {
-  height: 3px;
+.labelRight .line:last-of-type {
+  flex: 0 1 32px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .dyn-divider {
-    --divider-margin: 0.75rem 0;
-    --divider-label-padding: 0 0.75rem;
-    --divider-label-font-size: 0.8125rem;
+.directionVertical.labelLeft {
+  justify-content: flex-start;
+}
+
+.directionVertical.labelRight {
+  justify-content: flex-end;
+}
+
+.thicknessThin {
+  --dyn-divider-thickness: 1px;
+}
+
+.thicknessMedium {
+  --dyn-divider-thickness: 2px;
+}
+
+.thicknessThick {
+  --dyn-divider-thickness: 3px;
+}
+
+.lineStyleSolid {
+  --dyn-divider-line-style: solid;
+}
+
+.lineStyleDashed {
+  --dyn-divider-line-style: dashed;
+}
+
+.lineStyleDotted {
+  --dyn-divider-line-style: dotted;
+}
+
+.colorDefault {
+  --dyn-divider-color: var(--dyn-color-border, rgba(15, 23, 42, 0.12));
+  --dyn-divider-text-color: var(--dyn-color-text-secondary, #475569);
+}
+
+.colorPrimary {
+  --dyn-divider-color: var(--dyn-color-primary, #2563eb);
+  --dyn-divider-text-color: var(--dyn-color-primary, #2563eb);
+}
+
+.colorSecondary {
+  --dyn-divider-color: var(--dyn-color-secondary, #6b7280);
+  --dyn-divider-text-color: var(--dyn-color-secondary, #6b7280);
+}
+
+.colorMuted {
+  --dyn-divider-color: var(--dyn-color-muted, #e2e8f0);
+  --dyn-divider-text-color: var(--dyn-color-text-secondary, #475569);
+}
+
+.spacingNone {
+  --dyn-divider-spacing-block: 0;
+  --dyn-divider-spacing-inline: 0;
+}
+
+.spacingXs {
+  --dyn-divider-spacing-block: 0.25rem;
+  --dyn-divider-spacing-inline: 0.25rem;
+}
+
+.spacingSm {
+  --dyn-divider-spacing-block: 0.5rem;
+  --dyn-divider-spacing-inline: 0.5rem;
+}
+
+.spacingMd {
+  --dyn-divider-spacing-block: 1rem;
+  --dyn-divider-spacing-inline: 1rem;
+}
+
+.spacingLg {
+  --dyn-divider-spacing-block: 1.5rem;
+  --dyn-divider-spacing-inline: 1.5rem;
+}
+
+.spacingXl {
+  --dyn-divider-spacing-block: 2rem;
+  --dyn-divider-spacing-inline: 2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .label {
+    transition: none;
   }
-
-  .dyn-divider__line--left {
-    margin-right: 0.75rem;
-  }
-
-  .dyn-divider__line--right {
-    margin-left: 0.75rem;
-  }
 }
 
-/* High contrast theme support */
 @media (prefers-contrast: high) {
-  .dyn-divider {
-    --divider-color: var(--color-neutral-dark-90, #333);
-    --divider-label-color: var(--color-neutral-dark-90, #333);
-  }
-
-  .dyn-divider--medium .dyn-divider__svg-line,
-  .dyn-divider--medium .dyn-divider__line {
-    stroke-width: 3;
-    height: 3px;
-  }
-
-  .dyn-divider--large .dyn-divider__svg-line,
-  .dyn-divider--large .dyn-divider__line {
-    stroke-width: 4;
-    height: 4px;
-  }
-}
-
-/* Print styles */
-@media print {
-  .dyn-divider {
-    --divider-color: #000;
-    margin: 0.5rem 0;
-  }
-
-  .dyn-divider__svg-line,
-  .dyn-divider__line {
-    stroke: #000;
-    background-color: #000;
-  }
-}
-
-/* Dark theme support */
-@media (prefers-color-scheme: dark) {
-  .dyn-divider {
-    --divider-color: var(--color-neutral-light-40, #999);
-    --divider-label-bg: var(--color-neutral-dark-00, #1a1a1a);
-    --divider-label-color: var(--color-neutral-light-30, #ccc);
+  .root {
+    --dyn-divider-color: currentColor;
+    --dyn-divider-text-color: currentColor;
   }
 }

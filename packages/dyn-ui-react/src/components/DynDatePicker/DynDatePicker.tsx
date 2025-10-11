@@ -73,9 +73,8 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
 
   const { error, validate, clearError } = useDynFieldValidation({
     value,
-    required,
-    validation,
-    customError: errorMessage,
+    ...(required ? { required } : {}),
+    ...(validation ? { validation } : {}),
   });
 
   const {
@@ -85,7 +84,11 @@ export const DynDatePicker = forwardRef<DynFieldRef, DynDatePickerProps>((props,
     parseDate,
     isValidDate,
     getRelativeDescription,
-  } = useDynDateParser({ format, locale, customParser });
+  } = useDynDateParser({
+    format,
+    locale,
+    ...(customParser ? { customParser } : {}),
+  });
 
   const parseExternalValue = useCallback(
     (input: DynDatePickerProps['value']): Date | null => {

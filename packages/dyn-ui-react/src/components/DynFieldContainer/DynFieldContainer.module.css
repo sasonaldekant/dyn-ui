@@ -59,11 +59,3 @@
   line-height: 1.4;
   margin-top: var(--dyn-spacing-xs, 4px);
 }
-
-.required {
-  display: inline-block;
-}
-
-.optional {
-  display: inline-block;
-}
