@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { DynGauge } from './DynGauge';
 import type { DynGaugeProps } from './DynGauge.types';
 
