@@ -1,5 +1,5 @@
 /**
- * DynFieldContainer - SCSS Styles
+ * DynFieldContainer - CSS Module Styles
  * Part of DYN UI Form Components Group - SCOPE 6
  */
 
@@ -46,11 +46,11 @@
   color: var(--dyn-color-error, #f44336);
   line-height: 1.4;
   margin-top: var(--dyn-spacing-xs, 4px);
+}
 
-  &:before {
-    content: "⚠ ";
-    margin-right: var(--dyn-spacing-xs, 4px);
-  }
+.error::before {
+  content: '⚠ ';
+  margin-right: var(--dyn-spacing-xs, 4px);
 }
 
 .help {
@@ -58,12 +58,4 @@
   color: var(--dyn-color-text-secondary, #666);
   line-height: 1.4;
   margin-top: var(--dyn-spacing-xs, 4px);
-}
-
-.required {
-  display: inline-block;
-}
-
-.optional {
-  display: inline-block;
 }

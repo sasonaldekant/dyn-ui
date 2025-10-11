@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import DynFieldContainer from './DynFieldContainer';
-import styles from './DynFieldContainer.module.scss';
+import styles from './DynFieldContainer.module.css';
 
 const classes = styles as Record<string, string>;
 
