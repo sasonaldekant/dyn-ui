@@ -4,7 +4,6 @@
  */
 
 import type { BaseComponentProps } from './theme';
-export type { DynFieldContainerProps } from '../components/DynFieldContainer/DynFieldContainer.types';
 
 export interface ValidationRule {
   type: 'required' | 'email' | 'url' | 'pattern' | 'minLength' | 'maxLength' | 'custom';
@@ -13,7 +12,7 @@ export interface ValidationRule {
   validator?: (value: any) => boolean | Promise<boolean>;
 }
 
-export interface DynFieldBase extends BaseComponentProps {
+export interface DynFieldBase {
   name?: string;
   label?: string;
   help?: string;
@@ -26,6 +25,7 @@ export interface DynFieldBase extends BaseComponentProps {
   value?: any;
   errorMessage?: string;
   validation?: ValidationRule[];
+  className?: string;
   onChange?: (value: any) => void;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -33,7 +33,7 @@ export interface DynFieldBase extends BaseComponentProps {
 
 export interface DynFieldRef {
   focus: () => void;
-  validate: () => Promise<boolean>;
+  validate: () => boolean;
   clear: () => void;
   getValue: () => any;
   setValue: (value: any) => void;
