@@ -46,8 +46,6 @@ export {
 export type {
   DynContainerProps,
   DynDividerProps,
-  DynGridProps,
-  DynGridColumn,
   DynPageProps,
   DynPageBreadcrumb,
   DynPageAction,
@@ -57,6 +55,14 @@ export type {
   LayoutAlignment,
   LayoutJustify
 } from './components';
+export type {
+  DynGridProps,
+  DynGridColumn,
+  DynGridPagination,
+  DynGridSelectable,
+  DynGridSortDirection,
+} from './components';
+export { DYN_GRID_DEFAULT_PROPS } from './components';
 
 // Theme System
 export { ThemeProvider, useTheme } from './theme/ThemeProvider';

@@ -1,70 +1,100 @@
-/**
- * DynFieldContainer - Universal wrapper component for form fields
- * Part of DYN UI Form Components Group - SCOPE 6
- */
+import type { FC } from 'react';
+import { cn } from '../../utils/classNames';
+import {
+  DYN_FIELD_CONTAINER_DEFAULT_PROPS,
+  type DynFieldContainerProps,
+} from './DynFieldContainer.types';
+import styles from './DynFieldContainer.module.css';
 
-import React from 'react';
-import classNames from 'classnames';
-import './DynFieldContainer.module.scss';
+export const DynFieldContainer: FC<DynFieldContainerProps> = props => {
+  const {
+    children,
+    label,
+    required = false,
+    optional = false,
+    helpText,
+    errorText,
+    showValidation = DYN_FIELD_CONTAINER_DEFAULT_PROPS.showValidation,
+    className,
+    htmlFor,
+    id,
+    'data-testid': dataTestId = DYN_FIELD_CONTAINER_DEFAULT_PROPS['data-testid'],
+    ...rest
+  } = props;
 
-export interface DynFieldContainerProps {
-  children: React.ReactElement;
-  label?: string;
-  required?: boolean;
-  optional?: boolean;
-  helpText?: string;
-  errorText?: string;
-  showValidation?: boolean;
-  className?: string;
-  htmlFor?: string;
-}
+  const containerClasses = cn(
+    styles.container,
+    errorText && styles.containerError,
+    required && styles.containerRequired,
+    optional && styles.containerOptional,
+export const DynFieldContainer: FC<DynFieldContainerProps> = props => {
+  const {
+    children,
+    label,
+    required = false,
+    optional = false,
+    helpText,
+    errorText,
+    showValidation = DYN_FIELD_CONTAINER_DEFAULT_PROPS.showValidation,
+    className,
+    htmlFor,
+    id,
+    'data-testid': dataTestId = DYN_FIELD_CONTAINER_DEFAULT_PROPS['data-testid'],
+    ...rest
+  } = props;
 
-export const DynFieldContainer: React.FC<DynFieldContainerProps> = ({
-  children,
-  label,
-  required = false,
-  optional = false,
-  helpText,
-  errorText,
-  showValidation = true,
-  className,
-  htmlFor
-}) => {
-  const containerClasses = classNames(
-    'dyn-field-container',
-    {
-      'dyn-field-container--error': !!errorText,
-      'dyn-field-container--required': required,
-      'dyn-field-container--optional': optional
-    },
+  const containerClasses = cn(
+    styles.container,
+    errorText && styles.containerError,
+    required && styles.containerRequired,
+    optional && styles.containerOptional,
     className
   );
 
   return (
-    <div className={containerClasses}>
+    <div
+      {...rest}
+      id={id}
+      className={containerClasses}
+      data-testid={dataTestId}
+    >
+    <div
+      {...rest}
+      id={id}
+      className={containerClasses}
+      data-testid={dataTestId}
+    >
       {label && (
-        <label className="dyn-field-label" htmlFor={htmlFor}>
+        <label className={styles.label} htmlFor={htmlFor}>
+        <label className={styles.label} htmlFor={htmlFor}>
           {label}
           {required && (
-            <span className="dyn-field-required" aria-label="obrigatório">
+            <span className={styles.required} aria-label="obrigatório">
+            <span className={styles.required} aria-label="obrigatório">
               *
             </span>
           )}
           {optional && (
-            <span className="dyn-field-optional" aria-label="opcional">
+            <span className={styles.optional} aria-label="opcional">
+            <span className={styles.optional} aria-label="opcional">
               (opcional)
             </span>
           )}
         </label>
       )}
-      
+
+
       {children}
-      
+
+
       {showValidation && (helpText || errorText) && (
-        <div className="dyn-field-feedback">
+        <div className={styles.feedback}>
+        <div className={styles.feedback}>
           {errorText ? (
-            <div 
-              className="dyn-field-error" 
+            <div
+              className={styles.error}
+            <div
+              className={styles.error}
               id={htmlFor ? `${htmlFor}-error` : undefined}
               role="alert"
               aria-live="polite"
@@ -72,8 +102,10 @@ export const DynFieldContainer: React.FC<DynFieldContainerProps> = ({
               {errorText}
             </div>
           ) : helpText ? (
-            <div 
-              className="dyn-field-help"
+            <div
+              className={styles.help}
+            <div
+              className={styles.help}
               id={htmlFor ? `${htmlFor}-help` : undefined}
             >
               {helpText}

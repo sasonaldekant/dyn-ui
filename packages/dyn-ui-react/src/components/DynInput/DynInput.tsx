@@ -119,12 +119,14 @@ export const DynInput = forwardRef<DynFieldRef, DynInputProps>(
 
     if (!visible) return null;
 
+    const resolvedError = errorMessage ?? (error || undefined);
+
     const inputClasses = classNames(
       'dyn-input',
       `dyn-input--${size}`,
       {
         'dyn-input--focused': focused,
-        'dyn-input--error': !!error,
+        'dyn-input--error': Boolean(resolvedError),
         'dyn-input--disabled': disabled,
         'dyn-input--readonly': readonly,
         'dyn-input--with-icon': !!icon,
@@ -140,7 +142,7 @@ export const DynInput = forwardRef<DynFieldRef, DynInputProps>(
         helpText={help}
         required={required}
         optional={optional}
-        errorText={error}
+        errorText={resolvedError}
         className={className}
         htmlFor={name}
       >
@@ -170,8 +172,10 @@ export const DynInput = forwardRef<DynFieldRef, DynInputProps>(
             onChange={handleChange}
             onBlur={handleBlur}
             onFocus={handleFocus}
-            aria-invalid={!!error}
-            aria-describedby={error ? `${name}-error` : undefined}
+            aria-invalid={Boolean(resolvedError)}
+            aria-describedby={
+              resolvedError ? `${name}-error` : help ? `${name}-help` : undefined
+            }
           />
           
           {showCleanButton && value && !readonly && !disabled && (

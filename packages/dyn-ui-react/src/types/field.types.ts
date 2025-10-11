@@ -78,13 +78,6 @@ export interface DynSelectProps extends DynFieldBase {
   size?: InputSize;
 }
 
-// Checkbox specific types
-export interface DynCheckboxProps extends Omit<DynFieldBase, 'value'> {
-  checked?: boolean;
-  indeterminate?: boolean;
-  size?: InputSize;
-}
-
 // DatePicker specific types
 export interface DynDatePickerProps extends DynFieldBase {
   format?: string;
@@ -95,15 +88,4 @@ export interface DynDatePickerProps extends DynFieldBase {
   size?: InputSize;
 }
 
-// FieldContainer specific types
-export interface DynFieldContainerProps {
-  children: React.ReactElement;
-  label?: string;
-  required?: boolean;
-  optional?: boolean;
-  helpText?: string;
-  errorText?: string;
-  showValidation?: boolean;
-  className?: string;
-  htmlFor?: string;
-}
+// FieldContainer specific types are exported from the component package

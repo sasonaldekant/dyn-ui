@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { DynContainer } from './DynContainer';
 import { DynButton } from '../DynButton';
 
@@ -10,48 +10,92 @@ const meta: Meta<typeof DynContainer> = {
     docs: {
       description: {
         component: `
-          DynContainer is a flexible container component for grouping content.
-          It provides consistent styling, optional borders, padding, and titles.
+          DynContainer is a flexible container component for grouping related content.
+          It provides consistent spacing, optional borders and shadows, as well as layout controls
+          for alignment, direction, and background styling.
 
-          **Features:**
-          - Optional borders and padding
-          - Configurable height
-          - Title support
-          - Design token integration
-          - Responsive design
+          **Key capabilities:**
+          - Optional title and subtitle rendering
+          - Size variants that control internal padding
+          - Spacing tokens for content gap management
+          - Background, border, and shadow styling options
+          - Layout alignment and direction controls
         `,
       },
     },
   },
   tags: ['autodocs'],
   argTypes: {
+    title: {
+      control: 'text',
+      description: 'Optional container title',
+    },
+    subtitle: {
+      control: 'text',
+      description: 'Optional subtitle displayed below the title',
+    },
+    direction: {
+      control: 'radio',
+      options: ['vertical', 'horizontal'],
+      description: 'Layout direction for the content area',
+    },
+    spacing: {
+      control: 'select',
+      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Spacing token applied between content elements',
+    },
+    size: {
+      control: 'radio',
+      options: ['small', 'medium', 'large'],
+      description: 'Size variant that controls padding',
+    },
+    bordered: {
+      control: 'boolean',
+      description: 'Display a border around the container',
+    },
+    shadow: {
+      control: 'boolean',
+      description: 'Display an elevated shadow',
+    },
+    background: {
+      control: 'radio',
+      options: ['none', 'surface', 'card'],
+      description: 'Background style variant',
+    },
+    align: {
+      control: 'radio',
+      options: ['start', 'center', 'end', 'stretch'],
+      description: 'Cross-axis alignment for content',
+    },
+    justify: {
+      control: 'radio',
+      options: ['start', 'center', 'end', 'between', 'around', 'evenly'],
+      description: 'Main-axis alignment for content',
+    },
     height: {
       control: { type: 'number', min: 100, max: 800, step: 50 },
       description: 'Fixed height in pixels',
     },
-    noBorder: {
-      control: 'boolean',
-      description: 'Remove container border and shadow',
-    },
-    noPadding: {
-      control: 'boolean',
-      description: 'Remove internal padding',
-    },
-    title: {
+    maxWidth: {
       control: 'text',
-      description: 'Optional container title',
+      description: 'Optional maximum width constraint',
     },
     className: {
       control: 'text',
       description: 'Additional CSS classes',
     },
   },
+  args: {
+    spacing: 'md',
+    size: 'medium',
+    bordered: true,
+    background: 'surface',
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Default container
 export const Default: Story = {
   args: {
     children: (
@@ -63,38 +107,73 @@ export const Default: Story = {
   },
 };
 
-// Container with title
 export const WithTitle: Story = {
   args: {
     title: 'Container Title',
+    subtitle: 'Optional supporting information',
     children: (
       <div>
-        <p>This container has a title in the header section.</p>
-        <p>The content area is clearly separated from the title.</p>
+        <p>This container includes both a title and subtitle in the header area.</p>
+        <p>The content region inherits spacing tokens for consistent layout.</p>
       </div>
     ),
   },
 };
 
-// Container without borders
 export const NoBorder: Story = {
   args: {
-    noBorder: true,
+    bordered: false,
+    shadow: false,
+    background: 'none',
     title: 'Borderless Container',
     children: (
       <div>
-        <p>This container has no borders or shadow for a cleaner look.</p>
+        <p>This container has no border or shadow for a lightweight appearance.</p>
         <DynButton label="Action Button" kind="secondary" />
       </div>
     ),
   },
 };
 
-// Container without padding
+export const CardBackground: Story = {
+  args: {
+    background: 'card',
+    shadow: true,
+    title: 'Card Surface',
+    children: (
+      <div>
+        <p>Use the card background variant to mimic elevated surfaces.</p>
+        <DynButton label="Primary" kind="primary" />
+      </div>
+    ),
+  },
+};
+
+export const HorizontalLayout: Story = {
+  args: {
+    direction: 'horizontal',
+    spacing: 'lg',
+    align: 'center',
+    justify: 'between',
+    title: 'Horizontal Layout',
+    children: (
+      <>
+        <div>
+          <strong>Left Column</strong>
+          <p>Content aligns center vertically and spreads across.</p>
+        </div>
+        <DynButton label="Primary Action" kind="primary" />
+      </>
+    ),
+  },
+};
+
 export const NoPadding: Story = {
   args: {
     noPadding: true,
     title: 'No Padding Container',
+    background: 'none',
+    bordered: false,
     children: (
       <div style={{ padding: '20px', backgroundColor: '#f0f0f0' }}>
         <p>This container has no internal padding. Content spans the full width.</p>
@@ -104,7 +183,6 @@ export const NoPadding: Story = {
   },
 };
 
-// Container with fixed height
 export const FixedHeight: Story = {
   args: {
     height: 300,
@@ -121,24 +199,26 @@ export const FixedHeight: Story = {
   },
 };
 
-// Container combinations
 export const CustomCombination: Story = {
   args: {
     height: 250,
-    noBorder: true,
+    spacing: 'lg',
+    background: 'card',
+    shadow: true,
     title: 'Custom Configuration',
+    subtitle: 'Combining multiple layout tokens',
     className: 'custom-container-demo',
     children: (
       <div>
         <p>This container combines multiple features:</p>
         <ul>
           <li>Fixed height (250px)</li>
-          <li>No borders</li>
-          <li>Custom title</li>
+          <li>Card background with elevation</li>
+          <li>Large internal spacing</li>
           <li>Custom CSS class</li>
         </ul>
-        <div style={{ marginTop: '20px' }}>
-          <DynButton label="Primary" kind="primary"/>
+        <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
+          <DynButton label="Primary" kind="primary" />
           <DynButton label="Secondary" kind="secondary" />
         </div>
       </div>
@@ -146,19 +226,16 @@ export const CustomCombination: Story = {
   },
 };
 
-// Nested containers
 export const NestedContainers: Story = {
   args: {
     title: 'Parent Container',
+    spacing: 'md',
     children: (
-      <div>
-        <p>This is a parent container with nested child containers:</p>
-        <br />
-        <DynContainer title="Child Container 1" noBorder>
+      <div style={{ display: 'grid', gap: '16px' }}>
+        <DynContainer title="Child Container 1" bordered={false} background="none">
           <p>First nested container content.</p>
         </DynContainer>
-        <br />
-        <DynContainer title="Child Container 2" noBorder>
+        <DynContainer title="Child Container 2" bordered={false} background="none">
           <p>Second nested container content.</p>
           <DynButton label="Nested Action" kind="tertiary" />
         </DynContainer>
@@ -167,16 +244,28 @@ export const NestedContainers: Story = {
   },
 };
 
-// Showcase all variants
 export const Showcase: Story = {
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      story: 'Comprehensive showcase of DynContainer variants and configurations.',
+    },
+  },
   render: () => (
-    <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', width: '100%' }}>
+    <div
+      style={{
+        display: 'grid',
+        gap: '20px',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        width: '100%',
+      }}
+    >
       <DynContainer title="Default Container">
         <p>Standard container with all default settings.</p>
         <DynButton label="Default" kind="primary" />
       </DynContainer>
 
-      <DynContainer noBorder title="No Border">
+      <DynContainer bordered={false} background="none" title="No Border">
         <p>Container without borders or shadow.</p>
         <DynButton label="No Border" kind="secondary" />
       </DynContainer>
@@ -188,19 +277,11 @@ export const Showcase: Story = {
         </div>
       </DynContainer>
 
-      <DynContainer height={200} title="Fixed Height">
+      <DynContainer height={200} title="Fixed Height" spacing="sm">
         <p>Container with fixed height constraint.</p>
         <p>Content will be constrained to the specified height.</p>
         <DynButton label="Fixed" kind="primary" />
       </DynContainer>
     </div>
   ),
-  parameters: {
-    layout: 'fullscreen',
-    docs: {
-      description: {
-        story: 'Comprehensive showcase of all DynContainer variants and configurations.',
-      },
-    },
-  },
 };
