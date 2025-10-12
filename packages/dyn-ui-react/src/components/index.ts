@@ -1,61 +1,17 @@
-/**
- * Main component exports for DYN UI React
- * Standardized exports with consistent patterns across all components
- * Following DYN UI Standards and Naming Conventions
- */
-
-// Import global theme styles
-import '../styles/themes.css';
-// Import component styles
-import '../styles/dyn-field-container.css';
-import '../styles/dyn-input.css';
-import '../styles/dyn-select.css';
-import '../styles/dyn-datepicker.css';
-import '../styles/dyn-layout.css';
-
-// ===== COMPONENT EXPORTS (Grouped by Category) =====
-
-// Basic Components
+// Component exports
+export { DynBadge } from './DynBadge';
 export { DynButton } from './DynButton';
 export { DynIcon } from './DynIcon';
-export { DynBox } from './DynBox';
-
-// Display Components - SCOPE 5
-export { DynBadge } from './DynBadge';
 export { DynAvatar } from './DynAvatar';
 export { DynLabel } from './DynLabel';
-
-// Form Components - SCOPE 6
-export { DynInput } from './DynInput';
-export { DynSelect } from './DynSelect';
 export { DynCheckbox } from './DynCheckbox';
-export { DynDatePicker } from './DynDatePicker';
-export { DynFieldContainer } from './DynFieldContainer';
-
-// Layout Components - SCOPE 7
+export { DynInput } from './DynInput';
 export { DynContainer } from './DynContainer';
-export { DynDivider } from './DynDivider';
 export { DynGrid } from './DynGrid';
 export { DynPage } from './DynPage';
-
-// Data Display Components
-export { DynChart } from './DynChart';
-export { DynGauge } from './DynGauge';
-export { DynListView } from './DynListView';
-export { DynTable } from './DynTable';
-export { DynTreeView } from './DynTreeView';
-
-// Navigation Components
-export { DynMenu } from './DynMenu';
+export { DynDivider } from './DynDivider';
+export { DynBox } from './DynBox';
 export { DynBreadcrumb } from './DynBreadcrumb';
-export { DynTabs } from './DynTabs';
-export { DynStepper } from './DynStepper';
-export { DynToolbar } from './DynToolbar';
-
-// Utility Components
-export { ThemeSwitcher } from './ThemeSwitcher';
-
-// ===== TYPE EXPORTS (Grouped by Category) =====
 
 // Basic Component Types
 export type { DynBoxProps, DynBoxRef } from './DynBox/DynBox.types';
@@ -71,9 +27,12 @@ export { DYN_ICON_DEFAULT_PROPS } from '../types/icon.types';
 // Display Component Types - SCOPE 5
 export type {
   DynBadgeProps,
-  BadgeStatus,
-  BadgeSize,
-  BadgeIcon
+  DynBadgeRef,
+  DynBadgeVariant,
+  DynBadgeColor,
+  DynBadgePosition,
+  DynBadgeSize,
+  DynBadgeAccessibilityProps
 } from '../types/badge.types';
 export type {
   DynAvatarProps,

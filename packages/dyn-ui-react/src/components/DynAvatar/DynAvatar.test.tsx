@@ -34,7 +34,7 @@ describe('DynAvatar', () => {
       fireEvent.load(img);
 
       await waitFor(() => {
-        expect(img).toHaveClass(styles['avatar__image--loaded']);
+        expect(img).toHaveClass(styles['avatar__image--loaded'] ?? '');
       });
     });
 
