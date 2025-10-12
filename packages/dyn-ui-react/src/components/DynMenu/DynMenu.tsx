@@ -97,6 +97,34 @@ const DynMenu = forwardRef<DynMenuRef, DynMenuProps>((
     return filterItems(menus);
   }, [menus, filterText]);
 
+  const renderBadge = useCallback((badge: MenuItem['badge']) => {
+    if (!badge) {
+      return null;
+    }
+
+    if (typeof badge === 'object') {
+      const count = badge.count ?? badge.value;
+      return (
+        <DynBadge
+          count={typeof count === 'number' ? count : undefined}
+          maxCount={badge.maxCount}
+          showZero={badge.showZero}
+          color={badge.color}
+          variant={badge.variant}
+          size="small"
+        >
+          {badge.label}
+        </DynBadge>
+      );
+    }
+
+    if (typeof badge === 'number') {
+      return <DynBadge count={badge} size="small" />;
+    }
+
+    return <DynBadge size="small">{badge}</DynBadge>;
+  }, []);
+
   const handleToggleCollapse = () => {
     const newCollapsed = !collapsed;
     setCollapsed(newCollapsed);
@@ -175,11 +203,7 @@ const DynMenu = forwardRef<DynMenuRef, DynMenuProps>((
             </span>
             {item.badge && (
               <div className={styles['dyn-menu-item-badge']}>
-                <DynBadge
-                  value={item.badge.value}
-                  color={item.badge.color}
-                  size="small"
-                />
+                {renderBadge(item.badge)}
               </div>
             )}
             {hasSubItems && (

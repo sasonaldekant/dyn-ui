@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { DynIcon } from '../DynIcon';
 import { DynBadge } from './DynBadge';
 
 const meta: Meta<typeof DynBadge> = {
@@ -8,51 +9,69 @@ const meta: Meta<typeof DynBadge> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'DynBadge component for displaying status indicators, counters, and labels with various styling options.',
-      },
-    },
+        component:
+          'DynBadge displays counts, status indicators, and semantic labels using design tokens and accessibility best practices.'
+      }
+    }
   },
-  decorators: [
-    (Story) => (
-      <div style={{ padding: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-        <Story />
-      </div>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
-    value: {
-      control: 'number',
-      description: 'Numeric value to display in badge',
+    children: {
+      control: 'text',
+      description: 'Badge content'
+    },
+    variant: {
+      control: 'select',
+      options: ['solid', 'soft', 'outline', 'dot'],
+      description: 'Visual variant of the badge'
+    },
+    color: {
+      control: 'select',
+      options: ['primary', 'secondary', 'success', 'warning', 'danger', 'info', 'neutral'],
+      description: 'Semantic color token'
     },
     size: {
       control: 'select',
       options: ['small', 'medium', 'large'],
-      description: 'Badge size variant',
+      description: 'Badge size variant'
     },
-    status: {
-      control: 'select',
-      options: ['positive', 'negative', 'warning', 'disabled'],
-      description: 'Status color variant',
+    count: {
+      control: 'number',
+      description: 'Numeric value to display when using counter badges'
     },
-    color: {
-      control: 'select',
-      options: ['color-01', 'color-02', 'color-03', 'color-04', 'color-05', 'color-06', 'color-07', 'color-08', 'color-09', 'color-10', 'color-11', 'color-12'],
-      description: 'Color palette selection',
+    countDescription: {
+      control: 'text',
+      description: 'Accessible description announced for count badges'
     },
-    showBorder: {
+    maxCount: {
+      control: 'number',
+      description: 'Maximum value before showing the + indicator'
+    },
+    showZero: {
       control: 'boolean',
-      description: 'Show white border around badge',
+      description: 'Whether to display the badge when the count is 0'
     },
-    icon: {
-      control: 'text',
-      description: 'Icon name or boolean for status-based icons',
+    position: {
+      control: 'select',
+      options: ['topRight', 'topLeft', 'bottomRight', 'bottomLeft'],
+      description: 'Position of the badge when used as an overlay'
     },
-    children: {
-      control: 'text',
-      description: 'Badge content (text)',
+    animated: {
+      control: 'boolean',
+      description: 'Apply appear animation to the badge'
     },
+    pulse: {
+      control: 'boolean',
+      description: 'Apply pulse animation for notifications'
+    }
   },
+  args: {
+    children: 'New',
+    variant: 'solid',
+    color: 'primary',
+    size: 'medium',
+    maxCount: 99
+  }
 };
 
 export default meta;
@@ -60,62 +79,137 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
   args: {
-    value: 99,
-    size: 'medium',
-    color: 'color-07'
+    count: 8,
+    countDescription: 'Notifications'
+  }
+};
+
+export const Variants: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '0.5rem', flexDirection: 'column', alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <DynBadge variant="solid">Solid</DynBadge>
+        <DynBadge variant="soft">Soft</DynBadge>
+        <DynBadge variant="outline">Outline</DynBadge>
+        <DynBadge variant="dot" />
+      </div>
+    </div>
+  )
+};
+
+export const Sizes: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+      <DynBadge size="small">Small</DynBadge>
+      <DynBadge size="medium">Medium</DynBadge>
+      <DynBadge size="large">Large</DynBadge>
+    </div>
+  )
+};
+
+export const CountBadges: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <DynBadge count={3} />
+      <DynBadge count={99} />
+      <DynBadge count={150} maxCount={99} />
+      <DynBadge count={0} showZero />
+    </div>
+  )
+};
+
+export const WithIcons: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+      <DynBadge startIcon={<DynIcon icon="star" />}>Featured</DynBadge>
+      <DynBadge endIcon={<DynIcon icon="arrow-right" />}>Next</DynBadge>
+      <DynBadge startIcon={<DynIcon icon="check" />} color="success">
+        Verified
+      </DynBadge>
+    </div>
+  )
+};
+
+export const StatusIndicators: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
+      <div style={{ position: 'relative', width: 64, height: 64, background: '#f0f0f0', borderRadius: 8 }}>
+        <DynBadge variant="dot" color="success" position="topRight" />
+        <span style={{ position: 'absolute', bottom: 4, left: 4, fontSize: '0.75rem' }}>Online</span>
+      </div>
+      <div style={{ position: 'relative', width: 64, height: 64, background: '#f0f0f0', borderRadius: 8 }}>
+        <DynBadge count={3} color="danger" position="topRight" />
+        <span style={{ position: 'absolute', bottom: 4, left: 4, fontSize: '0.75rem' }}>Alerts</span>
+      </div>
+    </div>
+  )
+};
+
+export const Interactive: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+      <DynBadge onClick={() => alert('Badge clicked!')}>Clickable</DynBadge>
+      <DynBadge
+        count={5}
+        onClick={() => alert('5 notifications')}
+        countDescription="Notifications"
+      />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Interactive badges with click handlers and keyboard navigation.'
+      }
+    }
+  }
+};
+
+export const Animated: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+      <DynBadge animated>Animated</DynBadge>
+      <DynBadge pulse color="danger">
+        Pulsing
+      </DynBadge>
+      <DynBadge animated pulse count={1} color="info" />
+    </div>
+  )
+};
+
+export const DarkTheme: Story = {
+  parameters: {
+    backgrounds: { default: 'dark' }
   },
+  render: () => (
+    <div data-theme="dark" style={{ padding: '2rem', background: '#1a1a1a' }}>
+      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <DynBadge color="primary">Primary</DynBadge>
+        <DynBadge variant="soft" color="success">
+          Soft Success
+        </DynBadge>
+        <DynBadge variant="outline" color="warning">
+          Outline Warning
+        </DynBadge>
+        <DynBadge variant="dot" color="danger" />
+        <DynBadge count={9} color="info" />
+      </div>
+    </div>
+  )
 };
 
-export const StatusVariants: Story = {
+export const Accessibility: Story = {
   render: () => (
-    <>
-      <DynBadge status="positive" value={5}>Positive</DynBadge>
-      <DynBadge status="negative" value={3}>Negative</DynBadge>
-      <DynBadge status="warning" value={10}>Warning</DynBadge>
-      <DynBadge status="disabled" value={0}>Disabled</DynBadge>
-    </>
-  ),
-};
-
-export const WithIcon: Story = {
-  render: () => (
-    <>
-      <DynBadge icon="check" status="positive" value={1}>Success</DynBadge>
-      <DynBadge icon="close" status="negative">Error</DynBadge>
-      <DynBadge icon="warning" status="warning" value={5}>Warning</DynBadge>
-      <DynBadge icon={true} status="positive" value={3}>Auto Icon</DynBadge>
-    </>
-  ),
-};
-
-export const BorderVariant: Story = {
-  render: () => (
-    <>
-      <DynBadge value={3} showBorder status="positive">With Border</DynBadge>
-      <DynBadge value={7} showBorder color="color-02">Colored Border</DynBadge>
-      <DynBadge showBorder color="color-04">Text Only</DynBadge>
-    </>
-  ),
-};
-
-export const AllSizes: Story = {
-  render: () => (
-    <>
-      <DynBadge size="small" value={5}>Small</DynBadge>
-      <DynBadge size="medium" value={10}>Medium</DynBadge>
-      <DynBadge size="large" value={15}>Large</DynBadge>
-    </>
-  ),
-};
-
-export const TextBadges: Story = {
-  render: () => (
-    <>
-      <DynBadge>New</DynBadge>
-      <DynBadge status="positive">Online</DynBadge>
-      <DynBadge status="warning">Beta</DynBadge>
-      <DynBadge status="negative">Offline</DynBadge>
-      <DynBadge color="color-05">Premium</DynBadge>
-    </>
-  ),
+    <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column', alignItems: 'flex-start' }}>
+      <DynBadge
+        count={12}
+        countDescription="Unread messages"
+        ariaDescribedBy="message-description"
+      />
+      <p id="message-description" style={{ margin: 0 }}>
+        You have 12 unread messages in your inbox.
+      </p>
+      <DynBadge ariaLabel="Status indicator">Active</DynBadge>
+    </div>
+  )
 };

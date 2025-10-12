@@ -1,61 +1,79 @@
-import type { ReactNode } from 'react';
+import type {
+  HTMLAttributes,
+  MouseEvent as ReactMouseEvent,
+  ReactNode
+} from 'react';
 import type { BaseComponentProps } from '../../types';
 
+export type ComponentSize = 'small' | 'medium' | 'large';
+
 export const DYN_BADGE_COLORS = [
-  'color-01',
-  'color-02',
-  'color-03',
-  'color-04',
-  'color-05',
-  'color-06',
-  'color-07',
-  'color-08',
-  'color-09',
-  'color-10',
-  'color-11',
-  'color-12',
+  'primary',
+  'secondary',
+  'success',
+  'warning',
+  'danger',
+  'info',
+  'neutral'
 ] as const;
 
-export type BadgeStatus = 'disabled' | 'negative' | 'positive' | 'warning';
+export type DynBadgeSemanticColor = (typeof DYN_BADGE_COLORS)[number];
 
-export type BadgeSize = 'small' | 'medium' | 'large';
-
-export type BadgeIcon = string | boolean | ReactNode;
-
-export type BadgeThemeColor = (typeof DYN_BADGE_COLORS)[number];
-
-export interface DynBadgeProps extends BaseComponentProps {
-  /** Numeric value displayed inside the badge */
-  value?: number;
-
-  /** Theme token or custom CSS color */
-  color?: string;
-
-  /** Semantic status variant */
-  status?: BadgeStatus;
-
-  /** Visual size variant */
-  size?: BadgeSize;
-
-  /** Icon displayed inside the badge */
-  icon?: BadgeIcon;
-
-  /** Optional border treatment */
-  showBorder?: boolean;
-
-  /** Accessible label override */
+export interface AccessibilityProps {
   ariaLabel?: string;
+  ariaDescribedBy?: string;
+  ariaLive?: 'off' | 'polite' | 'assertive';
+}
+
+export type DynBadgeVariant = 'solid' | 'soft' | 'outline' | 'dot';
+export type DynBadgeColor = DynBadgeSemanticColor | (string & {});
+export type DynBadgePosition = 'topRight' | 'topLeft' | 'bottomRight' | 'bottomLeft';
+
+export interface DynBadgeProps
+  extends BaseComponentProps,
+    AccessibilityProps,
+    Omit<HTMLAttributes<HTMLSpanElement>, 'color' | 'children'> {
+  /** Badge content */
+  children?: ReactNode;
+
+  /** Badge variant style */
+  variant?: DynBadgeVariant;
+
+  /** Semantic color */
+  color?: DynBadgeColor;
+
+  /** Size variant */
+  size?: ComponentSize;
+
+  /** Position when used as overlay */
+  position?: DynBadgePosition;
+
+  /** Click handler (makes badge interactive) */
+  onClick?: (event: ReactMouseEvent<HTMLSpanElement>) => void;
+
+  /** Icon before text */
+  startIcon?: ReactNode;
+
+  /** Icon after text */
+  endIcon?: ReactNode;
+
+  /** Max count before showing + */
+  maxCount?: number;
+
+  /** Numeric value (for count badges) */
+  count?: number;
+
+  /** Show badge even when count is 0 */
+  showZero?: boolean;
+
+  /** Animate appearance */
+  animated?: boolean;
+
+  /** Pulse animation for notifications */
+  pulse?: boolean;
+
+  /** Accessible description for count */
+  countDescription?: string;
 }
 
 export type DynBadgeRef = HTMLSpanElement;
-
-export type DynBadgeDefaultProps = Required<
-  Pick<DynBadgeProps, 'value' | 'color' | 'size' | 'showBorder'>
->;
-
-export const DYN_BADGE_DEFAULT_PROPS: DynBadgeDefaultProps = {
-  value: 0,
-  color: 'color-07',
-  size: 'medium',
-  showBorder: false,
-};

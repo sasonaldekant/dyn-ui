@@ -3,6 +3,22 @@
  * Tab navigation component types with advanced features
  */
 
+import type { ReactNode } from 'react';
+import type { DynBadgeColor, DynBadgeVariant } from '../DynBadge/DynBadge.types';
+
+export type TabBadge =
+  | number
+  | string
+  | {
+      count?: number;
+      value?: number;
+      label?: ReactNode;
+      color?: DynBadgeColor;
+      variant?: DynBadgeVariant;
+      maxCount?: number;
+      showZero?: boolean;
+    };
+
 export interface TabItem {
   id: string;
   label: string;
@@ -10,7 +26,7 @@ export interface TabItem {
   disabled?: boolean;
   closable?: boolean;
   icon?: string | React.ReactNode;
-  badge?: string | number;
+  badge?: TabBadge;
   tooltip?: string;
 }
 

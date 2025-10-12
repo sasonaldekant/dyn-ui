@@ -6,25 +6,31 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 import { DynMenu } from './DynMenu';
 import { MenuItem } from './DynMenu.types';
 
 // Mock child components
-jest.mock('../DynIcon', () => ({
+vi.mock('../DynIcon', () => ({
   DynIcon: ({ icon, className }: { icon: string; className?: string }) => (
     <i data-testid={`icon-${icon}`} className={className} />
   )
 }));
 
-jest.mock('../DynBadge', () => ({
-  DynBadge: ({ value, color, size }: { value?: number; color?: string; size?: string }) => (
-    <span data-testid="badge" data-value={value} data-color={color} data-size={size}>
-      {value}
+vi.mock('../DynBadge', () => ({
+  DynBadge: ({
+    count,
+    color,
+    size,
+    children
+  }: { count?: number; color?: string; size?: string; children?: React.ReactNode }) => (
+    <span data-testid="badge" data-count={count} data-color={color} data-size={size}>
+      {children ?? count}
     </span>
   )
 }));
 
-jest.mock('../DynInput', () => ({
+vi.mock('../DynInput', () => ({
   DynInput: ({ placeholder, value, onChange, icon, size }: any) => (
     <input
       data-testid="menu-search"
@@ -43,8 +49,8 @@ const sampleMenus: MenuItem[] = [
     label: 'Dashboard',
     icon: 'dyn-icon-dashboard',
     shortLabel: 'Dash',
-    action: jest.fn(),
-    badge: { value: 3, color: 'color-01' }
+    action: vi.fn(),
+    badge: { count: 3, color: 'danger' }
   },
   {
     type: 'divider'
@@ -57,13 +63,13 @@ const sampleMenus: MenuItem[] = [
       {
         label: 'All Products',
         icon: 'dyn-icon-list',
-        action: jest.fn()
+        action: vi.fn()
       },
       {
         label: 'Categories',
         icon: 'dyn-icon-folder',
         disabled: true,
-        action: jest.fn()
+        action: vi.fn()
       }
     ]
   },
@@ -71,7 +77,7 @@ const sampleMenus: MenuItem[] = [
     label: 'Settings',
     icon: 'dyn-icon-settings',
     visible: false,
-    action: jest.fn()
+    action: vi.fn()
   }
 ];
 
@@ -84,7 +90,7 @@ const defaultProps = {
 
 describe('DynMenu', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders menu with items', () => {
@@ -108,8 +114,8 @@ describe('DynMenu', () => {
     
     const badge = screen.getByTestId('badge');
     expect(badge).toBeInTheDocument();
-    expect(badge).toHaveAttribute('data-value', '3');
-    expect(badge).toHaveAttribute('data-color', 'color-01');
+    expect(badge).toHaveAttribute('data-count', '3');
+    expect(badge).toHaveAttribute('data-color', 'danger');
   });
 
   it('handles menu item clicks', async () => {
@@ -158,12 +164,12 @@ describe('DynMenu', () => {
     
     // Click on disabled item should not trigger action
     await user.click(categoriesItem);
-    const categoriesAction = sampleMenus[2].subItems?.[1].action as jest.Mock;
+    const categoriesAction = sampleMenus[2].subItems?.[1].action as Mock;
     expect(categoriesAction).not.toHaveBeenCalled();
   });
 
   it('toggles collapsed state', async () => {
-    const onCollapse = jest.fn();
+    const onCollapse = vi.fn();
     const user = userEvent.setup();
     render(<DynMenu {...defaultProps} collapsed={false} onCollapse={onCollapse} />);
     
@@ -240,7 +246,7 @@ describe('DynMenu', () => {
   });
 
   it('calls onMenuClick when menu item is clicked', async () => {
-    const onMenuClick = jest.fn();
+    const onMenuClick = vi.fn();
     const user = userEvent.setup();
     render(<DynMenu {...defaultProps} onMenuClick={onMenuClick} />);
     
