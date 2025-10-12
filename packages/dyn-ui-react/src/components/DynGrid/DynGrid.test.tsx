@@ -111,7 +111,7 @@ describe('DynGrid', () => {
       <DynGrid columns={mockColumns} data={mockData} size="large" />
     );
     
-    expect(container.firstChild).toHaveClass(styles.sizeLarge);
+    expect(container.firstChild).toHaveClass(styles.sizeLarge!);
   });
 
   it('applies styling variants', () => {
@@ -125,6 +125,10 @@ describe('DynGrid', () => {
       />
     );
     
-    expect(container.firstChild).toHaveClass(styles.bordered, styles.striped, styles.hoverable);
+    expect(container.firstChild).toHaveClass(
+      styles.bordered!,
+      styles.striped!,
+      styles.hoverable!
+    );
   });
 });
