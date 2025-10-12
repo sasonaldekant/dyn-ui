@@ -6,8 +6,11 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 import { DynToolbar } from './DynToolbar';
 import { ToolbarItem, DynToolbarRef } from './DynToolbar.types';
+
+const jest = vi;
 
 // Mock child components
 jest.mock('../DynIcon', () => {
@@ -20,9 +23,13 @@ jest.mock('../DynIcon', () => {
 
 jest.mock('../DynBadge', () => {
   return {
-    DynBadge: ({ value, size }: { value?: string | number; size?: string }) => (
-      <span data-testid="badge" data-value={value} data-size={size}>
-        {value}
+    DynBadge: ({
+      count,
+      size,
+      children
+    }: { count?: number; size?: string; children?: React.ReactNode }) => (
+      <span data-testid="badge" data-count={count} data-size={size}>
+        {children ?? count}
       </span>
     )
   };
@@ -120,7 +127,7 @@ describe('DynToolbar', () => {
 
     const badge = screen.getByTestId('badge');
     expect(badge).toBeInTheDocument();
-    expect(badge).toHaveAttribute('data-value', '5');
+    expect(badge).toHaveAttribute('data-count', '5');
   });
 
   it('handles item clicks', async () => {
@@ -524,7 +531,7 @@ describe('DynToolbar', () => {
     const mockObserve = jest.fn();
     const mockDisconnect = jest.fn();
 
-    (global.ResizeObserver as jest.Mock).mockImplementation((callback) => ({
+    (global.ResizeObserver as Mock).mockImplementation((callback) => ({
       observe: mockObserve,
       unobserve: jest.fn(),
       disconnect: mockDisconnect

@@ -4,9 +4,12 @@ import {
   useId,
   useMemo
 } from 'react';
-import type { ForwardedRef, KeyboardEvent, MouseEvent } from 'react';
+import type { CSSProperties, ForwardedRef, KeyboardEvent, MouseEvent } from 'react';
 import { cn } from '../../utils/classNames';
-import type { DynBadgeProps, DynBadgeRef } from './DynBadge.types';
+import type {
+  DynBadgeProps,
+  DynBadgeRef
+} from './DynBadge.types';
 import styles from './DynBadge.module.css';
 
 const sizeClassNameMap = {
@@ -56,6 +59,7 @@ const DynBadgeComponent = (
     endIcon,
     maxCount = DEFAULT_MAX_COUNT,
     count,
+    value,
     showZero = false,
     animated = false,
     pulse = false,
@@ -72,9 +76,12 @@ const DynBadgeComponent = (
     ...rest
   } = props;
 
-  const hasCount = typeof count === 'number';
+  const { style: inlineStyle, ...restProps } = rest;
+
+  const numericCount = typeof count === 'number' ? count : typeof value === 'number' ? value : undefined;
+  const hasCount = typeof numericCount === 'number';
   const hasChildren = children !== undefined && children !== null;
-  const shouldHideBadge = hasCount && count === 0 && !showZero && !hasChildren;
+  const shouldHideBadge = hasCount && numericCount === 0 && !showZero && !hasChildren;
 
   if (shouldHideBadge) {
     return null;
@@ -89,12 +96,12 @@ const DynBadgeComponent = (
       return undefined;
     }
 
-    if (typeof maxCount === 'number' && count! > maxCount) {
+    if (typeof maxCount === 'number' && numericCount! > maxCount) {
       return `${maxCount}+`;
     }
 
-    return String(count);
-  }, [count, hasCount, maxCount]);
+    return String(numericCount);
+  }, [hasCount, maxCount, numericCount]);
 
   const displayContent = useMemo(() => {
     if (hasChildren) {
@@ -108,11 +115,16 @@ const DynBadgeComponent = (
     return undefined;
   }, [children, displayCount, hasChildren, hasCount]);
 
+  const semanticColorClass =
+    color && Object.prototype.hasOwnProperty.call(colorClassNameMap, color)
+      ? colorClassNameMap[color as keyof typeof colorClassNameMap]
+      : undefined;
+
   const badgeClasses = cn(
     styles.badge,
     sizeClassNameMap[size],
     variantClassNameMap[variant],
-    colorClassNameMap[color],
+    semanticColorClass,
     position && styles['badge--positioned'],
     position ? positionClassNameMap[position] : undefined,
     isInteractive && styles['badge--clickable'],
@@ -127,6 +139,16 @@ const DynBadgeComponent = (
   const roleValue = roleProp ?? (isInteractive ? 'button' : undefined);
   const tabIndexValue = tabIndexProp ?? (isInteractive ? 0 : undefined);
   const dataTestIdValue = dataTestId ?? 'dyn-badge';
+  const customColorStyle = !semanticColorClass && typeof color === 'string'
+    ? ({
+        '--badge-accent': color,
+        '--badge-outline-color': color,
+        '--badge-soft-fallback': color
+      } as CSSProperties)
+    : undefined;
+  const badgeStyle = customColorStyle
+    ? { ...customColorStyle, ...(inlineStyle as CSSProperties | undefined) }
+    : inlineStyle;
 
   const handleClick = useCallback(
     (event: MouseEvent<HTMLSpanElement>) => {
@@ -169,7 +191,8 @@ const DynBadgeComponent = (
       aria-describedby={ariaDescribedBy}
       aria-live={ariaLiveValue}
       data-testid={dataTestIdValue}
-      {...rest}
+      style={badgeStyle}
+      {...restProps}
     >
       <span className={styles['badge__content']}>
         {startIcon && (
@@ -191,7 +214,7 @@ const DynBadgeComponent = (
         )}
       </span>
 
-      {hasCount && Number(count) > 0 && (
+      {hasCount && Number(numericCount) > 0 && (
         <span className="dyn-sr-only">
           {countDescription || 'Notifications'}: {displayCount}
         </span>

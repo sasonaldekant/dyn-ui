@@ -117,7 +117,7 @@ const sampleTabs: TabItem[] = [
     id: 'tab2',
     label: 'Users',
     icon: '👥',
-    badge: 12,
+    badge: { count: 12 },
     content: (
       <div style={{ padding: '20px' }}>
         <h3>👥 User Management</h3>
@@ -191,7 +191,7 @@ const manyTabs: TabItem[] = Array.from({ length: 12 }, (_, i) => ({
   id: `tab${i + 1}`,
   label: `Tab ${i + 1}`,
   icon: i % 2 === 0 ? '📄' : '📁',
-  badge: i > 5 ? i - 5 : undefined,
+  badge: i > 5 ? { count: i - 5 } : undefined,
   content: (
     <div style={{ padding: '20px' }}>
       <h3>Content for Tab {i + 1}</h3>

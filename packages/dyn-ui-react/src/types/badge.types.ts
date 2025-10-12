@@ -5,5 +5,6 @@ export type {
   DynBadgeColor,
   DynBadgePosition,
   ComponentSize as DynBadgeSize,
-  AccessibilityProps as DynBadgeAccessibilityProps
+  AccessibilityProps as DynBadgeAccessibilityProps,
+  DYN_BADGE_COLORS
 } from '../components/DynBadge/DynBadge.types';

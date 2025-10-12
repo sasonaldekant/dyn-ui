@@ -7,6 +7,18 @@ import type { BaseComponentProps } from '../../types';
 
 export type ComponentSize = 'small' | 'medium' | 'large';
 
+export const DYN_BADGE_COLORS = [
+  'primary',
+  'secondary',
+  'success',
+  'warning',
+  'danger',
+  'info',
+  'neutral'
+] as const;
+
+export type DynBadgeSemanticColor = (typeof DYN_BADGE_COLORS)[number];
+
 export interface AccessibilityProps {
   ariaLabel?: string;
   ariaDescribedBy?: string;
@@ -14,14 +26,7 @@ export interface AccessibilityProps {
 }
 
 export type DynBadgeVariant = 'solid' | 'soft' | 'outline' | 'dot';
-export type DynBadgeColor =
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'info'
-  | 'neutral';
+export type DynBadgeColor = DynBadgeSemanticColor | (string & {});
 export type DynBadgePosition = 'topRight' | 'topLeft' | 'bottomRight' | 'bottomLeft';
 
 export interface DynBadgeProps
@@ -57,6 +62,11 @@ export interface DynBadgeProps
 
   /** Numeric value (for count badges) */
   count?: number;
+
+  /**
+   * @deprecated Use `count` instead. Legacy alias maintained for backward compatibility.
+   */
+  value?: number;
 
   /** Show badge even when count is 0 */
   showZero?: boolean;

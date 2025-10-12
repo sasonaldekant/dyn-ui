@@ -33,6 +33,12 @@ describe('DynBadge', () => {
       render(<DynBadge count={0} showZero />);
       expect(screen.getByText('0')).toBeInTheDocument();
     });
+
+    it('supports legacy value prop alias', () => {
+      render(<DynBadge value={7} />);
+      expect(screen.getByText('7')).toBeInTheDocument();
+      expect(screen.getByTestId('dyn-badge')).toBeInTheDocument();
+    });
   });
 
   describe('Accessibility', () => {

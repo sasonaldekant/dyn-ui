@@ -3,6 +3,22 @@
  * Toolbar component types for action buttons and responsive layouts
  */
 
+import type { ReactNode } from 'react';
+import type { DynBadgeColor, DynBadgeVariant } from '../DynBadge/DynBadge.types';
+
+export type ToolbarBadge =
+  | number
+  | string
+  | {
+      count?: number;
+      value?: number;
+      label?: ReactNode;
+      color?: DynBadgeColor;
+      variant?: DynBadgeVariant;
+      maxCount?: number;
+      showZero?: boolean;
+    };
+
 export interface ToolbarItem {
   id: string;
   label?: string;
@@ -14,7 +30,7 @@ export interface ToolbarItem {
   items?: ToolbarItem[]; // for dropdown submenus
   component?: React.ReactNode; // for custom components
   tooltip?: string;
-  badge?: string | number;
+  badge?: ToolbarBadge;
 }
 
 export interface DynToolbarProps {

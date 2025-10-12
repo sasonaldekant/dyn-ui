@@ -155,6 +155,34 @@ const DynTabs = forwardRef<DynTabsHandle, DynTabsProps>((
     tabListRef.current.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
   }, []);
 
+  const renderBadge = useCallback((badge: TabItem['badge']) => {
+    if (!badge) {
+      return null;
+    }
+
+    if (typeof badge === 'object') {
+      const count = badge.count ?? badge.value;
+      return (
+        <DynBadge
+          count={typeof count === 'number' ? count : undefined}
+          maxCount={badge.maxCount}
+          showZero={badge.showZero}
+          color={badge.color}
+          variant={badge.variant}
+          size="small"
+        >
+          {badge.label}
+        </DynBadge>
+      );
+    }
+
+    if (typeof badge === 'number') {
+      return <DynBadge count={badge} size="small" />;
+    }
+
+    return <DynBadge size="small">{badge}</DynBadge>;
+  }, []);
+
   const renderTab = useCallback((tab: TabItem) => {
     const isActive = tab.id === currentActiveTab;
     const tabClasses = classNames(
@@ -192,7 +220,7 @@ const DynTabs = forwardRef<DynTabsHandle, DynTabsProps>((
         <span className={styles['tab-label']}>{tab.label}</span>
         {tab.badge && (
           <span className={styles['tab-badge']}>
-            <DynBadge value={tab.badge} size="small" />
+            {renderBadge(tab.badge)}
           </span>
         )}
         {(closable || tab.closable) && !tab.disabled && (
@@ -207,9 +235,9 @@ const DynTabs = forwardRef<DynTabsHandle, DynTabsProps>((
         )}
       </button>
     );
-  }, [currentActiveTab, tabClassName, handleTabClick, handleKeyDown, handleTabClose, closable]);
+  }, [currentActiveTab, tabClassName, handleTabClick, handleKeyDown, handleTabClose, closable, renderBadge]);
 
-  const renderTabContent = () => {
+  const renderActiveTabContent = () => {
     const activeTabData = tabs.find(tab => tab.id === currentActiveTab);
     if (!activeTabData) return null;
 
@@ -223,7 +251,7 @@ const DynTabs = forwardRef<DynTabsHandle, DynTabsProps>((
     }
 
     const content = renderTabContent?.(activeTabData) ?? activeTabData.content;
-    
+
     return (
       <div
         className={classNames(styles['panel'], panelClassName)}
@@ -290,7 +318,7 @@ const DynTabs = forwardRef<DynTabsHandle, DynTabsProps>((
         )}
       </div>
       
-      {renderTabContent()}
+        {renderActiveTabContent()}
     </div>
   );
 });
