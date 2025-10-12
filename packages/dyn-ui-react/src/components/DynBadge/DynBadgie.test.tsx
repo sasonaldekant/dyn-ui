@@ -1,5 +1,9 @@
-// Primary DynBadge regression suite. Keep `DynBadgie.test.tsx`
-// synchronized so the legacy CLI filter continues to work.
+/**
+ * Compatibility copy of the DynBadge spec that preserves the
+ * historical "DynBadgie" filter used by local scripts.
+ *
+ * Keep this file in sync with `DynBadge.test.tsx`.
+ */
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -8,7 +12,7 @@ import styles from './DynBadge.module.css';
 
 const classes = styles as Record<string, string>;
 
-describe('DynBadge', () => {
+describe('DynBadgie', () => {
   describe('Basic Functionality', () => {
     it('renders badge with text content', () => {
       render(<DynBadge>New</DynBadge>);
