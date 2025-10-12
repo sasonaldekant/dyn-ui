@@ -5,7 +5,8 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
 import { DynGrid } from './DynGrid';
-import type { DynGridColumn } from '../../types/layout.types';
+import type { DynGridColumn } from './DynGrid.types';
+import styles from './DynGrid.module.css';
 
 const mockColumns: DynGridColumn[] = [
   {
@@ -28,9 +29,11 @@ const mockColumns: DynGridColumn[] = [
     key: 'status',
     title: 'Status',
     align: 'center',
-    render: (value) => (
-      <span className={`status-${value}`}>{value}</span>
-    )
+    render: value => {
+      const status = typeof value === 'string' ? value : '';
+
+      return <span className={`status-${status}`}>{status}</span>;
+    }
   }
 ];
 
@@ -56,7 +59,7 @@ describe('DynGrid', () => {
   it('shows loading state', () => {
     render(<DynGrid columns={mockColumns} data={[]} loading={true} />);
     
-    expect(screen.getByText('Carregando...')).toBeInTheDocument();
+    expect(screen.getByText('Loading data…')).toBeInTheDocument();
     // expect(screen.getByRole('progressbar', { hidden: true })).toBeInTheDocument();
   });
 
@@ -88,7 +91,10 @@ describe('DynGrid', () => {
     );
     
     const checkboxes = screen.getAllByRole('checkbox');
-    fireEvent.click(checkboxes[1]); // First row checkbox
+    const firstRowCheckbox = checkboxes[1];
+
+    expect(firstRowCheckbox).toBeDefined();
+    fireEvent.click(firstRowCheckbox!); // First row checkbox
     
     expect(onSelectionChange).toHaveBeenCalledWith(['1'], [mockData[0]]);
   });
@@ -106,7 +112,7 @@ describe('DynGrid', () => {
       <DynGrid columns={mockColumns} data={mockData} size="large" />
     );
     
-    expect(container.firstChild).toHaveClass('dyn-grid--large');
+    expect(container.firstChild).toHaveClass(styles.sizeLarge);
   });
 
   it('applies styling variants', () => {
@@ -120,10 +126,6 @@ describe('DynGrid', () => {
       />
     );
     
-    expect(container.firstChild).toHaveClass(
-      'dyn-grid--bordered',
-      'dyn-grid--striped',
-      'dyn-grid--hoverable'
-    );
+    expect(container.firstChild).toHaveClass(styles.bordered, styles.striped, styles.hoverable);
   });
 });
