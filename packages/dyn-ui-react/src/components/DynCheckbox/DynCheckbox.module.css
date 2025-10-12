@@ -19,18 +19,18 @@
   cursor: pointer;
   font-family: var(--dyn-font-family, system-ui, -apple-system, sans-serif);
   line-height: 1.5;
+}
 
-  &:hover .box {
-    border-color: var(--dyn-color-primary, #0066cc);
-  }
+.wrapper:hover .box {
+  border-color: var(--dyn-color-primary, #0066cc);
 }
 
 .wrapperDisabled {
   cursor: not-allowed;
+}
 
-  &:hover .box {
-    border-color: var(--dyn-color-border, #d1d5db);
-  }
+.wrapperDisabled:hover .box {
+  border-color: var(--dyn-color-border, #d1d5db);
 }
 
 .wrapperReadonly {
@@ -45,14 +45,14 @@
   height: 0;
   margin: 0;
   padding: 0;
+}
 
-  &:focus + .box {
-    box-shadow: 0 0 0 3px var(--dyn-color-primary-alpha, rgba(0, 102, 204, 0.1));
-  }
+.input:focus + .box {
+  box-shadow: 0 0 0 3px var(--dyn-color-primary-alpha, rgba(0, 102, 204, 0.1));
+}
 
-  &:focus:not(:focus-visible) + .box {
-    box-shadow: none;
-  }
+.input:focus:not(:focus-visible) + .box {
+  box-shadow: none;
 }
 
 .box {
@@ -68,65 +68,65 @@
   transition: all 0.2s ease;
   flex-shrink: 0;
   margin-top: 1px;
+}
 
-  &.boxChecked,
-  &.boxIndeterminate {
-    background-color: var(--dyn-color-primary, #0066cc);
-    border-color: var(--dyn-color-primary, #0066cc);
-  }
+.box.boxChecked,
+.box.boxIndeterminate {
+  background-color: var(--dyn-color-primary, #0066cc);
+  border-color: var(--dyn-color-primary, #0066cc);
+}
 
-  &.boxError {
-    border-color: var(--dyn-color-error, #f44336);
+.box.boxError {
+  border-color: var(--dyn-color-error, #f44336);
+}
 
-    &.boxChecked,
-    &.boxIndeterminate {
-      background-color: var(--dyn-color-error, #f44336);
-      border-color: var(--dyn-color-error, #f44336);
-    }
-  }
+.box.boxError.boxChecked,
+.box.boxError.boxIndeterminate {
+  background-color: var(--dyn-color-error, #f44336);
+  border-color: var(--dyn-color-error, #f44336);
+}
 
-  &.boxDisabled {
-    background-color: var(--dyn-color-surface-disabled, #f3f4f6);
-    border-color: var(--dyn-color-border-disabled, #e5e7eb);
-    cursor: not-allowed;
+.box.boxDisabled {
+  background-color: var(--dyn-color-surface-disabled, #f3f4f6);
+  border-color: var(--dyn-color-border-disabled, #e5e7eb);
+  cursor: not-allowed;
+}
 
-    &.boxChecked,
-    &.boxIndeterminate {
-      background-color: var(--dyn-color-text-disabled, #9ca3af);
-      border-color: var(--dyn-color-text-disabled, #9ca3af);
-    }
-  }
+.box.boxDisabled.boxChecked,
+.box.boxDisabled.boxIndeterminate {
+  background-color: var(--dyn-color-text-disabled, #9ca3af);
+  border-color: var(--dyn-color-text-disabled, #9ca3af);
+}
 
-  &.boxReadonly {
-    cursor: default;
-  }
+.box.boxReadonly {
+  cursor: default;
 }
 
 .boxSmall {
   width: 14px;
   height: 14px;
   border-width: 1px;
+}
 
-  .checkMark {
-    font-size: 10px;
-  }
+.boxSmall .checkMark {
+  font-size: 10px;
+}
 
-  .indeterminateMark {
-    font-size: 12px;
-  }
+.boxSmall .indeterminateMark {
+  font-size: 12px;
 }
 
 .boxLarge {
   width: 22px;
   height: 22px;
+}
 
-  .checkMark {
-    font-size: 14px;
-  }
+.boxLarge .checkMark {
+  font-size: 14px;
+}
 
-  .indeterminateMark {
-    font-size: 16px;
-  }
+.boxLarge .indeterminateMark {
+  font-size: 16px;
 }
 
 .checkmark {

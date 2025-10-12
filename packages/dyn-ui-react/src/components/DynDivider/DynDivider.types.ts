@@ -1,17 +1,32 @@
-export type DividerSize = 'small' | 'medium' | 'large';
+import type {
+  DynDividerColor,
+  DynDividerLabelPosition,
+  DynDividerLineStyle,
+  DynDividerProps as DynDividerPropsBase,
+  DynDividerThickness,
+  LayoutDirection,
+  LayoutSpacing,
+} from '../../types';
 
-export interface DynDividerProps {
-  label?: string;
-  borderWidth?: DividerSize;
-  className?: string;
+export type DynDividerProps = DynDividerPropsBase;
+export type DynDividerRef = HTMLDivElement;
+
+export interface DynDividerDefaultProps {
+  direction: LayoutDirection;
+  thickness: DynDividerThickness;
+  lineStyle: DynDividerLineStyle;
+  color: DynDividerColor;
+  labelPosition: DynDividerLabelPosition;
+  spacing: LayoutSpacing;
+  'data-testid': string;
 }
 
-export interface DynDividerRef {
-  focus(): void;
-}
-
-export const DIVIDER_COORDINATES = {
-  small: { x1: '0.1%', x2: '99.9%' },
-  medium: { x1: '0.2%', x2: '99.8%' },
-  large: { x1: '0.3%', x2: '99.7%' }
-} as const;
+export const DYN_DIVIDER_DEFAULT_PROPS: DynDividerDefaultProps = {
+  direction: 'horizontal',
+  thickness: 'thin',
+  lineStyle: 'solid',
+  color: 'default',
+  labelPosition: 'center',
+  spacing: 'md',
+  'data-testid': 'dyn-divider',
+};

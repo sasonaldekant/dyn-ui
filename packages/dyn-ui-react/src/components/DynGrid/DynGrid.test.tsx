@@ -1,7 +1,6 @@
 /**
  * @vitest-environment jsdom
  */
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
 import { DynGrid } from './DynGrid';
@@ -46,12 +45,12 @@ const mockData = [
 describe('DynGrid', () => {
   it('renders with basic data', () => {
     render(<DynGrid columns={mockColumns} data={mockData} />);
-    
+
     expect(screen.getByText('ID')).toBeInTheDocument();
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByText('Email')).toBeInTheDocument();
     expect(screen.getByText('Status')).toBeInTheDocument();
-    
+
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('jane@example.com')).toBeInTheDocument();
   });
@@ -65,17 +64,17 @@ describe('DynGrid', () => {
 
   it('shows empty state', () => {
     render(<DynGrid columns={mockColumns} data={[]} emptyText="No data found" />);
-    
+
     expect(screen.getByText('No data found')).toBeInTheDocument();
   });
 
   it('handles sorting', () => {
     const onSort = vi.fn();
     render(<DynGrid columns={mockColumns} data={mockData} onSort={onSort} />);
-    
+
     const nameHeader = screen.getByText('Name');
     fireEvent.click(nameHeader);
-    
+
     expect(onSort).toHaveBeenCalledWith('name', 'asc');
   });
 
@@ -89,7 +88,7 @@ describe('DynGrid', () => {
         onSelectionChange={onSelectionChange}
       />
     );
-    
+
     const checkboxes = screen.getAllByRole('checkbox');
     const firstRowCheckbox = checkboxes[1];
 
@@ -101,7 +100,7 @@ describe('DynGrid', () => {
 
   it('renders custom cell content', () => {
     render(<DynGrid columns={mockColumns} data={mockData} />);
-    
+
     // Use getAllByText since there are multiple 'active' status values
     expect(screen.getAllByText('active')).toHaveLength(2);
     expect(screen.getByText('inactive')).toBeInTheDocument();

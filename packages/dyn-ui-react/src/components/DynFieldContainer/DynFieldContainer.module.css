@@ -1,39 +1,33 @@
 /**
- * DynFieldContainer - SCSS Styles
+ * DynFieldContainer - CSS Module Styles
  * Part of DYN UI Form Components Group - SCOPE 6
  */
 
-.dyn-field-container {
+.container {
   display: flex;
   flex-direction: column;
   gap: var(--dyn-spacing-xs, 4px);
   margin-bottom: var(--dyn-spacing-md, 16px);
-
-  &--error {
-    .dyn-field-label {
-      color: var(--dyn-color-error, #f44336);
-    }
-  }
-
-  &--required {
-    .dyn-field-required {
-      color: var(--dyn-color-error, #f44336);
-      margin-left: var(--dyn-spacing-xs, 4px);
-      font-weight: 600;
-    }
-  }
-
-  &--optional {
-    .dyn-field-optional {
-      color: var(--dyn-color-text-secondary, #666);
-      margin-left: var(--dyn-spacing-xs, 4px);
-      font-size: var(--dyn-font-size-sm, 14px);
-      font-style: italic;
-    }
-  }
 }
 
-.dyn-field-label {
+.containerError .label {
+  color: var(--dyn-color-error, #f44336);
+}
+
+.containerRequired .required {
+  color: var(--dyn-color-error, #f44336);
+  margin-left: var(--dyn-spacing-xs, 4px);
+  font-weight: 600;
+}
+
+.containerOptional .optional {
+  color: var(--dyn-color-text-secondary, #666);
+  margin-left: var(--dyn-spacing-xs, 4px);
+  font-size: var(--dyn-font-size-sm, 14px);
+  font-style: italic;
+}
+
+.label {
   font-size: var(--dyn-font-size-sm, 14px);
   font-weight: var(--dyn-font-weight-medium, 500);
   color: var(--dyn-color-text-primary, #333);
@@ -41,27 +35,35 @@
   line-height: 1.4;
 }
 
-.dyn-field-feedback {
+.feedback {
   display: flex;
   flex-direction: column;
   gap: var(--dyn-spacing-xs, 4px);
 }
 
-.dyn-field-error {
+.error {
   font-size: var(--dyn-font-size-sm, 14px);
   color: var(--dyn-color-error, #f44336);
   line-height: 1.4;
   margin-top: var(--dyn-spacing-xs, 4px);
-
-  &:before {
-    content: "⚠ ";
-    margin-right: var(--dyn-spacing-xs, 4px);
-  }
 }
 
-.dyn-field-help {
+.error::before {
+  content: '⚠ ';
+  margin-right: var(--dyn-spacing-xs, 4px);
+}
+
+.help {
   font-size: var(--dyn-font-size-sm, 14px);
   color: var(--dyn-color-text-secondary, #666);
   line-height: 1.4;
   margin-top: var(--dyn-spacing-xs, 4px);
+}
+
+.required {
+  display: inline-block;
+}
+
+.optional {
+  display: inline-block;
 }

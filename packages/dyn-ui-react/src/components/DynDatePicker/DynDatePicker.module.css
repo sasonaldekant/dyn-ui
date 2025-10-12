@@ -1,5 +1,5 @@
 /**
- * DynDatePicker - SCSS Styles
+ * DynDatePicker - CSS Styles
  * Part of DYN UI Form Components Group - SCOPE 6
  */
 
@@ -28,33 +28,33 @@
   border: 1px solid var(--dyn-color-border, #d1d5db);
   border-radius: var(--dyn-border-radius-md, 6px);
   transition: all 0.2s ease-in-out;
+}
 
-  &::placeholder {
-    color: var(--dyn-color-text-placeholder, #9ca3af);
-    opacity: 1;
-  }
+.input::placeholder {
+  color: var(--dyn-color-text-placeholder, #9ca3af);
+  opacity: 1;
+}
 
-  &:hover:not(:disabled):not(:read-only) {
-    border-color: var(--dyn-color-border-hover, #9ca3af);
-  }
+.input:hover:not(:disabled):not(:read-only) {
+  border-color: var(--dyn-color-border-hover, #9ca3af);
+}
 
-  &:focus {
-    outline: none;
-    border-color: var(--dyn-color-primary, #0066cc);
-    box-shadow: 0 0 0 3px var(--dyn-color-primary-alpha, rgba(0, 102, 204, 0.1));
-  }
+.input:focus {
+  outline: none;
+  border-color: var(--dyn-color-primary, #0066cc);
+  box-shadow: 0 0 0 3px var(--dyn-color-primary-alpha, rgba(0, 102, 204, 0.1));
+}
 
-  &:disabled {
-    background-color: var(--dyn-color-surface-disabled, #f3f4f6);
-    color: var(--dyn-color-text-disabled, #9ca3af);
-    cursor: not-allowed;
-    border-color: var(--dyn-color-border-disabled, #e5e7eb);
-  }
+.input:disabled {
+  background-color: var(--dyn-color-surface-disabled, #f3f4f6);
+  color: var(--dyn-color-text-disabled, #9ca3af);
+  cursor: not-allowed;
+  border-color: var(--dyn-color-border-disabled, #e5e7eb);
+}
 
-  &:read-only {
-    background-color: var(--dyn-color-surface-readonly, #f9fafb);
-    cursor: default;
-  }
+.input:read-only {
+  background-color: var(--dyn-color-surface-readonly, #f9fafb);
+  cursor: default;
 }
 
 .sizeSmall {
@@ -78,10 +78,10 @@
 
 .stateError {
   border-color: var(--dyn-color-error, #f44336);
+}
 
-  &:focus {
-    box-shadow: 0 0 0 3px var(--dyn-color-error-alpha, rgba(244, 67, 54, 0.1));
-  }
+.stateError:focus {
+  box-shadow: 0 0 0 3px var(--dyn-color-error-alpha, rgba(244, 67, 54, 0.1));
 }
 
 .stateDisabled {
@@ -109,21 +109,24 @@
   color: var(--dyn-color-text-secondary, #666);
   cursor: pointer;
   transition: all 0.2s ease;
+}
 
-  &:hover:not(:disabled) {
-    color: var(--dyn-color-text-primary, #333);
-    background-color: var(--dyn-color-surface-hover, #f3f4f6);
-  }
+.calendarButton:hover:not(:disabled),
+.clearButton:hover:not(:disabled) {
+  color: var(--dyn-color-text-primary, #333);
+  background-color: var(--dyn-color-surface-hover, #f3f4f6);
+}
 
-  &:focus {
-    outline: 2px solid var(--dyn-color-primary, #0066cc);
-    outline-offset: 2px;
-  }
+.calendarButton:focus,
+.clearButton:focus {
+  outline: 2px solid var(--dyn-color-primary, #0066cc);
+  outline-offset: 2px;
+}
 
-  &:disabled {
-    color: var(--dyn-color-text-disabled, #9ca3af);
-    cursor: not-allowed;
-  }
+.calendarButton:disabled,
+.clearButton:disabled {
+  color: var(--dyn-color-text-disabled, #9ca3af);
+  cursor: not-allowed;
 }
 
 .calendarButton {
@@ -172,16 +175,16 @@
   border-radius: var(--dyn-border-radius-md, 6px);
   cursor: pointer;
   transition: all 0.2s ease;
+}
 
-  &:hover {
-    background-color: var(--dyn-color-surface-hover, #f3f4f6);
-    border-color: var(--dyn-color-primary, #0066cc);
-  }
+.shortcut:hover {
+  background-color: var(--dyn-color-surface-hover, #f3f4f6);
+  border-color: var(--dyn-color-primary, #0066cc);
+}
 
-  &:focus {
-    outline: 2px solid var(--dyn-color-primary, #0066cc);
-    outline-offset: 2px;
-  }
+.shortcut:focus {
+  outline: 2px solid var(--dyn-color-primary, #0066cc);
+  outline-offset: 2px;
 }
 
 .helpTitle {
@@ -203,15 +206,15 @@
   padding-left: var(--dyn-spacing-md, 16px);
   font-size: var(--dyn-font-size-sm, 14px);
   color: var(--dyn-color-text-secondary, #666);
+}
 
-  &:before {
-    content: '•';
-    position: absolute;
-    left: 0;
-    color: var(--dyn-color-primary, #0066cc);
-  }
+.helpListItem::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--dyn-color-primary, #0066cc);
+}
 
-  &:last-child {
-    margin-bottom: 0;
-  }
+.helpListItem:last-child {
+  margin-bottom: 0;
 }
