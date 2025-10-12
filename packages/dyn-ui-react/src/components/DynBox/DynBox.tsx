@@ -5,13 +5,11 @@ import type {
   ForwardedRef,
   KeyboardEvent,
   MouseEvent,
-  ReactElement,
-  Ref,
 } from 'react';
 import { cn } from '../../utils/classNames';
 import {
   DYN_BOX_DEFAULT_PROPS,
-  type DynBoxProps,
+  DynBoxProps,
   type DynBoxRef,
   type SpacingSize,
 } from './DynBox.types';
@@ -131,8 +129,8 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
     'aria-describedby': ariaDescribedBy,
     'data-testid': dataTestId = DYN_BOX_DEFAULT_PROPS['data-testid'],
     ...rest
-  }: DynBoxProps<E>,
-  ref: ForwardedRef<DynBoxRef<E>>
+  }: DynBoxProps,
+  ref: ForwardedRef<DynBoxRef>
 ) => {
   const Component = (as ?? 'div') as ElementType;
 
@@ -337,8 +335,8 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
     className
   );
 
-  type ClickHandler = DynBoxProps<E>['onClick'];
-  type KeyHandler = DynBoxProps<E>['onKeyDown'];
+  type ClickHandler = DynBoxProps['onClick'];
+  type KeyHandler = DynBoxProps['onKeyDown'];
   type ClickEvent = ClickHandler extends (event: infer Event, ...args: any[]) => any
     ? Event
     : MouseEvent<Element>;
@@ -350,12 +348,12 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
     if (interactive && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault();
       if (onClick) {
-        onClick(event as unknown as ClickEvent);
+        onClick(event as unknown as MouseEvent<HTMLElement>);
       }
     }
 
     if (onKeyDown) {
-      onKeyDown(event);
+      onKeyDown(event as unknown as KeyboardEvent<HTMLElement>);
     }
   };
 
@@ -388,11 +386,7 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
   );
 };
 
-type DynBoxComponentWithRef = <E extends ElementType = 'div'>(
-  props: DynBoxProps<E> & { ref?: Ref<DynBoxRef<E>> }
-) => ReactElement | null;
-
-const DynBox = forwardRef(DynBoxComponent) as DynBoxComponentWithRef;
+const DynBox = forwardRef(DynBoxComponent);
 
 DynBox.displayName = 'DynBox';
 
