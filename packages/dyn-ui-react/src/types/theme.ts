@@ -3,7 +3,7 @@
  * Includes BaseComponentProps for component standardization
  */
 
-export type { BaseComponentProps } from './base-component-props';
+import type { AriaRole, ReactNode } from 'react';
 
 export type ThemeName = 'light' | 'dark' | 'high-contrast';
 
@@ -66,6 +66,33 @@ export interface ThemeContextValue {
 }
 
 // ===== STANDARDIZED COMPONENT PROP TYPES =====
+
+/**
+ * Base properties that ALL DYN UI components should inherit
+ * Provides consistent interface across the entire component library
+ */
+export interface BaseComponentProps {
+  /** Unique identifier for the component */
+  id?: string;
+
+  /** Additional CSS class names to apply */
+  className?: string;
+
+  /** Test identifier for automated testing */
+  'data-testid'?: string;
+
+  /** Child elements to render */
+  children?: ReactNode;
+}
+
+export type ComponentSize = 'small' | 'medium' | 'large';
+
+export interface AccessibilityProps {
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+  'aria-describedby'?: string;
+  role?: AriaRole;
+}
 
 /**
  * Props for components that support color variants
