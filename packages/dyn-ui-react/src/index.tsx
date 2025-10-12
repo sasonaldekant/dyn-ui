@@ -9,11 +9,18 @@ export type {
   BadgeStatus,
   BadgeSize,
   DynAvatarProps,
-  AvatarSize,
+  DynAvatarRef,
+  DynAvatarSize,
+  DynAvatarShape,
+  DynAvatarStatus,
   DynLabelProps,
   DynIconProps
 } from './components';
-export { DYN_COLOR_PALETTE, AVATAR_SIZES } from './components';
+export {
+  DYN_COLOR_PALETTE,
+  DYN_AVATAR_PIXEL_SIZES,
+  DYN_AVATAR_STATUS_LABELS,
+} from './components';
 
 // Form Components - SCOPE 6
 export {

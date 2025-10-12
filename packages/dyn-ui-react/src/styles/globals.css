@@ -32,7 +32,8 @@ textarea {
 }
 
 /* Screen reader only klasa */
-.sr-only {
+.sr-only,
+.dyn-sr-only {
   position: absolute;
   width: 1px;
   height: 1px;

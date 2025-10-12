@@ -77,9 +77,15 @@ export type {
 } from '../types/badge.types';
 export type {
   DynAvatarProps,
-  AvatarSize,
-  AvatarLoading
-} from '../types/avatar.types';
+  DynAvatarRef,
+  DynAvatarSize,
+  DynAvatarShape,
+  DynAvatarStatus
+} from './DynAvatar';
+export {
+  DYN_AVATAR_PIXEL_SIZES,
+  DYN_AVATAR_STATUS_LABELS,
+} from './DynAvatar';
 export type { DynLabelProps } from '../types/label.types';
 
 // Form Component Types - SCOPE 6
@@ -211,7 +217,6 @@ export { useDynDateParser, DATE_FORMATS, getDateFormat } from '../hooks/useDynDa
 
 // ===== CONSTANTS EXPORTS =====
 export { DYN_COLOR_PALETTE } from '../types/badge.types';
-export { AVATAR_SIZES } from '../types/avatar.types';
 export { DEFAULT_MENU_LITERALS } from './DynMenu/DynMenu.types';
 export { DEFAULT_SEPARATOR, BREADCRUMB_LITERALS } from './DynBreadcrumb/DynBreadcrumb.types';
 export { TOOLBAR_DEFAULTS, TOOLBAR_ITEM_TYPES } from './DynToolbar/DynToolbar.types';
