@@ -6,6 +6,7 @@ import {
 import type {
   FocusEventHandler,
   ForwardedRef,
+  KeyboardEventHandler,
   MouseEventHandler,
 } from 'react';
 import { cn } from '../../utils/classNames';
@@ -48,13 +49,20 @@ const DynButtonComponent = (
     kind = DYN_BUTTON_DEFAULT_PROPS.kind,
     size = DYN_BUTTON_DEFAULT_PROPS.size,
     loading = DYN_BUTTON_DEFAULT_PROPS.loading,
+    loadingText = DYN_BUTTON_DEFAULT_PROPS.loadingText,
     danger = DYN_BUTTON_DEFAULT_PROPS.danger,
     disabled = DYN_BUTTON_DEFAULT_PROPS.disabled,
     fullWidth = DYN_BUTTON_DEFAULT_PROPS.fullWidth,
+    hideOnMobile = DYN_BUTTON_DEFAULT_PROPS.hideOnMobile,
+    iconOnlyOnMobile = DYN_BUTTON_DEFAULT_PROPS.iconOnlyOnMobile,
     ariaLabel,
     ariaExpanded,
+    ariaControls,
+    ariaDescribedBy,
+    ariaPressed,
     onBlur,
     onClick,
+    onKeyDown: userOnKeyDown,
     children,
     className,
     id,
@@ -89,6 +97,15 @@ const DynButtonComponent = (
   );
 
   const isDisabled = disabled || loading;
+
+  const normalizedLoadingText = useMemo(() => {
+    if (typeof loadingText !== 'string') {
+      return DYN_BUTTON_DEFAULT_PROPS.loadingText;
+    }
+
+    const trimmed = loadingText.trim();
+    return trimmed || DYN_BUTTON_DEFAULT_PROPS.loadingText;
+  }, [loadingText]);
 
   const iconSizeToken = useMemo(() => {
     switch (size) {
@@ -154,6 +171,8 @@ const DynButtonComponent = (
       [styles.loading!]: loading,
       [styles.iconOnly!]: isIconOnly,
       [styles.fullWidth!]: fullWidth,
+      [styles.hideOnMobile!]: hideOnMobile,
+      [styles.iconOnlyOnMobile!]: iconOnlyOnMobile,
     },
     className
   );
@@ -172,6 +191,18 @@ const DynButtonComponent = (
     onBlur?.(event);
   };
 
+  const handleKeyDown: KeyboardEventHandler<HTMLButtonElement> = event => {
+    if (event.key === ' ' || event.key === 'Spacebar') {
+      event.preventDefault();
+
+      if (!isDisabled) {
+        event.currentTarget.click();
+      }
+    }
+
+    userOnKeyDown?.(event);
+  };
+
   return (
     <button
       ref={ref}
@@ -181,11 +212,17 @@ const DynButtonComponent = (
       data-testid={dataTestId ?? 'dyn-button'}
       aria-label={computedAriaLabel}
       aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
+      aria-describedby={ariaDescribedBy}
+      aria-pressed={
+        typeof ariaPressed === 'boolean' ? ariaPressed : undefined
+      }
       aria-busy={loading || undefined}
       aria-disabled={isDisabled || undefined}
       disabled={isDisabled}
       onClick={handleClick}
       onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
       {...rest}
     >
       <span className={styles.content}>
@@ -194,7 +231,17 @@ const DynButtonComponent = (
         {childrenContent}
       </span>
       {loading ? (
-        <span className={styles.spinner} aria-hidden="true" />
+        <>
+          <span className={styles.spinner} aria-hidden="true" />
+          <span
+            className={styles.visuallyHidden}
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {normalizedLoadingText}
+          </span>
+        </>
       ) : null}
     </button>
   );
