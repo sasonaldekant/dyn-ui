@@ -1,0 +1,15 @@
+/* Spacing scale tokens */
+:root {
+  --dyn-spacing-xxs: 0.125rem; /* 2px */
+  --dyn-spacing-xs: 0.25rem; /* 4px */
+  --dyn-spacing-sm: 0.5rem; /* 8px */
+  --dyn-spacing-md: 0.75rem; /* 12px */
+  --dyn-spacing-lg: 1rem; /* 16px */
+  --dyn-spacing-xl: 1.5rem; /* 24px */
+  --dyn-spacing-2xl: 2rem; /* 32px */
+  --dyn-spacing-3xl: 3rem; /* 48px */
+
+  /* Gutters & layout helpers */
+  --dyn-spacing-gutter: 1.5rem;
+  --dyn-spacing-section: 3rem;
+}

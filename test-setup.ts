@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import 'vitest-axe/extend-expect';
 import { vi } from 'vitest';
 
 // Make vi globally available like jest was
