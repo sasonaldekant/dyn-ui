@@ -62,6 +62,11 @@ const meta: Meta<typeof DynContainer> = {
       options: ['none', 'surface', 'card'],
       description: 'Background style variant',
     },
+    layout: {
+      control: 'radio',
+      options: ['fluid', 'fixed'],
+      description: 'Layout behavior controlling how the container width is constrained',
+    },
     align: {
       control: 'radio',
       options: ['start', 'center', 'end', 'stretch'],
@@ -78,7 +83,18 @@ const meta: Meta<typeof DynContainer> = {
     },
     maxWidth: {
       control: 'text',
-      description: 'Optional maximum width constraint',
+      description:
+        'Optional maximum width constraint. Accepts CSS values or responsive tokens (xs, sm, md, lg, xl, full).',
+    },
+    padding: {
+      control: 'select',
+      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Override internal padding using spacing tokens',
+    },
+    margin: {
+      control: 'select',
+      options: ['none', 'xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Apply outer margin using spacing tokens',
     },
     className: {
       control: 'text',
@@ -195,6 +211,45 @@ export const FixedHeight: Story = {
         <p>More content to show scrolling behavior.</p>
         <p>Even more content for testing.</p>
       </div>
+    ),
+  },
+};
+
+export const FixedLayout: Story = {
+  args: {
+    layout: 'fixed',
+    maxWidth: 'lg',
+    title: 'Fixed Layout Container',
+    subtitle: 'Centers content and constrains width using design tokens.',
+    spacing: 'lg',
+    children: (
+      <div>
+        <p>
+          Fixed layout keeps content centered while respecting responsive max-width tokens. Resize the viewport to
+          observe adaptive behavior.
+        </p>
+        <DynButton label="Learn more" kind="secondary" />
+      </div>
+    ),
+  },
+};
+
+export const CustomSpacing: Story = {
+  args: {
+    padding: 'lg',
+    margin: 'md',
+    spacing: 'sm',
+    background: 'card',
+    shadow: true,
+    title: 'Custom Spacing Tokens',
+    children: (
+      <>
+        <p>
+          Use spacing tokens to coordinate internal padding, external margin, and child spacing while staying aligned with
+          the design system scale.
+        </p>
+        <DynButton label="Primary Action" kind="primary" />
+      </>
     ),
   },
 };

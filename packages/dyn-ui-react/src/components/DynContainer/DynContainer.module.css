@@ -1,22 +1,36 @@
 .root {
-  --dyn-container-padding: 1rem;
-  --dyn-container-gap: 1rem;
-  --dyn-container-border-color: var(--dyn-color-border, rgba(15, 23, 42, 0.08));
-  --dyn-container-surface: var(--dyn-layout-bg-surface, #f8fafc);
-  --dyn-container-card: var(--dyn-layout-bg-card, #ffffff);
-  --dyn-container-shadow: var(--dyn-layout-shadow-md, 0 8px 20px rgba(15, 23, 42, 0.08));
+  --dyn-container-padding: var(--dyn-spacing-md, 1rem);
+  --dyn-container-gap: var(--dyn-spacing-md, 1rem);
+  --dyn-container-margin: 0;
+  --dyn-container-border-color: var(--dyn-color-border, rgba(15, 23, 42, 0.12));
+  --dyn-container-surface: var(--dyn-layout-bg-surface, var(--color-surface, #f8fafc));
+  --dyn-container-card: var(--dyn-layout-bg-card, var(--color-background, #ffffff));
+  --dyn-container-shadow: var(--dyn-shadow-md, 0 10px 30px rgba(15, 23, 42, 0.12));
   --dyn-container-title-color: var(--dyn-color-text-primary, #0f172a);
   --dyn-container-subtitle-color: var(--dyn-color-text-secondary, #475569);
+  --dyn-container-max-width: 100%;
+  --dyn-container-max-width-xs: var(--dyn-container-size-xs, 20rem);
+  --dyn-container-max-width-sm: var(--dyn-container-size-sm, 28rem);
+  --dyn-container-max-width-md: var(--dyn-container-size-md, 40rem);
+  --dyn-container-max-width-lg: var(--dyn-container-size-lg, 64rem);
+  --dyn-container-max-width-xl: var(--dyn-container-size-xl, 80rem);
 
+  box-sizing: border-box;
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
-  background: transparent;
-  border-radius: var(--dyn-border-radius-lg, 12px);
+  max-width: var(--dyn-container-max-width, 100%);
+  margin: var(--dyn-container-margin);
   padding: var(--dyn-container-padding);
   gap: var(--dyn-container-gap);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border-radius: var(--dyn-border-radius-lg, 0.75rem);
+  border: none;
+  background: transparent;
+  transition:
+    background-color var(--dyn-transition-base, 0.2s ease),
+    box-shadow var(--dyn-transition-base, 0.2s ease),
+    border-color var(--dyn-transition-base, 0.2s ease);
 }
 
 .directionVertical .content {
@@ -45,35 +59,40 @@
 }
 
 .spacingXs {
-  --dyn-container-gap: 0.25rem;
+  --dyn-container-gap: var(--dyn-spacing-xs, 0.25rem);
 }
 
 .spacingSm {
-  --dyn-container-gap: 0.5rem;
+  --dyn-container-gap: var(--dyn-spacing-sm, 0.5rem);
 }
 
 .spacingMd {
-  --dyn-container-gap: 1rem;
+  --dyn-container-gap: var(--dyn-spacing-md, 1rem);
 }
 
 .spacingLg {
-  --dyn-container-gap: 1.5rem;
+  --dyn-container-gap: var(--dyn-spacing-lg, 1.5rem);
 }
 
 .spacingXl {
-  --dyn-container-gap: 2rem;
+  --dyn-container-gap: var(--dyn-spacing-xl, 2rem);
 }
 
 .sizeSmall {
-  --dyn-container-padding: 0.75rem;
+  --dyn-container-padding: var(--dyn-spacing-sm, 0.5rem);
 }
 
 .sizeMedium {
-  --dyn-container-padding: 1rem;
+  --dyn-container-padding: var(--dyn-spacing-md, 1rem);
 }
 
 .sizeLarge {
-  --dyn-container-padding: 1.5rem;
+  --dyn-container-padding: var(--dyn-spacing-lg, 1.5rem);
+}
+
+.layoutFixed {
+  --dyn-container-margin: 0 auto;
+  --dyn-container-max-width: min(100%, var(--dyn-container-max-width-lg, 64rem));
 }
 
 .backgroundNone {
@@ -86,7 +105,7 @@
 
 .backgroundCard {
   background: var(--dyn-container-card);
-  box-shadow: var(--dyn-layout-shadow-sm, 0 4px 12px rgba(15, 23, 42, 0.06));
+  box-shadow: var(--dyn-shadow-sm, 0 8px 24px rgba(15, 23, 42, 0.12));
 }
 
 .bordered {
@@ -104,8 +123,8 @@
 .header {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding-bottom: 0.75rem;
+  gap: var(--dyn-spacing-xs, 0.25rem);
+  padding-bottom: var(--dyn-spacing-sm, 0.5rem);
   border-bottom: 1px solid var(--dyn-container-border-color);
 }
 
@@ -134,11 +153,11 @@
 }
 
 .withTitle .content {
-  padding-top: 0.25rem;
+  padding-top: var(--dyn-spacing-xs, 0.25rem);
 }
 
 @media (max-width: 768px) {
   .root {
-    --dyn-container-padding: clamp(0.75rem, 2vw, 1rem);
+    --dyn-container-padding: clamp(0.75rem, 2vw + 0.5rem, var(--dyn-spacing-md, 1rem));
   }
 }

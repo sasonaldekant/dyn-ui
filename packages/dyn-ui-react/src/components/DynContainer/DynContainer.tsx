@@ -5,10 +5,70 @@ import {
   DYN_CONTAINER_DEFAULT_PROPS,
   DynContainerProps,
   DynContainerRef,
+  type DynContainerMaxWidthToken,
+  type DynContainerSpaceValue,
 } from './DynContainer.types';
 import styles from './DynContainer.module.css';
 
 const toPascalCase = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
+const SPACING_TOKENS: Record<string, string> = {
+  none: '0',
+  xs: 'var(--dyn-spacing-xs, 0.25rem)',
+  sm: 'var(--dyn-spacing-sm, 0.5rem)',
+  md: 'var(--dyn-spacing-md, 1rem)',
+  lg: 'var(--dyn-spacing-lg, 1.5rem)',
+  xl: 'var(--dyn-spacing-xl, 2rem)',
+};
+
+const MAX_WIDTH_TOKENS: Record<DynContainerMaxWidthToken, string> = {
+  xs: 'min(100%, var(--dyn-container-max-width-xs, 20rem))',
+  sm: 'min(100%, var(--dyn-container-max-width-sm, 28rem))',
+  md: 'min(100%, var(--dyn-container-max-width-md, 40rem))',
+  lg: 'min(100%, var(--dyn-container-max-width-lg, 64rem))',
+  xl: 'min(100%, var(--dyn-container-max-width-xl, 80rem))',
+  full: '100%',
+};
+
+type CSSVarProperties = CSSProperties & Record<string, string | number | undefined>;
+
+const resolveSpacingValue = (value?: DynContainerSpaceValue): string | undefined => {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (typeof value === 'number') {
+    return `${value}px`;
+  }
+
+  const normalized = value.trim();
+
+  if (normalized in SPACING_TOKENS) {
+    return SPACING_TOKENS[normalized];
+  }
+
+  return normalized;
+};
+
+const resolveMaxWidth = (
+  value?: DynContainerProps['maxWidth']
+): string | undefined => {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (typeof value === 'number') {
+    return `${value}px`;
+  }
+
+  const normalized = value.trim();
+
+  if (normalized in MAX_WIDTH_TOKENS) {
+    return MAX_WIDTH_TOKENS[normalized as DynContainerMaxWidthToken];
+  }
+
+  return normalized;
+};
 
 const DynContainerComponent = (
   {
@@ -24,6 +84,9 @@ const DynContainerComponent = (
     background = DYN_CONTAINER_DEFAULT_PROPS.background,
     height,
     maxWidth,
+    layout = DYN_CONTAINER_DEFAULT_PROPS.layout,
+    padding,
+    margin,
     noBorder,
     noPadding,
     className,
@@ -35,9 +98,13 @@ const DynContainerComponent = (
   ref: ForwardedRef<DynContainerRef>
 ) => {
   const resolvedBordered = noBorder ? false : bordered;
+  const hasTitleContent = Boolean(title || subtitle);
+  const resolvedMaxWidth = resolveMaxWidth(maxWidth);
+  const resolvedPadding = resolveSpacingValue(padding);
+  const resolvedMargin = resolveSpacingValue(margin);
 
   const containerStyle = useMemo<CSSProperties | undefined>(() => {
-    const next: CSSProperties = { ...style };
+    const next: CSSVarProperties = { ...(style as CSSVarProperties) };
 
     if (typeof height === 'number') {
       next.height = `${height}px`;
@@ -45,14 +112,21 @@ const DynContainerComponent = (
       next.height = height;
     }
 
-    if (typeof maxWidth === 'number') {
-      next.maxWidth = `${maxWidth}px`;
-    } else if (typeof maxWidth === 'string') {
-      next.maxWidth = maxWidth;
+    if (resolvedMaxWidth) {
+      next.maxWidth = resolvedMaxWidth;
+      next['--dyn-container-max-width'] = resolvedMaxWidth;
+    }
+
+    if (resolvedPadding) {
+      next['--dyn-container-padding'] = resolvedPadding;
+    }
+
+    if (resolvedMargin) {
+      next['--dyn-container-margin'] = resolvedMargin;
     }
 
     return Object.keys(next).length > 0 ? next : undefined;
-  }, [height, maxWidth, style]);
+  }, [height, resolvedMargin, resolvedMaxWidth, resolvedPadding, style]);
 
   const directionClass = styles[`direction${toPascalCase(direction)}` as keyof typeof styles];
   const spacingClass = spacing
@@ -79,10 +153,11 @@ const DynContainerComponent = (
     backgroundClass,
     alignClass,
     justifyClass,
+    layout === 'fixed' && styles.layoutFixed,
     resolvedBordered && styles.bordered,
     shadow && styles.shadow,
     noPadding && styles.noPadding,
-    (title || subtitle) && styles.withTitle,
+    hasTitleContent && styles.withTitle,
     className
   );
 
@@ -94,7 +169,7 @@ const DynContainerComponent = (
       data-testid={dataTestId}
       {...rest}
     >
-      {(title || subtitle) && (
+      {hasTitleContent && (
         <div className={styles.header}>
           {title && <h2 className={styles.title}>{title}</h2>}
           {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
