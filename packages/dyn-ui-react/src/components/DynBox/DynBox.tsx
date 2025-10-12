@@ -3,7 +3,9 @@ import type {
   CSSProperties,
   ForwardedRef,
   KeyboardEvent,
+  KeyboardEventHandler,
   MouseEvent,
+  MouseEventHandler,
 } from 'react';
 import { cn } from '../../utils/classNames';
 import {
@@ -303,25 +305,32 @@ const DynBoxComponent = (
 
   const boxClasses = cn(
     styles.box,
-    display && display !== 'block' && styles[`box--${display}`],
-    position && position !== 'static' && styles[`box--${position}`],
-    bg && styles[`box--bg-${bg}`],
+    display &&
+      display !== 'block' &&
+      styles[`box--${display}` as keyof typeof styles],
+    position &&
+      position !== 'static' &&
+      styles[`box--${position}` as keyof typeof styles],
+    bg && styles[`box--bg-${bg}` as keyof typeof styles],
     border && styles['box--border'],
     borderTop && styles['box--border-top'],
     borderRight && styles['box--border-right'],
     borderBottom && styles['box--border-bottom'],
     borderLeft && styles['box--border-left'],
-    borderRadius && styles[`box--rounded-${borderRadius}`],
-    shadow && styles[`box--shadow-${shadow}`],
-    textAlign && styles[`box--text-${textAlign}`],
-    overflow && styles[`box--overflow-${overflow}`],
+    borderRadius && styles[`box--rounded-${borderRadius}` as keyof typeof styles],
+    shadow && styles[`box--shadow-${shadow}` as keyof typeof styles],
+    textAlign && styles[`box--text-${textAlign}` as keyof typeof styles],
+    overflow && styles[`box--overflow-${overflow}` as keyof typeof styles],
     interactive && styles['box--interactive'],
     hideOnMobile && styles['box--mobile-hidden'],
     hideOnTablet && styles['box--tablet-hidden'],
     hideOnDesktop && styles['box--desktop-hidden'],
-    mobileOnly && [styles['box--tablet-hidden'], styles['box--desktop-hidden']],
-    tabletOnly && [styles['box--mobile-hidden'], styles['box--desktop-hidden']],
-    desktopOnly && [styles['box--mobile-hidden'], styles['box--tablet-hidden']],
+    mobileOnly && styles['box--tablet-hidden'],
+    mobileOnly && styles['box--desktop-hidden'],
+    tabletOnly && styles['box--mobile-hidden'],
+    tabletOnly && styles['box--desktop-hidden'],
+    desktopOnly && styles['box--mobile-hidden'],
+    desktopOnly && styles['box--tablet-hidden'],
     className
   );
 
@@ -341,6 +350,8 @@ const DynBoxComponent = (
 
   const componentRole = interactive ? role ?? 'button' : role;
   const componentTabIndex = interactive && tabIndex === undefined ? 0 : tabIndex;
+  const componentOnClick = onClick as unknown as MouseEventHandler<Element> | undefined;
+  const componentOnKeyDown = handleKeyDown as unknown as KeyboardEventHandler<Element>;
 
   return (
     <Component
@@ -352,8 +363,8 @@ const DynBoxComponent = (
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
       aria-describedby={ariaDescribedBy}
-      onClick={onClick}
-      onKeyDown={handleKeyDown}
+      onClick={componentOnClick}
+      onKeyDown={componentOnKeyDown}
       data-testid={dataTestId}
       {...rest}
     >

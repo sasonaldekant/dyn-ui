@@ -1,5 +1,9 @@
-import type { HTMLAttributes, ReactNode } from 'react';
-import type { BaseComponentProps, AccessibilityProps } from '../../types';
+import type {
+  HTMLAttributes,
+  KeyboardEventHandler,
+  MouseEventHandler,
+  ReactNode,
+} from 'react';
 
 export type BoxDisplay =
   | 'block'
@@ -41,9 +45,7 @@ export interface ResponsiveVisibilityProps {
 }
 
 export interface DynBoxProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, 'color'>,
-    BaseComponentProps,
-    AccessibilityProps,
+  extends Omit<HTMLAttributes<HTMLElement>, 'color' | 'onClick' | 'onKeyDown'>,
     ResponsiveVisibilityProps {
   /** Element to render as */
   as?: keyof JSX.IntrinsicElements;
@@ -173,6 +175,15 @@ export interface DynBoxProps
 
   /** Custom CSS variables */
   cssVars?: Record<string, string | number>;
+
+  /** Click handler */
+  onClick?: MouseEventHandler<HTMLElement>;
+
+  /** Key down handler */
+  onKeyDown?: KeyboardEventHandler<HTMLElement>;
+
+  /** Test id */
+  'data-testid'?: string;
 
   /** Children */
   children?: ReactNode;
