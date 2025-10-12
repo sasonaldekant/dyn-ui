@@ -185,13 +185,15 @@ export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
 
     if (!visible) return null;
 
+    const resolvedError = errorMessage ?? (error || undefined);
+
     const selectClasses = classNames(
       'dyn-select',
       `dyn-select--${size}`,
       {
         'dyn-select--open': isOpen,
         'dyn-select--focused': focused,
-        'dyn-select--error': !!error,
+        'dyn-select--error': Boolean(resolvedError),
         'dyn-select--disabled': disabled,
         'dyn-select--readonly': readonly,
         'dyn-select--searchable': searchable,
@@ -221,7 +223,7 @@ export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
         helpText={help}
         required={required}
         optional={optional}
-        errorText={error}
+        errorText={resolvedError}
         className={className}
         htmlFor={name}
       >
@@ -234,6 +236,10 @@ export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
             role="combobox"
             aria-expanded={isOpen}
             aria-haspopup="listbox"
+            aria-invalid={Boolean(resolvedError)}
+            aria-describedby={
+              resolvedError ? `${name}-error` : help ? `${name}-help` : undefined
+            }
             onBlur={handleBlur}
             onFocus={handleFocus}
           >

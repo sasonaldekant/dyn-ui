@@ -74,13 +74,13 @@ export interface ThemeContextValue {
 export interface BaseComponentProps {
   /** Unique identifier for the component */
   id?: string;
-  
+
   /** Additional CSS class names to apply */
   className?: string;
-  
+
   /** Test identifier for automated testing */
   'data-testid'?: string;
-  
+
   /** Child elements to render */
   children?: ReactNode;
 }
