@@ -3,9 +3,30 @@
  * Navigation component types for hierarchical menu system
  */
 
+import type { ReactNode } from 'react';
+import type { DynBadgeColor, DynBadgeVariant } from '../DynBadge/DynBadge.types';
+
 export interface MenuBadge {
+  /** Badge numeric indicator */
+  count?: number;
+
+  /** @deprecated Legacy alias for `count` */
   value?: number;
-  color?: string;
+
+  /** Optional text label rendered inside the badge */
+  label?: ReactNode;
+
+  /** Visual color token */
+  color?: DynBadgeColor;
+
+  /** Variant styling */
+  variant?: DynBadgeVariant;
+
+  /** Maximum count before `max+` is shown */
+  maxCount?: number;
+
+  /** Display when the count is zero */
+  showZero?: boolean;
 }
 
 export interface MenuItem {

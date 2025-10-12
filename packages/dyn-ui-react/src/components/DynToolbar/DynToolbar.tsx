@@ -157,6 +157,34 @@ const DynToolbar = forwardRef<DynToolbarRef, DynToolbarProps>((
     onOverflowToggle?.(newState);
   };
 
+  const renderBadge = useCallback((badge: ToolbarItem['badge']) => {
+    if (!badge) {
+      return null;
+    }
+
+    if (typeof badge === 'object') {
+      const count = badge.count ?? badge.value;
+      return (
+        <DynBadge
+          count={typeof count === 'number' ? count : undefined}
+          maxCount={badge.maxCount}
+          showZero={badge.showZero}
+          color={badge.color}
+          variant={badge.variant}
+          size="small"
+        >
+          {badge.label}
+        </DynBadge>
+      );
+    }
+
+    if (typeof badge === 'number') {
+      return <DynBadge count={badge} size="small" />;
+    }
+
+    return <DynBadge size="small">{badge}</DynBadge>;
+  }, []);
+
   const renderToolbarItem = (item: ToolbarItem, isInOverflow = false) => {
     if (item.type === 'separator') {
       return (
@@ -235,7 +263,7 @@ const DynToolbar = forwardRef<DynToolbarRef, DynToolbarProps>((
           )}
           {item.badge && (
             <span className={styles['toolbar-item-badge']}>
-              <DynBadge value={item.badge} size="small" />
+              {renderBadge(item.badge)}
             </span>
           )}
           {item.type === 'dropdown' && (
@@ -270,7 +298,7 @@ const DynToolbar = forwardRef<DynToolbarRef, DynToolbarProps>((
                 </span>
                 {subItem.badge && (
                   <span className={styles['toolbar-item-badge']}>
-                    <DynBadge value={subItem.badge} size="small" />
+                    {renderBadge(subItem.badge)}
                   </span>
                 )}
               </button>

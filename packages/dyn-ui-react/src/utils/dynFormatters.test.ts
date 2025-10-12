@@ -70,13 +70,13 @@ describe('formatBadgeValue', () => {
 
 describe('isThemeColor', () => {
   it('returns true for valid theme colors', () => {
-    expect(isThemeColor('color-01')).toBe(true);
-    expect(isThemeColor('color-06')).toBe(true);
-    expect(isThemeColor('color-12')).toBe(true);
+    expect(isThemeColor('primary')).toBe(true);
+    expect(isThemeColor('success')).toBe(true);
+    expect(isThemeColor('neutral')).toBe(true);
   });
 
   it('returns false for invalid theme colors', () => {
-    expect(isThemeColor('color-00')).toBe(false);
+    expect(isThemeColor('color-01')).toBe(false);
     expect(isThemeColor('color-13')).toBe(false);
     expect(isThemeColor('color-1')).toBe(false);
     expect(isThemeColor('red')).toBe(false);

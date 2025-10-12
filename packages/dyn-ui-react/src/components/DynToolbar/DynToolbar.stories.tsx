@@ -176,7 +176,7 @@ const advancedItems: ToolbarItem[] = [
     id: 'notifications',
     label: 'Notifications',
     icon: '🔔',
-    badge: 3,
+    badge: { count: 3 },
     action: () => console.log('Notifications')
   }
 ];
@@ -187,7 +187,7 @@ const manyItems: ToolbarItem[] = [
   { id: 'item3', label: 'Reports', icon: '📋', action: () => console.log('Reports') },
   { id: 'item4', label: 'Settings', icon: '⚙️', action: () => console.log('Settings') },
   { id: 'item5', label: 'Users', icon: '👥', action: () => console.log('Users') },
-  { id: 'item6', label: 'Messages', icon: '💬', badge: 5, action: () => console.log('Messages') },
+  { id: 'item6', label: 'Messages', icon: '💬', badge: { count: 5 }, action: () => console.log('Messages') },
   { id: 'item7', label: 'Calendar', icon: '📅', action: () => console.log('Calendar') },
   { id: 'item8', label: 'Tasks', icon: '✅', action: () => console.log('Tasks') },
   { id: 'item9', label: 'Files', icon: '📁', action: () => console.log('Files') },

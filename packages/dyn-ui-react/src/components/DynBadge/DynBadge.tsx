@@ -1,171 +1,224 @@
-import { forwardRef, useMemo } from 'react';
-import type { CSSProperties, ForwardedRef } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useId,
+  useMemo
+} from 'react';
+import type { CSSProperties, ForwardedRef, KeyboardEvent, MouseEvent } from 'react';
 import { cn } from '../../utils/classNames';
-import { formatBadgeValue, isThemeColor } from '../../utils/dynFormatters';
-import { DynIcon } from '../DynIcon';
 import type {
-  BadgeIcon,
-  BadgeSize,
-  BadgeStatus,
   DynBadgeProps,
-  DynBadgeRef,
-  DynBadgeDefaultProps,
-  BadgeThemeColor,
+  DynBadgeRef
 } from './DynBadge.types';
-import { DYN_BADGE_DEFAULT_PROPS } from './DynBadge.types';
 import styles from './DynBadge.module.css';
 
-const STATUS_ICON_MAP: Record<BadgeStatus, string> = {
-  positive: 'ok',
-  negative: 'close',
-  warning: 'warning',
-  disabled: 'minus',
-};
+const sizeClassNameMap = {
+  small: styles['badge--small'],
+  medium: styles['badge--medium'],
+  large: styles['badge--large']
+} as const;
 
-const SIZE_CLASS_MAP: Record<BadgeSize, string> = {
-  small: styles.sizeSmall!,
-  medium: styles.sizeMedium!,
-  large: styles.sizeLarge!,
-};
+const variantClassNameMap = {
+  solid: styles['badge--solid'],
+  soft: styles['badge--soft'],
+  outline: styles['badge--outline'],
+  dot: styles['badge--dot']
+} as const;
 
-const STATUS_CLASS_MAP: Record<BadgeStatus, string> = {
-  positive: styles.statusPositive!,
-  negative: styles.statusNegative!,
-  warning: styles.statusWarning!,
-  disabled: styles.statusDisabled!,
-};
+const colorClassNameMap = {
+  primary: styles['badge--primary'],
+  secondary: styles['badge--secondary'],
+  success: styles['badge--success'],
+  warning: styles['badge--warning'],
+  danger: styles['badge--danger'],
+  info: styles['badge--info'],
+  neutral: styles['badge--neutral']
+} as const;
 
-const COLOR_CLASS_MAP: Partial<Record<BadgeThemeColor, string>> = {
-  'color-01': styles.color01!,
-  'color-02': styles.color02!,
-  'color-03': styles.color03!,
-  'color-04': styles.color04!,
-  'color-05': styles.color05!,
-  'color-06': styles.color06!,
-  'color-07': styles.color07!,
-  'color-08': styles.color08!,
-  'color-09': styles.color09!,
-  'color-10': styles.color10!,
-  'color-11': styles.color11!,
-  'color-12': styles.color12!,
-};
+const positionClassNameMap = {
+  topRight: styles['badge--topRight'],
+  topLeft: styles['badge--topLeft'],
+  bottomRight: styles['badge--bottomRight'],
+  bottomLeft: styles['badge--bottomLeft']
+} as const;
 
-type DynBadgeComponentProps = DynBadgeProps & DynBadgeDefaultProps;
-
-const resolveStatusIcon = (status: BadgeStatus | undefined, icon: BadgeIcon | undefined) => {
-  if (icon === true && status) {
-    return <DynIcon icon={STATUS_ICON_MAP[status]} />;
-  }
-
-  if (typeof icon === 'string') {
-    return <DynIcon icon={icon} />;
-  }
-
-  if (icon) {
-    return <span className={styles.customIcon}>{icon}</span>;
-  }
-
-  return null;
-};
+const DEFAULT_MAX_COUNT = 99;
 
 const DynBadgeComponent = (
   props: DynBadgeProps,
   ref: ForwardedRef<DynBadgeRef>
 ) => {
-  const { value: providedValue } = props;
   const {
-    value = DYN_BADGE_DEFAULT_PROPS.value,
-    color = DYN_BADGE_DEFAULT_PROPS.color,
-    status,
-    size = DYN_BADGE_DEFAULT_PROPS.size,
-    icon,
-    showBorder = DYN_BADGE_DEFAULT_PROPS.showBorder,
-    ariaLabel,
     children,
+    variant = 'solid',
+    color = 'neutral',
+    size = 'medium',
+    position,
+    onClick,
+    startIcon,
+    endIcon,
+    maxCount = DEFAULT_MAX_COUNT,
+    count,
+    value,
+    showZero = false,
+    animated = false,
+    pulse = false,
+    countDescription,
+    ariaLabel,
+    ariaDescribedBy,
+    ariaLive,
     className,
     'data-testid': dataTestId,
     id,
+    onKeyDown: userOnKeyDown,
+    role: roleProp,
+    tabIndex: tabIndexProp,
     ...rest
-  } = props as DynBadgeComponentProps;
+  } = props;
 
-  const displayValue = useMemo(() => formatBadgeValue(value), [value]);
-  const hasChildren = typeof children !== 'undefined' && children !== null;
-  const hasExplicitValue = typeof providedValue === 'number';
-  const showValue = hasExplicitValue || value > 0;
-  const showIconOnly = Boolean(icon) && !hasChildren && !showValue;
+  const { style: inlineStyle, ...restProps } = rest;
 
-  const customStyle = useMemo<CSSProperties | undefined>(() => {
-    if (!color || isThemeColor(color)) {
+  const numericCount = typeof count === 'number' ? count : typeof value === 'number' ? value : undefined;
+  const hasCount = typeof numericCount === 'number';
+  const hasChildren = children !== undefined && children !== null;
+  const shouldHideBadge = hasCount && numericCount === 0 && !showZero && !hasChildren;
+
+  if (shouldHideBadge) {
+    return null;
+  }
+
+  const autoId = useId();
+  const internalId = id ?? autoId;
+  const isInteractive = typeof onClick === 'function';
+
+  const displayCount = useMemo(() => {
+    if (!hasCount) {
       return undefined;
     }
 
-    return { backgroundColor: color };
-  }, [color]);
+    if (typeof maxCount === 'number' && numericCount! > maxCount) {
+      return `${maxCount}+`;
+    }
 
-  const themeColorClass = isThemeColor(color)
-    ? COLOR_CLASS_MAP[color as BadgeThemeColor]
-    : undefined;
+    return String(numericCount);
+  }, [hasCount, maxCount, numericCount]);
 
-  const badgeClasses = cn(
-    styles.root,
-    SIZE_CLASS_MAP[size],
-    themeColorClass,
-    status ? STATUS_CLASS_MAP[status] : undefined,
-    showBorder ? styles.withBorder : undefined,
-    showIconOnly ? styles.iconOnly : undefined,
-    showValue ? styles.withValue : undefined,
-    className
-  );
-
-  const iconElement = resolveStatusIcon(status, icon);
-
-  const content = (() => {
+  const displayContent = useMemo(() => {
     if (hasChildren) {
       return children;
     }
 
-    if (showIconOnly) {
-      return iconElement;
+    if (hasCount) {
+      return displayCount;
     }
 
-    if (showValue && iconElement) {
-      return (
-        <>
-          {iconElement}
-          <span className={styles.value}>{displayValue}</span>
-        </>
-      );
-    }
+    return undefined;
+  }, [children, displayCount, hasChildren, hasCount]);
 
-    if (showValue) {
-      return <span className={styles.value}>{displayValue}</span>;
-    }
+  const semanticColorClass =
+    color && Object.prototype.hasOwnProperty.call(colorClassNameMap, color)
+      ? colorClassNameMap[color as keyof typeof colorClassNameMap]
+      : undefined;
 
-    return null;
-  })();
+  const badgeClasses = cn(
+    styles.badge,
+    sizeClassNameMap[size],
+    variantClassNameMap[variant],
+    semanticColorClass,
+    position && styles['badge--positioned'],
+    position ? positionClassNameMap[position] : undefined,
+    isInteractive && styles['badge--clickable'],
+    hasCount && styles['badge--count'],
+    animated && styles['badge--animated'],
+    pulse && styles['badge--pulse'],
+    className
+  );
 
-  const computedAriaLabel = ariaLabel
-    ? ariaLabel
-    : hasChildren
-    ? undefined
-    : showValue
-    ? `Badge with value ${displayValue}`
-    : status
-    ? `Badge status ${status}`
-    : 'Badge';
+  const ariaLabelValue = ariaLabel ?? (hasCount ? `${countDescription || 'Count'}: ${displayCount}` : undefined);
+  const ariaLiveValue = ariaLive ?? (hasCount ? 'polite' : undefined);
+  const roleValue = roleProp ?? (isInteractive ? 'button' : undefined);
+  const tabIndexValue = tabIndexProp ?? (isInteractive ? 0 : undefined);
+  const dataTestIdValue = dataTestId ?? 'dyn-badge';
+  const customColorStyle = !semanticColorClass && typeof color === 'string'
+    ? ({
+        '--badge-accent': color,
+        '--badge-outline-color': color,
+        '--badge-soft-fallback': color
+      } as CSSProperties)
+    : undefined;
+  const badgeStyle = customColorStyle
+    ? { ...customColorStyle, ...(inlineStyle as CSSProperties | undefined) }
+    : inlineStyle;
+
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLSpanElement>) => {
+      onClick?.(event);
+    },
+    [onClick]
+  );
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLSpanElement>) => {
+      userOnKeyDown?.(event);
+
+      if (!isInteractive || event.defaultPrevented) {
+        return;
+      }
+
+      if (event.key === 'Enter' || event.key === ' ') {
+        if (event.key === ' ') {
+          event.preventDefault();
+        }
+
+        event.currentTarget.click();
+      }
+    },
+    [isInteractive, userOnKeyDown]
+  );
+
+  const showTextContent = displayContent !== undefined && variant !== 'dot';
 
   return (
     <span
       ref={ref}
-      id={id}
+      id={internalId}
       className={badgeClasses}
-      style={customStyle}
-      data-testid={dataTestId}
-      aria-label={computedAriaLabel}
-      role="status"
-      {...rest}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role={roleValue}
+      tabIndex={tabIndexValue}
+      aria-label={ariaLabelValue}
+      aria-describedby={ariaDescribedBy}
+      aria-live={ariaLiveValue}
+      data-testid={dataTestIdValue}
+      style={badgeStyle}
+      {...restProps}
     >
-      {content}
+      <span className={styles['badge__content']}>
+        {startIcon && (
+          <span className={styles['badge__icon']} aria-hidden="true">
+            {startIcon}
+          </span>
+        )}
+
+        {showTextContent && (
+          <span className={styles['badge__text']}>
+            {displayContent}
+          </span>
+        )}
+
+        {endIcon && (
+          <span className={styles['badge__icon']} aria-hidden="true">
+            {endIcon}
+          </span>
+        )}
+      </span>
+
+      {hasCount && Number(numericCount) > 0 && (
+        <span className="dyn-sr-only">
+          {countDescription || 'Notifications'}: {displayCount}
+        </span>
+      )}
     </span>
   );
 };
@@ -176,9 +229,3 @@ DynBadge.displayName = 'DynBadge';
 
 export { DynBadge };
 export default DynBadge;
-export type {
-  DynBadgeProps,
-  BadgeStatus,
-  BadgeSize,
-  BadgeIcon,
-} from './DynBadge.types';

@@ -6,14 +6,18 @@ export type { DynButtonProps } from './components/DynButton';
 export { DynBadge, DynAvatar, DynLabel, DynIcon } from './components';
 export type {
   DynBadgeProps,
-  BadgeStatus,
-  BadgeSize,
+  DynBadgeRef,
+  DynBadgeVariant,
+  DynBadgeColor,
+  DynBadgePosition,
+  DynBadgeSize,
+  DynBadgeAccessibilityProps,
   DynAvatarProps,
   AvatarSize,
   DynLabelProps,
   DynIconProps
 } from './components';
-export { DYN_COLOR_PALETTE, AVATAR_SIZES } from './components';
+export { AVATAR_SIZES } from './components';
 
 // Form Components - SCOPE 6
 export {

@@ -91,7 +91,7 @@ const sampleMenus: MenuItem[] = [
     icon: 'dyn-icon-dashboard',
     shortLabel: 'Dash',
     action: () => console.log('Dashboard clicked'),
-    badge: { value: 3, color: 'color-01' }
+    badge: { count: 3, color: 'primary' }
   },
   {
     type: 'divider'
@@ -114,7 +114,7 @@ const sampleMenus: MenuItem[] = [
       {
         label: 'Inventory',
         icon: 'dyn-icon-warehouse',
-        badge: { value: 12, color: 'color-03' },
+        badge: { count: 12, color: 'info' },
         action: () => console.log('Inventory clicked')
       }
     ]
@@ -123,12 +123,12 @@ const sampleMenus: MenuItem[] = [
     label: 'Orders',
     icon: 'dyn-icon-shopping-cart',
     shortLabel: 'Orders',
-    badge: { value: 5, color: 'color-02' },
+    badge: { count: 5, color: 'secondary' },
     subItems: [
       {
         label: 'Pending Orders',
         icon: 'dyn-icon-clock',
-        badge: { value: 3, color: 'color-04' },
+        badge: { count: 3, color: 'warning' },
         action: () => console.log('Pending Orders clicked')
       },
       {
@@ -261,19 +261,19 @@ export const WithBadges: Story = {
       {
         label: 'Notifications',
         icon: 'dyn-icon-bell',
-        badge: { value: 15, color: 'color-02' },
+        badge: { count: 15, color: 'secondary' },
         action: () => console.log('Notifications clicked')
       },
       {
         label: 'Messages',
         icon: 'dyn-icon-envelope',
-        badge: { value: 3, color: 'color-04' },
+        badge: { count: 3, color: 'warning' },
         action: () => console.log('Messages clicked')
       },
       {
         label: 'Tasks',
         icon: 'dyn-icon-tasks',
-        badge: { value: 8, color: 'color-06' },
+        badge: { count: 8, color: 'success' },
         action: () => console.log('Tasks clicked')
       }
     ],

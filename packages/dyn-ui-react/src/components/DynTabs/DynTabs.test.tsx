@@ -15,9 +15,9 @@ const mockDynIcon = vi.fn(({ icon, className }: { icon: string; className?: stri
   <i data-testid={`icon-${icon}`} className={className} />
 ));
 
-const mockDynBadge = vi.fn(({ value, size }: { value?: string | number; size?: string }) => (
-  <span data-testid="badge" data-value={value} data-size={size}>
-    {value}
+const mockDynBadge = vi.fn(({ count, size, children }: { count?: number; size?: string; children?: React.ReactNode }) => (
+  <span data-testid="badge" data-count={count} data-size={size}>
+    {children ?? count}
   </span>
 ));
 
@@ -54,7 +54,7 @@ const tabsWithExtras: TabItem[] = [
     id: 'tab1',
     label: 'Tab 1',
     icon: 'test-icon',
-    badge: '5',
+    badge: { count: 5 },
     content: <div>Content 1</div>
   }
 ];
@@ -169,7 +169,7 @@ describe('DynTabs', () => {
       expect.anything()
     );
     expect(mockDynBadge).toHaveBeenCalledWith(
-      expect.objectContaining({ value: '5', size: 'small' }),
+      expect.objectContaining({ count: 5, size: 'small' }),
       expect.anything()
     );
   });
