@@ -8,7 +8,9 @@
 export type {
   BaseComponentProps,
   VariantProps,
-  SizeProps
+  SizeProps,
+  ComponentSize,
+  AccessibilityProps
 } from './theme';
 
 // Theme types
@@ -16,7 +18,17 @@ export type { ThemeName, ThemeConfig, ThemeContextValue, ColorVariant, Size } fr
 
 // Display Components types - SCOPE 5
 export type { DynBadgeProps, BadgeStatus, BadgeSize, BadgeIcon } from './badge.types';
-export type { DynAvatarProps, AvatarSize, AvatarLoading } from './avatar.types';
+export type {
+  DynAvatarProps,
+  DynAvatarRef,
+  DynAvatarSize,
+  DynAvatarShape,
+  DynAvatarStatus,
+} from '../components/DynAvatar/DynAvatar.types';
+export {
+  DYN_AVATAR_PIXEL_SIZES,
+  DYN_AVATAR_STATUS_LABELS,
+} from '../components/DynAvatar/DynAvatar.types';
 export type { DynIconProps, IconDictionary, ProcessedIcon } from './icon.types';
 export type { DynLabelProps } from './label.types';
 
@@ -68,4 +80,3 @@ export { DYN_GRID_DEFAULT_PROPS } from '../components/DynGrid/DynGrid.types';
 
 // Constants
 export { DYN_COLOR_PALETTE } from './badge.types';
-export { AVATAR_SIZES } from './avatar.types';
