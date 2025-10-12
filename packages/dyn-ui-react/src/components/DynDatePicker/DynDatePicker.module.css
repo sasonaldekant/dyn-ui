@@ -1,0 +1,220 @@
+/**
+ * DynDatePicker - CSS Styles
+ * Part of DYN UI Form Components Group - SCOPE 6
+ */
+
+.container {
+  position: relative;
+  width: 100%;
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  flex: 1;
+  width: 100%;
+  height: 40px;
+  padding: var(--dyn-spacing-sm, 8px) var(--dyn-spacing-xl, 80px) var(--dyn-spacing-sm, 8px)
+    var(--dyn-spacing-md, 12px);
+  font-family: var(--dyn-font-family, system-ui, -apple-system, sans-serif);
+  font-size: var(--dyn-font-size-base, 16px);
+  line-height: 1.5;
+  color: var(--dyn-color-text-primary, #333);
+  background-color: var(--dyn-color-surface, #fff);
+  border: 1px solid var(--dyn-color-border, #d1d5db);
+  border-radius: var(--dyn-border-radius-md, 6px);
+  transition: all 0.2s ease-in-out;
+}
+
+.input::placeholder {
+  color: var(--dyn-color-text-placeholder, #9ca3af);
+  opacity: 1;
+}
+
+.input:hover:not(:disabled):not(:read-only) {
+  border-color: var(--dyn-color-border-hover, #9ca3af);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--dyn-color-primary, #0066cc);
+  box-shadow: 0 0 0 3px var(--dyn-color-primary-alpha, rgba(0, 102, 204, 0.1));
+}
+
+.input:disabled {
+  background-color: var(--dyn-color-surface-disabled, #f3f4f6);
+  color: var(--dyn-color-text-disabled, #9ca3af);
+  cursor: not-allowed;
+  border-color: var(--dyn-color-border-disabled, #e5e7eb);
+}
+
+.input:read-only {
+  background-color: var(--dyn-color-surface-readonly, #f9fafb);
+  cursor: default;
+}
+
+.sizeSmall {
+  font-size: var(--dyn-font-size-sm, 14px);
+  height: 32px;
+  padding: var(--dyn-spacing-xs, 6px) var(--dyn-spacing-xl, 70px) var(--dyn-spacing-xs, 6px)
+    var(--dyn-spacing-sm, 8px);
+}
+
+.sizeLarge {
+  font-size: var(--dyn-font-size-lg, 18px);
+  height: 48px;
+  padding: var(--dyn-spacing-md, 12px) var(--dyn-spacing-xl, 90px) var(--dyn-spacing-md, 12px)
+    var(--dyn-spacing-lg, 16px);
+}
+
+.stateFocused,
+.stateOpen {
+  border-color: var(--dyn-color-primary, #0066cc);
+}
+
+.stateError {
+  border-color: var(--dyn-color-error, #f44336);
+}
+
+.stateError:focus {
+  box-shadow: 0 0 0 3px var(--dyn-color-error-alpha, rgba(244, 67, 54, 0.1));
+}
+
+.stateDisabled {
+  cursor: not-allowed;
+}
+
+.stateReadonly {
+  cursor: default;
+}
+
+.calendarButton,
+.clearButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: var(--dyn-spacing-xs, 4px);
+  background: none;
+  border: none;
+  border-radius: var(--dyn-border-radius-sm, 3px);
+  color: var(--dyn-color-text-secondary, #666);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendarButton:hover:not(:disabled),
+.clearButton:hover:not(:disabled) {
+  color: var(--dyn-color-text-primary, #333);
+  background-color: var(--dyn-color-surface-hover, #f3f4f6);
+}
+
+.calendarButton:focus,
+.clearButton:focus {
+  outline: 2px solid var(--dyn-color-primary, #0066cc);
+  outline-offset: 2px;
+}
+
+.calendarButton:disabled,
+.clearButton:disabled {
+  color: var(--dyn-color-text-disabled, #9ca3af);
+  cursor: not-allowed;
+}
+
+.calendarButton {
+  right: var(--dyn-spacing-xl, 32px);
+}
+
+.clearButton {
+  right: var(--dyn-spacing-xs, 4px);
+}
+
+.relativeText {
+  margin-top: var(--dyn-spacing-xs, 4px);
+  font-size: var(--dyn-font-size-sm, 14px);
+  font-style: italic;
+  color: var(--dyn-color-text-secondary, #666);
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: var(--dyn-spacing-xs, 4px);
+  padding: var(--dyn-spacing-md, 16px);
+  background-color: var(--dyn-color-surface, #fff);
+  border: 1px solid var(--dyn-color-border, #d1d5db);
+  border-radius: var(--dyn-border-radius-md, 6px);
+  box-shadow: var(--dyn-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05));
+}
+
+.shortcuts {
+  display: flex;
+  gap: var(--dyn-spacing-sm, 8px);
+  margin-bottom: var(--dyn-spacing-md, 16px);
+  padding-bottom: var(--dyn-spacing-md, 16px);
+  border-bottom: 1px solid var(--dyn-color-border, #d1d5db);
+}
+
+.shortcut {
+  padding: var(--dyn-spacing-sm, 8px) var(--dyn-spacing-md, 12px);
+  font-size: var(--dyn-font-size-sm, 14px);
+  color: var(--dyn-color-text-primary, #333);
+  background: none;
+  border: 1px solid var(--dyn-color-border, #d1d5db);
+  border-radius: var(--dyn-border-radius-md, 6px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shortcut:hover {
+  background-color: var(--dyn-color-surface-hover, #f3f4f6);
+  border-color: var(--dyn-color-primary, #0066cc);
+}
+
+.shortcut:focus {
+  outline: 2px solid var(--dyn-color-primary, #0066cc);
+  outline-offset: 2px;
+}
+
+.helpTitle {
+  margin-bottom: var(--dyn-spacing-sm, 8px);
+  font-size: var(--dyn-font-size-sm, 14px);
+  font-weight: var(--dyn-font-weight-medium, 500);
+  color: var(--dyn-color-text-primary, #333);
+}
+
+.helpList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.helpListItem {
+  position: relative;
+  margin-bottom: var(--dyn-spacing-xs, 4px);
+  padding-left: var(--dyn-spacing-md, 16px);
+  font-size: var(--dyn-font-size-sm, 14px);
+  color: var(--dyn-color-text-secondary, #666);
+}
+
+.helpListItem::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--dyn-color-primary, #0066cc);
+}
+
+.helpListItem:last-child {
+  margin-bottom: 0;
+}

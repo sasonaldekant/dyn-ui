@@ -1,11 +1,10 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { DynContainer } from './DynContainer';
 
 describe('DynContainer', () => {
   it('exports a React component', () => {
-    expect(DynContainer).toBeDefined(); // Changed from checking type to checking if defined
+    expect(DynContainer).toBeDefined();
   });
 
   it('renders children correctly', () => {
@@ -14,31 +13,57 @@ describe('DynContainer', () => {
         <div>Test content</div>
       </DynContainer>
     );
+
     expect(screen.getByText('Test content')).toBeInTheDocument();
   });
 
+  it('renders title and subtitle when provided', () => {
+    render(
+      <DynContainer title="Section Title" subtitle="Supporting copy">
+        <div>Content</div>
+      </DynContainer>
+    );
+
+    expect(screen.getByText('Section Title')).toBeInTheDocument();
+    expect(screen.getByText('Supporting copy')).toBeInTheDocument();
+  });
+
   it('applies custom className', () => {
-    const { container } = render(
+    render(
       <DynContainer className="custom-container">
         <div>Content</div>
       </DynContainer>
     );
-    expect(container.firstChild).toHaveClass('custom-container');
+
+    expect(screen.getByTestId('dyn-container')).toHaveClass('custom-container');
   });
 
-  it('applies size classes correctly', () => {
-    const { container, rerender } = render(
-      <DynContainer size="fluid">
+  it('applies layout modifiers through props', () => {
+    render(
+      <DynContainer spacing="lg" size="large" direction="horizontal" align="center" justify="between">
         <div>Content</div>
       </DynContainer>
     );
-    expect(container.firstChild?.className).toMatch(/fluid/i);
-    
-    rerender(
-      <DynContainer size="fixed">
+
+    const element = screen.getByTestId('dyn-container');
+
+    expect(element.className).toMatch(/spacingLg/);
+    expect(element.className).toMatch(/sizeLarge/);
+    expect(element.className).toMatch(/directionHorizontal/);
+    expect(element.className).toMatch(/alignCenter/);
+    expect(element.className).toMatch(/justifyBetween/);
+  });
+
+  it('respects legacy noBorder and noPadding flags', () => {
+    render(
+      <DynContainer noBorder noPadding bordered shadow>
         <div>Content</div>
       </DynContainer>
     );
-    expect(container.firstChild?.className).toMatch(/fixed/i);
+
+    const element = screen.getByTestId('dyn-container');
+
+    expect(element.className).not.toMatch(/bordered/);
+    expect(element.className).toMatch(/noPadding/);
   });
 });

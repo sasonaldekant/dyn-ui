@@ -1,89 +1,86 @@
-import * as React from 'react';
-import { DynDividerProps, DynDividerRef, DIVIDER_COORDINATES } from './DynDivider.types';
-import { classNames } from '../../utils/classNames';
+import { forwardRef, useId } from 'react';
+import type { ForwardedRef } from 'react';
+import { cn } from '../../utils/classNames';
+import {
+  DYN_DIVIDER_DEFAULT_PROPS,
+  DynDividerProps,
+  DynDividerRef,
+} from './DynDivider.types';
 import styles from './DynDivider.module.css';
 
-/**
- * DynDivider - Visual separator component with optional label
- * Follows DYN UI specification for layout components
- */
-export const DynDivider = React.forwardRef<DynDividerRef, DynDividerProps>(
-  (
-    {
-      label,
-      borderWidth = 'small',
-      className,
-      ...rest
-    },
-    ref
-  ) => {
-    const coordinates = DIVIDER_COORDINATES[borderWidth];
+const toPascalCase = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
-    // Build CSS classes
-    const dividerClasses = classNames(
-      styles['dyn-divider'],
-      styles[`dyn-divider--${borderWidth}`],
-      {
-        [styles['dyn-divider--with-label']]: !!label,
-      },
-      className
-    );
+const DynDividerComponent = (
+  {
+    label,
+    labelPosition = DYN_DIVIDER_DEFAULT_PROPS.labelPosition,
+    direction = DYN_DIVIDER_DEFAULT_PROPS.direction,
+    thickness = DYN_DIVIDER_DEFAULT_PROPS.thickness,
+    lineStyle = DYN_DIVIDER_DEFAULT_PROPS.lineStyle,
+    color = DYN_DIVIDER_DEFAULT_PROPS.color,
+    spacing = DYN_DIVIDER_DEFAULT_PROPS.spacing,
+    children,
+    className,
+    id,
+    'data-testid': dataTestId = DYN_DIVIDER_DEFAULT_PROPS['data-testid'],
+    ...rest
+  }: DynDividerProps,
+  ref: ForwardedRef<DynDividerRef>
+) => {
+  const generatedId = useId();
+  const orientation = direction === 'vertical' ? 'vertical' : 'horizontal';
+  const labelContent = children ?? label;
+  const labelId = labelContent ? `${id ?? `dyn-divider-${generatedId}`}-label` : undefined;
+  const ariaLabel =
+    !labelId && typeof labelContent === 'string' ? labelContent : undefined;
 
-    // Imperative API
-    React.useImperativeHandle(ref, () => ({
-      focus() {
-        console.log('DynDivider focused');
-      }
-    }));
+  const directionClass = styles[`direction${toPascalCase(orientation)}` as keyof typeof styles];
+  const thicknessClass = styles[`thickness${toPascalCase(thickness)}` as keyof typeof styles];
+  const styleClass = styles[`lineStyle${toPascalCase(lineStyle)}` as keyof typeof styles];
+  const colorClass = styles[`color${toPascalCase(color)}` as keyof typeof styles];
+  const spacingClass = styles[`spacing${toPascalCase(spacing)}` as keyof typeof styles];
+  const labelPositionClass = labelContent
+    ? styles[`label${toPascalCase(labelPosition)}` as keyof typeof styles]
+    : undefined;
 
-    // Divider with label
-    if (label) {
-      return (
-        <div
-          className={dividerClasses}
-          role="separator"
-          aria-label={label}
-          data-testid="dyn-divider"
-          {...rest}
-        >
-          <div className={styles['dyn-divider__content']}>
-            <div className={`${styles['dyn-divider__line']} ${styles['dyn-divider__line--left']}`} />
-            <span className={styles['dyn-divider__label']}>{label}</span>
-            <div className={`${styles['dyn-divider__line']} ${styles['dyn-divider__line--right']}`} />
-          </div>
-        </div>
-      );
-    }
+  const dividerClassName = cn(
+    styles.root,
+    directionClass,
+    thicknessClass,
+    styleClass,
+    colorClass,
+    spacingClass,
+    labelContent && styles.withLabel,
+    labelPositionClass,
+    className
+  );
 
-    // Simple divider with SVG line
-    return (
-      <div
-        className={dividerClasses}
-        role="separator"
-        data-testid="dyn-divider"
-        {...rest}
-      >
-        <svg
-          className={styles['dyn-divider__svg']}
-          viewBox="0 0 100 1"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <line
-            x1={coordinates.x1}
-            y1="0.5"
-            x2={coordinates.x2}
-            y2="0.5"
-            className={styles['dyn-divider__svg-line']}
-            strokeLinecap="round"
-          />
-        </svg>
-      </div>
-    );
-  }
-);
+  return (
+    <div
+      ref={ref}
+      id={id}
+      role="separator"
+      aria-orientation={orientation}
+      aria-labelledby={labelId}
+      aria-label={ariaLabel}
+      className={dividerClassName}
+      data-testid={dataTestId}
+      {...rest}
+    >
+      <span className={styles.line} aria-hidden="true" />
+      {labelContent ? (
+        <span className={styles.label} id={labelId}>
+          {labelContent}
+        </span>
+      ) : null}
+      <span className={styles.line} aria-hidden="true" />
+    </div>
+  );
+};
+
+const DynDivider = forwardRef<DynDividerRef, DynDividerProps>(DynDividerComponent);
 
 DynDivider.displayName = 'DynDivider';
 
-// Add default export
+export { DynDivider };
 export default DynDivider;

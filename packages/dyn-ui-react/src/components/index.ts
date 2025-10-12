@@ -59,7 +59,12 @@ export { ThemeSwitcher } from './ThemeSwitcher';
 
 // Basic Component Types
 export type { DynBoxProps, DynBoxRef } from './DynBox/DynBox.types';
-export type { DynButtonProps } from './DynButton/DynButton.types';
+export type {
+  DynButtonProps,
+  DynButtonKind,
+  DynButtonSize,
+} from './DynButton/DynButton.types';
+export { DYN_BUTTON_DEFAULT_PROPS } from './DynButton/DynButton.types';
 export type { DynIconProps, DynIconSizeToken, DynIconTone } from '../types/icon.types';
 export { DYN_ICON_DEFAULT_PROPS } from '../types/icon.types';
 
@@ -99,8 +104,6 @@ export { DYN_CHECKBOX_DEFAULT_PROPS } from './DynCheckbox/DynCheckbox.types';
 export type {
   DynContainerProps,
   DynDividerProps,
-  DynGridProps,
-  DynGridColumn,
   DynPageProps,
   DynPageBreadcrumb,
   DynPageAction,
@@ -110,6 +113,15 @@ export type {
   LayoutAlignment,
   LayoutJustify
 } from '../types/layout.types';
+
+export type {
+  DynGridProps,
+  DynGridColumn,
+  DynGridPagination,
+  DynGridSelectable,
+  DynGridSortDirection,
+} from './DynGrid';
+export { DYN_GRID_DEFAULT_PROPS } from './DynGrid';
 
 // Data Display Component Types
 export type {

@@ -21,6 +21,7 @@ export type { DynIconProps, IconDictionary, ProcessedIcon } from './icon.types';
 export type { DynLabelProps } from './label.types';
 
 // Form Components types - SCOPE 6
+// Form Components types - SCOPE 6
 export type {
   DynInputProps,
   DynSelectProps,
@@ -44,9 +45,14 @@ export {
 // Layout Components types - SCOPE 7
 export type {
   DynContainerProps,
+  DynContainerOwnProps,
+  DynContainerBackground,
   DynDividerProps,
-  DynGridProps,
-  DynGridColumn,
+  DynDividerOwnProps,
+  DynDividerColor,
+  DynDividerLabelPosition,
+  DynDividerLineStyle,
+  DynDividerThickness,
   DynPageProps,
   DynPageBreadcrumb,
   DynPageAction,
@@ -56,6 +62,15 @@ export type {
   LayoutAlignment,
   LayoutJustify
 } from './layout.types';
+
+export type {
+  DynGridProps,
+  DynGridColumn,
+  DynGridPagination,
+  DynGridSelectable,
+  DynGridSortDirection,
+} from '../components/DynGrid/DynGrid.types';
+export { DYN_GRID_DEFAULT_PROPS } from '../components/DynGrid/DynGrid.types';
 
 // Constants
 export { DYN_COLOR_PALETTE } from './badge.types';
