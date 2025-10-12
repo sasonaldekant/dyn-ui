@@ -63,11 +63,6 @@ export interface DynBadgeProps
   /** Numeric value (for count badges) */
   count?: number;
 
-  /**
-   * @deprecated Use `count` instead. Legacy alias maintained for backward compatibility.
-   */
-  value?: number;
-
   /** Show badge even when count is 0 */
   showZero?: boolean;
 
