@@ -13,7 +13,10 @@ export type {
   DynBadgeSize,
   DynBadgeAccessibilityProps,
   DynAvatarProps,
-  AvatarSize,
+  DynAvatarRef,
+  DynAvatarSize,
+  DynAvatarShape,
+  DynAvatarStatus,
   DynLabelProps,
   DynIconProps
 } from './components';

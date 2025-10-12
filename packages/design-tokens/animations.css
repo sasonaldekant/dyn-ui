@@ -1,0 +1,12 @@
+/* Motion tokens */
+:root {
+  --dyn-duration-instant: 80ms;
+  --dyn-duration-fast: 120ms;
+  --dyn-duration-normal: 200ms;
+  --dyn-duration-slow: 320ms;
+  --dyn-duration-deliberate: 480ms;
+
+  --dyn-timing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --dyn-timing-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --dyn-timing-exit: cubic-bezier(0.4, 0, 0.6, 1);
+}

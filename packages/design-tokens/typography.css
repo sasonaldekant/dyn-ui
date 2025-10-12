@@ -1,0 +1,28 @@
+/* Typography tokens */
+:root {
+  --dyn-font-family-base: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont,
+    'Helvetica Neue', sans-serif;
+  --dyn-font-family: var(--dyn-font-family-base);
+  --dyn-font-family-mono: 'Fira Code', 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+
+  --dyn-font-size-xs: 0.75rem; /* 12px */
+  --dyn-font-size-sm: 0.875rem; /* 14px */
+  --dyn-font-size-base: 1rem; /* 16px */
+  --dyn-font-size-md: 1.125rem; /* 18px */
+  --dyn-font-size-lg: 1.25rem; /* 20px */
+  --dyn-font-size-xl: 1.5rem; /* 24px */
+  --dyn-font-size-2xl: 1.75rem; /* 28px */
+
+  --dyn-font-weight-normal: 400;
+  --dyn-font-weight-medium: 500;
+  --dyn-font-weight-semibold: 600;
+  --dyn-font-weight-bold: 700;
+
+  --dyn-line-height-tight: 1.25;
+  --dyn-line-height-normal: 1.5;
+  --dyn-line-height-relaxed: 1.75;
+
+  --dyn-letter-spacing-tight: -0.01em;
+  --dyn-letter-spacing-normal: 0;
+}

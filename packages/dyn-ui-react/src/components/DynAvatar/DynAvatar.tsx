@@ -1,82 +1,125 @@
+import type { KeyboardEvent, SyntheticEvent } from 'react';
 import { forwardRef, useMemo, useState } from 'react';
-import type { KeyboardEvent, MouseEvent } from 'react';
-import type {
-  AvatarSize,
-  DynAvatarProps,
-} from '../../types/avatar.types';
-import { AVATAR_SIZES } from '../../types/avatar.types';
+
 import { cn } from '../../utils/classNames';
+import { generateInitials } from '../../utils/dynFormatters';
+import { generateId } from '../../utils/accessibility';
+import type { DynAvatarRef, DynAvatarProps } from './DynAvatar.types';
+import {
+  DYN_AVATAR_PIXEL_SIZES,
+  DYN_AVATAR_STATUS_LABELS,
+} from './DynAvatar.types';
 import styles from './DynAvatar.module.css';
 
-const sizeClassNameMap: Record<AvatarSize, string> = {
-  xs: styles.sizeXs!,
-  sm: styles.sizeSm!,
-  md: styles.sizeMd!,
-  lg: styles.sizeLg!,
-  xl: styles.sizeXl!,
-};
+const DefaultFallbackIcon = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <path
+      d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+      fill="currentColor"
+    />
+  </svg>
+);
 
-const generateInitials = (name: string): string =>
-  name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-
-export const DynAvatar = forwardRef<HTMLDivElement, DynAvatarProps>((props, ref) => {
+export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>((props, ref) => {
   const {
     src,
-    size = 'md',
-    loading = 'eager',
-    alt = 'Avatar',
+    alt,
+    size = 'medium',
+    shape = 'circle',
     initials,
-    className,
+    status,
+    loading = false,
+    error = false,
     onClick,
-    children,
+    fallback,
+    imageLoading = 'eager',
+    imageProps,
+    className,
+    id,
+    'aria-label': ariaLabel,
+    'aria-describedby': ariaDescribedBy,
+    'aria-labelledby': ariaLabelledBy,
     'data-testid': dataTestId,
+    role: roleProp,
+    tabIndex,
+    children,
     ...rest
   } = props;
 
-  const [hasError, setHasError] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [internalId] = useState(() => id ?? generateId('dyn-avatar'));
 
-  const pixelSize = AVATAR_SIZES[size] ?? AVATAR_SIZES.md;
   const isInteractive = typeof onClick === 'function';
+  const isExplicitError = Boolean(error);
+  const hasErrored = isExplicitError || imageError;
+  const hasSource = Boolean(src);
+  const canDisplayImage = hasSource && !hasErrored;
+  const hasLoadedImage = canDisplayImage && imageLoaded;
+  const isLoadingState = Boolean(loading || (canDisplayImage && !imageLoaded));
 
-  const fallbackInitials = useMemo(() => {
-    if (typeof initials === 'string' && initials.trim().length > 0) {
+  const displayInitials = useMemo(() => {
+    if (typeof initials === 'string' && initials.trim()) {
       return initials.trim().slice(0, 2).toUpperCase();
     }
 
-    if (alt && alt !== 'Avatar') {
-      return generateInitials(alt);
-    }
-
-    return '';
+    return generateInitials(alt).slice(0, 2);
   }, [initials, alt]);
 
-  const containerClassName = cn(
-    styles.root,
-    sizeClassNameMap[size] ?? styles.sizeMd,
+  const statusLabel = status ? DYN_AVATAR_STATUS_LABELS[status] : undefined;
+  const accessibleLabelBase = ariaLabel ?? (isInteractive ? `Avatar for ${alt}` : alt);
+  const accessibleLabel = statusLabel
+    ? `${accessibleLabelBase} (${statusLabel})`
+    : accessibleLabelBase;
+  const pixelSize =
+    DYN_AVATAR_PIXEL_SIZES[size] ?? DYN_AVATAR_PIXEL_SIZES.medium;
+  const imageTestId = dataTestId ? `${dataTestId}-image` : 'dyn-avatar-image';
+
+  const sizeClassName =
+    styles[`avatar--${size}` as keyof typeof styles] ?? styles['avatar--medium'];
+  const shapeClassName = styles[`avatar--${shape}` as keyof typeof styles];
+  const statusClassName = status
+    ? styles[`avatar--${status}` as keyof typeof styles]
+    : undefined;
+
+  const avatarClassName = cn(
+    styles.avatar,
+    sizeClassName,
+    shapeClassName,
+    statusClassName,
     {
-      [styles.clickable!]: isInteractive,
-      [styles.loading!]: Boolean(src) && !isLoaded && !hasError,
-      [styles.error!]: hasError,
+      [styles['avatar--clickable']!]: isInteractive,
+      [styles['avatar--loading']!]: isLoadingState,
+      [styles['avatar--error']!]: hasErrored,
     },
     className
   );
 
-  const handleImageLoad = () => {
-    setIsLoaded(true);
-    setHasError(false);
+  const {
+    className: imageClassName,
+    onLoad: onImageLoad,
+    onError: onImageError,
+    'data-testid': imageDataTestId,
+    ...restImageProps
+  } = imageProps ?? {};
+
+  const handleImageLoad = (event: SyntheticEvent<HTMLImageElement>) => {
+    setImageLoaded(true);
+    setImageError(false);
+    onImageLoad?.(event);
   };
 
-  const handleImageError = () => {
-    setHasError(true);
-    setIsLoaded(false);
+  const handleImageError = (event: SyntheticEvent<HTMLImageElement>) => {
+    setImageError(true);
+    setImageLoaded(false);
+    onImageError?.(event);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -86,53 +129,86 @@ export const DynAvatar = forwardRef<HTMLDivElement, DynAvatarProps>((props, ref)
 
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      onClick?.(event as unknown as MouseEvent<HTMLDivElement>);
+      event.currentTarget.click();
     }
   };
 
-  const shouldHidePlaceholderFromAccessibility = Boolean(src) && !hasError;
+  const shouldRenderFallback = !hasLoadedImage;
+
+  const srMessages: Array<{ text: string; live: 'polite' | 'assertive' }> = [];
+
+  if (isLoadingState) {
+    srMessages.push({ text: 'Loading avatar', live: 'polite' });
+  }
+
+  if (hasErrored) {
+    srMessages.push({ text: 'Avatar failed to load', live: 'assertive' });
+  }
+
+  const computedRole = isInteractive ? 'button' : roleProp ?? 'img';
+  const computedTabIndex = isInteractive ? 0 : tabIndex;
 
   return (
     <div
       ref={ref}
-      className={containerClassName}
-      role={isInteractive ? 'button' : undefined}
-      tabIndex={isInteractive ? 0 : undefined}
-      aria-label={isInteractive ? `Avatar - ${alt}` : alt}
-      onClick={isInteractive ? onClick : undefined}
-      onKeyDown={isInteractive ? handleKeyDown : undefined}
+      id={internalId}
+      className={avatarClassName}
+      role={computedRole}
+      tabIndex={computedTabIndex}
+      aria-label={accessibleLabel}
+      aria-describedby={ariaDescribedBy}
+      aria-labelledby={ariaLabelledBy}
+      aria-busy={isLoadingState ? 'true' : undefined}
+      data-status={status}
       data-testid={dataTestId ?? 'dyn-avatar'}
+      onClick={isInteractive ? onClick : undefined}
+      onKeyDown={handleKeyDown}
       {...rest}
     >
-      {(!src || hasError || !isLoaded) && (
+      {src && (
+        <img
+          src={src}
+          alt={hasLoadedImage ? alt : ''}
+          loading={imageLoading}
+          width={pixelSize}
+          height={pixelSize}
+          className={cn(
+            styles['avatar__image'],
+            {
+              [styles['avatar__image--loading']!]: !imageLoaded,
+              [styles['avatar__image--loaded']!]: imageLoaded,
+            },
+            imageClassName
+          )}
+          data-testid={imageDataTestId ?? imageTestId}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          {...restImageProps}
+        />
+      )}
+
+      {shouldRenderFallback && (
         <div
-          className={styles.placeholder}
-          aria-hidden={shouldHidePlaceholderFromAccessibility ? 'true' : undefined}
+          className={styles['avatar__fallback']}
+          aria-hidden={hasLoadedImage ? 'true' : undefined}
         >
-          {children ??
-            (fallbackInitials ? (
-              <span className={styles.initials}>{fallbackInitials}</span>
+          {fallback ??
+            children ??
+            (displayInitials ? (
+              <span className={styles['avatar__initials']}>{displayInitials}</span>
             ) : (
-              <span className={styles.icon} aria-hidden="true">
-                👤
+              <span className={styles['avatar__icon']} aria-hidden="true">
+                <DefaultFallbackIcon />
               </span>
             ))}
         </div>
       )}
 
-      {src && !hasError ? (
-        <img
-          src={src}
-          alt={alt}
-          loading={loading}
-          width={pixelSize}
-          height={pixelSize}
-          className={styles.image}
-          onLoad={handleImageLoad}
-          onError={handleImageError}
-          style={{ opacity: isLoaded ? 1 : 0 }}
-        />
-      ) : null}
+      {srMessages.map(({ text, live }) => (
+        <span key={text} className="dyn-sr-only sr-only" aria-live={live}>
+          {text}
+        </span>
+      ))}
     </div>
   );
 });
