@@ -1,294 +1,281 @@
-import {
-  cloneElement,
+import React, {
   forwardRef,
-  isValidElement,
   useCallback,
   useEffect,
-  useId,
-  useImperativeHandle,
   useMemo,
   useState,
 } from 'react';
-import type {
-  KeyboardEvent,
-  MouseEvent,
-  ReactElement,
-} from 'react';
 import { cn } from '../../utils/classNames';
-import { DynIcon } from '../DynIcon';
-import type { BreadcrumbItem, DynBreadcrumbProps, DynBreadcrumbRef } from './DynBreadcrumb.types';
-import {
-  BREADCRUMB_LITERALS,
-  DYN_BREADCRUMB_DEFAULT_PROPS,
+import { generateId } from '../../utils/accessibility';
+import type {
+  BreadcrumbItem,
+  DynBreadcrumbProps,
+  DynBreadcrumbRef,
 } from './DynBreadcrumb.types';
 import styles from './DynBreadcrumb.module.css';
 
-const ELLIPSIS_LABEL = '...';
+type VisibleItem = {
+  item: BreadcrumbItem;
+  originalIndex: number;
+};
 
-const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>((props, ref) => {
-  const {
-    items: itemsProp = DYN_BREADCRUMB_DEFAULT_PROPS.items,
-    favorite,
-    favoriteService,
-    separator = DYN_BREADCRUMB_DEFAULT_PROPS.separator,
-    maxItems = DYN_BREADCRUMB_DEFAULT_PROPS.maxItems,
-    onFavorite,
-    onItemClick,
-    ariaLabel = DYN_BREADCRUMB_DEFAULT_PROPS.ariaLabel,
-    className,
-    id,
-    children,
-    'data-testid': dataTestId,
-    ...rest
-  } = props;
-
-  const [internalItems, setInternalItems] = useState<BreadcrumbItem[]>(() => itemsProp);
-  const [showAllItems, setShowAllItems] = useState(false);
-  const [isFavorited, setIsFavorited] = useState(Boolean(favorite));
-
-  const instanceId = useId();
-  const navId = id ?? instanceId;
-
-  useEffect(() => {
-    setInternalItems(itemsProp);
-    setShowAllItems(false);
-  }, [itemsProp]);
-
-  useEffect(() => {
-    if (typeof favorite === 'boolean') {
-      setIsFavorited(favorite);
-    }
-  }, [favorite]);
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      addItem: (item: BreadcrumbItem) => {
-        setInternalItems(prevItems => [...prevItems, item]);
-      },
-      removeItem: (index: number) => {
-        setInternalItems(prevItems => prevItems.filter((_, itemIndex) => itemIndex !== index));
-      },
-      clear: () => {
-        setInternalItems([]);
-        setShowAllItems(false);
-      },
-    }),
-    []
-  );
-
-  const handleShowAllItems = useCallback(() => {
-    setShowAllItems(true);
-  }, []);
-
-  const shouldRenderFavorite = favoriteService !== undefined || typeof favorite === 'boolean';
-
-  const displayItems = useMemo<ReadonlyArray<BreadcrumbItem>>(() => {
-    if (showAllItems || internalItems.length <= maxItems) {
-      return internalItems;
-    }
-
-    if (internalItems.length === 0) {
-      return internalItems;
-    }
-
-    const firstItem = internalItems[0];
-    if (!firstItem) {
-      return internalItems;
-    }
-    const lastItems = internalItems.slice(-(maxItems - 2));
-
-    const ellipsisItem: BreadcrumbItem = {
-      label: ELLIPSIS_LABEL,
-      action: handleShowAllItems,
-    };
-
-    return [firstItem, ellipsisItem, ...lastItems];
-  }, [handleShowAllItems, internalItems, maxItems, showAllItems]);
-
-  const handleItemActivate = useCallback(
-    (
-      item: BreadcrumbItem,
-      index: number,
-      event: MouseEvent<HTMLAnchorElement | HTMLSpanElement> | KeyboardEvent<HTMLSpanElement>
-    ) => {
-      if (item.action) {
-        event.preventDefault();
-        item.action();
-      }
-
-      onItemClick?.(item, index);
+export const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>(
+  (
+    {
+      className,
+      items,
+      size = 'medium',
+      separator = 'slash',
+      customSeparator,
+      maxItems = 0,
+      showEllipsis = true,
+      navigationLabel = 'Breadcrumb',
+      onItemClick,
+      onEllipsisClick,
+      expanded: controlledExpanded,
+      linkComponent: LinkComponent = 'a',
+      enableStructuredData = false,
+      id,
+      children,
+      'data-testid': dataTestId,
+      'aria-label': ariaLabel,
+      ...rest
     },
-    [onItemClick]
-  );
+    ref
+  ) => {
+    const [internalExpanded, setInternalExpanded] = useState(false);
+    const [generatedId] = useState(() => generateId('breadcrumb'));
+    const itemsSignature = useMemo(
+      () =>
+        items
+          .map(item => `${item.id ?? item.label}:${item.href ?? ''}:${item.current ? '1' : '0'}`)
+          .join('|'),
+      [items]
+    );
 
-  const handleKeyDown = useCallback(
-    (item: BreadcrumbItem, index: number) =>
-      (event: KeyboardEvent<HTMLSpanElement>) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          handleItemActivate(item, index, event);
-        }
+    useEffect(() => {
+      if (controlledExpanded === undefined) {
+        setInternalExpanded(false);
+      }
+    }, [controlledExpanded, itemsSignature]);
+
+    const expanded = controlledExpanded ?? internalExpanded;
+    const navId = id ?? generatedId;
+    const totalItems = items.length;
+    const shouldCollapse = maxItems > 0 && totalItems > maxItems && !expanded;
+
+    const visibleItems = useMemo<VisibleItem[]>(() => {
+      if (!shouldCollapse) {
+        return items.map((item, originalIndex) => ({ item, originalIndex }));
+      }
+
+      if (items.length === 0) {
+        return [];
+      }
+
+      const firstEntry: VisibleItem = { item: items[0], originalIndex: 0 };
+      const middleEntries = items
+        .slice(1, -1)
+        .map<VisibleItem>((item, index) => ({ item, originalIndex: index + 1 }))
+        .filter(({ item }) => item.showWhenCollapsed);
+      const lastEntry: VisibleItem = {
+        item: items[items.length - 1],
+        originalIndex: items.length - 1,
+      };
+
+      return [firstEntry, ...middleEntries, lastEntry];
+    }, [items, shouldCollapse]);
+
+    const hiddenItemCount = shouldCollapse ? totalItems - visibleItems.length : 0;
+    const hasHiddenItems = hiddenItemCount > 0;
+
+    const handleEllipsisClick = useCallback(() => {
+      if (controlledExpanded === undefined) {
+        setInternalExpanded(true);
+      }
+      onEllipsisClick?.();
+    }, [controlledExpanded, onEllipsisClick]);
+
+    const handleItemClick = useCallback(
+      (item: BreadcrumbItem) => (event: React.MouseEvent<HTMLAnchorElement>) => {
+        onItemClick?.(item, event);
       },
-    [handleItemActivate]
-  );
+      [onItemClick]
+    );
 
-  const handleFavoriteToggle = useCallback(async () => {
-    const nextFavorited = !isFavorited;
-
-    if (favoriteService) {
-      try {
-        const response = await fetch(favoriteService, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ favorited: nextFavorited }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to update favorite status');
+    const renderSeparator = useCallback(
+      (index: number) => {
+        if (separator === 'custom' && !customSeparator) {
+          return null;
         }
 
-        setIsFavorited(nextFavorited);
-        onFavorite?.(nextFavorited);
-      } catch (error) {
-        console.error('Failed to update favorite status:', error);
-      }
-
-      return;
-    }
-
-    setIsFavorited(nextFavorited);
-    onFavorite?.(nextFavorited);
-  }, [favoriteService, isFavorited, onFavorite]);
-
-  const renderSeparator = useCallback(
-    (separatorIndex: number) => {
-      const key = `separator-${separatorIndex}`;
-
-      if (typeof separator === 'string') {
-        return (
-          <DynIcon
-            key={key}
-            icon={separator}
-            className={styles['dyn-breadcrumb-separator']}
-          />
+        const separatorClasses = cn(
+          styles.breadcrumbSeparator,
+          separator !== 'slash' && styles[`breadcrumbSeparator--${separator}`],
+          separator === 'custom' && styles['breadcrumbSeparator--custom']
         );
-      }
 
-      if (separator == null) {
+        return (
+          <span
+            key={`separator-${index}`}
+            className={separatorClasses}
+            aria-hidden="true"
+            data-separator={separator}
+          >
+            {separator === 'custom' ? customSeparator : null}
+          </span>
+        );
+      },
+      [customSeparator, separator]
+    );
+
+    const renderItemContent = useCallback(
+      (item: BreadcrumbItem, labelProps?: React.HTMLAttributes<HTMLSpanElement>) => (
+        <>
+          {item.icon ? (
+            <span className={styles.breadcrumbIcon} aria-hidden="true">
+              {item.icon}
+            </span>
+          ) : null}
+          <span className={styles.breadcrumbText} {...labelProps}>
+            {item.label}
+          </span>
+        </>
+      ),
+      []
+    );
+
+    const renderItem = useCallback(
+      (visibleItem: VisibleItem, index: number, array: VisibleItem[]) => {
+        const { item } = visibleItem;
+        const isLast = index === array.length - 1;
+        const isCurrent = Boolean(item.current) || (isLast && !item.href);
+        const isLink = Boolean(item.href) && !isCurrent;
+        const listItemClasses = cn(
+          styles.breadcrumbItem,
+          item.showWhenCollapsed && styles['breadcrumbItem--show']
+        );
+
+        const listItemProps = enableStructuredData
+          ? {
+              itemProp: 'itemListElement' as const,
+              itemScope: true,
+              itemType: 'https://schema.org/ListItem',
+            }
+          : undefined;
+
+        const itemContent = isLink ? (
+          <LinkComponent
+            href={item.href}
+            className={styles.breadcrumbLink}
+            onClick={handleItemClick(item)}
+            {...item.linkProps}
+            {...(enableStructuredData ? { itemProp: 'item' } : undefined)}
+          >
+            {enableStructuredData
+              ? renderItemContent(item, { itemProp: 'name' })
+              : renderItemContent(item)}
+          </LinkComponent>
+        ) : (
+          <span
+            className={isCurrent ? styles.breadcrumbCurrent : styles.breadcrumbStatic}
+            {...(isCurrent ? { 'aria-current': 'page' as const } : undefined)}
+            {...(enableStructuredData ? { itemProp: 'name' } : undefined)}
+          >
+            {renderItemContent(item)}
+          </span>
+        );
+
+        return (
+          <li
+            key={item.id ?? `breadcrumb-item-${visibleItem.originalIndex}`}
+            className={listItemClasses}
+            {...listItemProps}
+          >
+            {itemContent}
+            {enableStructuredData ? (
+              <meta itemProp="position" content={String(index + 1)} />
+            ) : null}
+            {!isLast && renderSeparator(visibleItem.originalIndex)}
+          </li>
+        );
+      },
+      [enableStructuredData, handleItemClick, renderItemContent, renderSeparator]
+    );
+
+    const renderEllipsis = useCallback(() => {
+      if (!hasHiddenItems || !showEllipsis) {
         return null;
       }
 
-      if (isValidElement(separator)) {
-        return cloneElement(separator as ReactElement, {
-          key,
-          className: cn(styles['dyn-breadcrumb-separator'], separator.props.className),
-        });
-      }
-
       return (
-        <span key={key} className={styles['dyn-breadcrumb-separator']}>
-          {separator}
-        </span>
-      );
-    },
-    [separator]
-  );
-
-  const breadcrumbClasses = cn(styles['dyn-breadcrumb'], className);
-
-  if (displayItems.length === 0) {
-    return null;
-  }
-
-  return (
-    <nav
-      id={navId}
-      className={breadcrumbClasses}
-      aria-label={ariaLabel}
-      data-testid={dataTestId}
-      {...rest}
-    >
-      <ol className={styles['dyn-breadcrumb-list']}>
-        {displayItems.map((item, index) => {
-          const isLastItem = index === displayItems.length - 1;
-          const isEllipsis = item.label === ELLIPSIS_LABEL;
-          const link = typeof item.link === 'string' ? item.link : undefined;
-          const shouldRenderLink = !isLastItem && !isEllipsis && link !== undefined;
-          const isInteractive = isEllipsis || Boolean(item.action);
-
-          const itemContent = shouldRenderLink ? (
-            <a
-              href={link}
-              className={styles['dyn-breadcrumb-link']}
-              onClick={(event: MouseEvent<HTMLAnchorElement>) => handleItemActivate(item, index, event)}
-            >
-              {item.label}
-            </a>
-          ) : (
-            <span
-              className={cn(
-                styles['dyn-breadcrumb-text'],
-                isLastItem && styles['dyn-breadcrumb-current'],
-                isEllipsis && styles['dyn-breadcrumb-ellipsis'],
-                isInteractive && styles['dyn-breadcrumb-clickable']
-              )}
-              onClick={
-                isInteractive
-                  ? (event: MouseEvent<HTMLSpanElement>) => handleItemActivate(item, index, event)
-                  : undefined
-              }
-              role={isInteractive ? 'button' : undefined}
-              tabIndex={isInteractive ? 0 : undefined}
-              onKeyDown={isInteractive ? handleKeyDown(item, index) : undefined}
-              aria-label={isEllipsis ? BREADCRUMB_LITERALS.showMore : undefined}
-              aria-current={isLastItem ? 'page' : undefined}
-            >
-              {item.label}
-            </span>
-          );
-
-          return (
-            <li key={`${item.label}-${index}`} className={styles['dyn-breadcrumb-item']}>
-              {itemContent}
-              {!isLastItem && renderSeparator(index)}
-            </li>
-          );
-        })}
-      </ol>
-
-      {shouldRenderFavorite && (
-        <div className={styles['dyn-breadcrumb-favorite']}>
-          <button
-            type="button"
-            className={cn(
-              styles['dyn-breadcrumb-favorite-button'],
-              isFavorited && styles['dyn-breadcrumb-favorite-active']
-            )}
-            onClick={handleFavoriteToggle}
-            aria-label={
-              isFavorited
-                ? BREADCRUMB_LITERALS.removeFromFavorites
-                : BREADCRUMB_LITERALS.addToFavorites
-            }
-            title={
-              isFavorited
-                ? BREADCRUMB_LITERALS.removeFromFavorites
-                : BREADCRUMB_LITERALS.addToFavorites
-            }
+        <>
+          <li
+            key="ellipsis"
+            className={cn(styles.breadcrumbItem, styles['breadcrumbItem--ellipsis'])}
           >
-            <DynIcon icon={isFavorited ? 'dyn-icon-star-filled' : 'dyn-icon-star'} />
-          </button>
-        </div>
-      )}
-      {children}
-    </nav>
-  );
-});
+            <button
+              type="button"
+              className={styles['breadcrumbItem--ellipsis']}
+              onClick={handleEllipsisClick}
+              aria-label={`Show ${hiddenItemCount} hidden breadcrumb items`}
+              aria-expanded={expanded}
+            >
+              …
+            </button>
+          </li>
+          {renderSeparator(-1)}
+        </>
+      );
+    }, [expanded, handleEllipsisClick, hasHiddenItems, hiddenItemCount, renderSeparator, showEllipsis]);
+
+    if (visibleItems.length === 0) {
+      return null;
+    }
+
+    const breadcrumbClasses = cn(
+      styles.breadcrumb,
+      styles[`breadcrumb--${size}`],
+      {
+        [styles['breadcrumb--collapsed']]: shouldCollapse && showEllipsis,
+      },
+      className
+    );
+
+    const navStructuredDataProps = enableStructuredData
+      ? {
+          itemScope: true,
+          itemType: 'https://schema.org/BreadcrumbList',
+        }
+      : undefined;
+
+    return (
+      <nav
+        ref={ref}
+        id={navId}
+        className={breadcrumbClasses}
+        aria-label={ariaLabel ?? navigationLabel}
+        data-testid={dataTestId}
+        {...navStructuredDataProps}
+        {...rest}
+      >
+        <ol className={styles.breadcrumbList}>
+          {renderItem(visibleItems[0], 0, visibleItems)}
+          {visibleItems.length > 1 ? (
+            <>
+              {renderEllipsis()}
+              {visibleItems.slice(1).map((visibleItem, index) =>
+                renderItem(visibleItem, index + 1, visibleItems)
+              )}
+            </>
+          ) : null}
+        </ol>
+        {children}
+      </nav>
+    );
+  }
+);
 
 DynBreadcrumb.displayName = 'DynBreadcrumb';
 
 export default DynBreadcrumb;
-export { DynBreadcrumb };
