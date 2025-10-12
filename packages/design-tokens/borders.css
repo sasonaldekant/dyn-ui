@@ -1,0 +1,14 @@
+/* Border radius and width tokens */
+:root {
+  --dyn-border-radius-xs: 0.125rem;
+  --dyn-border-radius-sm: 0.25rem;
+  --dyn-border-radius-md: 0.5rem;
+  --dyn-border-radius-lg: 0.75rem;
+  --dyn-border-radius-xl: 1rem;
+  --dyn-border-radius-pill: 999px;
+  --dyn-border-radius-full: 9999px;
+
+  --dyn-border-width-hairline: 1px;
+  --dyn-border-width-thin: 2px;
+  --dyn-border-width-thick: 3px;
+}

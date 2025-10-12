@@ -8,7 +8,9 @@
 export type {
   BaseComponentProps,
   VariantProps,
-  SizeProps
+  SizeProps,
+  ComponentSize,
+  AccessibilityProps
 } from './theme';
 
 // Theme types

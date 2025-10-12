@@ -3,7 +3,7 @@
  * Includes BaseComponentProps for component standardization
  */
 
-import { ReactNode } from 'react';
+import type { AriaRole, ReactNode } from 'react';
 
 export type ThemeName = 'light' | 'dark' | 'high-contrast';
 
@@ -83,6 +83,15 @@ export interface BaseComponentProps {
 
   /** Child elements to render */
   children?: ReactNode;
+}
+
+export type ComponentSize = 'small' | 'medium' | 'large';
+
+export interface AccessibilityProps {
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+  'aria-describedby'?: string;
+  role?: AriaRole;
 }
 
 /**
