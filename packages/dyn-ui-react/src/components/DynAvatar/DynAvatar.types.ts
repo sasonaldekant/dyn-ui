@@ -46,7 +46,9 @@ export interface DynAvatarProps
   imageLoading?: 'eager' | 'lazy';
 
   /** Custom image props */
-  imageProps?: Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt' | 'loading' | 'children'>;
+  imageProps?: Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt' | 'loading' | 'children'> & {
+    'data-testid'?: string;
+  };
 }
 
 export type DynAvatarRef = HTMLDivElement;

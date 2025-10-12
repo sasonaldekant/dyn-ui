@@ -59,6 +59,9 @@ export const WithImage: Story = {
 };
 
 export const Sizes: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
       <DynAvatar size="small" alt="Small Avatar" />
@@ -76,6 +79,9 @@ export const Sizes: Story = {
 };
 
 export const Shapes: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
       <DynAvatar
@@ -98,6 +104,9 @@ export const Shapes: Story = {
 };
 
 export const StatusIndicators: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
       <DynAvatar alt="Online User" status="online" />
@@ -109,6 +118,9 @@ export const StatusIndicators: Story = {
 };
 
 export const InitialsVariants: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
       <DynAvatar alt="John Doe" />
@@ -120,6 +132,9 @@ export const InitialsVariants: Story = {
 };
 
 export const InteractiveAvatars: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
       <DynAvatar alt="Clickable User" onClick={() => alert('Avatar clicked!')} />
@@ -140,6 +155,9 @@ export const InteractiveAvatars: Story = {
 };
 
 export const LoadingStates: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
       <DynAvatar alt="Loading User" loading />
@@ -152,6 +170,9 @@ export const LoadingStates: Story = {
 };
 
 export const ErrorStates: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
       <DynAvatar alt="Error User" error />
@@ -168,6 +189,9 @@ export const CustomFallback: Story = {
 };
 
 export const DarkTheme: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
   parameters: {
     backgrounds: { default: 'dark' },
   },
@@ -187,6 +211,9 @@ export const DarkTheme: Story = {
 };
 
 export const Accessibility: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column', alignItems: 'flex-start' }}>
       <div>

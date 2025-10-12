@@ -129,39 +129,39 @@ describe('DynAvatar', () => {
   describe('Sizes and Variants', () => {
     it('applies size classes correctly', () => {
       const { rerender } = render(<DynAvatar alt="Test" size="small" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--small']);
+      expect(screen.getByRole('img')).toHaveClass(styles['avatar--small']!);
 
       rerender(<DynAvatar alt="Test" size="large" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--large']);
+      expect(screen.getByRole('img')).toHaveClass(styles['avatar--large']!);
     });
 
     it('applies shape classes correctly', () => {
       const { rerender } = render(<DynAvatar alt="Test" shape="square" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--square']);
+      expect(screen.getByRole('img')).toHaveClass(styles['avatar--square']!);
 
       rerender(<DynAvatar alt="Test" shape="rounded" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--rounded']);
+      expect(screen.getByRole('img')).toHaveClass(styles['avatar--rounded']!);
     });
 
     it('applies status classes correctly', () => {
       const { rerender } = render(<DynAvatar alt="Test" status="online" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--online']);
+      expect(screen.getByRole('img')).toHaveClass(styles['avatar--online']!);
 
       rerender(<DynAvatar alt="Test" status="busy" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--busy']);
+      expect(screen.getByRole('img')).toHaveClass(styles['avatar--busy']!);
     });
   });
 
   describe('Loading and Error States', () => {
     it('shows loading state', () => {
       render(<DynAvatar alt="Loading" loading />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--loading']);
+      expect(screen.getByRole('img')).toHaveClass(styles['avatar--loading']!);
       expect(screen.getByText('Loading avatar')).toBeInTheDocument();
     });
 
     it('shows error state', () => {
       render(<DynAvatar alt="Error" error />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--error']);
+      expect(screen.getByRole('img')).toHaveClass(styles['avatar--error']!);
     });
   });
 
