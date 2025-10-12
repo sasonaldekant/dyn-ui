@@ -1,5 +1,7 @@
 import type {
-  HTMLAttributes,
+  ComponentPropsWithoutRef,
+  ElementRef,
+  ElementType,
   KeyboardEventHandler,
   MouseEventHandler,
   ReactNode,
@@ -44,12 +46,10 @@ export interface ResponsiveVisibilityProps {
   desktopOnly?: boolean;
 }
 
-export interface DynBoxProps
-  extends Omit<HTMLAttributes<HTMLElement>, 'color' | 'onClick' | 'onKeyDown'>,
-    ResponsiveVisibilityProps {
-  /** Element to render as */
-  as?: keyof JSX.IntrinsicElements;
+type PolymorphicComponentProps<E extends ElementType, P> = P &
+  Omit<ComponentPropsWithoutRef<E>, keyof P>;
 
+export interface DynBoxOwnProps extends ResponsiveVisibilityProps {
   /** Display property */
   display?: BoxDisplay;
 
@@ -176,12 +176,6 @@ export interface DynBoxProps
   /** Custom CSS variables */
   cssVars?: Record<string, string | number>;
 
-  /** Click handler */
-  onClick?: MouseEventHandler<HTMLElement>;
-
-  /** Key down handler */
-  onKeyDown?: KeyboardEventHandler<HTMLElement>;
-
   /** Test id */
   'data-testid'?: string;
 
@@ -189,7 +183,17 @@ export interface DynBoxProps
   children?: ReactNode;
 }
 
-export type DynBoxRef = HTMLDivElement;
+export type DynBoxProps<E extends ElementType = 'div'> = PolymorphicComponentProps<
+  E,
+  DynBoxOwnProps
+> & {
+  /** Element to render as */
+  as?: E;
+  onClick?: MouseEventHandler<ElementRef<E>>;
+  onKeyDown?: KeyboardEventHandler<ElementRef<E>>;
+};
+
+export type DynBoxRef<E extends ElementType = 'div'> = ElementRef<E>;
 
 export interface DynBoxDefaultProps {
   'data-testid': string;

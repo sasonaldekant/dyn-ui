@@ -1,11 +1,12 @@
 import { forwardRef, useMemo } from 'react';
 import type {
   CSSProperties,
+  ElementType,
   ForwardedRef,
   KeyboardEvent,
-  KeyboardEventHandler,
   MouseEvent,
-  MouseEventHandler,
+  ReactElement,
+  Ref,
 } from 'react';
 import { cn } from '../../utils/classNames';
 import {
@@ -42,9 +43,9 @@ const toDimensionValue = (value: string | number | undefined): string | number |
   return value;
 };
 
-const DynBoxComponent = (
+const DynBoxComponent = <E extends ElementType = 'div'>(
   {
-    as: Component = 'div',
+    as,
     className,
     children,
     display,
@@ -130,9 +131,11 @@ const DynBoxComponent = (
     'aria-describedby': ariaDescribedBy,
     'data-testid': dataTestId = DYN_BOX_DEFAULT_PROPS['data-testid'],
     ...rest
-  }: DynBoxProps,
-  ref: ForwardedRef<DynBoxRef>
+  }: DynBoxProps<E>,
+  ref: ForwardedRef<DynBoxRef<E>>
 ) => {
+  const Component = (as ?? 'div') as ElementType;
+
   const cssVariables = useMemo<Record<string, string | number>>(() => {
     const vars: Record<string, string | number> = {
       ...(cssVars ?? {}),
@@ -334,13 +337,26 @@ const DynBoxComponent = (
     className
   );
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+  type ClickHandler = DynBoxProps<E>['onClick'];
+  type KeyHandler = DynBoxProps<E>['onKeyDown'];
+  type ClickEvent = ClickHandler extends (event: infer Event, ...args: any[]) => any
+    ? Event
+    : MouseEvent<Element>;
+  type KeyEvent = KeyHandler extends (event: infer Event, ...args: any[]) => any
+    ? Event
+    : KeyboardEvent<Element>;
+
+  const handleKeyDown = (event: KeyEvent) => {
     if (interactive && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault();
-      onClick?.(event as unknown as MouseEvent<HTMLElement>);
+      if (onClick) {
+        onClick(event as unknown as ClickEvent);
+      }
     }
 
-    onKeyDown?.(event);
+    if (onKeyDown) {
+      onKeyDown(event);
+    }
   };
 
   const combinedStyle = useMemo<CSSProperties>(() => ({
@@ -350,8 +366,7 @@ const DynBoxComponent = (
 
   const componentRole = interactive ? role ?? 'button' : role;
   const componentTabIndex = interactive && tabIndex === undefined ? 0 : tabIndex;
-  const componentOnClick = onClick as unknown as MouseEventHandler<Element> | undefined;
-  const componentOnKeyDown = handleKeyDown as unknown as KeyboardEventHandler<Element>;
+  const componentOnKeyDown = interactive ? (handleKeyDown as KeyHandler) : onKeyDown;
 
   return (
     <Component
@@ -363,7 +378,7 @@ const DynBoxComponent = (
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
       aria-describedby={ariaDescribedBy}
-      onClick={componentOnClick}
+      onClick={onClick}
       onKeyDown={componentOnKeyDown}
       data-testid={dataTestId}
       {...rest}
@@ -373,7 +388,11 @@ const DynBoxComponent = (
   );
 };
 
-const DynBox = forwardRef<DynBoxRef, DynBoxProps>(DynBoxComponent);
+type DynBoxComponentWithRef = <E extends ElementType = 'div'>(
+  props: DynBoxProps<E> & { ref?: Ref<DynBoxRef<E>> }
+) => ReactElement | null;
+
+const DynBox = forwardRef(DynBoxComponent) as DynBoxComponentWithRef;
 
 DynBox.displayName = 'DynBox';
 
