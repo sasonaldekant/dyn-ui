@@ -34,8 +34,8 @@ describe('DynBadge', () => {
       expect(screen.getByText('0')).toBeInTheDocument();
     });
 
-    it('supports legacy value prop alias', () => {
-      render(<DynBadge value={7} />);
+    it('renders with count prop', () => {
+      render(<DynBadge count={7} />);
       expect(screen.getByText('7')).toBeInTheDocument();
       expect(screen.getByTestId('dyn-badge')).toBeInTheDocument();
     });
