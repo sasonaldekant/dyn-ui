@@ -9,6 +9,9 @@ import type {
 } from '../../types/layout.types';
 
 export type DynContainerBackground = 'none' | 'surface' | 'card';
+export type DynContainerLayout = 'fluid' | 'fixed';
+export type DynContainerMaxWidthToken = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+export type DynContainerSpaceValue = LayoutSpacing | number | string;
 
 export interface DynContainerOwnProps {
   /** Optional title displayed above the content */
@@ -33,8 +36,14 @@ export interface DynContainerOwnProps {
   background?: DynContainerBackground;
   /** Fixed height for the container */
   height?: number | string;
-  /** Maximum width constraint */
-  maxWidth?: number | string;
+  /** Maximum width constraint, accepts design tokens or raw CSS values */
+  maxWidth?: number | string | DynContainerMaxWidthToken;
+  /** Layout behavior for responsive alignment */
+  layout?: DynContainerLayout;
+  /** Optional padding override using spacing tokens or raw CSS values */
+  padding?: DynContainerSpaceValue;
+  /** Optional margin override using spacing tokens or raw CSS values */
+  margin?: DynContainerSpaceValue;
   /** Render prop children are supported in addition to nodes */
   children?: ReactNode;
   /** Removes border regardless of bordered value (legacy prop support) */
@@ -61,6 +70,7 @@ export interface DynContainerDefaultProps {
   background: DynContainerBackground;
   bordered: boolean;
   shadow: boolean;
+  layout: DynContainerLayout;
   'data-testid': string;
 }
 
@@ -71,5 +81,6 @@ export const DYN_CONTAINER_DEFAULT_PROPS: DynContainerDefaultProps = {
   background: 'surface',
   bordered: true,
   shadow: false,
+  layout: 'fluid',
   'data-testid': 'dyn-container',
 };
