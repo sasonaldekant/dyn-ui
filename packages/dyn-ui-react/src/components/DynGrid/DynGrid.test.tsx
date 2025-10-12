@@ -57,7 +57,7 @@ describe('DynGrid', () => {
 
   it('shows loading state', () => {
     render(<DynGrid columns={mockColumns} data={[]} loading={true} />);
-    
+
     expect(screen.getByText('Loading data…')).toBeInTheDocument();
     // expect(screen.getByRole('progressbar', { hidden: true })).toBeInTheDocument();
   });
@@ -94,7 +94,7 @@ describe('DynGrid', () => {
 
     expect(firstRowCheckbox).toBeDefined();
     fireEvent.click(firstRowCheckbox!); // First row checkbox
-    
+
     expect(onSelectionChange).toHaveBeenCalledWith(['1'], [mockData[0]]);
   });
 
@@ -110,8 +110,8 @@ describe('DynGrid', () => {
     const { container } = render(
       <DynGrid columns={mockColumns} data={mockData} size="large" />
     );
-    
-    expect(container.firstChild).toHaveClass(styles.sizeLarge);
+
+    expect(container.firstChild).toHaveClass(styles.sizeLarge!);
   });
 
   it('applies styling variants', () => {
@@ -124,7 +124,12 @@ describe('DynGrid', () => {
         hoverable={true}
       />
     );
-    
-    expect(container.firstChild).toHaveClass(styles.bordered, styles.striped, styles.hoverable);
+
+    expect(container.firstChild).toHaveClass(
+      styles.bordered!,
+      styles.striped!,
+      styles.hoverable!
+    );
+
   });
 });
