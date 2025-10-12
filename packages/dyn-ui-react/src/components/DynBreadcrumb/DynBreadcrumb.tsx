@@ -73,13 +73,20 @@ export const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>(
         return [];
       }
 
-      const firstEntry: VisibleItem = { item: items[0], originalIndex: 0 };
+      const firstItem = items[0];
+      const lastItem = items[items.length - 1];
+
+      if (!firstItem || !lastItem) {
+        return [];
+      }
+
+      const firstEntry: VisibleItem = { item: firstItem, originalIndex: 0 };
       const middleEntries = items
         .slice(1, -1)
         .map<VisibleItem>((item, index) => ({ item, originalIndex: index + 1 }))
-        .filter(({ item }) => item.showWhenCollapsed);
+        .filter(({ item }) => item && item.showWhenCollapsed);
       const lastEntry: VisibleItem = {
-        item: items[items.length - 1],
+        item: lastItem,
         originalIndex: items.length - 1,
       };
 
@@ -236,9 +243,7 @@ export const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>(
     const breadcrumbClasses = cn(
       styles.breadcrumb,
       styles[`breadcrumb--${size}`],
-      {
-        [styles['breadcrumb--collapsed']]: shouldCollapse && showEllipsis,
-      },
+      shouldCollapse && showEllipsis && styles['breadcrumb--collapsed'],
       className
     );
 
@@ -260,7 +265,7 @@ export const DynBreadcrumb = forwardRef<DynBreadcrumbRef, DynBreadcrumbProps>(
         {...rest}
       >
         <ol className={styles.breadcrumbList}>
-          {renderItem(visibleItems[0], 0, visibleItems)}
+          {visibleItems[0] && renderItem(visibleItems[0], 0, visibleItems)}
           {visibleItems.length > 1 ? (
             <>
               {renderEllipsis()}

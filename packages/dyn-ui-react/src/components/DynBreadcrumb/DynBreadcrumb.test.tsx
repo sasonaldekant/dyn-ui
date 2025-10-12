@@ -177,8 +177,9 @@ describe('DynBreadcrumb', () => {
     expect(nav).toHaveAttribute('itemtype', 'https://schema.org/BreadcrumbList');
 
     const listItem = screen.getAllByRole('listitem')[0];
+    expect(listItem).toBeDefined();
     expect(listItem).toHaveAttribute('itemtype', 'https://schema.org/ListItem');
-    expect(listItem.querySelector('meta[itemprop="position"]')).not.toBeNull();
+    expect(listItem?.querySelector('meta[itemprop="position"]')).not.toBeNull();
   });
 
   it('uses a custom link component', () => {

@@ -75,6 +75,9 @@ export const Default: Story = {
 };
 
 export const Separators: Story = {
+  args: {
+    items: basicItems,
+  },
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', minWidth: '320px' }}>
       <div>
@@ -106,6 +109,9 @@ export const Separators: Story = {
 };
 
 export const Sizes: Story = {
+  args: {
+    items: basicItems,
+  },
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', minWidth: '320px' }}>
       <div>
@@ -216,13 +222,16 @@ export const Accessibility: Story = {
 };
 
 export const Interactive: Story = {
-  render: () => {
+  args: {
+    items: longItems,
+    maxItems: 3,
+  },
+  render: (args) => {
     const [expanded, setExpanded] = React.useState(false);
 
     return (
       <DynBreadcrumb
-        items={longItems}
-        maxItems={3}
+        {...args}
         expanded={expanded}
         onEllipsisClick={() => setExpanded(true)}
         onItemClick={(item, event) => {
