@@ -26,3 +26,7 @@ export {
   isThemeColor,
   processIconString,
 } from './utils/dynFormatters';
+
+// Testing utilities
+export { axe, testA11y } from './testing';
+export type { AccessibilityTestOptions, AccessibilityTestResult } from './testing';

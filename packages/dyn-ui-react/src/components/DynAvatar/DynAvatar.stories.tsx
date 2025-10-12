@@ -1,36 +1,49 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { DynAvatar } from './DynAvatar';
-import { DynAvatarProps } from '../../types/avatar.types';
 
-const meta: Meta<typeof DynAvatar> = {
+const meta = {
   title: 'Components/DynAvatar',
   component: DynAvatar,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component: 'Avatar component with image fallback to initials. Supports different sizes and click handlers.',
+        component:
+          'A versatile avatar component with image support, fallback initials, status indicators, and full accessibility.',
       },
     },
   },
-  tags: ['autodocs'],
   argTypes: {
     size: {
       control: 'select',
-      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      options: ['small', 'medium', 'large'],
+      description: 'Avatar size',
+    },
+    shape: {
+      control: 'select',
+      options: ['circle', 'square', 'rounded'],
+      description: 'Avatar shape',
+    },
+    status: {
+      control: 'select',
+      options: ['online', 'offline', 'away', 'busy'],
+      description: 'Status indicator',
     },
     loading: {
-      control: 'select',
-      options: ['eager', 'lazy'],
+      control: 'boolean',
+      description: 'Loading state',
     },
-    onClick: {
-      action: 'clicked',
+    error: {
+      control: 'boolean',
+      description: 'Error state',
     },
   },
-};
+  tags: ['autodocs'],
+} satisfies Meta<typeof DynAvatar>;
 
 export default meta;
-type Story = StoryObj<DynAvatarProps>;
+
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
@@ -41,101 +54,184 @@ export const Default: Story = {
 export const WithImage: Story = {
   args: {
     src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-    alt: 'John Doe',
-  },
-};
-
-export const WithInitials: Story = {
-  args: {
-    initials: 'JD',
-    alt: 'John Doe',
-  },
-};
-
-export const Clickable: Story = {
-  args: {
-    src: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
-    alt: 'Jane Smith',
-    onClick: () => console.log('Avatar clicked'),
+    alt: 'Profile Picture',
   },
 };
 
 export const Sizes: Story = {
-  render: () => (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-      <DynAvatar size="xs" alt="Extra Small" />
-      <DynAvatar size="sm" alt="Small" />
-      <DynAvatar size="md" alt="Medium" />
-      <DynAvatar size="lg" alt="Large" />
-      <DynAvatar size="xl" alt="Extra Large" />
-    </div>
-  ),
-};
-
-export const WithImages: Story = {
-  render: () => (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-      <DynAvatar
-        size="md"
-        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-        alt="John Doe"
-      />
-      <DynAvatar
-        size="md"
-        src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
-        alt="Jane Smith"
-      />
-      <DynAvatar
-        size="md"
-        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
-        alt="Bob Johnson"
-      />
-    </div>
-  ),
-};
-
-export const ErrorFallback: Story = {
   args: {
-    src: 'https://invalid-url.jpg',
-    alt: 'Failed Image',
-    initials: 'FI',
+    alt: 'Avatar example',
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <DynAvatar size="small" alt="Small Avatar" />
+      <DynAvatar size="medium" alt="Medium Avatar" />
+      <DynAvatar size="large" alt="Large Avatar" />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Different size variants with proper scaling.',
+      },
+    },
   },
 };
 
-export const AllVariants: Story = {
+export const Shapes: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      <div>
-        <h3>Images</h3>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <DynAvatar
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-            alt="John Doe"
-          />
-          <DynAvatar
-            src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
-            alt="Jane Smith"
-          />
-        </div>
-      </div>
-      <div>
-        <h3>Initials</h3>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <DynAvatar initials="JD" alt="John Doe" />
-          <DynAvatar initials="JS" alt="Jane Smith" />
-          <DynAvatar alt="Bob Johnson" />
-        </div>
-      </div>
-      <div>
-        <h3>Clickable</h3>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <DynAvatar
-            initials="CL"
-            alt="Clickable Avatar"
-            onClick={() => alert('Avatar clicked!')}
-          />
-        </div>
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <DynAvatar
+        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+        alt="Circle Avatar"
+        shape="circle"
+      />
+      <DynAvatar
+        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+        alt="Square Avatar"
+        shape="square"
+      />
+      <DynAvatar
+        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+        alt="Rounded Avatar"
+        shape="rounded"
+      />
+    </div>
+  ),
+};
+
+export const StatusIndicators: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <DynAvatar alt="Online User" status="online" />
+      <DynAvatar alt="Away User" status="away" />
+      <DynAvatar alt="Busy User" status="busy" />
+      <DynAvatar alt="Offline User" status="offline" />
+    </div>
+  ),
+};
+
+export const InitialsVariants: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <DynAvatar alt="John Doe" />
+      <DynAvatar alt="Mary Jane Watson" />
+      <DynAvatar initials="AB" alt="Custom Initials" />
+      <DynAvatar alt="SingleName" />
+    </div>
+  ),
+};
+
+export const InteractiveAvatars: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <DynAvatar alt="Clickable User" onClick={() => alert('Avatar clicked!')} />
+      <DynAvatar
+        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+        alt="Profile Settings"
+        onClick={() => alert('Open profile!')}
+      />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Interactive avatars with click handlers and keyboard navigation.',
+      },
+    },
+  },
+};
+
+export const LoadingStates: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <DynAvatar alt="Loading User" loading />
+      <DynAvatar
+        src="https://slow-loading-image.example.com/avatar.jpg"
+        alt="Slow Loading"
+      />
+    </div>
+  ),
+};
+
+export const ErrorStates: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <DynAvatar alt="Error User" error />
+      <DynAvatar src="invalid-image-url.jpg" alt="Broken Image" />
+    </div>
+  ),
+};
+
+export const CustomFallback: Story = {
+  args: {
+    alt: 'Custom Fallback',
+    fallback: <span style={{ fontSize: '1.5em' }}>🦄</span>,
+  },
+};
+
+export const DarkTheme: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
+  parameters: {
+    backgrounds: { default: 'dark' },
+  },
+  render: () => (
+    <div data-theme="dark" style={{ padding: '2rem', background: '#1a1a1a' }}>
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <DynAvatar alt="Dark Theme User" />
+        <DynAvatar
+          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+          alt="Dark Image"
+        />
+        <DynAvatar alt="Dark Online" status="online" />
+        <DynAvatar alt="Dark Clickable" onClick={() => {}} />
       </div>
     </div>
   ),
+};
+
+export const Accessibility: Story = {
+  args: {
+    alt: 'Avatar example',
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column', alignItems: 'flex-start' }}>
+      <div>
+        <DynAvatar alt="User Profile" aria-describedby="profile-description" />
+        <p id="profile-description">Current user's profile picture</p>
+      </div>
+
+      <DynAvatar alt="Manager" aria-label="Team manager profile" onClick={() => {}} />
+
+      <DynAvatar alt="Loading Profile" loading aria-describedby="loading-description" />
+      <p id="loading-description">Profile picture is loading</p>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Examples demonstrating accessibility features and ARIA attributes.',
+      },
+    },
+  },
 };
