@@ -1,0 +1,188 @@
+.container {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.containerDisabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.containerReadonly {
+  pointer-events: none;
+}
+
+.wrapper {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--dyn-spacing-sm, 8px);
+  cursor: pointer;
+  font-family: var(--dyn-font-family, system-ui, -apple-system, sans-serif);
+  line-height: 1.5;
+}
+
+.wrapper:hover .box {
+  border-color: var(--dyn-color-primary, #0066cc);
+}
+
+.wrapperDisabled {
+  cursor: not-allowed;
+}
+
+.wrapperDisabled:hover .box {
+  border-color: var(--dyn-color-border, #d1d5db);
+}
+
+.wrapperReadonly {
+  cursor: default;
+  pointer-events: none;
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.input:focus + .box {
+  box-shadow: 0 0 0 3px var(--dyn-color-primary-alpha, rgba(0, 102, 204, 0.1));
+}
+
+.input:focus:not(:focus-visible) + .box {
+  box-shadow: none;
+}
+
+.box {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background-color: var(--dyn-color-surface, #fff);
+  border: 2px solid var(--dyn-color-border, #d1d5db);
+  border-radius: var(--dyn-border-radius-sm, 3px);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.box.boxChecked,
+.box.boxIndeterminate {
+  background-color: var(--dyn-color-primary, #0066cc);
+  border-color: var(--dyn-color-primary, #0066cc);
+}
+
+.box.boxError {
+  border-color: var(--dyn-color-error, #f44336);
+}
+
+.box.boxError.boxChecked,
+.box.boxError.boxIndeterminate {
+  background-color: var(--dyn-color-error, #f44336);
+  border-color: var(--dyn-color-error, #f44336);
+}
+
+.box.boxDisabled {
+  background-color: var(--dyn-color-surface-disabled, #f3f4f6);
+  border-color: var(--dyn-color-border-disabled, #e5e7eb);
+  cursor: not-allowed;
+}
+
+.box.boxDisabled.boxChecked,
+.box.boxDisabled.boxIndeterminate {
+  background-color: var(--dyn-color-text-disabled, #9ca3af);
+  border-color: var(--dyn-color-text-disabled, #9ca3af);
+}
+
+.box.boxReadonly {
+  cursor: default;
+}
+
+.boxSmall {
+  width: 14px;
+  height: 14px;
+  border-width: 1px;
+}
+
+.boxSmall .checkMark {
+  font-size: 10px;
+}
+
+.boxSmall .indeterminateMark {
+  font-size: 12px;
+}
+
+.boxLarge {
+  width: 22px;
+  height: 22px;
+}
+
+.boxLarge .checkMark {
+  font-size: 14px;
+}
+
+.boxLarge .indeterminateMark {
+  font-size: 16px;
+}
+
+.checkmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.checkMark {
+  color: var(--dyn-color-surface, #fff);
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.indeterminateMark {
+  color: var(--dyn-color-surface, #fff);
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.label {
+  color: var(--dyn-color-text-primary, #333);
+  font-size: var(--dyn-font-size-base, 16px);
+  user-select: none;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dyn-spacing-xs, 4px);
+}
+
+.containerDisabled .label {
+  color: var(--dyn-color-text-disabled, #9ca3af);
+}
+
+.boxSmall ~ .label {
+  font-size: var(--dyn-font-size-sm, 14px);
+}
+
+.boxLarge ~ .label {
+  font-size: var(--dyn-font-size-lg, 18px);
+}
+
+.requiredIndicator {
+  color: var(--dyn-color-error, #f44336);
+  font-weight: bold;
+}
+
+.optionalIndicator {
+  color: var(--dyn-color-text-secondary, #666);
+  font-size: var(--dyn-font-size-sm, 14px);
+}
