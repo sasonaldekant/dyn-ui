@@ -9,6 +9,36 @@ import { cn } from '../../utils/classNames';
 import type { DynBadgeProps, DynBadgeRef } from './DynBadge.types';
 import styles from './DynBadge.module.css';
 
+const sizeClassNameMap = {
+  small: styles['badge--small'],
+  medium: styles['badge--medium'],
+  large: styles['badge--large']
+} as const;
+
+const variantClassNameMap = {
+  solid: styles['badge--solid'],
+  soft: styles['badge--soft'],
+  outline: styles['badge--outline'],
+  dot: styles['badge--dot']
+} as const;
+
+const colorClassNameMap = {
+  primary: styles['badge--primary'],
+  secondary: styles['badge--secondary'],
+  success: styles['badge--success'],
+  warning: styles['badge--warning'],
+  danger: styles['badge--danger'],
+  info: styles['badge--info'],
+  neutral: styles['badge--neutral']
+} as const;
+
+const positionClassNameMap = {
+  topRight: styles['badge--topRight'],
+  topLeft: styles['badge--topLeft'],
+  bottomRight: styles['badge--bottomRight'],
+  bottomLeft: styles['badge--bottomLeft']
+} as const;
+
 const DEFAULT_MAX_COUNT = 99;
 
 const DynBadgeComponent = (
@@ -80,18 +110,15 @@ const DynBadgeComponent = (
 
   const badgeClasses = cn(
     styles.badge,
-    styles[`badge--${size}`],
-    styles[`badge--${variant}`],
-    styles[`badge--${color}`],
-    {
-      [styles['badge--positioned']]: Boolean(position),
-      [styles[`badge--${position}`]]: Boolean(position),
-      [styles['badge--clickable']]: isInteractive,
-      [styles['badge--dot']]: variant === 'dot',
-      [styles['badge--count']]: hasCount,
-      [styles['badge--animated']]: animated,
-      [styles['badge--pulse']]: pulse
-    },
+    sizeClassNameMap[size],
+    variantClassNameMap[variant],
+    colorClassNameMap[color],
+    position && styles['badge--positioned'],
+    position ? positionClassNameMap[position] : undefined,
+    isInteractive && styles['badge--clickable'],
+    hasCount && styles['badge--count'],
+    animated && styles['badge--animated'],
+    pulse && styles['badge--pulse'],
     className
   );
 
