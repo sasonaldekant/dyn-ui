@@ -110,7 +110,6 @@ describe('DynGrid', () => {
     const { container } = render(
       <DynGrid columns={mockColumns} data={mockData} size="large" />
     );
-
     expect(container.firstChild).toHaveClass(styles.sizeLarge!);
   });
 
@@ -124,12 +123,10 @@ describe('DynGrid', () => {
         hoverable={true}
       />
     );
-
     expect(container.firstChild).toHaveClass(
       styles.bordered!,
       styles.striped!,
       styles.hoverable!
     );
-
   });
 });
