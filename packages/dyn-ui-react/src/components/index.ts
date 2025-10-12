@@ -69,16 +69,16 @@ export type { DynIconProps, DynIconSizeToken, DynIconTone } from '../types/icon.
 export { DYN_ICON_DEFAULT_PROPS } from '../types/icon.types';
 
 // Display Component Types - SCOPE 5
-export type { 
-  DynBadgeProps, 
-  BadgeStatus, 
-  BadgeSize, 
-  BadgeIcon 
+export type {
+  DynBadgeProps,
+  BadgeStatus,
+  BadgeSize,
+  BadgeIcon
 } from '../types/badge.types';
-export type { 
-  DynAvatarProps, 
-  AvatarSize, 
-  AvatarLoading 
+export type {
+  DynAvatarProps,
+  AvatarSize,
+  AvatarLoading
 } from '../types/avatar.types';
 export type { DynLabelProps } from '../types/label.types';
 
@@ -103,7 +103,6 @@ export { DYN_CHECKBOX_DEFAULT_PROPS } from './DynCheckbox/DynCheckbox.types';
 // Layout Component Types - SCOPE 7
 export type {
   DynContainerProps,
-  DynDividerProps,
   DynPageProps,
   DynPageBreadcrumb,
   DynPageAction,

@@ -62,9 +62,30 @@ export interface DynDividerOwnProps {
   color?: DynDividerColor;
   /** External spacing around the divider */
   spacing?: LayoutSpacing;
-  className?: string;
-  id?: string;
-  'data-testid'?: string;
+  /** Optional custom content rendered instead of the label */
+  children?: ReactNode;
+}
+
+export type DynDividerProps = BaseComponentProps &
+  DynDividerOwnProps &
+  Omit<
+    HTMLAttributes<HTMLDivElement>,
+    keyof BaseComponentProps | keyof DynDividerOwnProps | 'color'
+  >;
+
+// DynGrid Props
+export interface DynGridColumn {
+  key: string;
+  title: string;
+  width?: string | number;
+  minWidth?: string | number;
+  sortable?: boolean;
+  filterable?: boolean;
+  resizable?: boolean;
+  render?: (value: any, record: any, index: number) => ReactNode;
+  align?: 'left' | 'center' | 'right';
+  fixed?: 'left' | 'right';
+  hidden?: boolean;
 }
 
 // DynPage Props

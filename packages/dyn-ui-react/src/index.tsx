@@ -45,7 +45,6 @@ export {
 } from './components';
 export type {
   DynContainerProps,
-  DynDividerProps,
   DynPageProps,
   DynPageBreadcrumb,
   DynPageAction,
@@ -76,10 +75,10 @@ export { useThemeVars } from './hooks/useTheme';
 export { useIconDictionary } from './hooks/useIconDictionary';
 
 // Types
-export type { 
-  ThemeName, 
-  ThemeConfig, 
-  ColorVariant, 
+export type {
+  ThemeName,
+  ThemeConfig,
+  ColorVariant,
   Size,
   IconDictionary
 } from './types';

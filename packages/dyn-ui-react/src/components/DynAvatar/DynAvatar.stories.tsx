@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 import { DynAvatar } from './DynAvatar';
 import { DynAvatarProps } from '../../types/avatar.types';
 

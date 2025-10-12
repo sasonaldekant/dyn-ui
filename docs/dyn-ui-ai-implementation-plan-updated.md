@@ -100,7 +100,7 @@ Generiši sve fajlove sa kompletnim sadržajem i setup instrukcijama u README.md
 ### 🚀 Deliverables
 
 - Style Dictionary konfiguracija
-- SCSS varijable i custom properties
+- CSS varijable i custom properties
 - Light/Dark/High-contrast teme
 - Color system sa WCAG compliance
 - Typography scale (8 veličina)

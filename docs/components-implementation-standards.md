@@ -9,7 +9,7 @@
 DynComponentName/
 ├── DynComponentName.tsx          # Main implementation
 ├── DynComponentName.types.ts     # TypeScript interfaces
-├── DynComponentName.module.scss  # Styles (preferred over CSS)
+├── DynComponentName.module.css   # Styles CSS
 ├── DynComponentName.stories.tsx  # Storybook stories
 ├── DynComponentName.test.tsx     # Vitest tests
 └── index.ts                      # Standardized exports

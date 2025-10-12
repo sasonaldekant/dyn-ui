@@ -47,7 +47,6 @@ export type {
   DynContainerProps,
   DynContainerOwnProps,
   DynContainerBackground,
-  DynDividerProps,
   DynPageProps,
   DynPageBreadcrumb,
   DynPageAction,
