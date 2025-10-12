@@ -62,7 +62,8 @@
     "turbo": "^1.13.4",
     "typescript": "^5.9.2",
     "vite": "^4.5.14",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vitest-axe": "^0.1.0"
   },
   "dependencies": {
     "glob": "^11.0.3",
