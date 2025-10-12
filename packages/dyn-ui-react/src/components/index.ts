@@ -182,7 +182,8 @@ export type {
 export type {
   DynBreadcrumbProps,
   BreadcrumbItem,
-  DynBreadcrumbRef
+  DynBreadcrumbRef,
+  BreadcrumbSeparator,
 } from './DynBreadcrumb/DynBreadcrumb.types';
 export type {
   DynTabsProps,
@@ -218,7 +219,6 @@ export { useDynDateParser, DATE_FORMATS, getDateFormat } from '../hooks/useDynDa
 // ===== CONSTANTS EXPORTS =====
 export { DYN_COLOR_PALETTE } from '../types/badge.types';
 export { DEFAULT_MENU_LITERALS } from './DynMenu/DynMenu.types';
-export { DEFAULT_SEPARATOR, BREADCRUMB_LITERALS } from './DynBreadcrumb/DynBreadcrumb.types';
 export { TOOLBAR_DEFAULTS, TOOLBAR_ITEM_TYPES } from './DynToolbar/DynToolbar.types';
 
 // ===== UTILITY EXPORTS =====

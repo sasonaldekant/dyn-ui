@@ -1,347 +1,228 @@
-/**
- * DynBreadcrumb Unit Tests
- * Comprehensive test coverage for breadcrumb navigation component
- */
-
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
 
 import { DynBreadcrumb } from './DynBreadcrumb';
-import { BreadcrumbItem } from './DynBreadcrumb.types';
+import type { BreadcrumbItem } from './DynBreadcrumb.types';
+import { testAccessibility } from '../../test-utils';
 
-// Mock child components
-vi.mock('../DynIcon', () => ({
-  DynIcon: ({ icon, className }: { icon: string; className?: string }) => {
-    const mergedClassName = [icon, className].filter(Boolean).join(' ');
-
-    return <i data-testid={`icon-${icon}`} className={mergedClassName || undefined} />;
-  },
-}));
-
-// Mock fetch for favorite service
-const fetchMock = vi.fn<typeof fetch>();
-global.fetch = fetchMock as unknown as typeof fetch;
-
-// Sample test data
-const basicItems: BreadcrumbItem[] = [
-  { label: 'Home', link: '/' },
-  { label: 'Products', link: '/products' },
-  { label: 'Laptops' }
+const baseItems: BreadcrumbItem[] = [
+  { id: '1', label: 'Home', href: '/' },
+  { id: '2', label: 'Products', href: '/products' },
+  { id: '3', label: 'Smartphones', current: true },
 ];
 
 const longItems: BreadcrumbItem[] = [
-  { label: 'Home', link: '/' },
-  { label: 'Category 1', link: '/cat1' },
-  { label: 'Category 2', link: '/cat2' },
-  { label: 'Category 3', link: '/cat3' },
-  { label: 'Category 4', link: '/cat4' },
-  { label: 'Category 5', link: '/cat5' },
-  { label: 'Current' }
+  { id: '1', label: 'Home', href: '/' },
+  { id: '2', label: 'Electronics', href: '/electronics' },
+  { id: '3', label: 'Mobile Phones', href: '/electronics/mobile' },
+  { id: '4', label: 'Android', href: '/electronics/mobile/android' },
+  { id: '5', label: 'Flagship', href: '/electronics/mobile/android/flagship' },
+  { id: '6', label: 'Current Device', current: true },
 ];
 
-const defaultProps = {
-  items: basicItems
-};
-
-const createActionItems = () => {
-  const dashboardAction = vi.fn();
-  const usersAction = vi.fn();
-
-  return {
-    items: [
-      { label: 'Dashboard', action: dashboardAction },
-      { label: 'Users', action: usersAction },
-      { label: 'Profile' }
-    ] satisfies BreadcrumbItem[],
-    dashboardAction,
-  };
-};
-
 describe('DynBreadcrumb', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    fetchMock.mockClear();
-  });
+  it('renders breadcrumb navigation', () => {
+    render(<DynBreadcrumb items={baseItems} />);
 
-  it('renders breadcrumb with items', () => {
-    render(<DynBreadcrumb {...defaultProps} />);
-    
     expect(screen.getByRole('navigation')).toBeInTheDocument();
-    expect(screen.getByText('Home')).toBeInTheDocument();
-    expect(screen.getByText('Products')).toBeInTheDocument();
-    expect(screen.getByText('Laptops')).toBeInTheDocument();
+    expect(screen.getByLabelText('Breadcrumb')).toBeInTheDocument();
   });
 
-  it('renders links for non-last items with links', () => {
-    render(<DynBreadcrumb {...defaultProps} />);
-    
-    const homeLink = screen.getByRole('link', { name: 'Home' });
-    const productsLink = screen.getByRole('link', { name: 'Products' });
+  it('renders all breadcrumb items', () => {
+    render(<DynBreadcrumb items={baseItems} />);
 
-    expect(homeLink).toHaveAttribute('href', '/');
-    expect(productsLink).toHaveAttribute('href', '/products');
-    expect(screen.queryByRole('link', { name: 'Laptops' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Products' })).toBeInTheDocument();
+    expect(screen.getByText('Smartphones')).toBeInTheDocument();
   });
 
-  it('renders separators between items', () => {
-    const { container } = render(<DynBreadcrumb {...defaultProps} />);
-    
-    const separators = container.querySelectorAll('.dyn-icon-arrow-right');
-    expect(separators).toHaveLength(2); // 3 items = 2 separators
+  it('marks current page with aria-current', () => {
+    render(<DynBreadcrumb items={baseItems} />);
+
+    const currentLabel = screen.getByText('Smartphones');
+    const currentContainer = currentLabel.closest('[aria-current="page"]');
+
+    expect(currentContainer).not.toBeNull();
   });
 
-  it('renders custom separator', () => {
-    const { container } = render(<DynBreadcrumb items={basicItems} separator="dyn-icon-chevron-right" />);
-    
-    const separators = container.querySelectorAll('.dyn-icon-chevron-right');
-    expect(separators).toHaveLength(2);
-  });
-
-  it('renders custom element separator', () => {
-    const customSeparator = <span data-testid="custom-sep">/</span>;
-    render(<DynBreadcrumb items={basicItems} separator={customSeparator} />);
-    
-    const separators = screen.getAllByTestId('custom-sep');
-    expect(separators).toHaveLength(2);
-  });
-
-  it('handles item clicks with actions', async () => {
+  it('handles item clicks', async () => {
+    const handleClick = vi.fn();
     const user = userEvent.setup();
-    const { items, dashboardAction } = createActionItems();
 
-    render(<DynBreadcrumb items={items} />);
-
-    const dashboardItem = screen.getByText('Dashboard');
-    await user.click(dashboardItem);
-
-    expect(dashboardAction).toHaveBeenCalled();
-  });
-
-  it('handles item clicks with onItemClick callback', async () => {
-    const onItemClick = vi.fn<(item: BreadcrumbItem, index: number) => void>();
-    const user = userEvent.setup();
-    render(
-      <DynBreadcrumb
-        items={basicItems}
-        onItemClick={(item, index) => onItemClick(item, index)}
-      />
-    );
+    render(<DynBreadcrumb items={baseItems} onItemClick={handleClick} />);
 
     const homeLink = screen.getByRole('link', { name: 'Home' });
     await user.click(homeLink);
 
-    expect(onItemClick).toHaveBeenCalledWith(basicItems[0], 0);
+    expect(handleClick).toHaveBeenCalledWith(baseItems[0], expect.any(Object));
   });
 
-  it('truncates long breadcrumbs with ellipsis', () => {
+  it('has no accessibility violations', async () => {
+    const { container } = render(<DynBreadcrumb items={baseItems} />);
+
+    await testAccessibility(container);
+  });
+
+  it('supports custom navigation label', () => {
+    render(<DynBreadcrumb items={baseItems} navigationLabel="Page navigation" />);
+
+    expect(screen.getByLabelText('Page navigation')).toBeInTheDocument();
+  });
+
+  it('renders default slash separators', () => {
+    render(<DynBreadcrumb items={baseItems} />);
+
+    const separators = document.querySelectorAll('[data-separator="slash"]');
+    expect(separators).toHaveLength(baseItems.length - 1);
+  });
+
+  it('renders separator variants', () => {
+    const { rerender } = render(<DynBreadcrumb items={baseItems} separator="chevron" />);
+
+    expect(document.querySelectorAll('[data-separator="chevron"]').length).toBe(
+      baseItems.length - 1
+    );
+
+    rerender(<DynBreadcrumb items={baseItems} separator="arrow" />);
+    expect(document.querySelectorAll('[data-separator="arrow"]').length).toBe(
+      baseItems.length - 1
+    );
+
+    rerender(<DynBreadcrumb items={baseItems} separator="dot" />);
+    expect(document.querySelectorAll('[data-separator="dot"]').length).toBe(
+      baseItems.length - 1
+    );
+  });
+
+  it('renders custom separator element', () => {
+    const customSeparator = <span data-testid="custom-separator">→</span>;
+
+    render(
+      <DynBreadcrumb items={baseItems} separator="custom" customSeparator={customSeparator} />
+    );
+
+    expect(screen.getAllByTestId('custom-separator')).toHaveLength(baseItems.length - 1);
+  });
+
+  it('collapses items when maxItems is set', () => {
     render(<DynBreadcrumb items={longItems} maxItems={4} />);
-    
-    expect(screen.getByText('Home')).toBeInTheDocument();
-    expect(screen.getByText('...')).toBeInTheDocument();
-    expect(screen.getByText('Category 5')).toBeInTheDocument();
-    expect(screen.getByText('Current')).toBeInTheDocument();
-    
-    // Items in the middle should not be visible
-    expect(screen.queryByText('Category 1')).not.toBeInTheDocument();
-    expect(screen.queryByText('Category 2')).not.toBeInTheDocument();
+
+    expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
+    expect(screen.getByText('Current Device')).toBeInTheDocument();
+    expect(screen.queryByText('Electronics')).not.toBeInTheDocument();
+    expect(screen.queryByText('Mobile Phones')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /hidden breadcrumb items/i })
+    ).toBeInTheDocument();
   });
 
-  it('expands ellipsis when clicked', async () => {
+  it('expands collapsed items when ellipsis is clicked', async () => {
     const user = userEvent.setup();
+
     render(<DynBreadcrumb items={longItems} maxItems={4} />);
-    
-    const ellipsis = screen.getByText('...');
+
+    const ellipsis = screen.getByRole('button', { name: /hidden breadcrumb items/i });
     await user.click(ellipsis);
-    
-    // All items should now be visible
-    expect(screen.getByText('Category 1')).toBeInTheDocument();
-    expect(screen.getByText('Category 2')).toBeInTheDocument();
-    expect(screen.getByText('Category 3')).toBeInTheDocument();
+
+    expect(screen.getByText('Electronics')).toBeInTheDocument();
+    expect(screen.getByText('Mobile Phones')).toBeInTheDocument();
   });
 
-  it('shows favorite button when favorite prop is provided', () => {
-    render(<DynBreadcrumb items={basicItems} favorite={false} />);
-    
-    const favoriteButton = screen.getByLabelText('Adicionar aos favoritos');
-    expect(favoriteButton).toBeInTheDocument();
+  it('respects showWhenCollapsed flag', () => {
+    const items: BreadcrumbItem[] = [
+      { id: '1', label: 'Home', href: '/' },
+      { id: '2', label: 'Pinned', href: '/pinned', showWhenCollapsed: true },
+      { id: '3', label: 'Hidden', href: '/hidden' },
+      { id: '4', label: 'Current', current: true },
+    ];
 
-    const icon = favoriteButton.querySelector('.dyn-icon-star');
-    expect(icon).not.toBeNull();
+    render(<DynBreadcrumb items={items} maxItems={3} />);
+
+    expect(screen.getByText('Pinned')).toBeInTheDocument();
+    expect(screen.queryByText('Hidden')).not.toBeInTheDocument();
   });
 
-  it('shows filled star when favorited', () => {
-    render(<DynBreadcrumb items={basicItems} favorite={true} />);
-    
-    const favoriteButton = screen.getByLabelText('Remover dos favoritos');
-    expect(favoriteButton).toBeInTheDocument();
-
-    const icon = favoriteButton.querySelector('.dyn-icon-star-filled');
-    expect(icon).not.toBeNull();
-  });
-
-  it('toggles favorite status when clicked', async () => {
-    const onFavorite = vi.fn<(favorited: boolean) => void>();
+  it('invokes onEllipsisClick callback', async () => {
+    const handleEllipsisClick = vi.fn();
     const user = userEvent.setup();
+
     render(
-      <DynBreadcrumb
-        items={basicItems}
-        favorite={false}
-        onFavorite={favorited => onFavorite(favorited)}
-      />
+      <DynBreadcrumb items={longItems} maxItems={4} onEllipsisClick={handleEllipsisClick} />
     );
-    
-    const favoriteButton = screen.getByLabelText('Adicionar aos favoritos');
-    await user.click(favoriteButton);
-    
-    expect(onFavorite).toHaveBeenCalledWith(true);
+
+    const ellipsis = screen.getByRole('button', { name: /hidden breadcrumb items/i });
+    await user.click(ellipsis);
+
+    expect(handleEllipsisClick).toHaveBeenCalled();
   });
 
-  it('calls favorite service API when provided', async () => {
-    fetchMock.mockResolvedValueOnce({ ok: true } as Response);
+  it('renders item icons', () => {
+    const itemsWithIcons: BreadcrumbItem[] = [
+      { id: '1', label: 'Home', href: '/', icon: <span data-testid="home-icon">🏠</span> },
+      { id: '2', label: 'Docs', href: '/docs', icon: <span data-testid="docs-icon">📚</span> },
+      { id: '3', label: 'Current', current: true },
+    ];
 
-    const onFavorite = vi.fn<(favorited: boolean) => void>();
-    const user = userEvent.setup();
-    render(
-      <DynBreadcrumb
-        items={basicItems}
-        favorite={false}
-        favoriteService="/api/favorites"
-        onFavorite={favorited => onFavorite(favorited)}
-      />
-    );
-    
-    const favoriteButton = screen.getByLabelText('Adicionar aos favoritos');
-    await user.click(favoriteButton);
-    
-    expect(fetchMock).toHaveBeenCalledWith('/api/favorites', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ favorited: true })
-    });
-    
-    await waitFor(() => {
-      expect(onFavorite).toHaveBeenCalledWith(true);
-    });
+    render(<DynBreadcrumb items={itemsWithIcons} />);
+
+    expect(screen.getByTestId('home-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('docs-icon')).toBeInTheDocument();
   });
 
-  it('handles favorite service API error gracefully', async () => {
-    fetchMock.mockRejectedValueOnce(new Error('Network error'));
-    
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const user = userEvent.setup();
-    render(
-      <DynBreadcrumb 
-        items={basicItems} 
-        favorite={false} 
-        favoriteService="/api/favorites"
-      />
-    );
-    
-    const favoriteButton = screen.getByLabelText('Adicionar aos favoritos');
-    await user.click(favoriteButton);
-    
-    expect(consoleSpy).toHaveBeenCalledWith('Failed to update favorite status:', expect.any(Error));
-    
-    consoleSpy.mockRestore();
+  it('includes structured data markup when enabled', () => {
+    render(<DynBreadcrumb items={baseItems} enableStructuredData />);
+
+    const nav = screen.getByRole('navigation');
+    expect(nav).toHaveAttribute('itemtype', 'https://schema.org/BreadcrumbList');
+
+    const listItem = screen.getAllByRole('listitem')[0];
+    expect(listItem).toHaveAttribute('itemtype', 'https://schema.org/ListItem');
+    expect(listItem.querySelector('meta[itemprop="position"]')).not.toBeNull();
   });
 
-  it('returns null when no items provided', () => {
+  it('uses a custom link component', () => {
+    const CustomLink = ({ href, children, ...props }: any) => (
+      <a data-testid="custom-link" data-href={href} {...props}>
+        {children}
+      </a>
+    );
+
+    render(<DynBreadcrumb items={baseItems} linkComponent={CustomLink} />);
+
+    expect(screen.getAllByTestId('custom-link')).toHaveLength(baseItems.length - 1);
+  });
+
+  it('supports controlled expansion', () => {
+    render(<DynBreadcrumb items={longItems} maxItems={3} expanded />);
+
+    expect(screen.queryByRole('button', { name: /hidden breadcrumb items/i })).not.toBeInTheDocument();
+    expect(screen.getByText('Electronics')).toBeInTheDocument();
+  });
+
+  it('hides ellipsis when showEllipsis is false', () => {
+    render(<DynBreadcrumb items={longItems} maxItems={3} showEllipsis={false} />);
+
+    expect(screen.queryByRole('button', { name: /hidden breadcrumb items/i })).not.toBeInTheDocument();
+    expect(screen.queryByText('Mobile Phones')).not.toBeInTheDocument();
+  });
+
+  it('returns null when no items are provided', () => {
     const { container } = render(<DynBreadcrumb items={[]} />);
+
     expect(container.firstChild).toBeNull();
   });
 
-  it('applies custom className', () => {
-    const customClass = 'custom-breadcrumb-class';
-    render(<DynBreadcrumb items={basicItems} className={customClass} />);
+  it('exposes list semantics', () => {
+    render(<DynBreadcrumb items={baseItems} />);
 
-    const breadcrumbElement = screen.getByRole('navigation');
-    expect(breadcrumbElement).toHaveClass(customClass);
+    expect(screen.getByRole('list')).toBeInTheDocument();
+    expect(screen.getAllByRole('listitem')).toHaveLength(baseItems.length);
   });
 
-  it('handles keyboard navigation for ellipsis', async () => {
-    render(<DynBreadcrumb items={longItems} maxItems={4} />);
-    
-    const ellipsis = screen.getByText('...');
-    expect(ellipsis).toHaveAttribute('tabIndex', '0');
-    expect(ellipsis).toHaveAttribute('role', 'button');
-    
-    // Test Enter key
-    fireEvent.keyDown(ellipsis, { key: 'Enter' });
-    expect(screen.getByText('Category 1')).toBeInTheDocument();
-  });
+  it('forwards data-testid to the nav element', () => {
+    render(<DynBreadcrumb items={baseItems} data-testid="breadcrumb" />);
 
-  it('handles keyboard navigation for action items', async () => {
-    const { items, dashboardAction } = createActionItems();
-
-    render(<DynBreadcrumb items={items} />);
-
-    const dashboardItem = screen.getByText('Dashboard');
-    fireEvent.keyDown(dashboardItem, { key: 'Enter' });
-
-    expect(dashboardAction).toHaveBeenCalled();
-  });
-
-  it('handles space key for keyboard navigation', async () => {
-    const { items, dashboardAction } = createActionItems();
-
-    render(<DynBreadcrumb items={items} />);
-
-    const dashboardItem = screen.getByText('Dashboard');
-    fireEvent.keyDown(dashboardItem, { key: ' ' });
-
-    expect(dashboardAction).toHaveBeenCalled();
-  });
-
-  it('shows correct ARIA labels', () => {
-    render(<DynBreadcrumb items={basicItems} favorite={false} />);
-    
-    const nav = screen.getByRole('navigation');
-    expect(nav).toHaveAttribute('aria-label', 'Breadcrumb');
-  });
-
-  it('does not show favorite button when not configured', () => {
-    render(<DynBreadcrumb items={basicItems} />);
-    
-    expect(screen.queryByLabelText('Adicionar aos favoritos')).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('Remover dos favoritos')).not.toBeInTheDocument();
-  });
-
-  it('shows all items when maxItems is greater than item count', () => {
-    render(<DynBreadcrumb items={basicItems} maxItems={10} />);
-    
-    expect(screen.getByText('Home')).toBeInTheDocument();
-    expect(screen.getByText('Products')).toBeInTheDocument();
-    expect(screen.getByText('Laptops')).toBeInTheDocument();
-    expect(screen.queryByText('...')).not.toBeInTheDocument();
-  });
-
-  it('prevents default on link click when action is provided', async () => {
-    const preventDefault = vi.fn<Event['preventDefault']>();
-    const user = userEvent.setup();
-    const actionSpy = vi.fn();
-
-    const itemsWithAction: BreadcrumbItem[] = [
-      { label: 'Home', link: '/', action: actionSpy },
-      { label: 'Current' }
-    ];
-    
-    render(<DynBreadcrumb items={itemsWithAction} />);
-    
-    const homeLink = screen.getByRole('link', { name: 'Home' });
-    
-    // Mock preventDefault
-    const originalPreventDefault = Event.prototype.preventDefault;
-    Event.prototype.preventDefault = preventDefault;
-    
-    await user.click(homeLink);
-    
-    expect(preventDefault).toHaveBeenCalled();
-    expect(actionSpy).toHaveBeenCalled();
-    
-    // Restore
-    Event.prototype.preventDefault = originalPreventDefault;
+    expect(screen.getByTestId('breadcrumb')).toBeInTheDocument();
   });
 });

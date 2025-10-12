@@ -1,272 +1,243 @@
-/**
- * DynBreadcrumb Storybook Stories
- * Interactive examples for breadcrumb navigation component
- */
-
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { DynBreadcrumb } from './DynBreadcrumb';
-import { BreadcrumbItem } from './DynBreadcrumb.types';
 
-const meta: Meta<typeof DynBreadcrumb> = {
-  title: 'Navigation/DynBreadcrumb',
+import { DynBreadcrumb } from './DynBreadcrumb';
+import type { BreadcrumbItem } from './DynBreadcrumb.types';
+
+const meta = {
+  title: 'Components/DynBreadcrumb',
   component: DynBreadcrumb,
   parameters: {
-    layout: 'padded',
+    layout: 'centered',
     docs: {
       description: {
-        component: `
-The DynBreadcrumb component provides navigation path indication with:
-
-- **Path Navigation** - Shows the current page location within the site hierarchy
-- **Clickable Links** - Each breadcrumb item can be a clickable link or action
-- **Overflow Handling** - Automatically handles long breadcrumb chains with ellipsis
-- **Favorites Support** - Optional favorite button for bookmarking current path
-- **Custom Separators** - Configurable separator icons or elements
-- **Responsive Design** - Adapts to mobile devices with scrollable breadcrumbs
-- **Accessibility** - Full keyboard navigation and screen reader support
-
-## Usage
-
-\`\`\`tsx
-import { DynBreadcrumb } from '@dyn-ui/react';
-
-const breadcrumbItems = [
-  { label: 'Home', link: '/' },
-  { label: 'Products', link: '/products' },
-  { label: 'Electronics', link: '/products/electronics' },
-  { label: 'Laptops' }
-];
-
-<DynBreadcrumb items={breadcrumbItems} />
-\`\`\`
-        `
-      }
-    }
+        component: 'Navigation breadcrumb component with accessibility support and responsive behavior.',
+      },
+    },
   },
   argTypes: {
-    items: {
-      description: 'Array of breadcrumb items representing the navigation path',
-      control: { type: 'object' }
-    },
-    favorite: {
-      description: 'Whether the current path is favorited',
-      control: { type: 'boolean' }
-    },
-    favoriteService: {
-      description: 'API endpoint for updating favorite status',
-      control: { type: 'text' }
-    },
-    maxItems: {
-      description: 'Maximum number of items to show before truncating',
-      control: { type: 'number' }
+    size: {
+      control: 'select',
+      options: ['small', 'medium', 'large'],
+      description: 'Size variant',
     },
     separator: {
-      description: 'Custom separator icon or element between items',
-      control: { type: 'text' }
+      control: 'select',
+      options: ['slash', 'chevron', 'arrow', 'dot', 'custom'],
+      description: 'Separator style',
     },
-    ariaLabel: {
-      description: 'ARIA label for the breadcrumb navigation region',
-      control: { type: 'text' }
+    maxItems: {
+      control: { type: 'number', min: 0, max: 10 },
+      description: 'Maximum items before collapsing',
     },
-    onFavorite: {
-      description: 'Callback fired when favorite status changes',
-      action: 'favoriteToggled'
+    showEllipsis: {
+      control: 'boolean',
+      description: 'Show ellipsis when collapsed',
     },
-    onItemClick: {
-      description: 'Callback fired when breadcrumb item is clicked',
-      action: 'itemClicked'
-    }
-  }
-};
+    enableStructuredData: {
+      control: 'boolean',
+      description: 'Enable Schema.org structured data',
+    },
+  },
+  tags: ['autodocs'],
+} satisfies Meta<typeof DynBreadcrumb>;
 
 export default meta;
-type Story = StoryObj<typeof DynBreadcrumb>;
+type Story = StoryObj<typeof meta>;
 
-// Sample breadcrumb data
 const basicItems: BreadcrumbItem[] = [
-  { label: 'Home', link: '/' },
-  { label: 'Products', link: '/products' },
-  { label: 'Laptops' }
+  { id: 'home', label: 'Home', href: '/' },
+  { id: 'products', label: 'Products', href: '/products' },
+  { id: 'current', label: 'Current Page', current: true },
 ];
 
 const longItems: BreadcrumbItem[] = [
-  { label: 'Home', link: '/' },
-  { label: 'Categories', link: '/categories' },
-  { label: 'Electronics', link: '/categories/electronics' },
-  { label: 'Computers', link: '/categories/electronics/computers' },
-  { label: 'Laptops', link: '/categories/electronics/computers/laptops' },
-  { label: 'Gaming Laptops', link: '/categories/electronics/computers/laptops/gaming' },
-  { label: 'High Performance', link: '/categories/electronics/computers/laptops/gaming/high-performance' },
-  { label: 'ASUS ROG Series' }
+  { id: 'home', label: 'Home', href: '/' },
+  { id: 'category', label: 'Category', href: '/category' },
+  { id: 'subcategory', label: 'Subcategory', href: '/category/subcategory' },
+  { id: 'type', label: 'Product Type', href: '/category/subcategory/type' },
+  { id: 'brand', label: 'Brand', href: '/category/subcategory/type/brand' },
+  { id: 'model', label: 'Model', href: '/category/subcategory/type/brand/model' },
+  { id: 'current', label: 'Current Product', current: true },
 ];
 
-const actionItems: BreadcrumbItem[] = [
-  { label: 'Dashboard', action: () => console.log('Navigate to Dashboard') },
-  { label: 'User Management', action: () => console.log('Navigate to User Management') },
-  { label: 'User Profile', action: () => console.log('Navigate to User Profile') },
-  { label: 'Edit Profile' }
-];
-
-const mixedItems: BreadcrumbItem[] = [
-  { label: 'Home', link: '/' },
-  { label: 'Search Results', action: () => console.log('Back to search') },
-  { label: 'Product Details' }
+const itemsWithIcons: BreadcrumbItem[] = [
+  { id: 'home', label: 'Home', href: '/', icon: '🏠' },
+  { id: 'docs', label: 'Documentation', href: '/docs', icon: '📚' },
+  { id: 'api', label: 'API Reference', href: '/docs/api', icon: '⚙️' },
+  { id: 'current', label: 'Components', current: true, icon: '🧩' },
 ];
 
 export const Default: Story = {
   args: {
-    items: basicItems
-  }
-};
-
-export const WithFavorites: Story = {
-  args: {
     items: basicItems,
-    favorite: false
-  }
+  },
 };
 
-export const FavoritedPath: Story = {
+export const Separators: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', minWidth: '320px' }}>
+      <div>
+        <h3>Slash (Default)</h3>
+        <DynBreadcrumb items={basicItems} separator="slash" />
+      </div>
+      <div>
+        <h3>Chevron</h3>
+        <DynBreadcrumb items={basicItems} separator="chevron" />
+      </div>
+      <div>
+        <h3>Arrow</h3>
+        <DynBreadcrumb items={basicItems} separator="arrow" />
+      </div>
+      <div>
+        <h3>Dot</h3>
+        <DynBreadcrumb items={basicItems} separator="dot" />
+      </div>
+      <div>
+        <h3>Custom</h3>
+        <DynBreadcrumb
+          items={basicItems}
+          separator="custom"
+          customSeparator={<span style={{ color: '#475569' }}>→</span>}
+        />
+      </div>
+    </div>
+  ),
+};
+
+export const Sizes: Story = {
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', minWidth: '320px' }}>
+      <div>
+        <h3>Small</h3>
+        <DynBreadcrumb items={basicItems} size="small" />
+      </div>
+      <div>
+        <h3>Medium</h3>
+        <DynBreadcrumb items={basicItems} size="medium" />
+      </div>
+      <div>
+        <h3>Large</h3>
+        <DynBreadcrumb items={basicItems} size="large" />
+      </div>
+    </div>
+  ),
+};
+
+export const WithIcons: Story = {
   args: {
-    items: basicItems,
-    favorite: true
-  }
+    items: itemsWithIcons,
+  },
 };
 
-export const LongBreadcrumb: Story = {
+export const LongPath: Story = {
   args: {
     items: longItems,
-    maxItems: 4
-  }
+  },
 };
 
-export const LongBreadcrumbWithFavorites: Story = {
+export const CollapsedPath: Story = {
+  args: {
+    items: longItems,
+    maxItems: 4,
+    showEllipsis: true,
+  },
+};
+
+export const WithoutEllipsis: Story = {
+  args: {
+    items: longItems,
+    maxItems: 4,
+    showEllipsis: false,
+  },
+};
+
+export const StructuredData: Story = {
+  args: {
+    items: basicItems,
+    enableStructuredData: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Includes Schema.org structured data for better SEO.',
+      },
+    },
+  },
+};
+
+export const DarkTheme: Story = {
+  args: {
+    items: basicItems,
+  },
+  parameters: {
+    backgrounds: { default: 'dark' },
+  },
+  render: args => (
+    <div data-theme="dark" style={{ padding: '2rem', background: '#0f172a' }}>
+      <DynBreadcrumb {...args} />
+    </div>
+  ),
+};
+
+export const ResponsiveBehavior: Story = {
   args: {
     items: longItems,
     maxItems: 5,
-    favorite: false
-  }
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+    docs: {
+      description: {
+        story: 'Automatically collapses on smaller screens and maintains comfortable touch targets.',
+      },
+    },
+  },
 };
 
-export const CustomSeparator: Story = {
-  args: {
-    items: basicItems,
-    separator: 'dyn-icon-chevron-right'
-  }
-};
-
-export const CustomElementSeparator: Story = {
-  args: {
-    items: basicItems,
-    separator: <span style={{ color: '#666', fontSize: '12px' }}>/</span>
-  }
-};
-
-export const WithActions: Story = {
-  args: {
-    items: actionItems,
-    favorite: false
-  }
-};
-
-export const MixedNavigation: Story = {
-  args: {
-    items: mixedItems,
-    separator: 'dyn-icon-arrow-right'
-  }
-};
-
-export const MaxItems3: Story = {
-  args: {
-    items: longItems,
-    maxItems: 3,
-    favorite: true
-  }
-};
-
-export const SingleItem: Story = {
-  args: {
-    items: [{ label: 'Current Page' }],
-    favorite: false
-  }
-};
-
-export const EmptyBreadcrumb: Story = {
-  args: {
-    items: [],
-    favorite: true
-  }
-};
-
-export const InteractiveExample: Story = {
+export const Accessibility: Story = {
   args: {
     items: [
-      {
-        label: 'Home',
-        action: () => {
-          console.log('Navigating to Home');
-          alert('Would navigate to Home page');
-        }
-      },
-      {
-        label: 'Products',
-        action: () => {
-          console.log('Navigating to Products');
-          alert('Would navigate to Products page');
-        }
-      },
-      {
-        label: 'Electronics',
-        action: () => {
-          console.log('Navigating to Electronics');
-          alert('Would navigate to Electronics page');
-        }
-      },
-      { label: 'Current Item' }
+      { id: 'home', label: 'Home', href: '/' },
+      { id: 'section', label: 'Accessible Section', href: '/accessible' },
+      { id: 'current', label: 'Current Accessible Page', current: true },
     ],
-    favorite: false,
-    maxItems: 4
+    navigationLabel: 'Main page navigation',
   },
   parameters: {
     docs: {
       description: {
-        story: 'Click on any breadcrumb item to see the action in practice. Try clicking the favorite star as well!'
-      }
-    }
-  }
+        story: 'Demonstrates accessible navigation labeling and semantic markup.',
+      },
+    },
+  },
 };
 
-export const ResponsiveTest: Story = {
-  args: {
-    items: [
-      { label: 'Very Long Category Name That Should Truncate', link: '/category' },
-      { label: 'Another Long Subcategory Name', link: '/category/subcategory' },
-      { label: 'Even Longer Product Name That Definitely Needs Truncation', link: '/category/subcategory/product' },
-      { label: 'Current Very Long Page Title' }
-    ],
-    favorite: true,
-    maxItems: 6
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Test responsive behavior by resizing the browser window. Long text will truncate with ellipsis.'
-      }
-    }
-  }
-};
+export const Interactive: Story = {
+  render: () => {
+    const [expanded, setExpanded] = React.useState(false);
 
-export const APIIntegration: Story = {
-  args: {
-    items: basicItems,
-    favorite: false,
-    favoriteService: '/api/favorites/toggle'
+    return (
+      <DynBreadcrumb
+        items={longItems}
+        maxItems={3}
+        expanded={expanded}
+        onEllipsisClick={() => setExpanded(true)}
+        onItemClick={(item, event) => {
+          event.preventDefault();
+          // eslint-disable-next-line no-alert
+          alert(`Navigating to: ${item.label}`);
+        }}
+      />
+    );
   },
   parameters: {
     docs: {
       description: {
-        story: 'Example with API integration. In a real app, clicking the favorite button would call the specified endpoint.'
-      }
-    }
-  }
+        story: 'Interactive example with controlled expansion and custom click handling.',
+      },
+    },
+  },
 };
