@@ -1,6 +1,14 @@
-// Standardized exports for DynAvatar component
 export { DynAvatar } from './DynAvatar';
 export { default } from './DynAvatar';
 
-export type { DynAvatarProps, AvatarSize } from '../../types/avatar.types';
-export { AVATAR_SIZES } from '../../types/avatar.types';
+export type {
+  DynAvatarProps,
+  DynAvatarRef,
+  DynAvatarSize,
+  DynAvatarShape,
+  DynAvatarStatus,
+} from './DynAvatar.types';
+export {
+  DYN_AVATAR_PIXEL_SIZES,
+  DYN_AVATAR_STATUS_LABELS,
+} from './DynAvatar.types';

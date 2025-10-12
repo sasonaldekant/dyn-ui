@@ -36,9 +36,15 @@ export type {
 } from '../types/badge.types';
 export type {
   DynAvatarProps,
-  AvatarSize,
-  AvatarLoading
-} from '../types/avatar.types';
+  DynAvatarRef,
+  DynAvatarSize,
+  DynAvatarShape,
+  DynAvatarStatus
+} from './DynAvatar';
+export {
+  DYN_AVATAR_PIXEL_SIZES,
+  DYN_AVATAR_STATUS_LABELS,
+} from './DynAvatar';
 export type { DynLabelProps } from '../types/label.types';
 
 // Form Component Types - SCOPE 6

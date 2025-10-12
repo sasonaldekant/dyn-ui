@@ -1,9 +1,11 @@
 # DYN UI Monorepo
 
 ## Build
+
 Svaki paket koristi Rollup konfiguraciju preko `rollup.config.mjs`.
 
 ### Komande
+
 ```bash
 pnpm install
 pnpm build

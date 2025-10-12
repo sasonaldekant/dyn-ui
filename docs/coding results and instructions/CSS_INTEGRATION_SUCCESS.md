@@ -7,6 +7,7 @@ Ova implementacija rešava sve probleme sa CSS stilovima u monorepo workspace-u 
 ## 📦 Kreiran Centralizovan CSS Sistem
 
 ### **`packages/dyn-ui-react/src/styles/dyn-ui.css`**
+
 - 🔥 **Kompletni design system** sa CSS custom properties
 - 🎨 **Design tokens** za boje, spacing, typography, shadows
 - 👍 **DynButton stilovi** sa svim varijantama
@@ -18,11 +19,13 @@ Ova implementacija rešava sve probleme sa CSS stilovima u monorepo workspace-u 
 ## 🚀 Ažurirane Aplikacije
 
 ### **React Demo App** (`apps/react-demo/src/main.tsx`)
+
 - ✅ Import iz paketa: `import '../../../packages/dyn-ui-react/src/styles/dyn-ui.css'`
 - ✅ Proširena demo sekcija sa više primera
 - ✅ Optimizovan `index.css` sa minimal dodatnim stilovima
 
 ### **Storybook** (`.storybook/`)
+
 - ✅ **preview.ts** - import centralizovanog CSS-a
 - ✅ **main.ts** - Vite alias konfiguracija za workspace
 - ✅ **DynButton.stories.tsx** - kompletne Storybook story-jeve
@@ -56,12 +59,14 @@ pnpm storybook
 ## 🎯 Rešeni Problemi
 
 ### **❌ Pre:**
+
 - CSS stilovi u `apps/react-demo/src/dyn-ui-styles.css`
 - Storybook nije mogao da učita stilove iz aplikacije
 - "vu greška" u Storybook preview-u
 - Nedoslednost u prikazivanju
 
 ### **✅ Posle:**
+
 - CSS stilovi u `packages/dyn-ui-react/src/styles/dyn-ui.css`
 - **Single source of truth** za sve stilove
 - Storybook automatski učitava stilove iz paketa
@@ -70,6 +75,7 @@ pnpm storybook
 ## 🎨 Šta Dobijamo
 
 ### **Centralizovani Design System:**
+
 ```css
 :root {
   --color-primary: #2563eb;
@@ -81,6 +87,7 @@ pnpm storybook
 ```
 
 ### **Kompletni DynButton Stilovi:**
+
 - Primary, Secondary, Tertiary varijante
 - Small, Medium, Large veličine
 - Danger, Loading, Disabled stanja
@@ -88,19 +95,22 @@ pnpm storybook
 - Focus podrška za accessibility
 
 ### **Demo Layout Stilovi:**
+
 - `.demo-container`, `.demo-section`, `.demo-buttons`
 - Responsive grid layout
 - Professional card design
 
 ## 🔍 Proveri da li radi
 
-### **U React Demo (http://localhost:5173):**
+### **U React Demo (<http://localhost:5173>):**
+
 - ✅ Svi dugmad imaju ispravne stilove
 - ✅ Hover efekti rade
 - ✅ Loading animacije se prikazuju
 - ✅ Responsive dizajn na mobile
 
-### **U Storybook-u (http://localhost:6006):**
+### **U Storybook-u (<http://localhost:6006>):**
+
 - ✅ DynButton story se prikazuje sa stilovima
 - ✅ Controls panel funkcioniše
 - ✅ All Variants prikazuje sve kombinacije
@@ -126,6 +136,7 @@ pnpm storybook
 ## 🔮 Buduće Proširenja
 
 Ovaj sistem je spreman za:
+
 - ➕ Nove komponente (input, select, modal...)
 - 🎨 Dodatne theme varijante
 - 📱 Proširene responsive breakpoints
