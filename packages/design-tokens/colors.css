@@ -1,0 +1,91 @@
+/*
+ * Foundation color tokens for the DYN UI design system.
+ * These variables provide the canonical color palette that
+ * components, themes, and global styles should consume.
+ */
+:root {
+  /* Neutrals & backgrounds */
+  --dyn-color-background: #ffffff;
+  --dyn-color-background-secondary: #f8fafc;
+  --dyn-color-background-hover: #f1f5f9;
+  --dyn-color-background-selected: #e2e8f0;
+  --dyn-color-background-dark: #0f172a;
+  --dyn-color-background-secondary-dark: #1e293b;
+
+  --dyn-color-surface: #ffffff;
+  --dyn-color-surface-subtle: #f3f4f6;
+  --dyn-color-surface-muted: #e2e8f0;
+  --dyn-color-surface-alt: #cbd5f5;
+  --dyn-color-surface-disabled: #f1f5f9;
+  --dyn-color-surface-hover: #f8fafc;
+  --dyn-color-surface-readonly: #f8fafc;
+  --dyn-color-surface-elevated: #ffffff;
+
+  --dyn-color-muted: #f8fafc;
+  --dyn-color-disabled: #cbd5f5;
+
+  /* Text */
+  --dyn-color-text: #111827;
+  --dyn-color-text-primary: #111827;
+  --dyn-color-text-secondary: #475569;
+  --dyn-color-text-tertiary: #64748b;
+  --dyn-color-text-subtle: #64748b;
+  --dyn-color-text-placeholder: #94a3b8;
+  --dyn-color-text-disabled: #94a3b8;
+  --dyn-color-text-inverse: #f8fafc;
+  --dyn-color-text-primary-dark: #f1f5f9;
+  --dyn-color-text-secondary-dark: #cbd5f5;
+
+  --dyn-color-foreground: #0f172a;
+
+  /* Borders */
+  --dyn-color-border: #d0d5dd;
+  --dyn-color-border-light: #e2e8f0;
+  --dyn-color-border-subtle: rgba(15, 23, 42, 0.08);
+  --dyn-color-border-hover: #94a3b8;
+  --dyn-color-border-disabled: #e2e8f0;
+  --dyn-color-border-dark: #334155;
+
+  /* Brand - Primary */
+  --dyn-color-primary: #2563eb;
+  --dyn-color-primary-text: #ffffff;
+  --dyn-color-primary-hover: #1d4ed8;
+  --dyn-color-primary-active: #1e40af;
+  --dyn-color-primary-light: #60a5fa;
+  --dyn-color-primary-dark: #1e3a8a;
+  --dyn-color-primary-contrast: #ffffff;
+  --dyn-color-primary-alpha: rgba(37, 99, 235, 0.16);
+  --dyn-color-primary-subtle: #dbeafe;
+
+  /* Secondary & tertiary accents */
+  --dyn-color-secondary: #6b7280;
+  --dyn-color-secondary-text: #1f2937;
+  --dyn-color-secondary-hover: #4b5563;
+
+  --dyn-color-tertiary: #475569;
+  --dyn-color-tertiary-text: #111827;
+  --dyn-color-tertiary-hover: rgba(71, 85, 105, 0.08);
+
+  /* Status */
+  --dyn-color-success: #10b981;
+  --dyn-color-warning: #f59e0b;
+  --dyn-color-info: #0ea5e9;
+
+  --dyn-color-error: #ef4444;
+  --dyn-color-error-hover: #dc2626;
+  --dyn-color-error-alpha: rgba(239, 68, 68, 0.2);
+
+  --dyn-color-danger: #dc2626;
+  --dyn-color-danger-hover: #b91c1c;
+  --dyn-color-danger-active: #991b1b;
+  --dyn-color-danger-contrast: #ffffff;
+
+  /* Interactive helpers */
+  --dyn-color-focus-ring: rgba(37, 99, 235, 0.35);
+  --dyn-color-primary-alpha-strong: rgba(37, 99, 235, 0.24);
+
+  /* Legacy aliases */
+  --dyn-color-bg: var(--dyn-color-background);
+  --dyn-color-bg-subtle: var(--dyn-color-surface-subtle);
+  --dyn-color-bg-hover: var(--dyn-color-background-hover);
+}
