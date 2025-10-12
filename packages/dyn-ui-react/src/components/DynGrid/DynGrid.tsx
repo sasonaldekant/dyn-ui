@@ -17,13 +17,13 @@ import { DYN_GRID_DEFAULT_PROPS } from './DynGrid.types';
 import styles from './DynGrid.module.css';
 
 const headerAlignClassMap: Record<'center' | 'right', string> = {
-  center: styles.headerCellAlignCenter!,
-  right: styles.headerCellAlignRight!,
+  center: styles.headerCellAlignCenter,
+  right: styles.headerCellAlignRight,
 };
 
 const cellAlignClassMap: Record<'center' | 'right', string> = {
-  center: styles.cellAlignCenter!,
-  right: styles.cellAlignRight!,
+  center: styles.cellAlignCenter,
+  right: styles.cellAlignRight,
 };
 
 const sizeClassNameMap: Record<NonNullable<DynGridProps['size']>, string | undefined> = {
