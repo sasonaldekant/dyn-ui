@@ -1,66 +1,56 @@
 /**
- * DynTabs Unit Tests
- * Comprehensive test coverage for tab navigation component functionality
+ * DynTabs Component Test Suite
+ * Comprehensive testing following DynAvatar gold standard pattern
  */
 
-import { vi } from 'vitest';
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { vi, describe, it, test, expect, beforeEach } from 'vitest';
+import React, { createRef } from 'react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import DynTabs from './DynTabs';
-import { TabItem, DynTabsHandle } from './DynTabs.types';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import { DynTabs } from './DynTabs';
+import type { DynTabsRef, DynTabItem } from './DynTabs.types';
+import styles from './DynTabs.module.css';
 
-// Mock child components with proper vitest imports
-const mockDynIcon = vi.fn(({ icon, className }: { icon: string; className?: string }) => (
-  <i data-testid={`icon-${icon}`} className={className} />
-));
+// Extend expect matchers
+expect.extend(toHaveNoViolations);
 
-const mockDynBadge = vi.fn(({ count, size, children }: { count?: number; size?: string; children?: React.ReactNode }) => (
-  <span data-testid="badge" data-count={count} data-size={size}>
-    {children ?? count}
-  </span>
-));
+// Helper function for safe CSS class access (following DynAvatar pattern)
+const getStyleClass = (className: string): string => {
+  return (styles as Record<string, string>)[className] || '';
+};
 
-vi.mock('../DynIcon', () => ({
-  DynIcon: mockDynIcon
-}));
-
-vi.mock('../DynBadge', () => ({
-  DynBadge: mockDynBadge
-}));
-
-// Sample test data
-const mockTabs: TabItem[] = [
+// Mock data following DynAvatar test pattern
+const mockItems: DynTabItem[] = [
   {
-    id: 'tab1',
-    label: 'Tab 1',
-    content: <div>Content 1</div>
+    id: 'tab-1',
+    label: 'First Tab',
+    content: <div>First tab content</div>
   },
   {
-    id: 'tab2',
-    label: 'Tab 2',
-    content: <div>Content 2</div>
+    id: 'tab-2', 
+    label: 'Second Tab',
+    content: <div>Second tab content</div>,
+    icon: <span data-testid="tab-icon">📄</span>
   },
   {
-    id: 'tab3',
-    label: 'Tab 3',
-    disabled: true,
-    content: <div>Content 3</div>
-  }
-];
-
-const tabsWithExtras: TabItem[] = [
+    id: 'tab-3',
+    label: 'Disabled Tab',
+    content: <div>Disabled content</div>,
+    disabled: true
+  },
   {
-    id: 'tab1',
-    label: 'Tab 1',
-    icon: 'test-icon',
-    badge: { count: 5 },
-    content: <div>Content 1</div>
+    id: 'tab-4',
+    label: 'Closable Tab',
+    content: <div>Closable content</div>,
+    closable: true,
+    badge: '5'
   }
 ];
 
 const defaultProps = {
-  tabs: mockTabs
+  items: mockItems,
+  'data-testid': 'test-tabs'
 };
 
 describe('DynTabs', () => {
@@ -68,325 +58,463 @@ describe('DynTabs', () => {
     vi.clearAllMocks();
   });
 
-  it('renders tabs correctly', () => {
-    render(<DynTabs {...defaultProps} />);
-    
-    expect(screen.getByRole('tablist')).toBeInTheDocument();
-    expect(screen.getByText('Tab 1')).toBeInTheDocument();
-    expect(screen.getByText('Tab 2')).toBeInTheDocument();
-    expect(screen.getByText('Tab 3')).toBeInTheDocument();
-  });
-
-  it('shows first tab as active by default', () => {
-    render(<DynTabs {...defaultProps} />);
-    
-    const firstTab = screen.getByRole('tab', { name: /tab 1/i });
-    expect(firstTab).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByText('Content 1')).toBeInTheDocument();
-  });
-
-  it('switches tabs on click', async () => {
-    const user = userEvent.setup();
-    render(<DynTabs {...defaultProps} />);
-    
-    const secondTab = screen.getByRole('tab', { name: /tab 2/i });
-    await user.click(secondTab);
-    
-    expect(secondTab).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByText('Content 2')).toBeInTheDocument();
-  });
-
-  it('respects defaultActiveTab prop', () => {
-    render(<DynTabs tabs={mockTabs} defaultActiveTab="tab2" />);
-    
-    const secondTab = screen.getByRole('tab', { name: /tab 2/i });
-    expect(secondTab).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByText('Content 2')).toBeInTheDocument();
-  });
-
-  it('calls onTabChange when tab is clicked', async () => {
-    const user = userEvent.setup();
-    const onTabChange = vi.fn();
-    render(<DynTabs tabs={mockTabs} onTabChange={onTabChange} />);
-    
-    const secondTab = screen.getByRole('tab', { name: /tab 2/i });
-    await user.click(secondTab);
-    
-    expect(onTabChange).toHaveBeenCalledWith('tab2');
-  });
-
-  it('does not switch to disabled tab', async () => {
-    const user = userEvent.setup();
-    const onTabChange = vi.fn();
-    render(<DynTabs tabs={mockTabs} onTabChange={onTabChange} />);
-    
-    const disabledTab = screen.getByRole('tab', { name: /tab 3/i });
-    expect(disabledTab).toBeDisabled();
-    
-    await user.click(disabledTab);
-    expect(onTabChange).not.toHaveBeenCalledWith('tab3');
-  });
-
-  it('supports keyboard navigation', async () => {
-    const user = userEvent.setup();
-    const onTabChange = vi.fn();
-    render(<DynTabs tabs={mockTabs} onTabChange={onTabChange} />);
-    
-    const firstTab = screen.getByRole('tab', { name: /tab 1/i });
-    firstTab.focus();
-    
-    await user.keyboard('{ArrowRight}');
-    expect(onTabChange).toHaveBeenCalledWith('tab2');
-    
-    vi.clearAllMocks();
-    
-    await user.keyboard('{ArrowLeft}');
-    expect(onTabChange).toHaveBeenCalledWith('tab1');
-  });
-
-  it('supports Home and End keys', async () => {
-    const user = userEvent.setup();
-    const onTabChange = vi.fn();
-    render(<DynTabs tabs={mockTabs} onTabChange={onTabChange} />);
-    
-    const firstTab = screen.getByRole('tab', { name: /tab 1/i });
-    firstTab.focus();
-    
-    await user.keyboard('{End}');
-    expect(onTabChange).toHaveBeenCalledWith('tab2'); // Last non-disabled tab
-    
-    vi.clearAllMocks();
-    
-    await user.keyboard('{Home}');
-    expect(onTabChange).toHaveBeenCalledWith('tab1');
-  });
-
-  it('renders with icons and badges', () => {
-    render(<DynTabs tabs={tabsWithExtras} />);
-    
-    expect(mockDynIcon).toHaveBeenCalledWith(
-      expect.objectContaining({ icon: 'test-icon' }),
-      expect.anything()
-    );
-    expect(mockDynBadge).toHaveBeenCalledWith(
-      expect.objectContaining({ count: 5, size: 'small' }),
-      expect.anything()
-    );
-  });
-
-  it('applies custom className', () => {
-    const { container } = render(
-      <DynTabs tabs={mockTabs} className="custom-tabs" />
-    );
-    
-    expect(container.firstChild).toHaveClass('custom-tabs');
-  });
-
-  it('applies different variants correctly', () => {
-    const { container, rerender } = render(
-      <DynTabs tabs={mockTabs} variant="pills" />
-    );
-    
-    expect(container.firstChild).toHaveClass('variant-pills');
-    
-    rerender(<DynTabs tabs={mockTabs} variant="underline" />);
-    expect(container.firstChild).toHaveClass('variant-underline');
-    
-    rerender(<DynTabs tabs={mockTabs} variant="cards" />);
-    expect(container.firstChild).toHaveClass('variant-cards');
-  });
-
-  it('applies different positions correctly', () => {
-    const { container, rerender } = render(
-      <DynTabs tabs={mockTabs} position="left" />
-    );
-    
-    expect(container.firstChild).toHaveClass('position-left');
-    
-    rerender(<DynTabs tabs={mockTabs} position="bottom" />);
-    expect(container.firstChild).toHaveClass('position-bottom');
-    
-    rerender(<DynTabs tabs={mockTabs} position="right" />);
-    expect(container.firstChild).toHaveClass('position-right');
-  });
-
-  it('applies different sizes correctly', () => {
-    const { container, rerender } = render(
-      <DynTabs tabs={mockTabs} size="small" />
-    );
-    
-    expect(container.firstChild).toHaveClass('size-small');
-    
-    rerender(<DynTabs tabs={mockTabs} size="large" />);
-    expect(container.firstChild).toHaveClass('size-large');
-  });
-
-  it('supports lazy loading', () => {
-    render(<DynTabs tabs={mockTabs} lazyLoad={true} />);
-    
-    // First tab should be loaded
-    expect(screen.getByText('Content 1')).toBeInTheDocument();
-    
-    // Other tabs should not be loaded initially
-    expect(screen.queryByText('Content 2')).not.toBeInTheDocument();
-  });
-
-  it('handles scrollable tabs', () => {
-    const manyTabs = Array.from({ length: 10 }, (_, i) => ({
-      id: `tab${i + 1}`,
-      label: `Tab ${i + 1}`,
-      content: <div>Content {i + 1}</div>
-    }));
-    
-    const { container } = render(
-      <DynTabs tabs={manyTabs} scrollable={true} />
-    );
-    
-    expect(container.firstChild).toHaveClass('scrollable');
-  });
-
-  it('handles closable tabs', async () => {
-    const user = userEvent.setup();
-    const onTabClose = vi.fn();
-    const closableTabs = mockTabs.map(tab => ({ ...tab, closable: true }));
-    
-    render(
-      <DynTabs 
-        tabs={closableTabs} 
-        closable={true} 
-        onTabClose={onTabClose}
-      />
-    );
-    
-    const closeButtons = screen.getAllByLabelText(/close.*tab/i);
-    expect(closeButtons.length).toBeGreaterThan(0);
-    
-    await user.click(closeButtons[0]);
-    expect(onTabClose).toHaveBeenCalledWith('tab1');
-  });
-
-  it('handles add button', async () => {
-    const user = userEvent.setup();
-    const onTabAdd = vi.fn();
-    
-    render(
-      <DynTabs 
-        tabs={mockTabs} 
-        addable={true} 
-        onTabAdd={onTabAdd}
-      />
-    );
-    
-    const addButton = screen.getByLabelText('Add new tab');
-    expect(addButton).toBeInTheDocument();
-    
-    await user.click(addButton);
-    expect(onTabAdd).toHaveBeenCalled();
-  });
-
-  it('handles empty tabs array', () => {
-    render(<DynTabs tabs={[]} />);
-    
-    expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
-  });
-
-  it('shows tooltip on tabs with tooltip property', () => {
-    const tabsWithTooltip: TabItem[] = [
-      {
-        id: 'tooltip-tab',
-        label: 'Tab with Tooltip',
-        tooltip: 'This is a tooltip',
-        content: <div>Content</div>
-      }
-    ];
-    
-    render(<DynTabs tabs={tabsWithTooltip} />);
-    
-    const tab = screen.getByRole('tab', { name: /tab with tooltip/i });
-    expect(tab).toHaveAttribute('title', 'This is a tooltip');
-  });
-
-  describe('Imperative API', () => {
-    it('provides setActiveTab method', () => {
-      const tabsRef = React.createRef<DynTabsHandle>();
-      const onTabChange = vi.fn();
+  describe('Basic Functionality', () => {
+    test('renders tabs with proper structure', () => {
+      render(<DynTabs {...defaultProps} />);
       
-      render(
-        <DynTabs 
-          ref={tabsRef}
-          tabs={mockTabs}
-          onTabChange={onTabChange}
-        />
-      );
+      const tablist = screen.getByRole('tablist');
+      const tabs = screen.getAllByRole('tab');
+      const tabpanel = screen.getByRole('tabpanel');
       
-      tabsRef.current?.setActiveTab('tab2');
-      expect(onTabChange).toHaveBeenCalledWith('tab2');
+      expect(tablist).toBeInTheDocument();
+      expect(tabs).toHaveLength(4);
+      expect(tabpanel).toBeInTheDocument();
     });
 
-    it('provides getActiveTab method', () => {
-      const tabsRef = React.createRef<DynTabsHandle>();
+    test('shows first enabled tab as active by default', () => {
+      render(<DynTabs {...defaultProps} />);
       
-      render(
-        <DynTabs 
-          ref={tabsRef}
-          tabs={mockTabs}
-          defaultActiveTab="tab2"
-        />
-      );
-      
-      expect(tabsRef.current?.getActiveTab()).toBe('tab2');
+      const firstTab = screen.getByRole('tab', { name: /first tab/i });
+      expect(firstTab).toHaveAttribute('aria-selected', 'true');
+      expect(screen.getByText('First tab content')).toBeInTheDocument();
     });
 
-    it('provides closeTab method', () => {
-      const tabsRef = React.createRef<DynTabsHandle>();
+    test('respects defaultActiveTab prop', () => {
+      render(<DynTabs {...defaultProps} defaultActiveTab="tab-2" />);
+      
+      const secondTab = screen.getByRole('tab', { name: /second tab/i });
+      expect(secondTab).toHaveAttribute('aria-selected', 'true');
+      expect(screen.getByText('Second tab content')).toBeInTheDocument();
+    });
+
+    test('switches tabs on click', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      
+      render(<DynTabs {...defaultProps} onChange={onChange} />);
+      
+      const secondTab = screen.getByRole('tab', { name: /second tab/i });
+      await user.click(secondTab);
+      
+      expect(onChange).toHaveBeenCalledWith('tab-2');
+      expect(secondTab).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('ignores clicks on disabled tabs', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      
+      render(<DynTabs {...defaultProps} onChange={onChange} />);
+      
+      const disabledTab = screen.getByRole('tab', { name: /disabled tab/i });
+      await user.click(disabledTab);
+      
+      expect(onChange).not.toHaveBeenCalledWith('tab-3');
+      expect(disabledTab).toHaveAttribute('aria-selected', 'false');
+    });
+
+    test('handles controlled activeTab prop changes', () => {
+      const { rerender } = render(<DynTabs {...defaultProps} activeTab="tab-1" />);
+      
+      expect(screen.getByText('First tab content')).toBeInTheDocument();
+      
+      rerender(<DynTabs {...defaultProps} activeTab="tab-2" />);
+      
+      expect(screen.getByText('Second tab content')).toBeInTheDocument();
+    });
+  });
+
+  describe('Accessibility', () => {
+    test('has no accessibility violations', async () => {
+      const { container } = render(<DynTabs {...defaultProps} />);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+
+    test('implements proper ARIA tablist pattern', () => {
+      render(<DynTabs {...defaultProps} />);
+      
+      const tablist = screen.getByRole('tablist');
+      const tabs = screen.getAllByRole('tab');
+      const tabpanel = screen.getByRole('tabpanel');
+      
+      expect(tablist).toHaveAttribute('role', 'tablist');
+      
+      tabs.forEach((tab, index) => {
+        const item = mockItems[index];
+        expect(tab).toHaveAttribute('role', 'tab');
+        expect(tab).toHaveAttribute('aria-controls', expect.stringContaining(`panel-${item.id}`));
+        expect(tab).toHaveAttribute('id', expect.stringContaining(`tab-${item.id}`));
+      });
+      
+      expect(tabpanel).toHaveAttribute('role', 'tabpanel');
+      expect(tabpanel).toHaveAttribute('aria-labelledby', expect.stringContaining('tab-tab-1'));
+    });
+
+    test('manages tabIndex correctly for roving tabindex pattern', () => {
+      render(<DynTabs {...defaultProps} />);
+      
+      const tabs = screen.getAllByRole('tab');
+      
+      // First tab should be focusable, others should not
+      expect(tabs[0]).toHaveAttribute('tabIndex', '0');
+      expect(tabs[1]).toHaveAttribute('tabIndex', '-1');
+      expect(tabs[2]).toHaveAttribute('tabIndex', '-1'); // disabled
+      expect(tabs[3]).toHaveAttribute('tabIndex', '-1');
+    });
+
+    test('supports custom aria-label on tablist', () => {
+      render(<DynTabs {...defaultProps} aria-label="Navigation tabs" />);
+      
+      const tablist = screen.getByRole('tablist');
+      expect(tablist).toHaveAttribute('aria-label', 'Navigation tabs');
+    });
+
+    test('supports aria-labelledby and aria-describedby', () => {
+      render(
+        <div>
+          <h2 id="tabs-heading">Section Tabs</h2>
+          <p id="tabs-description">Navigate between sections</p>
+          <DynTabs 
+            {...defaultProps}
+            aria-labelledby="tabs-heading"
+            aria-describedby="tabs-description"
+          />
+        </div>
+      );
+      
+      const tablist = screen.getByRole('tablist');
+      expect(tablist).toHaveAttribute('aria-labelledby', 'tabs-heading');
+      expect(tablist).toHaveAttribute('aria-describedby', 'tabs-description');
+    });
+
+    test('announces tab changes to screen readers', async () => {
+      const user = userEvent.setup();
+      render(<DynTabs {...defaultProps} />);
+      
+      const announcements = screen.getByLabelText(/tab .* of .* selected/i);
+      expect(announcements).toBeInTheDocument();
+      
+      await user.click(screen.getByRole('tab', { name: /second tab/i }));
+      
+      await waitFor(() => {
+        expect(announcements).toHaveTextContent(/tab 2 of 4 selected/i);
+      });
+    });
+
+    test('sets aria-disabled correctly for disabled tabs', () => {
+      render(<DynTabs {...defaultProps} />);
+      
+      const disabledTab = screen.getByRole('tab', { name: /disabled tab/i });
+      expect(disabledTab).toHaveAttribute('aria-disabled', 'true');
+      expect(disabledTab).toHaveAttribute('disabled');
+    });
+  });
+
+  describe('Interactive Behavior', () => {
+    test('handles tab closing functionality', async () => {
+      const user = userEvent.setup();
+      const onTabClose = vi.fn();
+      
+      render(<DynTabs {...defaultProps} closable onTabClose={onTabClose} />);
+      
+      const closeButton = screen.getByLabelText(/close closable tab/i);
+      expect(closeButton).toBeInTheDocument();
+      
+      await user.click(closeButton);
+      expect(onTabClose).toHaveBeenCalledWith('tab-4');
+    });
+
+    test('handles add tab functionality', async () => {
+      const user = userEvent.setup();
+      const onTabAdd = vi.fn();
+      
+      render(<DynTabs {...defaultProps} addable onTabAdd={onTabAdd} />);
+      
+      const addButton = screen.getByLabelText('Add new tab');
+      await user.click(addButton);
+      
+      expect(onTabAdd).toHaveBeenCalled();
+    });
+
+    test('prevents close button clicks from activating tabs', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
       const onTabClose = vi.fn();
       
       render(
         <DynTabs 
-          ref={tabsRef}
-          tabs={mockTabs}
+          {...defaultProps}
+          closable 
+          onChange={onChange}
           onTabClose={onTabClose}
         />
       );
       
-      tabsRef.current?.closeTab('tab1');
-      expect(onTabClose).toHaveBeenCalledWith('tab1');
+      const closeButton = screen.getByLabelText(/close closable tab/i);
+      await user.click(closeButton);
+      
+      expect(onTabClose).toHaveBeenCalledWith('tab-4');
+      expect(onChange).not.toHaveBeenCalledWith('tab-4');
+    });
+
+    test('handles keyboard navigation with arrow keys', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      
+      render(<DynTabs {...defaultProps} onChange={onChange} />);
+      
+      const firstTab = screen.getByRole('tab', { name: /first tab/i });
+      firstTab.focus();
+      
+      // Navigate right
+      await user.keyboard('{ArrowRight}');
+      expect(onChange).toHaveBeenCalledWith('tab-2');
+      
+      // Navigate left  
+      await user.keyboard('{ArrowLeft}');
+      expect(onChange).toHaveBeenCalledWith('tab-1');
+    });
+
+    test('handles Home and End key navigation', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      
+      render(<DynTabs {...defaultProps} defaultActiveTab="tab-2" onChange={onChange} />);
+      
+      const secondTab = screen.getByRole('tab', { name: /second tab/i });
+      secondTab.focus();
+      
+      // Go to first tab
+      await user.keyboard('{Home}');
+      expect(onChange).toHaveBeenCalledWith('tab-1');
+      
+      // Go to last enabled tab
+      await user.keyboard('{End}');
+      expect(onChange).toHaveBeenCalledWith('tab-4');
+    });
+
+    test('skips disabled tabs during keyboard navigation', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      
+      render(<DynTabs {...defaultProps} defaultActiveTab="tab-2" onChange={onChange} />);
+      
+      const secondTab = screen.getByRole('tab', { name: /second tab/i });
+      secondTab.focus();
+      
+      // Navigate right should skip disabled tab-3 and go to tab-4
+      await user.keyboard('{ArrowRight}');
+      expect(onChange).toHaveBeenCalledWith('tab-4');
+    });
+
+    test('activates tab with Enter and Space keys', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      
+      render(<DynTabs {...defaultProps} onChange={onChange} />);
+      
+      const secondTab = screen.getByRole('tab', { name: /second tab/i });
+      secondTab.focus();
+      
+      await user.keyboard('{Enter}');
+      expect(onChange).toHaveBeenCalledWith('tab-2');
+      
+      onChange.mockClear();
+      
+      await user.keyboard('{Space}');
+      expect(onChange).toHaveBeenCalledWith('tab-2');
     });
   });
 
-  it('applies tabClassName to individual tabs', () => {
-    const customTabClass = 'custom-tab-class';
-    render(
-      <DynTabs tabs={mockTabs} tabClassName={customTabClass} />
-    );
-    
-    const tabs = screen.getAllByRole('tab');
-    tabs.forEach(tab => {
-      expect(tab).toHaveClass(customTabClass);
+  describe('Sizes and Variants', () => {
+    test('applies size classes correctly', () => {
+      const { rerender } = render(<DynTabs {...defaultProps} size="small" />);
+      
+      const tabs = screen.getAllByRole('tab');
+      tabs.forEach(tab => {
+        expect(tab).toHaveClass(getStyleClass('tab--small'));
+      });
+      
+      rerender(<DynTabs {...defaultProps} size="large" />);
+      
+      const largeTabs = screen.getAllByRole('tab');
+      largeTabs.forEach(tab => {
+        expect(tab).toHaveClass(getStyleClass('tab--large'));
+      });
+    });
+
+    test('applies variant classes correctly', () => {
+      const { rerender } = render(<DynTabs {...defaultProps} variant="underlined" />);
+      
+      const tabs = screen.getAllByRole('tab');
+      tabs.forEach(tab => {
+        expect(tab).toHaveClass(getStyleClass('tab--underlined'));
+      });
+      
+      rerender(<DynTabs {...defaultProps} variant="pills" />);
+      
+      const pillTabs = screen.getAllByRole('tab');
+      pillTabs.forEach(tab => {
+        expect(tab).toHaveClass(getStyleClass('tab--pills'));
+      });
+    });
+
+    test('applies position classes correctly', () => {
+      const { container, rerender } = render(<DynTabs {...defaultProps} position="left" />);
+      
+      expect(container.firstChild).toHaveClass(getStyleClass('tabs--left'));
+      
+      rerender(<DynTabs {...defaultProps} position="bottom" />);
+      expect(container.firstChild).toHaveClass(getStyleClass('tabs--bottom'));
+    });
+
+    test('applies default medium size when not specified', () => {
+      render(<DynTabs {...defaultProps} />);
+      
+      const tabs = screen.getAllByRole('tab');
+      tabs.forEach(tab => {
+        expect(tab).toHaveClass(getStyleClass('tab--medium'));
+      });
+    });
+
+    test('applies active state classes correctly', () => {
+      render(<DynTabs {...defaultProps} />);
+      
+      const activeTab = screen.getByRole('tab', { selected: true });
+      expect(activeTab).toHaveClass(getStyleClass('tab--active'));
     });
   });
 
-  it('applies panelClassName to content panel', () => {
-    const customPanelClass = 'custom-panel-class';
-    render(
-      <DynTabs tabs={mockTabs} panelClassName={customPanelClass} />
-    );
-    
-    const panel = screen.getByRole('tabpanel');
-    expect(panel).toHaveClass(customPanelClass);
+  describe('Lazy Loading', () => {
+    test('loads content only for active tab when lazy=true', () => {
+      render(<DynTabs {...defaultProps} lazy defaultActiveTab="tab-1" />);
+      
+      expect(screen.getByText('First tab content')).toBeInTheDocument();
+      expect(screen.queryByText('Second tab content')).not.toBeInTheDocument();
+    });
+
+    test('shows loading state for unloaded lazy tabs', async () => {
+      const user = userEvent.setup();
+      
+      render(<DynTabs {...defaultProps} lazy defaultActiveTab="tab-1" />);
+      
+      const secondTab = screen.getByRole('tab', { name: /second tab/i });
+      await user.click(secondTab);
+      
+      expect(screen.getByLabelText('Loading content')).toBeInTheDocument();
+      expect(screen.getByText('Loading tab content')).toBeInTheDocument();
+    });
+
+    test('loads content progressively when switching tabs', async () => {
+      const user = userEvent.setup();
+      
+      render(<DynTabs {...defaultProps} lazy />);
+      
+      // Switch to second tab
+      await user.click(screen.getByRole('tab', { name: /second tab/i }));
+      
+      await waitFor(() => {
+        expect(screen.getByText('Second tab content')).toBeInTheDocument();
+      });
+      
+      // Switch back to first tab - should still be loaded
+      await user.click(screen.getByRole('tab', { name: /first tab/i }));
+      expect(screen.getByText('First tab content')).toBeInTheDocument();
+    });
   });
 
-  it('handles custom renderTabContent', () => {
-    const customRender = vi.fn((tab) => <div>Custom {tab.label}</div>);
-    
-    render(
-      <DynTabs 
-        tabs={mockTabs} 
-        renderTabContent={customRender}
-      />
-    );
-    
-    expect(customRender).toHaveBeenCalledWith(mockTabs[0], 0);
-    expect(screen.getByText('Custom Tab 1')).toBeInTheDocument();
+  describe('Visual Elements', () => {
+    test('renders icons correctly', () => {
+      render(<DynTabs {...defaultProps} />);
+      
+      expect(screen.getByTestId('tab-icon')).toBeInTheDocument();
+    });
+
+    test('renders badges correctly', () => {
+      render(<DynTabs {...defaultProps} />);
+      
+      expect(screen.getByText('5')).toBeInTheDocument();
+      expect(screen.getByLabelText('5 notifications')).toBeInTheDocument();
+    });
+
+    test('applies scrollable behavior', () => {
+      const { container } = render(<DynTabs {...defaultProps} scrollable />);
+      
+      expect(container.firstChild).toHaveClass(getStyleClass('tabs--scrollable'));
+    });
+  });
+
+  describe('Props and Customization', () => {
+    test('applies custom className', () => {
+      const { container } = render(
+        <DynTabs {...defaultProps} className="custom-tabs" />
+      );
+      
+      expect(container.firstChild).toHaveClass('custom-tabs');
+    });
+
+    test('applies custom tabListClassName', () => {
+      render(<DynTabs {...defaultProps} tabListClassName="custom-tablist" />);
+      
+      const tablist = screen.getByRole('tablist');
+      expect(tablist).toHaveClass('custom-tablist');
+    });
+
+    test('applies custom contentClassName', () => {
+      render(<DynTabs {...defaultProps} contentClassName="custom-content" />);
+      
+      const tabpanel = screen.getByRole('tabpanel');
+      expect(tabpanel).toHaveClass('custom-content');
+    });
+
+    test('sets custom id', () => {
+      render(<DynTabs {...defaultProps} id="custom-tabs-id" />);
+      
+      expect(screen.getByTestId('test-tabs')).toHaveAttribute('id', 'custom-tabs-id');
+    });
+
+    test('sets custom test id', () => {
+      render(<DynTabs items={mockItems} data-testid="custom-test-id" />);
+      
+      expect(screen.getByTestId('custom-test-id')).toBeInTheDocument();
+      expect(screen.getByTestId('custom-test-id-tablist')).toBeInTheDocument();
+    });
+
+    test('forwards additional props', () => {
+      render(
+        <DynTabs 
+          {...defaultProps}
+          data-custom="test-value"
+        />
+      );
+      
+      const tabsContainer = screen.getByTestId('test-tabs');
+      expect(tabsContainer).toHaveAttribute('data-custom', 'test-value');
+    });
+
+    test('handles empty items array gracefully', () => {
+      render(<DynTabs items={[]} />);
+      
+      expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
+    });
+
+    test('shows custom loading component for lazy tabs', async () => {
+      const user = userEvent.setup();
+      const customLoading = <div data-testid="custom-loading">Custom Loading...</div>;
+      
+      render(
+        <DynTabs 
+          {...defaultProps}
+          lazy
+          defaultActiveTab="tab-1"
+          loadingComponent={customLoading}
+        />
+      );
+      
+      await user.click(screen.getByRole('tab', { name: /second tab/i }));
+      
+      expect(screen.getByTestId('custom-loading')).toBeInTheDocument();
+    });
   });
 });
