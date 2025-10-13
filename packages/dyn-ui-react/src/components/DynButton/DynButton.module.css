@@ -130,6 +130,14 @@
   width: 100%;
 }
 
+.hideOnMobile {
+  display: inherit;
+}
+
+.iconOnlyOnMobile {
+  display: inline-flex;
+}
+
 .iconOnly {
   --dyn-button-padding-x: 0.75rem;
   --dyn-button-padding-y: 0.75rem;
@@ -143,6 +151,18 @@
 
 .loading .content {
   opacity: 0;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .danger {
@@ -219,4 +239,100 @@
   --dyn-button-border-hover: transparent;
   --dyn-button-bg-active: var(--dyn-color-surface-muted, rgba(211, 47, 47, 0.18));
   --dyn-button-border-active: transparent;
+}
+
+/* Responsive design */
+@media (max-width: 767px) {
+  .root {
+    min-height: 44px;
+    font-size: var(--dyn-font-size-base, 1rem);
+    --dyn-button-padding-y: 0.625rem;
+    --dyn-button-padding-x: 1rem;
+  }
+
+  .sizeSmall {
+    min-height: 40px;
+    --dyn-button-padding-y: 0.5rem;
+    --dyn-button-padding-x: 0.875rem;
+  }
+
+  .sizeLarge {
+    min-height: 52px;
+    --dyn-button-padding-y: 0.875rem;
+    --dyn-button-padding-x: 1.75rem;
+  }
+
+  .iconOnly {
+    min-width: 44px;
+    width: 44px;
+    --dyn-button-padding-x: 0;
+    --dyn-button-padding-y: 0;
+  }
+
+  /* Mobile-specific utilities */
+  .hideOnMobile {
+    display: none !important;
+  }
+
+  .iconOnlyOnMobile .label {
+    display: none !important;
+  }
+
+  .iconOnlyOnMobile {
+    width: 44px;
+    min-width: 44px;
+    --dyn-button-padding-x: 0;
+    --dyn-button-padding-y: 0;
+  }
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  .kindPrimary {
+    --dyn-button-bg: var(--dyn-color-primary-dark, #3b82f6);
+    --dyn-button-border: var(--dyn-color-primary-dark, #3b82f6);
+    --dyn-button-bg-hover: var(--dyn-color-primary-dark-hover, #2563eb);
+    --dyn-button-border-hover: var(--dyn-color-primary-dark-hover, #2563eb);
+    --dyn-button-bg-active: var(--dyn-color-primary-dark-active, #1d4ed8);
+    --dyn-button-border-active: var(--dyn-color-primary-dark-active, #1d4ed8);
+  }
+
+  .kindSecondary {
+    --dyn-button-border: var(--dyn-color-primary-dark, #3b82f6);
+    --dyn-button-color: var(--dyn-color-primary-dark, #3b82f6);
+    --dyn-button-color-hover: var(--dyn-color-primary-dark-hover, #2563eb);
+    --dyn-button-color-active: var(--dyn-color-primary-dark-active, #1d4ed8);
+    --dyn-button-border-hover: var(--dyn-color-primary-dark-hover, #2563eb);
+    --dyn-button-border-active: var(--dyn-color-primary-dark-active, #1d4ed8);
+  }
+
+  .kindTertiary {
+    --dyn-button-color: var(--dyn-color-primary-dark, #3b82f6);
+    --dyn-button-color-hover: var(--dyn-color-primary-dark-hover, #2563eb);
+    --dyn-button-color-active: var(--dyn-color-primary-dark-active, #1d4ed8);
+  }
+
+  .danger.kindPrimary {
+    --dyn-button-bg: var(--dyn-color-danger-dark, #ef4444);
+    --dyn-button-border: var(--dyn-color-danger-dark, #ef4444);
+    --dyn-button-bg-hover: var(--dyn-color-danger-dark-hover, #dc2626);
+    --dyn-button-border-hover: var(--dyn-color-danger-dark-hover, #dc2626);
+    --dyn-button-bg-active: var(--dyn-color-danger-dark-active, #b91c1c);
+    --dyn-button-border-active: var(--dyn-color-danger-dark-active, #b91c1c);
+  }
+
+  .danger.kindSecondary {
+    --dyn-button-border: var(--dyn-color-danger-dark, #ef4444);
+    --dyn-button-color: var(--dyn-color-danger-dark, #ef4444);
+    --dyn-button-color-hover: var(--dyn-color-danger-dark-hover, #dc2626);
+    --dyn-button-color-active: var(--dyn-color-danger-dark-active, #b91c1c);
+    --dyn-button-border-hover: var(--dyn-color-danger-dark-hover, #dc2626);
+    --dyn-button-border-active: var(--dyn-color-danger-dark-active, #b91c1c);
+  }
+
+  .danger.kindTertiary {
+    --dyn-button-color: var(--dyn-color-danger-dark, #ef4444);
+    --dyn-button-color-hover: var(--dyn-color-danger-dark-hover, #dc2626);
+    --dyn-button-color-active: var(--dyn-color-danger-dark-active, #b91c1c);
+  }
 }

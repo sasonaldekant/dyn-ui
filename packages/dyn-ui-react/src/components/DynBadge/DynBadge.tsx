@@ -59,6 +59,7 @@ const DynBadgeComponent = (
     endIcon,
     maxCount = DEFAULT_MAX_COUNT,
     count,
+    value,
     showZero = false,
     animated = false,
     pulse = false,
@@ -77,7 +78,7 @@ const DynBadgeComponent = (
 
   const { style: inlineStyle, ...restProps } = rest;
 
-  const numericCount = typeof count === 'number' ? count : undefined;
+  const numericCount = typeof count === 'number' ? count : typeof value === 'number' ? value : undefined;
   const hasCount = typeof numericCount === 'number';
   const hasChildren = children !== undefined && children !== null;
   const shouldHideBadge = hasCount && numericCount === 0 && !showZero && !hasChildren;
