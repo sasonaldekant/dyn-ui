@@ -66,4 +66,39 @@ describe('DynContainer', () => {
     expect(element.className).not.toMatch(/bordered/);
     expect(element.className).toMatch(/noPadding/);
   });
+
+  it('supports fixed layout with token-based maxWidth and spacing overrides', () => {
+    render(
+      <DynContainer layout="fixed" maxWidth="md" padding="lg" margin="sm">
+        <div>Content</div>
+      </DynContainer>
+    );
+
+    const element = screen.getByTestId('dyn-container');
+
+    expect(element.className).toMatch(/layoutFixed/);
+    expect(element.style.getPropertyValue('--dyn-container-max-width')).toBe(
+      'min(100%, var(--dyn-container-max-width-md))'
+    );
+    expect(element.style.getPropertyValue('--dyn-container-padding')).toBe(
+      'var(--dyn-spacing-lg, var(--spacing-lg, 1.5rem))'
+    );
+    expect(element.style.getPropertyValue('--dyn-container-margin')).toBe(
+      'var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem))'
+    );
+  });
+
+  it('accepts numeric spacing overrides', () => {
+    render(
+      <DynContainer padding={24} margin={16} maxWidth={720}>
+        <div>Content</div>
+      </DynContainer>
+    );
+
+    const element = screen.getByTestId('dyn-container');
+
+    expect(element.style.getPropertyValue('--dyn-container-padding')).toBe('24px');
+    expect(element.style.getPropertyValue('--dyn-container-margin')).toBe('16px');
+    expect(element.style.maxWidth).toBe('720px');
+  });
 });
