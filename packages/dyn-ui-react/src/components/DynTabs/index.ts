@@ -1,5 +1,15 @@
-// Standardized exports for DynTabs component
-export { DynTabs } from './DynTabs';
-export { default } from './DynTabs';
+/**
+ * DynTabs Component Exports
+ * Following DynAvatar export pattern for consistency
+ */
 
-export type { DynTabsProps, DynTabsHandle, TabItem } from './DynTabs.types';
+export { DynTabs } from './DynTabs';
+export type {
+  DynTabsProps,
+  DynTabsRef,
+  DynTabItem,
+  DynTabsSize,
+  DynTabsPosition,
+  DynTabsVariant
+} from './DynTabs.types';
+export { DYN_TABS_DEFAULT_PROPS } from './DynTabs.types';
