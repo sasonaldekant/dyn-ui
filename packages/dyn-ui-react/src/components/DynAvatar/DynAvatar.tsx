@@ -35,6 +35,13 @@ const generateInitials = (name: string): string => {
     .join('');
 };
 
+/**
+ * Safely access CSS module classes
+ */
+const getStyleClass = (className: string): string => {
+  return (styles as Record<string, string>)[className] || '';
+};
+
 export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
   (
     {
@@ -104,10 +111,13 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
       }
     };
 
-    // Generate CSS class names with proper type safety
-    const sizeClass = styles[`avatar--${size}` as keyof typeof styles] || styles['avatar--medium'];
-    const shapeClass = styles[`avatar--${shape}` as keyof typeof styles] || styles.avatar;
-    const statusClass = status ? styles[`avatar--${status}` as keyof typeof styles] : undefined;
+    // Generate CSS class names safely
+    const sizeClass = getStyleClass(`avatar--${size}`);
+    const shapeClass = getStyleClass(`avatar--${shape}`);
+    const statusClass = status ? getStyleClass(`avatar--${status}`) : '';
+    const clickableClass = getStyleClass('avatar--clickable');
+    const loadingClass = getStyleClass('avatar--loading');
+    const errorClass = getStyleClass('avatar--error');
 
     // Generate accessibility attributes
     const statusLabel = status ? DYN_AVATAR_STATUS_LABELS[status] : undefined;
@@ -117,47 +127,46 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
       : accessibleLabelBase;
 
     const avatarClasses = cn(
-      styles.avatar,
+      getStyleClass('avatar'),
       sizeClass,
       shapeClass,
       statusClass,
       {
-        [styles['avatar--clickable'] || '']: isInteractive,
-        [styles['avatar--loading'] || '']: isLoadingState,
-        [styles['avatar--error'] || '']: error || imageError,
+        [clickableClass]: isInteractive && clickableClass,
+        [loadingClass]: isLoadingState && loadingClass,
+        [errorClass]: (error || imageError) && errorClass,
       },
       className
     );
 
-    // Generate image classes with proper type safety
+    // Generate image classes safely
+    const imageBaseClass = getStyleClass('avatar__image');
+    const imageLoadingClass = getStyleClass('avatar__image--loading');
+    const imageLoadedClass = getStyleClass('avatar__image--loaded');
+
     const imageClasses = cn(
-      styles['avatar__image'] || styles.avatar__image,
+      imageBaseClass,
       {
-        [styles['avatar__image--loading'] || '']: !imageLoaded,
-        [styles['avatar__image--loaded'] || '']: imageLoaded,
+        [imageLoadingClass]: !imageLoaded && imageLoadingClass,
+        [imageLoadedClass]: imageLoaded && imageLoadedClass,
       }
     );
-
-    // Accessibility props
-    const accessibilityProps = {
-      id: internalId,
-      role: isInteractive ? ('button' as const) : (role || ('img' as const)),
-      tabIndex: isInteractive ? 0 : undefined,
-      'aria-label': accessibleLabel,
-      'aria-describedby': ariaDescribedBy,
-      'aria-labelledby': ariaLabelledBy,
-      'aria-busy': isLoadingState ? ('true' as const) : undefined,
-      'data-status': status,
-      'data-testid': dataTestId || 'dyn-avatar',
-    } as const;
 
     return (
       <div
         ref={ref}
+        id={internalId}
         className={avatarClasses}
+        role={isInteractive ? 'button' : (role || 'img')}
+        tabIndex={isInteractive ? 0 : undefined}
+        aria-label={accessibleLabel}
+        aria-describedby={ariaDescribedBy}
+        aria-labelledby={ariaLabelledBy}
+        aria-busy={isLoadingState ? 'true' : undefined}
+        data-status={status}
+        data-testid={dataTestId || 'dyn-avatar'}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
-        {...accessibilityProps}
         {...rest}
       >
         {/* Image */}
@@ -176,16 +185,16 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
         {/* Fallback content */}
         {showFallback && (
           <div 
-            className={styles['avatar__fallback'] || styles.avatar__fallback}
+            className={getStyleClass('avatar__fallback')}
             aria-hidden={showImage ? 'true' : undefined}
           >
             {fallback || children || (
               displayInitials ? (
-                <span className={styles['avatar__initials'] || styles.avatar__initials}>
+                <span className={getStyleClass('avatar__initials')}>
                   {displayInitials}
                 </span>
               ) : (
-                <span className={styles['avatar__icon'] || styles.avatar__icon}>
+                <span className={getStyleClass('avatar__icon')}>
                   <DefaultFallbackIcon />
                 </span>
               )
