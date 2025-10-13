@@ -1,4 +1,4 @@
-import { ImgHTMLAttributes, ReactNode } from 'react';
+import React, { ImgHTMLAttributes, ReactNode } from 'react';
 import { BaseComponentProps, ComponentSize, AccessibilityProps } from '../../types';
 
 export type DynAvatarSize = ComponentSize;
@@ -10,8 +10,9 @@ export type DynAvatarStatus = 'online' | 'offline' | 'away' | 'busy';
  * Extends BaseComponentProps for consistency across the design system
  */
 export interface DynAvatarProps extends 
-  BaseComponentProps,
-  AccessibilityProps {
+  Omit<BaseComponentProps, 'children'>,
+  AccessibilityProps,
+  Omit<React.HTMLAttributes<HTMLDivElement>, keyof BaseComponentProps | keyof AccessibilityProps | 'onClick' | 'children'> {
   
   /** Image source URL */
   src?: string;
@@ -43,6 +44,9 @@ export interface DynAvatarProps extends
   /** Custom fallback content when no image */
   fallback?: ReactNode;
   
+  /** Children content (alternative to fallback) */
+  children?: ReactNode;
+  
   /** Image loading strategy */
   imageLoading?: 'eager' | 'lazy';
   
@@ -55,7 +59,7 @@ export interface DynAvatarProps extends
 /**
  * Ref type for DynAvatar component
  */
-export interface DynAvatarRef extends HTMLDivElement {}
+export type DynAvatarRef = HTMLDivElement;
 
 /**
  * Status labels for accessibility
