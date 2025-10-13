@@ -1,14 +1,10 @@
 export { DynAvatar } from './DynAvatar';
-export { default } from './DynAvatar';
-
-export type {
-  DynAvatarProps,
+export { DynAvatar as default } from './DynAvatar';
+export type { 
+  DynAvatarProps, 
   DynAvatarRef,
   DynAvatarSize,
   DynAvatarShape,
-  DynAvatarStatus,
+  DynAvatarStatus
 } from './DynAvatar.types';
-export {
-  DYN_AVATAR_PIXEL_SIZES,
-  DYN_AVATAR_STATUS_LABELS,
-} from './DynAvatar.types';
+export { DYN_AVATAR_STATUS_LABELS } from './DynAvatar.types';
