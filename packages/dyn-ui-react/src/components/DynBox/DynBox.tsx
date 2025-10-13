@@ -1,10 +1,12 @@
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useEffect, useId, useMemo, useRef } from 'react';
 import type {
   CSSProperties,
   ElementType,
   ForwardedRef,
   KeyboardEvent,
   MouseEvent,
+  MutableRefObject,
+  Ref,
 } from 'react';
 import { cn } from '../../utils/classNames';
 import {
@@ -41,6 +43,9 @@ const toDimensionValue = (value: string | number | undefined): string | number |
   return value;
 };
 
+/**
+ * DynBox – polymorphic, token-aware layout primitive aligned with DynAvatar contract
+ */
 const DynBoxComponent = <E extends ElementType = 'div'>(
   {
     as,
@@ -127,12 +132,34 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledBy,
     'aria-describedby': ariaDescribedBy,
+    ariaLiveMessage,
+    ariaLivePoliteness = 'polite',
+    focusOnMount = false,
     'data-testid': dataTestId = DYN_BOX_DEFAULT_PROPS['data-testid'],
     ...rest
-  }: DynBoxProps,
-  ref: ForwardedRef<DynBoxRef>
+  }: DynBoxProps<E>,
+  ref: ForwardedRef<DynBoxRef<E>>
 ) => {
   const Component = (as ?? 'div') as ElementType;
+  const liveRegionId = useId();
+  const shouldRenderLiveRegion = Boolean(ariaLiveMessage);
+  const describedBy = useMemo(() => {
+    if (!shouldRenderLiveRegion) {
+      return ariaDescribedBy;
+    }
+    if (!ariaDescribedBy) {
+      return liveRegionId;
+    }
+    return `${ariaDescribedBy} ${liveRegionId}`;
+  }, [ariaDescribedBy, liveRegionId, shouldRenderLiveRegion]);
+
+  const innerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (focusOnMount && innerRef.current) {
+      innerRef.current.focus();
+    }
+  }, [focusOnMount]);
 
   const cssVariables = useMemo<Record<string, string | number>>(() => {
     const vars: Record<string, string | number> = {
@@ -352,8 +379,7 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
       }
     }
 
-    if (onKeyDown) `  4
-    
+    if (onKeyDown) {
       onKeyDown(event as unknown as KeyboardEvent<HTMLElement>);
     }
   };
@@ -367,27 +393,50 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
   const componentTabIndex = interactive && tabIndex === undefined ? 0 : tabIndex;
   const componentOnKeyDown = interactive ? (handleKeyDown as KeyHandler) : onKeyDown;
 
+  const assignRef = (node: DynBoxRef<E> | null) => {
+    innerRef.current = (node as HTMLElement | null) ?? null;
+    if (typeof ref === 'function') {
+      ref(node);
+    } else if (ref) {
+      (ref as MutableRefObject<DynBoxRef<E> | null>).current = node;
+    }
+  };
+
   return (
     <Component
-      ref={ref}
+      ref={assignRef}
       className={boxClasses}
       style={combinedStyle}
       role={componentRole}
       tabIndex={componentTabIndex}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
-      aria-describedby={ariaDescribedBy}
+      aria-describedby={describedBy}
       onClick={onClick}
       onKeyDown={componentOnKeyDown}
       data-testid={dataTestId}
       {...rest}
     >
       {children}
+      {shouldRenderLiveRegion && (
+        <span
+          id={liveRegionId}
+          className={styles['box__sr-only']}
+          aria-live={ariaLivePoliteness}
+          aria-atomic="true"
+        >
+          {ariaLiveMessage}
+        </span>
+      )}
     </Component>
   );
 };
 
-const DynBox = forwardRef(DynBoxComponent);
+type DynBoxForwardRef = <E extends ElementType = 'div'>(
+  props: DynBoxProps<E> & { ref?: Ref<DynBoxRef<E>> }
+) => ReturnType<typeof DynBoxComponent>;
+
+const DynBox = forwardRef(DynBoxComponent) as DynBoxForwardRef;
 
 DynBox.displayName = 'DynBox';
 
