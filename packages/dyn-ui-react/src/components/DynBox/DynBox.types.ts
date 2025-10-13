@@ -4,8 +4,8 @@ import type {
   ElementType,
   KeyboardEventHandler,
   MouseEventHandler,
-  ReactNode,
 } from 'react';
+import type { AccessibilityProps, BaseComponentProps } from '../../types';
 
 export type BoxDisplay =
   | 'block'
@@ -37,6 +37,9 @@ export type JustifyContent =
 export type AlignItems = 'stretch' | 'flex-start' | 'flex-end' | 'center' | 'baseline';
 export type AlignContent = 'stretch' | 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around';
 
+/**
+ * Responsive visibility helpers following DynAvatar contract
+ */
 export interface ResponsiveVisibilityProps {
   hideOnMobile?: boolean;
   hideOnTablet?: boolean;
@@ -49,7 +52,13 @@ export interface ResponsiveVisibilityProps {
 type PolymorphicComponentProps<E extends ElementType, P> = P &
   Omit<ComponentPropsWithoutRef<E>, keyof P>;
 
-export interface DynBoxOwnProps extends ResponsiveVisibilityProps {
+/**
+ * Core DynBox props composed with system base props
+ */
+export interface DynBoxOwnProps
+  extends BaseComponentProps,
+    AccessibilityProps,
+    ResponsiveVisibilityProps {
   /** Display property */
   display?: BoxDisplay;
 
@@ -176,13 +185,18 @@ export interface DynBoxOwnProps extends ResponsiveVisibilityProps {
   /** Custom CSS variables */
   cssVars?: Record<string, string | number>;
 
-  /** Test id */
-  'data-testid'?: string;
+  /** Optional live region announcement */
+  ariaLiveMessage?: string;
+  /** Politeness setting for the live region */
+  ariaLivePoliteness?: 'polite' | 'assertive' | 'off';
 
-  /** Children */
-  children?: ReactNode;
+  /** Automatically focus the DynBox when it mounts */
+  focusOnMount?: boolean;
 }
 
+/**
+ * Full DynBox prop signature including polymorphic element overrides
+ */
 export type DynBoxProps<E extends ElementType = 'div'> = PolymorphicComponentProps<
   E,
   DynBoxOwnProps
