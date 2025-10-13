@@ -1,85 +1,115 @@
+import React, { ReactNode } from 'react';
+import { BaseComponentProps, ComponentSize, AccessibilityProps } from '../../types';
+
+export type DynTabsSize = ComponentSize;
+export type DynTabsPosition = 'top' | 'bottom' | 'left' | 'right';
+export type DynTabsVariant = 'default' | 'underlined' | 'pills' | 'bordered';
+
 /**
- * DynTabs TypeScript type definitions
- * Tab navigation component types with advanced features
+ * Individual tab item configuration
  */
-
-import type { ReactNode } from 'react';
-import type { DynBadgeColor, DynBadgeVariant } from '../DynBadge/DynBadge.types';
-
-export type TabBadge =
-  | number
-  | string
-  | {
-      count?: number;
-      value?: number;
-      label?: ReactNode;
-      color?: DynBadgeColor;
-      variant?: DynBadgeVariant;
-      maxCount?: number;
-      showZero?: boolean;
-    };
-
-export interface TabItem {
+export interface DynTabItem {
+  /** Unique identifier for the tab */
   id: string;
+  
+  /** Display label for the tab */
   label: string;
-  content?: React.ReactNode;
+  
+  /** Content to display when tab is active */
+  content: ReactNode;
+  
+  /** Whether the tab is disabled */
   disabled?: boolean;
+  
+  /** Whether this specific tab can be closed */
   closable?: boolean;
-  icon?: string | React.ReactNode;
-  badge?: TabBadge;
+  
+  /** Optional icon element or component */
+  icon?: ReactNode;
+  
+  /** Badge content (number or string) */
+  badge?: string | number;
+  
+  /** Tooltip text for the tab */
   tooltip?: string;
 }
 
-export interface DynTabsProps {
-  tabs: TabItem[];
+/**
+ * Props interface for DynTabs component
+ * Extends BaseComponentProps for consistency across the design system
+ */
+export interface DynTabsProps extends 
+  BaseComponentProps,
+  AccessibilityProps,
+  Omit<React.HTMLAttributes<HTMLDivElement>, keyof BaseComponentProps | keyof AccessibilityProps | 'onChange' | 'children'> {
+  
+  /** Array of tab items to display */
+  items: DynTabItem[];
+  
+  /** Currently active tab ID (controlled) */
   activeTab?: string;
+  
+  /** Default active tab ID (uncontrolled) */
   defaultActiveTab?: string;
-  position?: 'top' | 'bottom' | 'left' | 'right';
-  variant?: 'default' | 'pills' | 'underline' | 'cards';
-  size?: 'small' | 'medium' | 'large';
+  
+  /** Position of tabs relative to content */
+  position?: DynTabsPosition;
+  
+  /** Visual variant of the tabs */
+  variant?: DynTabsVariant;
+  
+  /** Size of the tab elements */
+  size?: DynTabsSize;
+  
+  /** Enable horizontal scrolling for overflow tabs */
   scrollable?: boolean;
-  lazyLoad?: boolean;
+  
+  /** Allow tabs to be closed */
   closable?: boolean;
+  
+  /** Enable lazy loading of tab content */
+  lazy?: boolean;
+  
+  /** Enable tab transition animations */
+  animated?: boolean;
+  
+  /** Show add new tab button */
   addable?: boolean;
-  className?: string;
-  tabClassName?: string;
-  panelClassName?: string;
-  onTabChange?: (tabId: string) => void;
+  
+  /** Custom className for the tab list container */
+  tabListClassName?: string;
+  
+  /** Custom className for the content container */
+  contentClassName?: string;
+  
+  /** Custom loading component for lazy tabs */
+  loadingComponent?: ReactNode;
+  
+  /** Called when active tab changes */
+  onChange?: (tabId: string) => void;
+  
+  /** Called when a tab is closed */
   onTabClose?: (tabId: string) => void;
+  
+  /** Called when add tab button is clicked */
   onTabAdd?: () => void;
-  renderTabContent?: (tab: TabItem) => React.ReactNode;
 }
 
-export interface DynTabsHandle {
-  setActiveTab: (tabId: string) => void;
-  getActiveTab: () => string | undefined;
-  closeTab: (tabId: string) => void;
-  addTab: (tab: TabItem) => void;
-}
+/**
+ * Ref type for DynTabs component
+ */
+export type DynTabsRef = HTMLDivElement;
 
-// Default configuration
-export const TABS_DEFAULTS = {
+/**
+ * Default props for DynTabs component
+ */
+export const DYN_TABS_DEFAULT_PROPS = {
   position: 'top' as const,
   variant: 'default' as const,
   size: 'medium' as const,
   scrollable: false,
-  lazyLoad: false,
   closable: false,
-  addable: false
-};
-
-// Tab positions
-export const TAB_POSITIONS = {
-  TOP: 'top',
-  BOTTOM: 'bottom',
-  LEFT: 'left',
-  RIGHT: 'right'
-} as const;
-
-// Tab variants
-export const TAB_VARIANTS = {
-  DEFAULT: 'default',
-  PILLS: 'pills',
-  UNDERLINE: 'underline',
-  CARDS: 'cards'
+  lazy: false,
+  animated: true,
+  addable: false,
 } as const;
