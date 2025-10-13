@@ -74,7 +74,7 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
     const [internalId] = useState(() => id || generateId('avatar'));
 
     const isInteractive = Boolean(onClick);
-    
+
     // Generate initials from alt text or use provided initials
     const displayInitials = useMemo(() => {
       if (initials) return initials.slice(0, 2).toUpperCase();
@@ -104,7 +104,7 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (!isInteractive) return;
-      
+
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         onClick?.(event as any);
@@ -176,6 +176,7 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
             alt={showImage ? alt : ''}
             loading={imageLoading}
             className={imageClasses}
+            data-testid="dyn-avatar-image"
             onLoad={handleImageLoad}
             onError={handleImageError}
             {...imageProps}
@@ -184,7 +185,7 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
 
         {/* Fallback content */}
         {showFallback && (
-          <div 
+          <div
             className={getStyleClass('avatar__fallback')}
             aria-hidden={showImage ? 'true' : undefined}
           >

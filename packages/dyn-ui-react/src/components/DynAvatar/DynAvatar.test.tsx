@@ -49,7 +49,7 @@ describe('DynAvatar', () => {
       fireEvent.load(img);
 
       await waitFor(() => {
-        expect(img).toHaveClass(styles['avatar__image--loaded'] ?? '');
+        expect(img).toHaveClass(getStyleClass('avatar__image--loaded'));
       });
     });
 
@@ -187,15 +187,15 @@ describe('DynAvatar', () => {
   describe('Sizes and Variants', () => {
     it('applies size classes correctly', () => {
       const { rerender } = render(<DynAvatar alt="Test" size="small" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--small']!);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--small'));
 
       rerender(<DynAvatar alt="Test" size="large" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--large']!);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--large'));
     });
 
     it('applies default medium size when not specified', () => {
       render(<DynAvatar alt="Test" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--medium']!);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--medium'));
     });
 
     it('applies shape classes correctly', () => {
@@ -213,36 +213,36 @@ describe('DynAvatar', () => {
 
     it('applies status classes correctly', () => {
       const { rerender } = render(<DynAvatar alt="Test" status="online" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--online']!);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--online'));
 
       rerender(<DynAvatar alt="Test" status="busy" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--busy']!);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--busy'));
     });
   });
 
   describe('Loading and Error States', () => {
     it('shows loading state', () => {
       render(<DynAvatar alt="Loading" loading />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--loading']!);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--loading'));
       expect(screen.getByText('Loading avatar')).toBeInTheDocument();
     });
 
     it('shows error state', () => {
       render(<DynAvatar alt="Error" error />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--error']!);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--error'));
       expect(screen.getByText('Avatar failed to load')).toBeInTheDocument();
     });
 
     it('shows loading state when image is loading', () => {
       render(<DynAvatar src="loading.jpg" alt="Loading" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--loading']!);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--loading'));
     });
 
     it('combines error and loading states correctly', () => {
       render(<DynAvatar alt="Error Loading" error loading />);
       const avatar = screen.getByRole('img');
-      expect(avatar).toHaveClass(styles['avatar--error']!);
-      expect(avatar).toHaveClass(styles['avatar--loading']!);
+      expect(avatar).toHaveClass(getStyleClass('avatar--error'));
+      expect(avatar).toHaveClass(getStyleClass('avatar--loading'));
     });
   });
 
