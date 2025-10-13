@@ -78,13 +78,13 @@ describe('DynContainer', () => {
 
     expect(element.className).toMatch(/layoutFixed/);
     expect(element.style.getPropertyValue('--dyn-container-max-width')).toBe(
-      'min(100%, var(--dyn-container-max-width-md, 40rem))'
+      'min(100%, var(--dyn-container-max-width-md))'
     );
     expect(element.style.getPropertyValue('--dyn-container-padding')).toBe(
-      'var(--dyn-spacing-lg, 1.5rem)'
+      'var(--dyn-spacing-lg, var(--spacing-lg, 1.5rem))'
     );
     expect(element.style.getPropertyValue('--dyn-container-margin')).toBe(
-      'var(--dyn-spacing-sm, 0.5rem)'
+      'var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem))'
     );
   });
 

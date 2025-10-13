@@ -14,19 +14,19 @@ const toPascalCase = (value: string) => value.charAt(0).toUpperCase() + value.sl
 
 const SPACING_TOKENS: Record<string, string> = {
   none: '0',
-  xs: 'var(--dyn-spacing-xs, 0.25rem)',
-  sm: 'var(--dyn-spacing-sm, 0.5rem)',
-  md: 'var(--dyn-spacing-md, 1rem)',
-  lg: 'var(--dyn-spacing-lg, 1.5rem)',
-  xl: 'var(--dyn-spacing-xl, 2rem)',
+  xs: 'var(--dyn-spacing-xs, var(--spacing-xs, 0.25rem))',
+  sm: 'var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem))',
+  md: 'var(--dyn-spacing-md, var(--spacing-md, 1rem))',
+  lg: 'var(--dyn-spacing-lg, var(--spacing-lg, 1.5rem))',
+  xl: 'var(--dyn-spacing-xl, var(--spacing-xl, 2rem))',
 };
 
 const MAX_WIDTH_TOKENS: Record<DynContainerMaxWidthToken, string> = {
-  xs: 'min(100%, var(--dyn-container-max-width-xs, 20rem))',
-  sm: 'min(100%, var(--dyn-container-max-width-sm, 28rem))',
-  md: 'min(100%, var(--dyn-container-max-width-md, 40rem))',
-  lg: 'min(100%, var(--dyn-container-max-width-lg, 64rem))',
-  xl: 'min(100%, var(--dyn-container-max-width-xl, 80rem))',
+  xs: 'min(100%, var(--dyn-container-max-width-xs))',
+  sm: 'min(100%, var(--dyn-container-max-width-sm))',
+  md: 'min(100%, var(--dyn-container-max-width-md))',
+  lg: 'min(100%, var(--dyn-container-max-width-lg))',
+  xl: 'min(100%, var(--dyn-container-max-width-xl))',
   full: '100%',
 };
 

@@ -1,19 +1,19 @@
 .root {
-  --dyn-container-padding: var(--dyn-spacing-md, 1rem);
-  --dyn-container-gap: var(--dyn-spacing-md, 1rem);
+  --dyn-container-padding: var(--dyn-spacing-md, var(--spacing-md, 1rem));
+  --dyn-container-gap: var(--dyn-spacing-md, var(--spacing-md, 1rem));
   --dyn-container-margin: 0;
-  --dyn-container-border-color: var(--dyn-color-border, rgba(15, 23, 42, 0.12));
+  --dyn-container-border-color: var(--dyn-color-border, var(--color-border, rgba(15, 23, 42, 0.12)));
   --dyn-container-surface: var(--dyn-layout-bg-surface, var(--color-surface, #f8fafc));
   --dyn-container-card: var(--dyn-layout-bg-card, var(--color-background, #ffffff));
-  --dyn-container-shadow: var(--dyn-shadow-md, 0 10px 30px rgba(15, 23, 42, 0.12));
-  --dyn-container-title-color: var(--dyn-color-text-primary, #0f172a);
-  --dyn-container-subtitle-color: var(--dyn-color-text-secondary, #475569);
+  --dyn-container-shadow: var(--dyn-shadow-md, var(--shadow-md, 0 10px 30px rgba(15, 23, 42, 0.12)));
+  --dyn-container-title-color: var(--dyn-color-text-primary, var(--color-text-primary, #0f172a));
+  --dyn-container-subtitle-color: var(--dyn-color-text-secondary, var(--color-text-secondary, #475569));
   --dyn-container-max-width: 100%;
-  --dyn-container-max-width-xs: var(--dyn-container-size-xs, 20rem);
-  --dyn-container-max-width-sm: var(--dyn-container-size-sm, 28rem);
-  --dyn-container-max-width-md: var(--dyn-container-size-md, 40rem);
-  --dyn-container-max-width-lg: var(--dyn-container-size-lg, 64rem);
-  --dyn-container-max-width-xl: var(--dyn-container-size-xl, 80rem);
+  --dyn-container-max-width-xs: var(--dyn-layout-container-width-xs, var(--container-max-width-xs, 20rem));
+  --dyn-container-max-width-sm: var(--dyn-layout-container-width-sm, var(--container-max-width-sm, 28rem));
+  --dyn-container-max-width-md: var(--dyn-layout-container-width-md, var(--container-max-width-md, 40rem));
+  --dyn-container-max-width-lg: var(--dyn-layout-container-width-lg, var(--container-max-width-lg, 64rem));
+  --dyn-container-max-width-xl: var(--dyn-layout-container-width-xl, var(--container-max-width-xl, 80rem));
 
   box-sizing: border-box;
   position: relative;
@@ -24,7 +24,7 @@
   margin: var(--dyn-container-margin);
   padding: var(--dyn-container-padding);
   gap: var(--dyn-container-gap);
-  border-radius: var(--dyn-border-radius-lg, 0.75rem);
+  border-radius: var(--dyn-border-radius-lg, var(--border-radius-lg, 0.75rem));
   border: none;
   background: transparent;
   transition:
@@ -59,35 +59,35 @@
 }
 
 .spacingXs {
-  --dyn-container-gap: var(--dyn-spacing-xs, 0.25rem);
+  --dyn-container-gap: var(--dyn-spacing-xs, var(--spacing-xs, 0.25rem));
 }
 
 .spacingSm {
-  --dyn-container-gap: var(--dyn-spacing-sm, 0.5rem);
+  --dyn-container-gap: var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem));
 }
 
 .spacingMd {
-  --dyn-container-gap: var(--dyn-spacing-md, 1rem);
+  --dyn-container-gap: var(--dyn-spacing-md, var(--spacing-md, 1rem));
 }
 
 .spacingLg {
-  --dyn-container-gap: var(--dyn-spacing-lg, 1.5rem);
+  --dyn-container-gap: var(--dyn-spacing-lg, var(--spacing-lg, 1.5rem));
 }
 
 .spacingXl {
-  --dyn-container-gap: var(--dyn-spacing-xl, 2rem);
+  --dyn-container-gap: var(--dyn-spacing-xl, var(--spacing-xl, 2rem));
 }
 
 .sizeSmall {
-  --dyn-container-padding: var(--dyn-spacing-sm, 0.5rem);
+  --dyn-container-padding: var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem));
 }
 
 .sizeMedium {
-  --dyn-container-padding: var(--dyn-spacing-md, 1rem);
+  --dyn-container-padding: var(--dyn-spacing-md, var(--spacing-md, 1rem));
 }
 
 .sizeLarge {
-  --dyn-container-padding: var(--dyn-spacing-lg, 1.5rem);
+  --dyn-container-padding: var(--dyn-spacing-lg, var(--spacing-lg, 1.5rem));
 }
 
 .layoutFixed {
@@ -105,7 +105,7 @@
 
 .backgroundCard {
   background: var(--dyn-container-card);
-  box-shadow: var(--dyn-shadow-sm, 0 8px 24px rgba(15, 23, 42, 0.12));
+  box-shadow: var(--dyn-shadow-sm, var(--shadow-sm, 0 8px 24px rgba(15, 23, 42, 0.12)));
 }
 
 .bordered {
@@ -123,24 +123,24 @@
 .header {
   display: flex;
   flex-direction: column;
-  gap: var(--dyn-spacing-xs, 0.25rem);
-  padding-bottom: var(--dyn-spacing-sm, 0.5rem);
+  gap: var(--dyn-spacing-xs, var(--spacing-xs, 0.25rem));
+  padding-bottom: var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem));
   border-bottom: 1px solid var(--dyn-container-border-color);
 }
 
 .title {
   margin: 0;
-  font-size: var(--dyn-font-size-lg, 1.125rem);
-  font-weight: var(--dyn-font-weight-semibold, 600);
+  font-size: var(--dyn-font-size-lg, var(--font-size-lg, 1.125rem));
+  font-weight: var(--dyn-font-weight-semibold, var(--font-weight-semibold, 600));
   color: var(--dyn-container-title-color);
-  line-height: var(--dyn-line-height-tight, 1.3);
+  line-height: var(--dyn-line-height-tight, var(--line-height-tight, 1.3));
 }
 
 .subtitle {
   margin: 0;
-  font-size: var(--dyn-font-size-sm, 0.875rem);
+  font-size: var(--dyn-font-size-sm, var(--font-size-sm, 0.875rem));
   color: var(--dyn-container-subtitle-color);
-  line-height: var(--dyn-line-height-normal, 1.5);
+  line-height: var(--dyn-line-height-normal, var(--line-height-normal, 1.5));
 }
 
 .content {
@@ -153,11 +153,15 @@
 }
 
 .withTitle .content {
-  padding-top: var(--dyn-spacing-xs, 0.25rem);
+  padding-top: var(--dyn-spacing-xs, var(--spacing-xs, 0.25rem));
 }
 
 @media (max-width: 768px) {
   .root {
-    --dyn-container-padding: clamp(0.75rem, 2vw + 0.5rem, var(--dyn-spacing-md, 1rem));
+    --dyn-container-padding: clamp(
+      0.75rem,
+      2vw + 0.5rem,
+      var(--dyn-spacing-md, var(--spacing-md, 1rem))
+    );
   }
 }
