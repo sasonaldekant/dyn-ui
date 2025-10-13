@@ -23,6 +23,17 @@ describe('DynAvatar', () => {
       expect(screen.getByText('AB')).toBeInTheDocument();
     });
 
+    it('handles single name initials correctly', () => {
+      render(<DynAvatar alt="John" />);
+      expect(screen.getByText('J')).toBeInTheDocument();
+    });
+
+    it('handles empty alt gracefully', () => {
+      render(<DynAvatar alt="" />);
+      // Should show default icon when no initials can be generated
+      expect(screen.getByRole('img')).toBeInTheDocument();
+    });
+
     it('renders image when src provided', async () => {
       const mockSrc = 'https://example.com/avatar.jpg';
       render(<DynAvatar src={mockSrc} alt="User Avatar" />);
@@ -81,9 +92,39 @@ describe('DynAvatar', () => {
       expect(screen.getByRole('img')).toHaveAttribute('aria-describedby', 'avatar-description');
     });
 
+    it('supports aria-labelledby', () => {
+      render(
+        <>
+          <DynAvatar alt="User" aria-labelledby="avatar-label" />
+          <div id="avatar-label">Profile picture</div>
+        </>
+      );
+      expect(screen.getByRole('img')).toHaveAttribute('aria-labelledby', 'avatar-label');
+    });
+
     it('announces loading state to screen readers', () => {
       render(<DynAvatar src="loading.jpg" alt="Loading avatar" />);
       expect(screen.getByText('Loading avatar')).toBeInTheDocument();
+    });
+
+    it('announces error state to screen readers', () => {
+      render(<DynAvatar alt="Error avatar" error />);
+      expect(screen.getByText('Avatar failed to load')).toBeInTheDocument();
+    });
+
+    it('sets aria-busy during loading', () => {
+      render(<DynAvatar alt="Loading" loading />);
+      expect(screen.getByRole('img')).toHaveAttribute('aria-busy', 'true');
+    });
+
+    it('includes status in aria-label', () => {
+      render(<DynAvatar alt="John Doe" status="online" />);
+      expect(screen.getByRole('img')).toHaveAttribute('aria-label', 'John Doe (Online)');
+    });
+
+    it('sets data-status attribute', () => {
+      render(<DynAvatar alt="User" status="busy" />);
+      expect(screen.getByRole('img')).toHaveAttribute('data-status', 'busy');
     });
   });
 
@@ -117,12 +158,25 @@ describe('DynAvatar', () => {
       expect(avatar).toHaveFocus();
     });
 
+    it('has proper tabIndex for interactive avatars', () => {
+      render(<DynAvatar alt="Interactive" onClick={() => {}} />);
+      expect(screen.getByRole('button')).toHaveAttribute('tabIndex', '0');
+    });
+
     it('is not interactive without onClick', () => {
       render(<DynAvatar alt="Non-interactive" />);
       const avatar = screen.getByRole('img');
 
       expect(avatar).not.toHaveAttribute('tabIndex');
       expect(avatar).toHaveAttribute('role', 'img');
+    });
+
+    it('does not trigger click when not interactive', async () => {
+      const handleClick = vi.fn();
+      render(<DynAvatar alt="Non-interactive" />);
+      
+      await userEvent.click(screen.getByRole('img'));
+      expect(handleClick).not.toHaveBeenCalled();
     });
   });
 
@@ -135,12 +189,22 @@ describe('DynAvatar', () => {
       expect(screen.getByRole('img')).toHaveClass(styles['avatar--large']!);
     });
 
+    it('applies default medium size when not specified', () => {
+      render(<DynAvatar alt="Test" />);
+      expect(screen.getByRole('img')).toHaveClass(styles['avatar--medium']!);
+    });
+
     it('applies shape classes correctly', () => {
       const { rerender } = render(<DynAvatar alt="Test" shape="square" />);
       expect(screen.getByRole('img')).toHaveClass(styles['avatar--square']!);
 
       rerender(<DynAvatar alt="Test" shape="rounded" />);
       expect(screen.getByRole('img')).toHaveClass(styles['avatar--rounded']!);
+    });
+
+    it('applies default circle shape when not specified', () => {
+      render(<DynAvatar alt="Test" />);
+      expect(screen.getByRole('img')).toHaveClass(styles['avatar--circle'] || styles.avatar);
     });
 
     it('applies status classes correctly', () => {
@@ -162,6 +226,19 @@ describe('DynAvatar', () => {
     it('shows error state', () => {
       render(<DynAvatar alt="Error" error />);
       expect(screen.getByRole('img')).toHaveClass(styles['avatar--error']!);
+      expect(screen.getByText('Avatar failed to load')).toBeInTheDocument();
+    });
+
+    it('shows loading state when image is loading', () => {
+      render(<DynAvatar src="loading.jpg" alt="Loading" />);
+      expect(screen.getByRole('img')).toHaveClass(styles['avatar--loading']!);
+    });
+
+    it('combines error and loading states correctly', () => {
+      render(<DynAvatar alt="Error Loading" error loading />);
+      const avatar = screen.getByRole('img');
+      expect(avatar).toHaveClass(styles['avatar--error']!);
+      expect(avatar).toHaveClass(styles['avatar--loading']!);
     });
   });
 
@@ -171,12 +248,39 @@ describe('DynAvatar', () => {
       render(<DynAvatar alt="Custom" fallback={customFallback} />);
       expect(screen.getByTestId('custom-fallback')).toBeInTheDocument();
     });
+
+    it('prefers fallback over children', () => {
+      const customFallback = <span data-testid="fallback">FB</span>;
+      const children = <span data-testid="children">CH</span>;
+      render(
+        <DynAvatar alt="Test" fallback={customFallback}>
+          {children}
+        </DynAvatar>
+      );
+      expect(screen.getByTestId('fallback')).toBeInTheDocument();
+      expect(screen.queryByTestId('children')).not.toBeInTheDocument();
+    });
+
+    it('uses children when no fallback or initials', () => {
+      const children = <span data-testid="children">CH</span>;
+      render(
+        <DynAvatar alt="">
+          {children}
+        </DynAvatar>
+      );
+      expect(screen.getByTestId('children')).toBeInTheDocument();
+    });
   });
 
   describe('Image Loading', () => {
     it('sets loading strategy correctly', () => {
       render(<DynAvatar src="test.jpg" alt="Test" imageLoading="lazy" />);
       expect(getImageElement()).toHaveAttribute('loading', 'lazy');
+    });
+
+    it('defaults to eager loading', () => {
+      render(<DynAvatar src="test.jpg" alt="Test" />);
+      expect(getImageElement()).toHaveAttribute('loading', 'eager');
     });
 
     it('passes through image props', () => {
@@ -188,6 +292,64 @@ describe('DynAvatar', () => {
         />
       );
       expect(getImageElement()).toHaveAttribute('crossorigin', 'anonymous');
+    });
+
+    it('handles image load events', async () => {
+      const onLoad = vi.fn();
+      render(
+        <DynAvatar
+          src="test.jpg"
+          alt="Test"
+          imageProps={{ onLoad }}
+        />
+      );
+      
+      const img = getImageElement();
+      fireEvent.load(img);
+      
+      await waitFor(() => {
+        expect(onLoad).toHaveBeenCalled();
+      });
+    });
+
+    it('handles image error events', async () => {
+      const onError = vi.fn();
+      render(
+        <DynAvatar
+          src="invalid.jpg"
+          alt="Test"
+          imageProps={{ onError }}
+        />
+      );
+      
+      const img = getImageElement();
+      fireEvent.error(img);
+      
+      await waitFor(() => {
+        expect(onError).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('Props and Customization', () => {
+    it('applies custom className', () => {
+      render(<DynAvatar alt="Test" className="custom-class" />);
+      expect(screen.getByRole('img')).toHaveClass('custom-class');
+    });
+
+    it('sets custom id', () => {
+      render(<DynAvatar alt="Test" id="custom-id" />);
+      expect(screen.getByRole('img')).toHaveAttribute('id', 'custom-id');
+    });
+
+    it('sets custom test id', () => {
+      render(<DynAvatar alt="Test" data-testid="custom-testid" />);
+      expect(screen.getByTestId('custom-testid')).toBeInTheDocument();
+    });
+
+    it('forwards additional props', () => {
+      render(<DynAvatar alt="Test" data-custom="value" />);
+      expect(screen.getByRole('img')).toHaveAttribute('data-custom', 'value');
     });
   });
 });
