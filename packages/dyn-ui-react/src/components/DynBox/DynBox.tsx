@@ -352,7 +352,8 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
       }
     }
 
-    if (onKeyDown) {
+    if (onKeyDown) `  4
+    
       onKeyDown(event as unknown as KeyboardEvent<HTMLElement>);
     }
   };

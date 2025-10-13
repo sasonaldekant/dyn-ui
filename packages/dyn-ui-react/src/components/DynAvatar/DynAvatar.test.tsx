@@ -9,6 +9,10 @@ import styles from './DynAvatar.module.css';
 const getImageElement = () =>
   screen.getByTestId('dyn-avatar-image') as HTMLImageElement;
 
+const getStyleClass = (className: string): string => {
+  return (styles as Record<string, string>)[className] || '';
+};
+
 describe('DynAvatar', () => {
   describe('Basic Functionality', () => {
     it('renders with initials when no image provided', () => {
@@ -174,7 +178,7 @@ describe('DynAvatar', () => {
     it('does not trigger click when not interactive', async () => {
       const handleClick = vi.fn();
       render(<DynAvatar alt="Non-interactive" />);
-      
+
       await userEvent.click(screen.getByRole('img'));
       expect(handleClick).not.toHaveBeenCalled();
     });
@@ -196,15 +200,15 @@ describe('DynAvatar', () => {
 
     it('applies shape classes correctly', () => {
       const { rerender } = render(<DynAvatar alt="Test" shape="square" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--square']!);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--square')!);
 
       rerender(<DynAvatar alt="Test" shape="rounded" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--rounded']!);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--rounded')!);
     });
 
     it('applies default circle shape when not specified', () => {
       render(<DynAvatar alt="Test" />);
-      expect(screen.getByRole('img')).toHaveClass(styles['avatar--circle'] || styles.avatar);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--circle'));
     });
 
     it('applies status classes correctly', () => {
@@ -303,10 +307,10 @@ describe('DynAvatar', () => {
           imageProps={{ onLoad }}
         />
       );
-      
+
       const img = getImageElement();
       fireEvent.load(img);
-      
+
       await waitFor(() => {
         expect(onLoad).toHaveBeenCalled();
       });
@@ -321,10 +325,10 @@ describe('DynAvatar', () => {
           imageProps={{ onError }}
         />
       );
-      
+
       const img = getImageElement();
       fireEvent.error(img);
-      
+
       await waitFor(() => {
         expect(onError).toHaveBeenCalled();
       });
