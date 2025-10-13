@@ -104,6 +104,11 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
       }
     };
 
+    // Generate CSS class names with proper type safety
+    const sizeClass = styles[`avatar--${size}` as keyof typeof styles] || styles['avatar--medium'];
+    const shapeClass = styles[`avatar--${shape}` as keyof typeof styles] || styles.avatar;
+    const statusClass = status ? styles[`avatar--${status}` as keyof typeof styles] : undefined;
+
     // Generate accessibility attributes
     const statusLabel = status ? DYN_AVATAR_STATUS_LABELS[status] : undefined;
     const accessibleLabelBase = ariaLabel || (isInteractive ? `Avatar for ${alt}` : alt);
@@ -113,29 +118,38 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
 
     const avatarClasses = cn(
       styles.avatar,
-      styles[`avatar--${size}`],
-      styles[`avatar--${shape}`],
+      sizeClass,
+      shapeClass,
+      statusClass,
       {
-        [styles['avatar--clickable']]: isInteractive,
-        [styles['avatar--loading']]: isLoadingState,
-        [styles['avatar--error']]: error || imageError,
-        [styles[`avatar--${status}`]]: status,
+        [styles['avatar--clickable'] || '']: isInteractive,
+        [styles['avatar--loading'] || '']: isLoadingState,
+        [styles['avatar--error'] || '']: error || imageError,
       },
       className
+    );
+
+    // Generate image classes with proper type safety
+    const imageClasses = cn(
+      styles['avatar__image'] || styles.avatar__image,
+      {
+        [styles['avatar__image--loading'] || '']: !imageLoaded,
+        [styles['avatar__image--loaded'] || '']: imageLoaded,
+      }
     );
 
     // Accessibility props
     const accessibilityProps = {
       id: internalId,
-      role: isInteractive ? 'button' : role || 'img',
+      role: isInteractive ? ('button' as const) : (role || ('img' as const)),
       tabIndex: isInteractive ? 0 : undefined,
       'aria-label': accessibleLabel,
       'aria-describedby': ariaDescribedBy,
       'aria-labelledby': ariaLabelledBy,
-      'aria-busy': isLoadingState ? 'true' : undefined,
+      'aria-busy': isLoadingState ? ('true' as const) : undefined,
       'data-status': status,
       'data-testid': dataTestId || 'dyn-avatar',
-    };
+    } as const;
 
     return (
       <div
@@ -152,13 +166,7 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
             src={src}
             alt={showImage ? alt : ''}
             loading={imageLoading}
-            className={cn(
-              styles.avatar__image,
-              {
-                [styles['avatar__image--loading']]: !imageLoaded,
-                [styles['avatar__image--loaded']]: imageLoaded,
-              }
-            )}
+            className={imageClasses}
             onLoad={handleImageLoad}
             onError={handleImageError}
             {...imageProps}
@@ -168,16 +176,16 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
         {/* Fallback content */}
         {showFallback && (
           <div 
-            className={styles.avatar__fallback}
+            className={styles['avatar__fallback'] || styles.avatar__fallback}
             aria-hidden={showImage ? 'true' : undefined}
           >
             {fallback || children || (
               displayInitials ? (
-                <span className={styles.avatar__initials}>
+                <span className={styles['avatar__initials'] || styles.avatar__initials}>
                   {displayInitials}
                 </span>
               ) : (
-                <span className={styles.avatar__icon}>
+                <span className={styles['avatar__icon'] || styles.avatar__icon}>
                   <DefaultFallbackIcon />
                 </span>
               )
