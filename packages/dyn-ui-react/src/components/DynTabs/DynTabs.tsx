@@ -1,329 +1,339 @@
-/**
- * DynTabs - Tab Navigation Component
- * Flexible tab system with multiple positions, variants, and advanced features
- */
-
-import React, { forwardRef, useImperativeHandle, useState, useEffect, useRef, useCallback } from 'react';
-import classNames from 'classnames';
-import { DynTabsProps, TabItem, DynTabsHandle, TABS_DEFAULTS } from './DynTabs.types';
-import { DynIcon } from '../DynIcon';
-import { DynBadge } from '../DynBadge';
+import React, { forwardRef, useState, useRef, useMemo, useCallback, useEffect, useImperativeHandle } from 'react';
+import { cn } from '../../utils/classNames';
+import { generateId } from '../../utils/accessibility';
+import type { DynTabsProps, DynTabsRef, DynTabItem, DYN_TABS_DEFAULT_PROPS } from './DynTabs.types';
+import { DYN_TABS_DEFAULT_PROPS } from './DynTabs.types';
 import styles from './DynTabs.module.css';
 
-const DynTabs = forwardRef<DynTabsHandle, DynTabsProps>((
+/**
+ * Generate accessible tab and panel IDs
+ */
+const generateTabId = (baseId: string, tabId: string) => `${baseId}-tab-${tabId}`;
+const generatePanelId = (baseId: string, tabId: string) => `${baseId}-panel-${tabId}`;
+
+/**
+ * Safely access CSS module classes
+ */
+const getStyleClass = (className: string): string => {
+  return (styles as Record<string, string>)[className] || '';
+};
+
+/**
+ * Default loading component for lazy tabs
+ */
+const DefaultLoadingComponent = () => (
+  <div className={getStyleClass('loading-spinner')} aria-label="Loading content">
+    <span className="dyn-sr-only">Loading tab content</span>
+  </div>
+);
+
+export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>((
   {
-    tabs = [],
+    items = [],
     activeTab,
     defaultActiveTab,
-    position = TABS_DEFAULTS.position,
-    variant = TABS_DEFAULTS.variant,
-    size = TABS_DEFAULTS.size,
-    scrollable = TABS_DEFAULTS.scrollable,
-    lazyLoad = TABS_DEFAULTS.lazyLoad,
-    closable = TABS_DEFAULTS.closable,
-    addable = TABS_DEFAULTS.addable,
-    className,
-    tabClassName,
-    panelClassName,
-    onTabChange,
+    position = DYN_TABS_DEFAULT_PROPS.position,
+    variant = DYN_TABS_DEFAULT_PROPS.variant,
+    size = DYN_TABS_DEFAULT_PROPS.size,
+    scrollable = DYN_TABS_DEFAULT_PROPS.scrollable,
+    closable = DYN_TABS_DEFAULT_PROPS.closable,
+    lazy = DYN_TABS_DEFAULT_PROPS.lazy,
+    animated = DYN_TABS_DEFAULT_PROPS.animated,
+    addable = DYN_TABS_DEFAULT_PROPS.addable,
+    tabListClassName,
+    contentClassName,
+    loadingComponent,
+    onChange,
     onTabClose,
     onTabAdd,
-    renderTabContent
+    className,
+    id,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy,
+    'aria-describedby': ariaDescribedBy,
+    'data-testid': dataTestId,
+    ...rest
   },
   ref
 ) => {
   const [internalActiveTab, setInternalActiveTab] = useState<string>(() => {
     if (activeTab) return activeTab;
     if (defaultActiveTab) return defaultActiveTab;
-    return tabs.length > 0 ? tabs[0].id : '';
+    const enabledTab = items.find(item => !item.disabled);
+    return enabledTab?.id || '';
   });
 
-  const [loadedTabs, setLoadedTabs] = useState<Set<string>>(new Set([internalActiveTab]));
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [loadedTabs, setLoadedTabs] = useState<Set<string>>(() => {
+    const initialTab = activeTab || defaultActiveTab || items.find(item => !item.disabled)?.id || '';
+    return new Set(lazy ? [initialTab] : items.map(item => item.id));
+  });
+
+  const [internalId] = useState(() => id ?? generateId('dyn-tabs'));
   const tabListRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const currentActiveTab = activeTab ?? internalActiveTab;
+  const isControlled = activeTab !== undefined;
+  const enabledItems = items.filter(item => !item.disabled);
 
-  useEffect(() => {
-    if (activeTab && activeTab !== internalActiveTab) {
-      setInternalActiveTab(activeTab);
-      if (lazyLoad) {
-        setLoadedTabs(prev => new Set([...prev, activeTab]));
-      }
-    }
-  }, [activeTab, internalActiveTab, lazyLoad]);
+  // Helper functions
+  const setActiveTabId = useCallback((tabId: string) => {
+    const targetTab = items.find(item => item.id === tabId);
+    if (!targetTab || targetTab.disabled) return;
 
-  useEffect(() => {
-    if (scrollable && tabListRef.current) {
-      const checkScroll = () => {
-        const element = tabListRef.current!;
-        setCanScrollLeft(element.scrollLeft > 0);
-        setCanScrollRight(element.scrollLeft < element.scrollWidth - element.clientWidth);
-      };
-      
-      checkScroll();
-      const element = tabListRef.current;
-      element.addEventListener('scroll', checkScroll);
-      return () => element.removeEventListener('scroll', checkScroll);
-    }
-  }, [scrollable, tabs]);
-
-  useImperativeHandle(ref, () => ({
-    setActiveTab: (tabId: string) => {
-      handleTabClick(tabId);
-    },
-    getActiveTab: () => currentActiveTab,
-    closeTab: (tabId: string) => {
-      onTabClose?.(tabId);
-    },
-    addTab: (tab: TabItem) => {
-      onTabAdd?.();
-    }
-  }));
-
-  const handleTabClick = useCallback((tabId: string) => {
-    const tab = tabs.find(t => t.id === tabId);
-    if (tab?.disabled) return;
-
-    if (!activeTab) {
+    if (!isControlled) {
       setInternalActiveTab(tabId);
     }
-    
-    if (lazyLoad) {
+
+    if (lazy) {
       setLoadedTabs(prev => new Set([...prev, tabId]));
     }
-    
-    onTabChange?.(tabId);
-  }, [activeTab, lazyLoad, onTabChange]);
 
-  const handleTabClose = useCallback((e: React.MouseEvent, tabId: string) => {
-    e.stopPropagation();
-    onTabClose?.(tabId);
-  }, [onTabClose]);
+    onChange?.(tabId);
+  }, [items, isControlled, lazy, onChange]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent, tabId: string) => {
-    const currentIndex = tabs.findIndex(tab => tab.id === tabId);
-    
-    switch (e.key) {
+  const focusTab = useCallback((tabId: string) => {
+    const tabElement = tabRefs.current.get(tabId);
+    if (tabElement) {
+      tabElement.focus();
+    }
+  }, []);
+
+  // Keyboard navigation handler
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLButtonElement>, tabId: string) => {
+    const currentIndex = enabledItems.findIndex(item => item.id === tabId);
+    if (currentIndex === -1) return;
+
+    let targetTab: DynTabItem | undefined;
+
+    switch (event.key) {
       case 'ArrowRight':
       case 'ArrowDown':
-        e.preventDefault();
-        const nextIndex = (currentIndex + 1) % tabs.length;
-        const nextTab = tabs[nextIndex];
-        if (!nextTab.disabled) {
-          handleTabClick(nextTab.id);
-        }
+        event.preventDefault();
+        targetTab = enabledItems[(currentIndex + 1) % enabledItems.length];
         break;
         
       case 'ArrowLeft':
       case 'ArrowUp':
-        e.preventDefault();
-        const prevIndex = currentIndex === 0 ? tabs.length - 1 : currentIndex - 1;
-        const prevTab = tabs[prevIndex];
-        if (!prevTab.disabled) {
-          handleTabClick(prevTab.id);
-        }
+        event.preventDefault();
+        targetTab = enabledItems[(currentIndex - 1 + enabledItems.length) % enabledItems.length];
         break;
         
       case 'Home':
-        e.preventDefault();
-        const firstEnabled = tabs.find(tab => !tab.disabled);
-        if (firstEnabled) {
-          handleTabClick(firstEnabled.id);
-        }
+        event.preventDefault();
+        targetTab = enabledItems[0];
         break;
         
       case 'End':
-        e.preventDefault();
-        const lastEnabled = [...tabs].reverse().find(tab => !tab.disabled);
-        if (lastEnabled) {
-          handleTabClick(lastEnabled.id);
-        }
+        event.preventDefault();
+        targetTab = enabledItems[enabledItems.length - 1];
         break;
-    }
-  }, [tabs, handleTabClick]);
-
-  const scrollTabs = useCallback((direction: 'left' | 'right') => {
-    if (!tabListRef.current) return;
-    
-    const scrollAmount = 200;
-    const newScrollLeft = direction === 'left' 
-      ? tabListRef.current.scrollLeft - scrollAmount
-      : tabListRef.current.scrollLeft + scrollAmount;
-      
-    tabListRef.current.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
-  }, []);
-
-  const renderBadge = useCallback((badge: TabItem['badge']) => {
-    if (!badge) {
-      return null;
+        
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        setActiveTabId(tabId);
+        return;
     }
 
-    if (typeof badge === 'object') {
-      const count = badge.count ?? badge.value;
-      return (
-        <DynBadge
-          count={typeof count === 'number' ? count : undefined}
-          maxCount={badge.maxCount}
-          showZero={badge.showZero}
-          color={badge.color}
-          variant={badge.variant}
-          size="small"
-        >
-          {badge.label}
-        </DynBadge>
-      );
+    if (targetTab) {
+      focusTab(targetTab.id);
+      setActiveTabId(targetTab.id);
     }
+  }, [enabledItems, focusTab, setActiveTabId]);
 
-    if (typeof badge === 'number') {
-      return <DynBadge count={badge} size="small" />;
+  // Tab close handler
+  const handleTabClose = useCallback((event: React.MouseEvent, tabId: string) => {
+    event.stopPropagation();
+    onTabClose?.(tabId);
+  }, [onTabClose]);
+
+  // Effect for controlled activeTab changes
+  useEffect(() => {
+    if (isControlled && activeTab && lazy) {
+      setLoadedTabs(prev => new Set([...prev, activeTab]));
     }
+  }, [activeTab, isControlled, lazy]);
 
-    return <DynBadge size="small">{badge}</DynBadge>;
-  }, []);
+  // Imperative handle
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      const activeTabElement = tabRefs.current.get(currentActiveTab);
+      activeTabElement?.focus();
+    },
+    blur: () => {
+      const activeTabElement = tabRefs.current.get(currentActiveTab);
+      activeTabElement?.blur();
+    }
+  } as any));
 
-  const renderTab = useCallback((tab: TabItem) => {
-    const isActive = tab.id === currentActiveTab;
-    const tabClasses = classNames(
-      styles['tab'],
-      {
-        [styles['active']]: isActive,
-        [styles['disabled']]: tab.disabled
-      },
-      tabClassName
+  // Render tab button
+  const renderTab = useCallback((item: DynTabItem) => {
+    const isActive = item.id === currentActiveTab;
+    const isDisabled = item.disabled;
+    const shouldShowCloseButton = (closable || item.closable) && !isDisabled;
+
+    const tabClasses = cn(
+      getStyleClass('tab'),
+      getStyleClass(`tab--${size}`),
+      getStyleClass(`tab--${variant}`),
+      isActive && getStyleClass('tab--active'),
+      isDisabled && getStyleClass('tab--disabled'),
+      shouldShowCloseButton && getStyleClass('tab--closable')
     );
 
     return (
       <button
-        key={tab.id}
-        className={tabClasses}
-        onClick={() => handleTabClick(tab.id)}
-        onKeyDown={(e) => handleKeyDown(e, tab.id)}
-        disabled={tab.disabled}
+        key={item.id}
+        ref={(el) => {
+          if (el) {
+            tabRefs.current.set(item.id, el);
+          } else {
+            tabRefs.current.delete(item.id);
+          }
+        }}
+        id={generateTabId(internalId, item.id)}
         role="tab"
-        aria-selected={isActive}
-        aria-controls={`panel-${tab.id}`}
-        id={`tab-${tab.id}`}
         tabIndex={isActive ? 0 : -1}
-        title={tab.tooltip || tab.label}
+        aria-selected={isActive}
+        aria-controls={generatePanelId(internalId, item.id)}
+        aria-disabled={isDisabled}
+        className={tabClasses}
+        onClick={() => !isDisabled && setActiveTabId(item.id)}
+        onKeyDown={(e) => handleKeyDown(e, item.id)}
+        disabled={isDisabled}
+        title={item.tooltip || undefined}
+        data-testid={dataTestId ? `${dataTestId}-tab-${item.id}` : `tab-${item.id}`}
       >
-        {tab.icon && (
-          <span className={styles['tab-icon']}>
-            {typeof tab.icon === 'string' ? (
-              <DynIcon icon={tab.icon} />
-            ) : (
-              tab.icon
-            )}
+        <span className={getStyleClass('tab__content')}>
+          {item.icon && (
+            <span className={getStyleClass('tab__icon')} aria-hidden="true">
+              {item.icon}
+            </span>
+          )}
+          <span className={getStyleClass('tab__label')}>
+            {item.label}
           </span>
-        )}
-        <span className={styles['tab-label']}>{tab.label}</span>
-        {tab.badge && (
-          <span className={styles['tab-badge']}>
-            {renderBadge(tab.badge)}
-          </span>
-        )}
-        {(closable || tab.closable) && !tab.disabled && (
+          {item.badge && (
+            <span 
+              className={getStyleClass('tab__badge')}
+              aria-label={`${item.badge} notifications`}
+            >
+              {item.badge}
+            </span>
+          )}
+        </span>
+        
+        {shouldShowCloseButton && (
           <button
-            className={styles['tab-close']}
-            onClick={(e) => handleTabClose(e, tab.id)}
-            aria-label={`Close ${tab.label} tab`}
+            className={getStyleClass('tab__close')}
+            onClick={(e) => handleTabClose(e, item.id)}
+            aria-label={`Close ${item.label} tab`}
             tabIndex={-1}
+            data-testid={dataTestId ? `${dataTestId}-close-${item.id}` : `close-${item.id}`}
           >
-            <DynIcon icon="dyn-icon-close" />
+            <span aria-hidden="true">×</span>
           </button>
         )}
       </button>
     );
-  }, [currentActiveTab, tabClassName, handleTabClick, handleKeyDown, handleTabClose, closable, renderBadge]);
+  }, [currentActiveTab, size, variant, closable, internalId, dataTestId, setActiveTabId, handleKeyDown, handleTabClose, getStyleClass]);
 
-  const renderActiveTabContent = () => {
-    const activeTabData = tabs.find(tab => tab.id === currentActiveTab);
-    if (!activeTabData) return null;
+  // Render tab content
+  const renderTabContent = useCallback(() => {
+    const activeItem = items.find(item => item.id === currentActiveTab);
+    if (!activeItem) return null;
 
-    if (lazyLoad && !loadedTabs.has(currentActiveTab)) {
-      return (
-        <div className={styles['loading']}>
-          <DynIcon icon="dyn-icon-loading" />
-          <span>Loading...</span>
-        </div>
-      );
-    }
-
-    const content = renderTabContent?.(activeTabData) ?? activeTabData.content;
+    const shouldShowContent = !lazy || loadedTabs.has(activeItem.id);
+    const isLoading = lazy && !loadedTabs.has(activeItem.id);
 
     return (
       <div
-        className={classNames(styles['panel'], panelClassName)}
+        key={currentActiveTab}
+        id={generatePanelId(internalId, currentActiveTab)}
         role="tabpanel"
-        aria-labelledby={`tab-${currentActiveTab}`}
-        id={`panel-${currentActiveTab}`}
         tabIndex={0}
+        aria-labelledby={generateTabId(internalId, currentActiveTab)}
+        className={cn(
+          getStyleClass('panel'),
+          animated && getStyleClass('panel--animated'),
+          contentClassName
+        )}
+        data-testid={dataTestId ? `${dataTestId}-panel-${currentActiveTab}` : `panel-${currentActiveTab}`}
       >
-        {content}
+        {isLoading ? (
+          <div className={getStyleClass('panel__loading')}>
+            {loadingComponent || <DefaultLoadingComponent />}
+          </div>
+        ) : shouldShowContent ? (
+          activeItem.content
+        ) : null}
       </div>
     );
-  };
+  }, [items, currentActiveTab, lazy, loadedTabs, internalId, animated, contentClassName, dataTestId, loadingComponent, getStyleClass]);
 
-  const tabsClasses = classNames(
-    styles['dyn-tabs'],
-    {
-      [styles[`position-${position}`]]: position,
-      [styles[`variant-${variant}`]]: variant,
-      [styles[`size-${size}`]]: size,
-      [styles['scrollable']]: scrollable
-    },
+  // CSS classes
+  const tabsClasses = cn(
+    getStyleClass('tabs'),
+    getStyleClass(`tabs--${position}`),
+    getStyleClass(`tabs--${variant}`),
+    scrollable && getStyleClass('tabs--scrollable'),
     className
   );
 
-  if (tabs.length === 0) {
+  const tabListClasses = cn(
+    getStyleClass('tablist'),
+    tabListClassName
+  );
+
+  // Don't render if no items
+  if (items.length === 0) {
     return null;
   }
 
   return (
-    <div className={tabsClasses}>
-      <div className={styles['tab-list-container']}>
-        {scrollable && canScrollLeft && (
-          <button
-            className={styles['scroll-button']}
-            onClick={() => scrollTabs('left')}
-            aria-label="Scroll tabs left"
-          >
-            <DynIcon icon="dyn-icon-chevron-left" />
-          </button>
-        )}
-        
-        <div className={styles['tab-list']} role="tablist" ref={tabListRef}>
-          {tabs.map(renderTab)}
-        </div>
-        
-        {scrollable && canScrollRight && (
-          <button
-            className={styles['scroll-button']}
-            onClick={() => scrollTabs('right')}
-            aria-label="Scroll tabs right"
-          >
-            <DynIcon icon="dyn-icon-chevron-right" />
-          </button>
-        )}
+    <div
+      ref={ref}
+      id={internalId}
+      className={tabsClasses}
+      data-testid={dataTestId || 'dyn-tabs'}
+      {...rest}
+    >
+      <div
+        ref={tabListRef}
+        role="tablist"
+        className={tabListClasses}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
+        data-testid={dataTestId ? `${dataTestId}-tablist` : 'tablist'}
+      >
+        {items.map(renderTab)}
         
         {addable && (
           <button
-            className={styles['add-button']}
+            className={getStyleClass('tab-add')}
             onClick={onTabAdd}
             aria-label="Add new tab"
+            data-testid={dataTestId ? `${dataTestId}-add-tab` : 'add-tab'}
           >
-            <DynIcon icon="dyn-icon-plus" />
+            <span aria-hidden="true">+</span>
           </button>
         )}
       </div>
-      
-        {renderActiveTabContent()}
+
+      <div className={getStyleClass('content')}>
+        {renderTabContent()}
+      </div>
+
+      {/* Screen reader announcements */}
+      <div aria-live="polite" className="dyn-sr-only">
+        {currentActiveTab && (
+          `Tab ${items.findIndex(item => item.id === currentActiveTab) + 1} of ${items.length} selected`
+        )}
+      </div>
     </div>
   );
 });
 
 DynTabs.displayName = 'DynTabs';
-
-export default DynTabs;
-export { DynTabs };
