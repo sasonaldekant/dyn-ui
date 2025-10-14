@@ -72,15 +72,15 @@ const DynBadgeComponent = (
     animated = false,
     pulse = false,
     countDescription,
-    ariaLabel,
-    ariaDescribedBy,
-    ariaLive,
     className,
     'data-testid': dataTestId,
     id,
     onKeyDown: userOnKeyDown,
     role: roleProp,
     tabIndex: tabIndexProp,
+    'aria-label': ariaLabel,
+    'aria-describedby': ariaDescribedBy,
+    'aria-live': ariaLive,
     ...rest
   } = props;
 
