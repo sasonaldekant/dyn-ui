@@ -16,7 +16,7 @@ import type { DynSelectProps, DynFieldRef, SelectOption } from '../../types/fiel
 import { DynFieldContainer } from '../DynFieldContainer';
 import { useDynFieldValidation } from '../../hooks/useDynFieldValidation';
 import { DynIcon } from '../DynIcon';
-import './DynSelect.module.scss';
+import './DynSelect.module.css';
 
 export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
   (
@@ -133,7 +133,7 @@ export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
         setIsOpen(false);
         setSearchTerm('');
       }
-      
+
       clearError();
     };
 
@@ -204,17 +204,17 @@ export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
 
     const getDisplayText = () => {
       if (loading) return 'Carregando...';
-      
+
       if (multiple && Array.isArray(selectedOptions) && selectedOptions.length > 0) {
         return `${selectedOptions.length} selecionado(s)`;
       } else if (!multiple && selectedOptions) {
         return (selectedOptions as SelectOption).label;
       }
-      
+
       return placeholder;
     };
 
-    const showPlaceholder = !selectedOptions || 
+    const showPlaceholder = !selectedOptions ||
       (multiple && Array.isArray(selectedOptions) && selectedOptions.length === 0);
 
     return (
@@ -250,7 +250,7 @@ export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
               name={name}
               value={multiple && Array.isArray(value) ? value.join(',') : value || ''}
             />
-            
+
             <div className="dyn-select-content">
               {multiple && Array.isArray(selectedOptions) && selectedOptions.length > 0 ? (
                 <div className="dyn-select-tags">
@@ -276,17 +276,17 @@ export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
                 </span>
               )}
             </div>
-            
+
             <div className="dyn-select-arrow">
-              <DynIcon 
-                icon={loading ? "dyn-icon-loading" : "dyn-icon-arrow-down"} 
+              <DynIcon
+                icon={loading ? "dyn-icon-loading" : "dyn-icon-arrow-down"}
                 className={classNames({
                   'dyn-select-arrow--up': isOpen && !loading
-                })} 
+                })}
               />
             </div>
           </div>
-          
+
           {isOpen && (
             <div className="dyn-select-dropdown">
               {searchable && (
@@ -300,7 +300,7 @@ export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
                   />
                 </div>
               )}
-              
+
               <div className="dyn-select-options" role="listbox">
                 {filteredOptions.length === 0 ? (
                   <div className="dyn-select-empty">
@@ -308,10 +308,10 @@ export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
                   </div>
                 ) : (
                   filteredOptions.map((option) => {
-                    const isSelected = multiple && Array.isArray(value) 
+                    const isSelected = multiple && Array.isArray(value)
                       ? value.includes(option.value)
                       : value === option.value;
-                      
+
                     return (
                       <div
                         key={option.value}
@@ -326,7 +326,7 @@ export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
                         {multiple && (
                           <span className={classNames('dyn-select-checkbox', {
                             'dyn-select-checkbox--checked': isSelected
-                          })}>              
+                          })}>
                             {isSelected && <DynIcon icon="dyn-icon-check" />}
                           </span>
                         )}

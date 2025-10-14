@@ -13,16 +13,6 @@ module.exports = {
         }
       ]
     },
-    scss: {
-      transformGroup: 'scss',
-      buildPath: 'build/scss/',
-      files: [
-        {
-          destination: 'tokens.css',
-          format: 'scss/variables'
-        }
-      ]
-    },
     js: {
       transformGroup: 'js',
       buildPath: 'build/js/',
