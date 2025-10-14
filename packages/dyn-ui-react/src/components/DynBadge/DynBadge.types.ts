@@ -3,7 +3,7 @@ import type {
   MouseEvent as ReactMouseEvent,
   ReactNode
 } from 'react';
-import type { BaseComponentProps } from '../../types';
+import type { BaseComponentProps, AccessibilityProps } from '../../types';
 
 export type ComponentSize = 'small' | 'medium' | 'large';
 
@@ -18,21 +18,18 @@ export const DYN_BADGE_COLORS = [
 ] as const;
 
 export type DynBadgeSemanticColor = (typeof DYN_BADGE_COLORS)[number];
-
-export interface AccessibilityProps {
-  ariaLabel?: string;
-  ariaDescribedBy?: string;
-  ariaLive?: 'off' | 'polite' | 'assertive';
-}
-
 export type DynBadgeVariant = 'solid' | 'soft' | 'outline' | 'dot';
 export type DynBadgeColor = DynBadgeSemanticColor | (string & {});
 export type DynBadgePosition = 'topRight' | 'topLeft' | 'bottomRight' | 'bottomLeft';
 
+/**
+ * Props interface for DynBadge component
+ * Clean TypeScript implementation following DynAvatar gold standard
+ */
 export interface DynBadgeProps
   extends BaseComponentProps,
     AccessibilityProps,
-    Omit<HTMLAttributes<HTMLSpanElement>, 'color' | 'children'> {
+    Omit<HTMLAttributes<HTMLSpanElement>, keyof BaseComponentProps | keyof AccessibilityProps | 'color' | 'children'> {
   /** Badge content */
   children?: ReactNode;
 
@@ -81,4 +78,7 @@ export interface DynBadgeProps
   countDescription?: string;
 }
 
+/**
+ * Ref type for DynBadge component
+ */
 export type DynBadgeRef = HTMLSpanElement;
