@@ -1,7 +1,8 @@
 import React, { ImgHTMLAttributes, ReactNode } from 'react';
-import { BaseComponentProps, ComponentSize, AccessibilityProps } from '../../types';
+import { BaseComponentProps, AccessibilityProps } from '../../types';
 
-export type DynAvatarSize = ComponentSize;
+// Custom size type for DynAvatar (compatible with design system)
+export type DynAvatarSize = 'small' | 'medium' | 'large';
 export type DynAvatarShape = 'circle' | 'square' | 'rounded';
 export type DynAvatarStatus = 'online' | 'offline' | 'away' | 'busy';
 
