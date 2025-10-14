@@ -5,6 +5,7 @@ A versatile and accessible badge component that displays counts, status indicato
 ## Features
 
 ✅ **100% Gold Standard Compliant**
+
 - Uses `--dyn-*` design tokens with proper fallbacks
 - Implements `generateId` for consistent ID generation
 - Safe CSS class access with `getStyleClass` utility
@@ -12,12 +13,14 @@ A versatile and accessible badge component that displays counts, status indicato
 - Full TypeScript type safety
 
 ✅ **Design System Integration**
+
 - Semantic color variants (primary, secondary, success, warning, danger, info, neutral)
 - Size variants (small, medium, large) following design token scale
 - Multiple visual variants (solid, soft, outline, dot)
 - Custom color support with CSS variable fallbacks
 
 ✅ **Accessibility Excellence**
+
 - WCAG 2.1 AA compliant
 - Screen reader announcements for counts
 - Keyboard navigation support
@@ -25,12 +28,14 @@ A versatile and accessible badge component that displays counts, status indicato
 - Focus management for interactive states
 
 ✅ **Interactive Capabilities**
+
 - Click handlers with automatic role and tabIndex management
 - Keyboard navigation (Enter and Space key support)
 - Custom event handling with proper event delegation
 - Loading and error states
 
 ✅ **Advanced Features**
+
 - Count display with maxCount limits (e.g., "99+")
 - Icon integration (start and end icons)
 - Position variants for overlay usage
@@ -41,6 +46,7 @@ A versatile and accessible badge component that displays counts, status indicato
 ## Usage
 
 ### Basic Badge
+
 ```tsx
 import { DynBadge } from '@dyn-ui/react';
 
@@ -50,6 +56,7 @@ import { DynBadge } from '@dyn-ui/react';
 ```
 
 ### Count Badges
+
 ```tsx
 <DynBadge count={5} />
 <DynBadge count={150} maxCount={99} /> {/* Shows "99+" */}
@@ -57,8 +64,9 @@ import { DynBadge } from '@dyn-ui/react';
 ```
 
 ### Interactive Badge
+
 ```tsx
-<DynBadge 
+<DynBadge
   onClick={() => handleNotificationClick()}
   count={3}
   countDescription="Notifications"
@@ -67,24 +75,27 @@ import { DynBadge } from '@dyn-ui/react';
 ```
 
 ### With Icons
+
 ```tsx
 <DynBadge startIcon={<DynIcon icon="star" />}>Featured</DynBadge>
 <DynBadge endIcon={<DynIcon icon="arrow-right" />}>Next</DynBadge>
 ```
 
 ### Status Overlays
+
 ```tsx
 <div style={{ position: 'relative' }}>
   <UserAvatar />
-  <DynBadge 
-    variant="dot" 
-    color="success" 
-    position="topRight" 
+  <DynBadge
+    variant="dot"
+    color="success"
+    position="topRight"
   />
 </div>
 ```
 
 ### Animated Badges
+
 ```tsx
 <DynBadge animated pulse count={1} color="danger" />
 ```
@@ -171,7 +182,7 @@ npm run storybook
 ### From Previous Version
 
 - Replace `ariaLabel` with `aria-label`
-- Replace `ariaDescribedBy` with `aria-describedby` 
+- Replace `ariaDescribedBy` with `aria-describedby`
 - Replace `ariaLive` with `aria-live`
 - Update custom colors to use CSS custom properties
 
@@ -184,6 +195,6 @@ npm run storybook
 
 ---
 
-**Status**: ✅ 100% Gold Standard Compliant  
-**Last Updated**: October 2025  
+**Status**: ✅ 100% Gold Standard Compliant
+**Last Updated**: October 2025
 **Maintainer**: DynUI Team
