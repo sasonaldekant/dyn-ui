@@ -16,23 +16,23 @@ Write-Host " Pronađen packages/dyn-ui-react folder" -ForegroundColor Green
 # Funkcija za kreiranje backup-a
 function Create-Backup {
     Write-Host " Kreiram backup branch..." -ForegroundColor Yellow
-    
+
     # Proveri Git status
     $gitStatus = git status --porcelain
     if ($gitStatus) {
         Write-Host "  Imaš uncommitted promene. Želiš li da ih commit-uješ pre backup-a? (y/N): " -ForegroundColor Yellow -NoNewline
         $response = Read-Host
-        
+
         if ($response -eq 'y' -or $response -eq 'Y') {
             git add .
             git commit -m "wip: pre-cleanup commit"
             Write-Host " Promene commit-ovane" -ForegroundColor Green
         }
     }
-    
+
     $backupBranchName = "cleanup/project-standardization-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
     git checkout -b $backupBranchName
-    
+
     if ($LASTEXITCODE -eq 0) {
         Write-Host " Backup branch kreiran: $backupBranchName" -ForegroundColor Green
         return $backupBranchName
@@ -45,12 +45,12 @@ function Create-Backup {
 # Funkcija za pronalaženje SCSS fajlova
 function Find-SCSSFiles {
     Write-Host " Skeniram SCSS fajlove..." -ForegroundColor Yellow
-    
+
     $scssFiles = @()
     if (Test-Path "packages/dyn-ui-react") {
         $scssFiles = Get-ChildItem -Path "packages/dyn-ui-react" -Filter "*.scss" -Recurse -File
     }
-    
+
     if ($scssFiles.Count -gt 0) {
         Write-Host " Pronađeno $($scssFiles.Count) SCSS fajlova za konverziju:" -ForegroundColor Red
         foreach ($file in $scssFiles) {
@@ -67,26 +67,26 @@ function Find-SCSSFiles {
 # Funkcija za kreiranje centralizovanog export fajla
 function Create-CentralizedExports {
     Write-Host " Kreiram centralizovani export sistem..." -ForegroundColor Yellow
-    
+
     $componentsPath = "packages/dyn-ui-react/src/components"
-    
+
     if (-not (Test-Path $componentsPath)) {
         Write-Host " Ne mogu da pronađem: $componentsPath" -ForegroundColor Red
         return
     }
-    
+
     $indexPath = Join-Path $componentsPath "index.ts"
-    
+
     # Pronađi sve component direktorijume
-    $componentFolders = Get-ChildItem -Path $componentsPath -Directory | Where-Object { 
-        $_.Name -like "Dyn*" -or $_.Name -eq "ThemeSwitcher" 
+    $componentFolders = Get-ChildItem -Path $componentsPath -Directory | Where-Object {
+        $_.Name -like "Dyn*" -or $_.Name -eq "ThemeSwitcher"
     }
-    
+
     if ($componentFolders.Count -eq 0) {
         Write-Host " Nema component foldere u $componentsPath" -ForegroundColor Red
         return
     }
-    
+
     # Generiši export sadržaj
     $exportContent = @"
 // Standardized exports for ALL DYN-UI components
@@ -100,15 +100,15 @@ function Create-CentralizedExports {
         $componentName = $folder.Name
         $exportContent += "export { $componentName } from './$componentName';`n"
     }
-    
+
     $exportContent += "`n// Type exports`n"
-    
+
     # Type exports
     foreach ($folder in $componentFolders) {
         $componentName = $folder.Name
         $exportContent += "export type * from './$componentName';`n"
     }
-    
+
     # Sačuvaj fajl
     try {
         Set-Content -Path $indexPath -Value $exportContent -Encoding UTF8
@@ -124,31 +124,31 @@ function Create-CentralizedExports {
 try {
     Write-Host " Početak cleanup procesa za DYN-UI..." -ForegroundColor Cyan
     Write-Host ""
-    
+
     # Korak 1: Backup
     $backupBranch = Create-Backup
     Write-Host ""
-    
+
     # Korak 2: Pronađi SCSS fajlove
     $scssFiles = Find-SCSSFiles
     Write-Host ""
-    
+
     # Korak 3: Kreiraj centralizovane exporte
-    Write-Host " CENTRALIZOVANI EXPORT SISTEM" -ForegroundColor Cyan  
+    Write-Host " CENTRALIZOVANI EXPORT SISTEM" -ForegroundColor Cyan
     Write-Host ("" * 40)
     Create-CentralizedExports
     Write-Host ""
-    
+
     Write-Host " DYN-UI CLEANUP ZAVRŠEN!" -ForegroundColor Green
     Write-Host ("=" * 50)
     Write-Host " Centralizovani export sistem implementiran" -ForegroundColor Green
     Write-Host ""
     Write-Host " Backup branch: $backupBranch" -ForegroundColor Gray
-    
+
 } catch {
     Write-Host ""
     Write-Host " GREŠKA TOKOM CLEANUP PROCESA:" -ForegroundColor Red
     Write-Host $_.Exception.Message -ForegroundColor Red
-    
+
     exit 1
 }
