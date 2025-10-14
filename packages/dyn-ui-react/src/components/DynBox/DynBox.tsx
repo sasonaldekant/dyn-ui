@@ -65,6 +65,20 @@ const getStyleClass = (className: string): string => {
 };
 
 /**
+ * Check if a background value is a predefined token
+ */
+const isBackgroundToken = (bg: string): boolean => {
+  return ['primary', 'secondary', 'tertiary', 'success', 'warning', 'danger'].includes(bg);
+};
+
+/**
+ * Check if a border radius value is a predefined token
+ */
+const isBorderRadiusToken = (radius: string): boolean => {
+  return ['none', 'xs', 'sm', 'md', 'lg', 'xl', 'full'].includes(radius);
+};
+
+/**
  * DynBox – polymorphic, token-aware layout primitive
  * 
  * A flexible container component that serves as the foundational layout primitive
@@ -218,7 +232,7 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
     return `${ariaDescribedBy} ${liveRegionId}`;
   }, [ariaDescribedBy, liveRegionId, shouldRenderLiveRegion]);
 
-  const innerRef = useRef<HTMLElement | null>(null);
+  const innerRef = useRef<any>(null);
 
   // Focus management effect
   useEffect(() => {
@@ -417,13 +431,13 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
     position &&
       position !== 'static' &&
       getStyleClass(`box--${position}`),
-    bg && getStyleClass(`box--bg-${bg}`),
+    bg && isBackgroundToken(bg) && getStyleClass(`box--bg-${bg}`),
     border && getStyleClass('box--border'),
     borderTop && getStyleClass('box--border-top'),
     borderRight && getStyleClass('box--border-right'),
     borderBottom && getStyleClass('box--border-bottom'),
     borderLeft && getStyleClass('box--border-left'),
-    borderRadius && getStyleClass(`box--rounded-${borderRadius}`),
+    borderRadius && isBorderRadiusToken(borderRadius) && getStyleClass(`box--rounded-${borderRadius}`),
     shadow && getStyleClass(`box--shadow-${shadow}`),
     textAlign && getStyleClass(`box--text-${textAlign}`),
     overflow && getStyleClass(`box--overflow-${overflow}`),
@@ -440,30 +454,20 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
     className
   );
 
-  // Type-safe event handlers
-  type ClickHandler = DynBoxProps['onClick'];
-  type KeyHandler = DynBoxProps['onKeyDown'];
-  type ClickEvent = ClickHandler extends (event: infer Event, ...args: any[]) => any
-    ? Event
-    : MouseEvent<Element>;
-  type KeyEvent = KeyHandler extends (event: infer Event, ...args: any[]) => any
-    ? Event
-    : KeyboardEvent<Element>;
-
   /**
    * Handle keyboard interactions for interactive boxes
    * Supports Enter and Space key activation following WCAG guidelines
    */
-  const handleKeyDown = (event: KeyEvent) => {
+  const handleKeyDown = (event: KeyboardEvent<any>) => {
     if (interactive && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault();
       if (onClick) {
-        onClick(event as unknown as MouseEvent<HTMLElement>);
+        onClick(event as unknown as MouseEvent<any>);
       }
     }
 
     if (onKeyDown) {
-      onKeyDown(event as unknown as KeyboardEvent<HTMLElement>);
+      onKeyDown(event as unknown as KeyboardEvent<any>);
     }
   };
 
@@ -471,23 +475,27 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
   const combinedStyle = useMemo<CSSProperties>(() => ({
     ...cssVariables,
     ...(style ?? {}),
-  }), [cssVariables, style]);
+    // Handle custom background color
+    ...(bg && !isBackgroundToken(bg) && { '--dyn-box-bg': bg }),
+    // Handle custom border radius
+    ...(borderRadius && !isBorderRadiusToken(borderRadius) && { '--dyn-box-radius': borderRadius }),
+  }), [cssVariables, style, bg, borderRadius]);
 
   // Determine accessibility attributes
   const componentRole = interactive ? role ?? 'button' : role;
   const componentTabIndex = interactive && tabIndex === undefined ? 0 : tabIndex;
-  const componentOnKeyDown = interactive ? (handleKeyDown as KeyHandler) : onKeyDown;
+  const componentOnKeyDown = interactive ? handleKeyDown : onKeyDown;
 
   /**
-   * Assign refs using the same pattern as DynAvatar
+   * Assign refs using polymorphic typing
    * Ensures proper ref forwarding for polymorphic components
    */
-  const assignRef = (node: DynBoxRef<E> | null) => {
-    innerRef.current = (node as HTMLElement | null) ?? null;
+  const assignRef = (node: any) => {
+    innerRef.current = node;
     if (typeof ref === 'function') {
       ref(node);
     } else if (ref) {
-      (ref as MutableRefObject<DynBoxRef<E> | null>).current = node;
+      (ref as MutableRefObject<any>).current = node;
     }
   };
 
