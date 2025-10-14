@@ -68,7 +68,7 @@ const meta: Meta<typeof DynBadge> = {
       action: 'clicked',
       description: 'Click handler for interactive badges'
     },
-    ariaLabel: {
+    'aria-label': {
       control: 'text',
       description: 'Accessible label for screen readers'
     }
@@ -216,12 +216,12 @@ export const Interactive: Story = {
   name: 'Interactive Behavior',
   render: () => (
     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-      <DynBadge onClick={() => alert('Badge clicked!')} ariaLabel="Clickable badge">Clickable</DynBadge>
+      <DynBadge onClick={() => alert('Badge clicked!')} aria-label="Clickable badge">Clickable</DynBadge>
       <DynBadge
         count={5}
         onClick={() => alert('5 notifications')}
         countDescription="Notifications"
-        ariaLabel="View notifications"
+        aria-label="View notifications"
       />
     </div>
   ),
@@ -288,16 +288,16 @@ export const Accessibility: Story = {
       <DynBadge
         count={12}
         countDescription="Unread messages"
-        ariaDescribedBy="message-description"
-        ariaLabel="12 unread messages"
+        aria-describedby="message-description"
+        aria-label="12 unread messages"
       />
       <p id="message-description" style={{ margin: 0, fontSize: '0.875rem', color: '#666' }}>
         You have 12 unread messages in your inbox.
       </p>
-      <DynBadge ariaLabel="Active status indicator">Active</DynBadge>
+      <DynBadge aria-label="Active status indicator">Active</DynBadge>
       <DynBadge 
         onClick={() => alert('Accessible click!')}
-        ariaLabel="Interactive badge with keyboard support"
+        aria-label="Interactive badge with keyboard support"
         onKeyDown={(e) => console.log('Key pressed:', e.key)}
       >
         Keyboard Accessible
