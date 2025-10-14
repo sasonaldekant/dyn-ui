@@ -74,3 +74,19 @@ pnpm exec storybook dev --host 0.0.0.0
 
 
 
+# Opcija 1: Direktno TypeScript kompajliranje
+npx tsc --noEmit
+
+# Opcija 2: Proveri DynAvatar komponentu specifično
+cd packages/dyn-ui-react/src/components/DynAvatar
+npx tsc --noEmit --jsx react-jsx DynAvatar.tsx DynAvatar.types.ts DynAvatar.stories.tsx
+
+# Opcija 3: Proveri ceo React paket
+cd packages/dyn-ui-react
+npx tsc --noEmit
+
+# Opcija 4: Build test
+pnpm build
+
+# Opcija 5: Otvori VS Code i vidi greške vizuelno
+code .
