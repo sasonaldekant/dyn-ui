@@ -97,8 +97,24 @@ export interface DynTabsProps extends
 
 /**
  * Ref type for DynTabs component
+ * Includes imperative methods following DynAvatar pattern
  */
-export type DynTabsRef = HTMLDivElement;
+export interface DynTabsRef extends HTMLDivElement {
+  /** Focus the tabs container */
+  focus: () => void;
+  
+  /** Blur the tabs container */
+  blur: () => void;
+  
+  /** Focus specific tab by ID */
+  focusTab?: (tabId: string) => void;
+  
+  /** Get currently active tab ID */
+  getActiveTab?: () => string | undefined;
+  
+  /** Programmatically set active tab */
+  setActiveTab?: (tabId: string) => void;
+}
 
 /**
  * Default props for DynTabs component
