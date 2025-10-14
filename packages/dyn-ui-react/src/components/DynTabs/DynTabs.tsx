@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef, useMemo, useCallback, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useState, useRef, useCallback, useEffect, useImperativeHandle } from 'react';
 import { cn } from '../../utils/classNames';
 import { generateId } from '../../utils/accessibility';
 import { DynTabsProps, DynTabsRef, DynTabItem, DYN_TABS_DEFAULT_PROPS } from './DynTabs.types';
@@ -99,6 +99,10 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
       }
     }, []);
 
+    const getActiveTab = useCallback(() => {
+      return currentActiveTab;
+    }, [currentActiveTab]);
+
     // Keyboard navigation handler
     const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLButtonElement>, tabId: string) => {
       const currentIndex = enabledItems.findIndex(item => item.id === tabId);
@@ -155,17 +159,25 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
       }
     }, [activeTab, isControlled, lazy]);
 
-    // Imperative handle following DynAvatar pattern
-    useImperativeHandle(ref, () => ({
-      focus: () => {
-        const activeTabElement = tabRefs.current.get(currentActiveTab);
-        activeTabElement?.focus();
-      },
-      blur: () => {
-        const activeTabElement = tabRefs.current.get(currentActiveTab);
-        activeTabElement?.blur();
-      }
-    } as any));
+    // Imperative handle with extended API following DynAvatar pattern
+    useImperativeHandle(ref, () => {
+      const element = tabListRef.current;
+      if (!element) return null as any;
+      
+      return Object.assign(element, {
+        focus: () => {
+          const activeTabElement = tabRefs.current.get(currentActiveTab);
+          activeTabElement?.focus();
+        },
+        blur: () => {
+          const activeTabElement = tabRefs.current.get(currentActiveTab);
+          activeTabElement?.blur();
+        },
+        focusTab,
+        getActiveTab,
+        setActiveTab: setActiveTabId
+      });
+    }, [currentActiveTab, focusTab, getActiveTab, setActiveTabId]);
 
     // Render tab button
     const renderTab = useCallback((item: DynTabItem) => {
@@ -297,14 +309,13 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
 
     return (
       <div
-        ref={ref}
+        ref={tabListRef}
         id={internalId}
         className={tabsClasses}
         data-testid={dataTestId || 'dyn-tabs'}
         {...rest}
       >
         <div
-          ref={tabListRef}
           role="tablist"
           className={tabListClasses}
           aria-label={ariaLabel}
