@@ -1,5 +1,3 @@
-// Primary DynBadge regression suite. Keep `DynBadgie.test.tsx`
-// synchronized so the legacy CLI filter continues to work.
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -41,6 +39,25 @@ describe('DynBadge', () => {
       expect(screen.getByText('7')).toBeInTheDocument();
       expect(screen.getByTestId('dyn-badge')).toBeInTheDocument();
     });
+
+    it('supports legacy value prop alias', () => {
+      render(<DynBadge value={7} />);
+      expect(screen.getByText('7')).toBeInTheDocument();
+      expect(screen.getByTestId('dyn-badge')).toBeInTheDocument();
+    });
+
+    it('uses generateId for internal id when not provided', () => {
+      render(<DynBadge>Test</DynBadge>);
+      const badge = screen.getByTestId('dyn-badge');
+      expect(badge).toHaveAttribute('id');
+      expect(badge.id).toMatch(/^badge-\d+$/);
+    });
+
+    it('uses provided id when given', () => {
+      render(<DynBadge id="custom-badge">Test</DynBadge>);
+      const badge = screen.getByTestId('dyn-badge');
+      expect(badge).toHaveAttribute('id', 'custom-badge');
+    });
   });
 
   describe('Accessibility', () => {
@@ -55,18 +72,28 @@ describe('DynBadge', () => {
     });
 
     it('supports custom aria-label', () => {
-      render(<DynBadge ariaLabel="Status indicator">Active</DynBadge>);
+      render(<DynBadge aria-label="Status indicator">Active</DynBadge>);
       expect(screen.getByTestId('dyn-badge')).toHaveAttribute('aria-label', 'Status indicator');
     });
 
     it('supports aria-describedby', () => {
       render(
         <>
-          <DynBadge ariaDescribedBy="badge-description">Status</DynBadge>
+          <DynBadge aria-describedby="badge-description">Status</DynBadge>
           <div id="badge-description">Current user status</div>
         </>
       );
       expect(screen.getByTestId('dyn-badge')).toHaveAttribute('aria-describedby', 'badge-description');
+    });
+
+    it('generates automatic aria-label for count badges', () => {
+      render(<DynBadge count={5} />);
+      expect(screen.getByTestId('dyn-badge')).toHaveAttribute('aria-label', 'Count: 5');
+    });
+
+    it('uses custom countDescription in aria-label', () => {
+      render(<DynBadge count={3} countDescription="Messages" />);
+      expect(screen.getByTestId('dyn-badge')).toHaveAttribute('aria-label', 'Messages: 3');
     });
   });
 
@@ -78,6 +105,7 @@ describe('DynBadge', () => {
 
       const badge = screen.getByRole('button');
       expect(badge).toHaveAttribute('tabIndex', '0');
+      expect(badge).toHaveClass(classes['badge--clickable']!);
 
       await user.click(badge);
       expect(handleClick).toHaveBeenCalledTimes(1);
@@ -104,6 +132,25 @@ describe('DynBadge', () => {
 
       expect(badge).not.toHaveAttribute('role', 'button');
       expect(badge).not.toHaveAttribute('tabIndex');
+      expect(badge).not.toHaveClass(classes['badge--clickable']!);
+    });
+
+    it('handles custom onKeyDown event', async () => {
+      const handleClick = vi.fn();
+      const handleKeyDown = vi.fn();
+      const user = userEvent.setup();
+      
+      render(
+        <DynBadge onClick={handleClick} onKeyDown={handleKeyDown}>
+          Custom KeyDown
+        </DynBadge>
+      );
+
+      const badge = screen.getByRole('button');
+      await user.keyboard('{Enter}');
+      
+      expect(handleKeyDown).toHaveBeenCalled();
+      expect(handleClick).toHaveBeenCalled();
     });
   });
 
@@ -117,6 +164,9 @@ describe('DynBadge', () => {
 
       rerender(<DynBadge variant="outline">Outline</DynBadge>);
       expect(screen.getByTestId('dyn-badge')).toHaveClass(classes['badge--outline']!);
+
+      rerender(<DynBadge variant="dot" />);
+      expect(screen.getByTestId('dyn-badge')).toHaveClass(classes['badge--dot']!);
     });
 
     it('applies color classes correctly', () => {
@@ -136,6 +186,14 @@ describe('DynBadge', () => {
 
       rerender(<DynBadge size="large">Large</DynBadge>);
       expect(screen.getByTestId('dyn-badge')).toHaveClass(classes['badge--large']!);
+    });
+
+    it('handles custom color values with CSS variables', () => {
+      render(<DynBadge color="#ff0000">Custom Color</DynBadge>);
+      const badge = screen.getByTestId('dyn-badge');
+      
+      expect(badge.style.getPropertyValue('--badge-accent')).toBe('#ff0000');
+      expect(badge.style.getPropertyValue('--badge-outline-color')).toBe('#ff0000');
     });
 
     it('renders dot variant correctly', () => {
@@ -162,14 +220,40 @@ describe('DynBadge', () => {
       );
       expect(screen.getByTestId('end-icon')).toBeInTheDocument();
     });
+
+    it('icons have aria-hidden attribute', () => {
+      render(
+        <DynBadge 
+          startIcon={<span data-testid="start-icon">🔥</span>}
+          endIcon={<span data-testid="end-icon">→</span>}
+        >
+          Test
+        </DynBadge>
+      );
+      
+      const startIcon = screen.getByTestId('start-icon').parentElement;
+      const endIcon = screen.getByTestId('end-icon').parentElement;
+      
+      expect(startIcon).toHaveAttribute('aria-hidden', 'true');
+      expect(endIcon).toHaveAttribute('aria-hidden', 'true');
+    });
   });
 
   describe('Positioning', () => {
     it('applies position classes correctly', () => {
-      render(<DynBadge position="topRight">Positioned</DynBadge>);
+      const { rerender } = render(<DynBadge position="topRight">Positioned</DynBadge>);
       const badge = screen.getByTestId('dyn-badge');
       expect(badge).toHaveClass(classes['badge--positioned']!);
       expect(badge).toHaveClass(classes['badge--topRight']!);
+
+      rerender(<DynBadge position="topLeft">Positioned</DynBadge>);
+      expect(screen.getByTestId('dyn-badge')).toHaveClass(classes['badge--topLeft']!);
+
+      rerender(<DynBadge position="bottomRight">Positioned</DynBadge>);
+      expect(screen.getByTestId('dyn-badge')).toHaveClass(classes['badge--bottomRight']!);
+
+      rerender(<DynBadge position="bottomLeft">Positioned</DynBadge>);
+      expect(screen.getByTestId('dyn-badge')).toHaveClass(classes['badge--bottomLeft']!);
     });
   });
 
@@ -182,6 +266,40 @@ describe('DynBadge', () => {
     it('applies pulse class when pulse prop is true', () => {
       render(<DynBadge pulse>Pulsing</DynBadge>);
       expect(screen.getByTestId('dyn-badge')).toHaveClass(classes['badge--pulse']!);
+    });
+
+    it('can combine animated and pulse classes', () => {
+      render(<DynBadge animated pulse>Both</DynBadge>);
+      const badge = screen.getByTestId('dyn-badge');
+      expect(badge).toHaveClass(classes['badge--animated']!);
+      expect(badge).toHaveClass(classes['badge--pulse']!);
+    });
+  });
+
+  describe('CSS Module Safety', () => {
+    it('handles missing CSS classes gracefully', () => {
+      // This test ensures getStyleClass returns empty string for missing classes
+      render(<DynBadge className="test-badge">Safe</DynBadge>);
+      const badge = screen.getByTestId('dyn-badge');
+      expect(badge).toBeInTheDocument();
+    });
+  });
+
+  describe('Props Forwarding', () => {
+    it('forwards custom data attributes', () => {
+      render(<DynBadge data-custom="test-value">Custom Data</DynBadge>);
+      expect(screen.getByTestId('dyn-badge')).toHaveAttribute('data-custom', 'test-value');
+    });
+
+    it('forwards custom className', () => {
+      render(<DynBadge className="custom-class">Custom Class</DynBadge>);
+      expect(screen.getByTestId('dyn-badge')).toHaveClass('custom-class');
+    });
+
+    it('uses custom data-testid when provided', () => {
+      render(<DynBadge data-testid="custom-badge">Custom TestID</DynBadge>);
+      expect(screen.getByTestId('custom-badge')).toBeInTheDocument();
+      expect(screen.queryByTestId('dyn-badge')).not.toBeInTheDocument();
     });
   });
 });
