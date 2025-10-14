@@ -3,14 +3,14 @@ import { DynIcon } from '../DynIcon';
 import { DynBadge } from './DynBadge';
 
 const meta: Meta<typeof DynBadge> = {
-  title: 'Display/DynBadge',
+  title: 'Components/DynBadge',
   component: DynBadge,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
         component:
-          'DynBadge displays counts, status indicators, and semantic labels using design tokens and accessibility best practices.'
+          'DynBadge displays counts, status indicators, and semantic labels using design tokens and accessibility best practices. Follows enterprise-grade standards for consistency and maintainability.'
       }
     }
   },
@@ -63,6 +63,14 @@ const meta: Meta<typeof DynBadge> = {
     pulse: {
       control: 'boolean',
       description: 'Apply pulse animation for notifications'
+    },
+    onClick: {
+      action: 'clicked',
+      description: 'Click handler for interactive badges'
+    },
+    ariaLabel: {
+      control: 'text',
+      description: 'Accessible label for screen readers'
     }
   },
   args: {
@@ -77,14 +85,12 @@ const meta: Meta<typeof DynBadge> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story = {
-  args: {
-    count: 8,
-    countDescription: 'Notifications'
-  }
+export const Default: Story = {
+  args: {}
 };
 
 export const Variants: Story = {
+  name: 'All Variants',
   render: () => (
     <div style={{ display: 'flex', gap: '0.5rem', flexDirection: 'column', alignItems: 'flex-start' }}>
       <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -94,20 +100,58 @@ export const Variants: Story = {
         <DynBadge variant="dot" />
       </div>
     </div>
-  )
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Different visual variants: solid, soft, outline, and dot.'
+      }
+    }
+  }
 };
 
 export const Sizes: Story = {
+  name: 'Size Variants',
   render: () => (
     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
       <DynBadge size="small">Small</DynBadge>
       <DynBadge size="medium">Medium</DynBadge>
       <DynBadge size="large">Large</DynBadge>
     </div>
-  )
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Available size variants following design token scale.'
+      }
+    }
+  }
+};
+
+export const Colors: Story = {
+  name: 'Color Variants',
+  render: () => (
+    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+      <DynBadge color="primary">Primary</DynBadge>
+      <DynBadge color="secondary">Secondary</DynBadge>
+      <DynBadge color="success">Success</DynBadge>
+      <DynBadge color="warning">Warning</DynBadge>
+      <DynBadge color="danger">Danger</DynBadge>
+      <DynBadge color="info">Info</DynBadge>
+      <DynBadge color="neutral">Neutral</DynBadge>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Semantic color variants using design tokens.'
+      }
+    }
+  }
 };
 
 export const CountBadges: Story = {
+  name: 'Count Display',
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
       <DynBadge count={3} />
@@ -115,10 +159,18 @@ export const CountBadges: Story = {
       <DynBadge count={150} maxCount={99} />
       <DynBadge count={0} showZero />
     </div>
-  )
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Count badges with maxCount limits and zero display options.'
+      }
+    }
+  }
 };
 
 export const WithIcons: Story = {
+  name: 'Icon Integration',
   render: () => (
     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
       <DynBadge startIcon={<DynIcon icon="star" />}>Featured</DynBadge>
@@ -127,10 +179,18 @@ export const WithIcons: Story = {
         Verified
       </DynBadge>
     </div>
-  )
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Badges with start and end icons for enhanced visual communication.'
+      }
+    }
+  }
 };
 
 export const StatusIndicators: Story = {
+  name: 'Status Overlays',
   render: () => (
     <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
       <div style={{ position: 'relative', width: 64, height: 64, background: '#f0f0f0', borderRadius: 8 }}>
@@ -138,34 +198,44 @@ export const StatusIndicators: Story = {
         <span style={{ position: 'absolute', bottom: 4, left: 4, fontSize: '0.75rem' }}>Online</span>
       </div>
       <div style={{ position: 'relative', width: 64, height: 64, background: '#f0f0f0', borderRadius: 8 }}>
-        <DynBadge count={3} color="danger" position="topRight" />
+        <DynBadge count={3} color="danger" position="topRight" countDescription="Alerts" />
         <span style={{ position: 'absolute', bottom: 4, left: 4, fontSize: '0.75rem' }}>Alerts</span>
       </div>
     </div>
-  )
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Positioned badges for status indicators and notification overlays.'
+      }
+    }
+  }
 };
 
 export const Interactive: Story = {
+  name: 'Interactive Behavior',
   render: () => (
     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-      <DynBadge onClick={() => alert('Badge clicked!')}>Clickable</DynBadge>
+      <DynBadge onClick={() => alert('Badge clicked!')} ariaLabel="Clickable badge">Clickable</DynBadge>
       <DynBadge
         count={5}
         onClick={() => alert('5 notifications')}
         countDescription="Notifications"
+        ariaLabel="View notifications"
       />
     </div>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Interactive badges with click handlers and keyboard navigation.'
+        story: 'Interactive badges with click handlers and proper keyboard navigation support.'
       }
     }
   }
 };
 
 export const Animated: Story = {
+  name: 'Animation Effects',
   render: () => (
     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
       <DynBadge animated>Animated</DynBadge>
@@ -174,12 +244,25 @@ export const Animated: Story = {
       </DynBadge>
       <DynBadge animated pulse count={1} color="info" />
     </div>
-  )
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Animation effects for attention-grabbing notifications.'
+      }
+    }
+  }
 };
 
 export const DarkTheme: Story = {
+  name: 'Dark Theme Support',
   parameters: {
-    backgrounds: { default: 'dark' }
+    backgrounds: { default: 'dark' },
+    docs: {
+      description: {
+        story: 'Badge appearance in dark theme using CSS custom properties and media queries.'
+      }
+    }
   },
   render: () => (
     <div data-theme="dark" style={{ padding: '2rem', background: '#1a1a1a' }}>
@@ -199,17 +282,49 @@ export const DarkTheme: Story = {
 };
 
 export const Accessibility: Story = {
+  name: 'Accessibility Features',
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column', alignItems: 'flex-start' }}>
       <DynBadge
         count={12}
         countDescription="Unread messages"
         ariaDescribedBy="message-description"
+        ariaLabel="12 unread messages"
       />
-      <p id="message-description" style={{ margin: 0 }}>
+      <p id="message-description" style={{ margin: 0, fontSize: '0.875rem', color: '#666' }}>
         You have 12 unread messages in your inbox.
       </p>
-      <DynBadge ariaLabel="Status indicator">Active</DynBadge>
+      <DynBadge ariaLabel="Active status indicator">Active</DynBadge>
+      <DynBadge 
+        onClick={() => alert('Accessible click!')}
+        ariaLabel="Interactive badge with keyboard support"
+        onKeyDown={(e) => console.log('Key pressed:', e.key)}
+      >
+        Keyboard Accessible
+      </DynBadge>
     </div>
-  )
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Comprehensive accessibility features including ARIA attributes, screen reader announcements, and keyboard navigation.'
+      }
+    }
+  }
+};
+
+export const Playground: Story = {
+  name: 'Interactive Playground',
+  args: {
+    count: 8,
+    countDescription: 'Notifications',
+    animated: true
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Interactive playground to experiment with different badge configurations.'
+      }
+    }
+  }
 };
