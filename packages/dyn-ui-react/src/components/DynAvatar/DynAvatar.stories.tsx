@@ -174,9 +174,9 @@ export const InteractiveAvatars: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
       <div style={{ textAlign: 'center' }}>
-        <DynAvatar 
-          alt="Clickable User" 
-          onClick={() => alert('Avatar clicked!')} 
+        <DynAvatar
+          alt="Clickable User"
+          onClick={() => alert('Avatar clicked!')}
         />
         <p style={{ fontSize: '0.875rem', margin: '0.5rem 0 0 0' }}>Click or press Enter/Space</p>
       </div>
@@ -189,8 +189,8 @@ export const InteractiveAvatars: Story = {
         <p style={{ fontSize: '0.875rem', margin: '0.5rem 0 0 0' }}>Interactive with image</p>
       </div>
       <div style={{ textAlign: 'center' }}>
-        <DynAvatar 
-          alt="Status Interactive" 
+        <DynAvatar
+          alt="Status Interactive"
           status="online"
           onClick={() => alert('Online user clicked!')}
         />
@@ -222,10 +222,10 @@ export const LoadingStates: Story = {
         <p style={{ fontSize: '0.875rem', margin: '0.5rem 0 0 0' }}>Image loading</p>
       </div>
       <div style={{ textAlign: 'center' }}>
-        <DynAvatar 
+        <DynAvatar
           alt="Loading with Status"
           status="online"
-          loading 
+          loading
         />
         <p style={{ fontSize: '0.875rem', margin: '0.5rem 0 0 0' }}>Loading + status</p>
       </div>
@@ -241,6 +241,9 @@ export const LoadingStates: Story = {
 };
 
 export const ErrorStates: Story = {
+  args: {
+    alt: 'Error User',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
       <div style={{ textAlign: 'center' }}>
@@ -252,7 +255,7 @@ export const ErrorStates: Story = {
         <p style={{ fontSize: '0.875rem', margin: '0.5rem 0 0 0' }}>Image error</p>
       </div>
       <div style={{ textAlign: 'center' }}>
-        <DynAvatar 
+        <DynAvatar
           alt="Error Interactive"
           error
           onClick={() => alert('Error state clicked')}
@@ -271,6 +274,9 @@ export const ErrorStates: Story = {
 };
 
 export const CustomFallback: Story = {
+  args: {
+    alt: 'Custom fallback',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
       <div style={{ textAlign: 'center' }}>
@@ -310,21 +316,21 @@ export const DarkTheme: Story = {
     backgrounds: { default: 'dark' },
   },
   render: () => (
-    <div 
-      data-theme="dark" 
-      style={{ 
-        padding: '2rem', 
+    <div
+      data-theme="dark"
+      style={{
+        padding: '2rem',
         background: '#1a1a1a',
         borderRadius: '8px',
         color: 'white'
       }}
     >
       <h3 style={{ margin: '0 0 1rem 0', color: 'white' }}>Dark Theme Examples</h3>
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', 
-        gap: '1rem', 
-        alignItems: 'center' 
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+        gap: '1rem',
+        alignItems: 'center'
       }}>
         <div style={{ textAlign: 'center' }}>
           <DynAvatar alt="Dark Theme User" />
@@ -367,18 +373,18 @@ export const DarkTheme: Story = {
 
 export const Accessibility: Story = {
   render: () => (
-    <div style={{ 
-      display: 'flex', 
-      gap: '2rem', 
-      flexDirection: 'column', 
+    <div style={{
+      display: 'flex',
+      gap: '2rem',
+      flexDirection: 'column',
       alignItems: 'flex-start',
       maxWidth: '600px'
     }}>
       <div>
         <h4 style={{ margin: '0 0 0.5rem 0' }}>ARIA Described By</h4>
-        <DynAvatar 
-          alt="User Profile" 
-          aria-describedby="profile-description" 
+        <DynAvatar
+          alt="User Profile"
+          aria-describedby="profile-description"
         />
         <p id="profile-description" style={{ fontSize: '0.875rem', margin: '0.5rem 0 0 0', color: '#666' }}>
           Current user's profile picture with online status
@@ -387,8 +393,8 @@ export const Accessibility: Story = {
 
       <div>
         <h4 style={{ margin: '0 0 0.5rem 0' }}>Custom ARIA Label</h4>
-        <DynAvatar 
-          alt="Manager" 
+        <DynAvatar
+          alt="Manager"
           aria-label="Team manager profile - click to view details"
           onClick={() => alert('Manager details')}
         />
@@ -399,10 +405,10 @@ export const Accessibility: Story = {
 
       <div>
         <h4 style={{ margin: '0 0 0.5rem 0' }}>Screen Reader Announcements</h4>
-        <DynAvatar 
-          alt="Loading Profile" 
-          loading 
-          aria-describedby="loading-description" 
+        <DynAvatar
+          alt="Loading Profile"
+          loading
+          aria-describedby="loading-description"
         />
         <p id="loading-description" style={{ fontSize: '0.875rem', margin: '0.5rem 0 0 0', color: '#666' }}>
           Profile picture is loading - screen readers will announce "Loading avatar"
@@ -411,9 +417,9 @@ export const Accessibility: Story = {
 
       <div>
         <h4 style={{ margin: '0 0 0.5rem 0' }}>Status in Accessibility Label</h4>
-        <DynAvatar 
-          alt="John Smith" 
-          status="busy" 
+        <DynAvatar
+          alt="John Smith"
+          status="busy"
           aria-describedby="status-description"
         />
         <p id="status-description" style={{ fontSize: '0.875rem', margin: '0.5rem 0 0 0', color: '#666' }}>
@@ -439,19 +445,19 @@ export const ResponsiveDesign: Story = {
         Interactive avatars meet mobile accessibility guidelines (44px minimum touch target)
       </p>
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-        <DynAvatar 
-          size="small" 
-          alt="Small Interactive" 
+        <DynAvatar
+          size="small"
+          alt="Small Interactive"
           onClick={() => alert('Small avatar clicked')}
         />
-        <DynAvatar 
-          size="medium" 
-          alt="Medium Interactive" 
+        <DynAvatar
+          size="medium"
+          alt="Medium Interactive"
           onClick={() => alert('Medium avatar clicked')}
         />
-        <DynAvatar 
-          size="large" 
-          alt="Large Interactive" 
+        <DynAvatar
+          size="large"
+          alt="Large Interactive"
           onClick={() => alert('Large avatar clicked')}
         />
       </div>

@@ -17,19 +17,21 @@ export type {
 export type { ThemeName, ThemeConfig, ThemeContextValue, ColorVariant, Size } from './theme';
 
 // Display Components types - SCOPE 5
+
 export type {
-  DynBadgeProps,
-  DynBadgeRef,
-  DynBadgeVariant,
-  DynBadgeColor,
-  DynBadgePosition,
-  DynBadgeSize,
-  DynBadgeAccessibilityProps
-} from './badge.types';
-export type { DynAvatarProps, AvatarSize, AvatarLoading } from './avatar.types';
+  DynAvatarProps,
+  DynAvatarRef,
+  DynAvatarSize,
+  DynAvatarShape,
+  DynAvatarStatus,
+} from '../components/DynAvatar/DynAvatar.types';
+export {
+  DYN_AVATAR_STATUS_LABELS,
+} from '../components/DynAvatar/DynAvatar.types';
 export type { DynIconProps, IconDictionary, ProcessedIcon } from './icon.types';
 export type { DynLabelProps } from './label.types';
 
+// Form Components types - SCOPE 6
 // Form Components types - SCOPE 6
 export type {
   DynInputProps,
@@ -76,4 +78,4 @@ export type {
 export { DYN_GRID_DEFAULT_PROPS } from '../components/DynGrid/DynGrid.types';
 
 // Constants
-export { AVATAR_SIZES } from './avatar.types';
+
