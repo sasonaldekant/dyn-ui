@@ -146,7 +146,10 @@ describe('DynBadge', () => {
         </DynBadge>
       );
 
+      // Badge is interactive because it has onClick -> role="button" and tabIndex=0
       const badge = screen.getByRole('button');
+      badge.focus();
+      
       await user.keyboard('{Enter}');
       
       expect(handleKeyDown).toHaveBeenCalled();
