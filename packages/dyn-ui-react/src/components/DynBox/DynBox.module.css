@@ -401,7 +401,8 @@
   outline-offset: var(--dyn-focus-ring-offset, 2px);
 }
 
-.box__sr-only {
+/* Standardized screen reader utility class - following DynAvatar gold standard */
+.dyn-sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
