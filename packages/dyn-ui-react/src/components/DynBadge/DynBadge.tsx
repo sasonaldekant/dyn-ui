@@ -1,11 +1,12 @@
 import {
   forwardRef,
   useCallback,
-  useId,
-  useMemo
+  useMemo,
+  useState
 } from 'react';
 import type { CSSProperties, ForwardedRef, KeyboardEvent, MouseEvent } from 'react';
 import { cn } from '../../utils/classNames';
+import { generateId } from '../../utils/accessibility';
 import type {
   DynBadgeProps,
   DynBadgeRef
@@ -44,6 +45,13 @@ const positionClassNameMap = {
 
 const DEFAULT_MAX_COUNT = 99;
 
+/**
+ * Safely access CSS module classes
+ */
+const getStyleClass = (className: string): string => {
+  return (styles as Record<string, string>)[className] || '';
+};
+
 const DynBadgeComponent = (
   props: DynBadgeProps,
   ref: ForwardedRef<DynBadgeRef>
@@ -78,6 +86,8 @@ const DynBadgeComponent = (
 
   const { style: inlineStyle, ...restProps } = rest;
 
+  const [internalId] = useState(() => id || generateId('badge'));
+  
   const numericCount = typeof count === 'number' ? count : typeof value === 'number' ? value : undefined;
   const hasCount = typeof numericCount === 'number';
   const hasChildren = children !== undefined && children !== null;
@@ -87,8 +97,6 @@ const DynBadgeComponent = (
     return null;
   }
 
-  const autoId = useId();
-  const internalId = id ?? autoId;
   const isInteractive = typeof onClick === 'function';
 
   const displayCount = useMemo(() => {
@@ -121,16 +129,16 @@ const DynBadgeComponent = (
       : undefined;
 
   const badgeClasses = cn(
-    styles.badge,
+    getStyleClass('badge'),
     sizeClassNameMap[size],
     variantClassNameMap[variant],
     semanticColorClass,
-    position && styles['badge--positioned'],
+    position && getStyleClass('badge--positioned'),
     position ? positionClassNameMap[position] : undefined,
-    isInteractive && styles['badge--clickable'],
-    hasCount && styles['badge--count'],
-    animated && styles['badge--animated'],
-    pulse && styles['badge--pulse'],
+    isInteractive && getStyleClass('badge--clickable'),
+    hasCount && getStyleClass('badge--count'),
+    animated && getStyleClass('badge--animated'),
+    pulse && getStyleClass('badge--pulse'),
     className
   );
 
@@ -194,21 +202,21 @@ const DynBadgeComponent = (
       style={badgeStyle}
       {...restProps}
     >
-      <span className={styles['badge__content']}>
+      <span className={getStyleClass('badge__content')}>
         {startIcon && (
-          <span className={styles['badge__icon']} aria-hidden="true">
+          <span className={getStyleClass('badge__icon')} aria-hidden="true">
             {startIcon}
           </span>
         )}
 
         {showTextContent && (
-          <span className={styles['badge__text']}>
+          <span className={getStyleClass('badge__text')}>
             {displayContent}
           </span>
         )}
 
         {endIcon && (
-          <span className={styles['badge__icon']} aria-hidden="true">
+          <span className={getStyleClass('badge__icon')} aria-hidden="true">
             {endIcon}
           </span>
         )}
