@@ -448,6 +448,38 @@ describe('DynBox', () => {
       });
     });
 
+    it('handles custom background colors', () => {
+      render(
+        <DynBox 
+          data-testid="custom-bg"
+          bg="rgba(255,255,255,0.1)" 
+        />
+      );
+
+      const element = screen.getByTestId('custom-bg');
+      // Custom backgrounds should not get CSS classes but should use CSS variables
+      expect(element).not.toHaveClass(getStyleClass('box--bg-rgba(255,255,255,0.1)'));
+      expect(element).toHaveStyle({
+        '--dyn-box-bg': 'rgba(255,255,255,0.1)',
+      });
+    });
+
+    it('handles custom border radius values', () => {
+      render(
+        <DynBox 
+          data-testid="custom-radius"
+          borderRadius="20px" 
+        />
+      );
+
+      const element = screen.getByTestId('custom-radius');
+      // Custom radius should not get CSS classes but should use CSS variables
+      expect(element).not.toHaveClass(getStyleClass('box--rounded-20px'));
+      expect(element).toHaveStyle({
+        '--dyn-box-radius': '20px',
+      });
+    });
+
     it('applies layout variables for flex configuration', () => {
       render(
         <DynBox
@@ -739,7 +771,7 @@ describe('DynBox', () => {
       render(
         <DynBox
           data-testid="missing-class"
-          bg="nonexistent" as any
+          bg="nonexistent-custom-color"
         />
       );
 
@@ -747,6 +779,10 @@ describe('DynBox', () => {
       expect(element).toBeInTheDocument();
       // Should still have base class
       expect(element).toHaveClass(getStyleClass('box'));
+      // Custom bg should be handled as CSS variable
+      expect(element).toHaveStyle({
+        '--dyn-box-bg': 'nonexistent-custom-color',
+      });
     });
 
     it('maintains performance with complex prop combinations', () => {
