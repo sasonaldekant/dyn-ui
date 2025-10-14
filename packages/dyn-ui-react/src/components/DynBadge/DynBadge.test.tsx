@@ -139,7 +139,7 @@ describe('DynBadge', () => {
       const handleClick = vi.fn();
       const handleKeyDown = vi.fn();
       const user = userEvent.setup();
-      
+
       render(
         <DynBadge onClick={handleClick} onKeyDown={handleKeyDown}>
           Custom KeyDown
@@ -147,8 +147,9 @@ describe('DynBadge', () => {
       );
 
       const badge = screen.getByRole('button');
+      badge.focus();
       await user.keyboard('{Enter}');
-      
+
       expect(handleKeyDown).toHaveBeenCalled();
       expect(handleClick).toHaveBeenCalled();
     });
@@ -191,7 +192,7 @@ describe('DynBadge', () => {
     it('handles custom color values with CSS variables', () => {
       render(<DynBadge color="#ff0000">Custom Color</DynBadge>);
       const badge = screen.getByTestId('dyn-badge');
-      
+
       expect(badge.style.getPropertyValue('--badge-accent')).toBe('#ff0000');
       expect(badge.style.getPropertyValue('--badge-outline-color')).toBe('#ff0000');
     });
@@ -223,17 +224,17 @@ describe('DynBadge', () => {
 
     it('icons have aria-hidden attribute', () => {
       render(
-        <DynBadge 
+        <DynBadge
           startIcon={<span data-testid="start-icon">🔥</span>}
           endIcon={<span data-testid="end-icon">→</span>}
         >
           Test
         </DynBadge>
       );
-      
+
       const startIcon = screen.getByTestId('start-icon').parentElement;
       const endIcon = screen.getByTestId('end-icon').parentElement;
-      
+
       expect(startIcon).toHaveAttribute('aria-hidden', 'true');
       expect(endIcon).toHaveAttribute('aria-hidden', 'true');
     });
