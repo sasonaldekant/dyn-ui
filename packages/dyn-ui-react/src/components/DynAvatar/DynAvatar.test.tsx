@@ -186,16 +186,16 @@ describe('DynAvatar', () => {
 
   describe('Sizes and Variants', () => {
     it('applies size classes correctly', () => {
-      const { rerender } = render(<DynAvatar alt="Test" size="small" />);
-      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--small'));
+      const { rerender } = render(<DynAvatar alt="Test" size="sm" />);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--sm'));
 
-      rerender(<DynAvatar alt="Test" size="large" />);
-      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--large'));
+      rerender(<DynAvatar alt="Test" size="lg" />);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--lg'));
     });
 
     it('applies default medium size when not specified', () => {
-      render(<DynAvatar alt="Test" />);
-      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--medium'));
+      render(<DynAvatar alt="Test" size="md"/>);
+      expect(screen.getByRole('img')).toHaveClass(getStyleClass('avatar--md'));
     });
 
     it('applies shape classes correctly', () => {

@@ -1,14 +1,14 @@
-﻿import React, { ImgHTMLAttributes, ReactNode } from 'react';
-import { BaseComponentProps, AccessibilityProps } from '../../types';
+﻿import { type ImgHTMLAttributes, type ReactNode } from 'react';
+import type { BaseComponentProps, AccessibilityProps } from '../../types';
 
-// Size types aligned with design tokens
+// Direct type definitions - no external dependencies
 export type DynAvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type DynAvatarShape = 'circle' | 'square' | 'rounded';
 export type DynAvatarStatus = 'online' | 'offline' | 'away' | 'busy';
 
 /**
  * Props interface for DynAvatar component
- * Aligned with design token system and standardization requirements
+ * Clean TypeScript implementation without external namespace dependencies
  */
 export interface DynAvatarProps extends
   Omit<BaseComponentProps, 'children'>,
@@ -18,13 +18,13 @@ export interface DynAvatarProps extends
   /** Image source URL */
   src?: string;
 
-  /** Alt text for image (also used for initials generation) */
+  /** Alt text for image (required for accessibility) */
   alt: string;
 
-  /** Avatar size - aligned with design token scale */
+  /** Avatar size using design token scale */
   size?: DynAvatarSize;
 
-  /** Avatar shape */
+  /** Avatar shape variant */
   shape?: DynAvatarShape;
 
   /** Manual initials override */
@@ -39,19 +39,19 @@ export interface DynAvatarProps extends
   /** Error state */
   error?: boolean;
 
-  /** Click handler (makes avatar interactive) */
+  /** Click handler for interactive avatars */
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 
-  /** Custom fallback content when no image */
+  /** Custom fallback content */
   fallback?: ReactNode;
 
-  /** Children content (alternative to fallback) */
+  /** Children content */
   children?: ReactNode;
 
   /** Image loading strategy */
   imageLoading?: 'eager' | 'lazy';
 
-  /** Custom image props */
+  /** Custom image properties */
   imageProps?: Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt' | 'loading'> & {
     'data-testid'?: string;
   };
@@ -63,7 +63,7 @@ export interface DynAvatarProps extends
 export type DynAvatarRef = HTMLDivElement;
 
 /**
- * Status labels for accessibility
+ * Status accessibility labels
  */
 export const DYN_AVATAR_STATUS_LABELS: Record<DynAvatarStatus, string> = {
   online: 'Online',
