@@ -1,8 +1,8 @@
 import React, { ImgHTMLAttributes, ReactNode } from 'react';
 import { BaseComponentProps, AccessibilityProps } from '../../types';
 
-// Custom size type for DynAvatar (compatible with design system)
-export type DynAvatarSize = 'small' | 'medium' | 'large';
+// Size type aligned with design tokens (xs, sm, md, lg, xl)
+export type DynAvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type DynAvatarShape = 'circle' | 'square' | 'rounded';
 export type DynAvatarStatus = 'online' | 'offline' | 'away' | 'busy';
 
@@ -21,7 +21,7 @@ export interface DynAvatarProps extends
   /** Alt text for image (also used for initials generation) */
   alt: string;
   
-  /** Avatar size */
+  /** Avatar size - aligned with design token scale */
   size?: DynAvatarSize;
   
   /** Avatar shape */
