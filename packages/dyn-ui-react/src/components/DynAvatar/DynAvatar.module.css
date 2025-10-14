@@ -14,23 +14,35 @@
   border: var(--dyn-border-width, 1px) solid var(--dyn-color-border, var(--color-border, #d0d5dd));
 }
 
-/* Size variants using design tokens */
-.avatar--small {
-  width: var(--dyn-spacing-3xl, 3rem);
-  height: var(--dyn-spacing-3xl, 3rem);
-  font-size: var(--dyn-font-size-sm, var(--font-size-sm, 0.875rem));
+/* Size variants using design tokens - aligned with design system */
+.avatar--xs {
+  width: var(--dyn-spacing-2xl, 2rem);   /* 32px */
+  height: var(--dyn-spacing-2xl, 2rem);
+  font-size: var(--dyn-font-size-xs, 0.75rem);
 }
 
-.avatar--medium {
-  width: var(--dyn-spacing-4xl, 4rem);
-  height: var(--dyn-spacing-4xl, 4rem);
+.avatar--sm {
+  width: var(--dyn-spacing-3xl, 3rem);   /* 48px */
+  height: var(--dyn-spacing-3xl, 3rem);
+  font-size: var(--dyn-font-size-sm, 0.875rem);
+}
+
+.avatar--md {
+  width: 4rem;   /* 64px - standard medium */
+  height: 4rem;
   font-size: var(--dyn-font-size-base, 1rem);
 }
 
-.avatar--large {
-  width: calc(var(--dyn-spacing-4xl, 4rem) * 1.5);
-  height: calc(var(--dyn-spacing-4xl, 4rem) * 1.5);
-  font-size: var(--dyn-font-size-lg, var(--font-size-lg, 1.125rem));
+.avatar--lg {
+  width: 5rem;   /* 80px - large */
+  height: 5rem;
+  font-size: var(--dyn-font-size-lg, 1.125rem);
+}
+
+.avatar--xl {
+  width: 6rem;   /* 96px - extra large */
+  height: 6rem;
+  font-size: var(--dyn-font-size-xl, 1.25rem);
 }
 
 /* Shape variants */
