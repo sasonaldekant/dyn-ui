@@ -1,4 +1,4 @@
-﻿import resolve from '@rollup/plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
@@ -44,11 +44,13 @@ const config: RollupOptions[] = [
       }),
       postcss({
         modules: {
+          localsConvention: 'camelCase',
           generateScopedName: 'dyn-[name]__[local]___[hash:base64:5]'
         },
         extract: false,
         minimize: true,
-        use: ['sass']
+        // Remove SCSS processing, use only CSS and PostCSS
+        use: ['postcss-nested', 'autoprefixer']
       }),
       terser({
         compress: {
@@ -74,9 +76,3 @@ const config: RollupOptions[] = [
 ];
 
 export default config;
-
-// No code changes needed. Just install the missing dependency to fix the error.
-// Run in your terminal:
-// npm install --save-dev @rollup/plugin-terser
-// or
-// yarn add --dev @rollup/plugin-terser
