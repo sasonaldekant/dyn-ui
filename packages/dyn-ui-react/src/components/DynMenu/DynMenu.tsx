@@ -1,285 +1,134 @@
-/**
- * DynMenu - Navigation Menu Component
- * Hierarchical menu system with collapse/expand functionality, search, and responsive design
- */
-
-import React, { forwardRef, useImperativeHandle, useState, useEffect, useMemo, useCallback } from 'react';
-import classNames from 'classnames';
-import { DynMenuProps, MenuItem, MenuLiterals, DynMenuRef, DEFAULT_MENU_LITERALS } from './DynMenu.types';
-import { DynIcon } from '../DynIcon';
-import { DynBadge } from '../DynBadge';
-import { DynInput } from '../DynInput';
+import React, { useEffect, useMemo, useRef, useState, forwardRef } from 'react';
+import { cn } from '../../utils/classNames';
+import { generateId } from '../../utils/accessibility';
 import styles from './DynMenu.module.css';
+import type { DynMenuProps, DynMenuItem } from './DynMenu.types';
 
-const DynMenu = forwardRef<DynMenuRef, DynMenuProps>((
-  {
-    menus = [],
-    collapsed: propCollapsed = false,
-    collapsedIcon = 'dyn-icon-menu',
-    filter = false,
-    shortLogo,
-    logo,
-    literals: customLiterals = {},
-    automaticToggle = true,
-    className,
-    onCollapse,
-    onMenuClick
-  },
-  ref
-) => {
-  const [collapsed, setCollapsed] = useState(propCollapsed);
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  const [filterText, setFilterText] = useState('');
-  const [activeItem, setActiveItem] = useState<string>('');
+const getStyleClass = (n: string) => (styles as Record<string, string>)[n] || '';
 
-  const literals = { ...DEFAULT_MENU_LITERALS, ...customLiterals };
+export const DynMenu: React.FC<DynMenuProps> = ({
+  items,
+  orientation = 'horizontal',
+  className,
+  id,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  'data-testid': dataTestId,
+  onAction,
+  ...rest
+}) => {
+  const [internalId] = useState(() => id || generateId('menu'));
+  const isHorizontal = orientation === 'horizontal';
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [focusIndex, setFocusIndex] = useState<number>(0);
 
-  useImperativeHandle(ref, () => ({
-    collapse: () => {
-      setCollapsed(true);
-      onCollapse?.(true);
-    },
-    expand: () => {
-      setCollapsed(false);
-      onCollapse?.(false);
-    },
-    toggle: () => {
-      const newCollapsed = !collapsed;
-      setCollapsed(newCollapsed);
-      onCollapse?.(newCollapsed);
-    }
-  }));
+  const menubarRef = useRef<HTMLDivElement | null>(null);
+  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => {
-    setCollapsed(propCollapsed);
-  }, [propCollapsed]);
+    if (focusIndex >= 0) itemRefs.current[focusIndex]?.focus();
+  }, [focusIndex]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (automaticToggle) {
-        setCollapsed(window.innerWidth < 768);
-      }
-    };
+  const visibleMenuCount = useMemo(() => items.length, [items]);
 
-    if (automaticToggle) {
-      window.addEventListener('resize', handleResize);
-      handleResize(); // Initial check
-      return () => window.removeEventListener('resize', handleResize);
-    }
-  }, [automaticToggle]);
-
-  const filteredMenus = useMemo(() => {
-    if (!filterText) return menus;
-
-    const filterItems = (items: MenuItem[]): MenuItem[] => {
-      return items.reduce<MenuItem[]>((acc, item) => {
-        if (item.type === 'divider') {
-          acc.push(item);
-          return acc;
-        }
-
-        const matchesFilter =
-          item.label.toLowerCase().includes(filterText.toLowerCase()) ||
-          item.shortLabel?.toLowerCase().includes(filterText.toLowerCase());
-
-        if (matchesFilter) {
-          acc.push(item);
-        } else if (item.subItems) {
-          const filteredSubItems = filterItems(item.subItems);
-          if (filteredSubItems.length > 0) {
-            acc.push({ ...item, subItems: filteredSubItems });
-          }
-        }
-        return acc;
-      }, []);
-    };
-
-    return filterItems(menus);
-  }, [menus, filterText]);
-
-  const renderBadge = useCallback((badge: MenuItem['badge']) => {
-    if (!badge) {
-      return null;
-    }
-
-    if (typeof badge === 'object') {
-      const count = badge.count ?? badge.value;
-      return (
-        <DynBadge
-          count={typeof count === 'number' ? count : undefined}
-          maxCount={badge.maxCount}
-          showZero={badge.showZero}
-          color={badge.color}
-          variant={badge.variant}
-          size="small"
-        >
-          {badge.label}
-        </DynBadge>
-      );
-    }
-
-    if (typeof badge === 'number') {
-      return <DynBadge count={badge} size="small" />;
-    }
-
-    return <DynBadge size="small">{badge}</DynBadge>;
-  }, []);
-
-  const handleToggleCollapse = () => {
-    const newCollapsed = !collapsed;
-    setCollapsed(newCollapsed);
-    onCollapse?.(newCollapsed);
+  const moveFocus = (delta: number) => {
+    if (!visibleMenuCount) return;
+    setFocusIndex((prev) => {
+      const next = (prev + delta + visibleMenuCount) % visibleMenuCount;
+      return next;
+    });
   };
 
-  const handleItemClick = useCallback((item: MenuItem, path: string) => {
-    if (item.disabled) return;
+  const closeAll = () => setOpenIndex(null);
 
-    setActiveItem(path);
-
-    if (item.subItems && item.subItems.length > 0) {
-      setExpandedItems(prev => {
-        const newSet = new Set(prev);
-        if (newSet.has(path)) {
-          newSet.delete(path);
-        } else {
-          newSet.add(path);
-        }
-        return newSet;
-      });
-    } else {
-      if (item.action) {
-        item.action();
-      } else if (item.link) {
-        window.location.href = item.link;
+  const onMenubarKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const horizontal = isHorizontal;
+    switch (e.key) {
+      case 'ArrowRight': if (horizontal) { e.preventDefault(); moveFocus(1); } break;
+      case 'ArrowLeft': if (horizontal) { e.preventDefault(); moveFocus(-1); } break;
+      case 'ArrowDown': if (!horizontal) { e.preventDefault(); moveFocus(1); } else if (openIndex === focusIndex) { e.preventDefault(); /* focus first submenu item handled by browser tab */ } break;
+      case 'ArrowUp': if (!horizontal) { e.preventDefault(); moveFocus(-1); } break;
+      case 'Home': e.preventDefault(); setFocusIndex(0); break;
+      case 'End': e.preventDefault(); setFocusIndex(Math.max(0, visibleMenuCount - 1)); break;
+      case 'Enter':
+      case ' ': {
+        e.preventDefault();
+        setOpenIndex((prev) => (prev === focusIndex ? null : focusIndex));
+        break;
       }
-      onMenuClick?.(item);
+      case 'Escape':
+        if (openIndex !== null) { e.preventDefault(); closeAll(); }
+        break;
     }
-  }, [onMenuClick]);
-
-  const renderMenuItem = (item: MenuItem, level = 0, parentPath = ''): React.ReactNode => {
-    if (!item.visible && item.visible !== undefined) return null;
-
-    const path = `${parentPath}/${item.label}`;
-    const isExpanded = expandedItems.has(path);
-    const isActive = activeItem === path;
-    const hasSubItems = item.subItems && item.subItems.length > 0;
-
-    if (item.type === 'divider') {
-      return <div key={path} className={styles['dyn-menu-divider']} />;
-    }
-
-    const itemClasses = classNames(
-      styles['dyn-menu-item'],
-      {
-        [styles['dyn-menu-item-active']]: isActive,
-        [styles['dyn-menu-item-expanded']]: isExpanded,
-        [styles['dyn-menu-item-disabled']]: item.disabled,
-        [styles['dyn-menu-item-with-sub']]: hasSubItems,
-        [styles[`dyn-menu-item-level-${level}`]]: level > 0
-      }
-    );
-
-    return (
-      <div key={path} className={styles['dyn-menu-item-container']}>
-        <div
-          className={itemClasses}
-          onClick={() => handleItemClick(item, path)}
-          role="menuitem"
-          tabIndex={item.disabled ? -1 : 0}
-          aria-expanded={hasSubItems ? isExpanded : undefined}
-        >
-          <div className={styles['dyn-menu-item-content']}>
-            {item.icon && (
-              <div className={styles['dyn-menu-item-icon']}>
-                {typeof item.icon === 'string' ? (
-                  <DynIcon icon={item.icon} />
-                ) : (
-                  item.icon
-                )}
-              </div>
-            )}
-            <span className={styles['dyn-menu-item-label']}>
-              {collapsed && item.shortLabel ? item.shortLabel : item.label}
-            </span>
-            {item.badge && (
-              <div className={styles['dyn-menu-item-badge']}>
-                {renderBadge(item.badge)}
-              </div>
-            )}
-            {hasSubItems && (
-              <div className={styles['dyn-menu-item-arrow']}>
-                <DynIcon
-                  icon="dyn-icon-arrow-down"
-                  className={classNames({
-                    [styles['dyn-menu-arrow-expanded']]: isExpanded
-                  })}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-        {hasSubItems && isExpanded && (
-          <div className={styles['dyn-menu-subitems']}>
-            {item.subItems!.map(subItem =>
-              renderMenuItem(subItem, level + 1, path)
-            )}
-          </div>
-        )}
-      </div>
-    );
   };
 
-  const menuClasses = classNames(
-    styles['dyn-menu'],
-    {
-      [styles['dyn-menu-collapsed']]: collapsed
-    },
-    className
-  );
+  const handleItemClick = (index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+    setFocusIndex(index);
+  };
+
+  const onSubItemClick = (action: string) => {
+    onAction?.(action);
+    closeAll();
+  };
 
   return (
-    <nav className={menuClasses} role="navigation">
-      <div className={styles['dyn-menu-header']}>
-        <div className={styles['dyn-menu-logo']}>
-          {collapsed && shortLogo ? (
-            <img src={shortLogo} alt="Logo" className={styles['dyn-menu-logo-image']} />
-          ) : logo ? (
-            <img src={logo} alt="Logo" className={styles['dyn-menu-logo-image']} />
-          ) : null}
-        </div>
-        <button
-          className={styles['dyn-menu-toggle']}
-          onClick={handleToggleCollapse}
-          aria-label={collapsed ? literals.expand : literals.collapse}
-        >
-          {typeof collapsedIcon === 'string' ? (
-            <DynIcon icon={collapsedIcon} />
-          ) : (
-            collapsedIcon
-          )}
-        </button>
-      </div>
-      {filter && !collapsed && (
-        <div className={styles['dyn-menu-filter']}>
-          <DynInput
-            placeholder={literals.search}
-            value={filterText}
-            onChange={setFilterText}
-            icon="dyn-icon-search"
-            size="small"
-          />
-        </div>
-      )}
-      <div className={styles['dyn-menu-content']}>
-        <div className={styles['dyn-menu-items']} role="menu">
-          {filteredMenus.map(item => renderMenuItem(item))}
-        </div>
-      </div>
-    </nav>
+    <div
+      id={internalId}
+      role="menubar"
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
+      aria-orientation={orientation}
+      className={cn(getStyleClass('menubar'), className)}
+      data-testid={dataTestId || 'dyn-menu'}
+      ref={menubarRef}
+      onKeyDown={onMenubarKeyDown}
+      {...rest}
+    >
+      {items.map((item, idx) => {
+        const isOpen = openIndex === idx;
+        const buttonId = `${internalId}-item-${idx}`;
+        const menuId = `${internalId}-submenu-${idx}`;
+        return (
+          <div key={buttonId} className={getStyleClass('menubar__item')}>
+            <button
+              ref={(el) => (itemRefs.current[idx] = el)}
+              id={buttonId}
+              type="button"
+              role="menuitem"
+              className={cn(getStyleClass('menubar__button'), isOpen && getStyleClass('menubar__button--open'))}
+              aria-haspopup={item.children && item.children.length ? 'menu' : undefined}
+              aria-expanded={item.children && item.children.length ? isOpen : undefined}
+              aria-controls={item.children && item.children.length ? menuId : undefined}
+              onClick={() => handleItemClick(idx)}
+            >
+              {item.label}
+            </button>
+            {item.children && item.children.length > 0 && isOpen && (
+              <div
+                id={menuId}
+                role="menu"
+                aria-labelledby={buttonId}
+                className={getStyleClass('menu')}
+              >
+                {item.children.map((sub, sidx) => (
+                  <button
+                    key={`${menuId}-opt-${sidx}`}
+                    role="menuitem"
+                    type="button"
+                    className={getStyleClass('menu__item')}
+                    onClick={() => onSubItemClick(sub.action)}
+                  >
+                    {sub.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
-});
-
-DynMenu.displayName = 'DynMenu';
+};
 
 export default DynMenu;
-export { DynMenu };
