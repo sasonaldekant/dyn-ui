@@ -1,126 +1,160 @@
-/**
- * DynInput - CSS Module Styles
- * Part of DYN UI Form Components Group - SCOPE 6
- */
+.container {
+  --dyn-input-bg: var(--dyn-color-surface, var(--color-surface, #ffffff));
+  --dyn-input-color: var(--dyn-color-text-primary, var(--color-text-primary, #111827));
+  --dyn-input-border: var(--dyn-color-border, var(--color-border, #d1d5db));
+  --dyn-input-border-hover: var(--dyn-color-border-hover, var(--color-border-hover, #9ca3af));
+  --dyn-input-border-focus: var(--dyn-color-primary, var(--color-primary, #2563eb));
+  --dyn-input-focus-ring: var(--dyn-color-focus-ring, var(--color-focus-ring, rgba(37, 99, 235, 0.35)));
+  --dyn-input-placeholder: var(--dyn-color-text-placeholder, var(--color-text-placeholder, #9ca3af));
+  --dyn-input-disabled-bg: var(--dyn-color-surface-disabled, var(--color-surface-disabled, #f3f4f6));
+  --dyn-input-disabled-color: var(--dyn-color-text-disabled, var(--color-text-disabled, #9ca3af));
+  --dyn-input-readonly-bg: var(--dyn-color-surface-readonly, var(--color-surface-readonly, #f9fafb));
+  --dyn-input-error: var(--dyn-color-danger, var(--color-danger, #d32f2f));
 
-.dyn-input-container {
-  position: relative;
   display: flex;
   align-items: center;
+  position: relative;
 }
 
-.dyn-input {
-  flex: 1;
-  font-family: var(--dyn-font-family, system-ui, -apple-system, sans-serif);
-  font-size: var(--dyn-font-size-base, 16px);
-  line-height: 1.5;
-  color: var(--dyn-color-text-primary, #333);
-  background-color: var(--dyn-color-surface, #fff);
-  border: 1px solid var(--dyn-color-border, #d1d5db);
-  border-radius: var(--dyn-border-radius-md, 6px);
-  padding: var(--dyn-spacing-sm, 8px) var(--dyn-spacing-md, 12px);
-  transition: all 0.2s ease-in-out;
+.input {
+  appearance: none;
   width: 100%;
+  color: var(--dyn-input-color);
+  background: var(--dyn-input-bg);
+  border: 1px solid var(--dyn-input-border);
+  border-radius: var(--dyn-border-radius-md, var(--border-radius-md, 0.5rem));
+  padding: var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem)) var(--dyn-spacing-md, var(--spacing-md, 1rem));
+  font-family: var(--dyn-font-family-base, var(--font-family-base, system-ui, -apple-system, sans-serif));
+  font-size: var(--dyn-font-size-base, var(--font-size-base, 1rem));
+  line-height: var(--dyn-line-height-base, var(--line-height-base, 1.5));
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
 }
 
-.dyn-input::placeholder {
-  color: var(--dyn-color-text-placeholder, #9ca3af);
-  opacity: 1;
+.input::placeholder {
+  color: var(--dyn-input-placeholder);
 }
 
-.dyn-input:hover:not(:disabled):not(:read-only) {
-  border-color: var(--dyn-color-border-hover, #9ca3af);
+/* Hover */
+.input:hover:not(.input--disabled):not(.input--readonly) {
+  border-color: var(--dyn-input-border-hover);
 }
 
-.dyn-input:focus {
+/* Focus */
+.input:focus-visible {
   outline: none;
-  border-color: var(--dyn-color-primary, #0066cc);
-  box-shadow: 0 0 0 3px var(--dyn-color-primary-alpha, rgba(0, 102, 204, 0.1));
+  border-color: var(--dyn-input-border-focus);
+  box-shadow: 0 0 0 3px var(--dyn-input-focus-ring);
 }
 
-.dyn-input:disabled {
-  background-color: var(--dyn-color-surface-disabled, #f3f4f6);
-  color: var(--dyn-color-text-disabled, #9ca3af);
+/* Disabled */
+.input--disabled,
+.input:disabled {
+  background: var(--dyn-input-disabled-bg);
+  color: var(--dyn-input-disabled-color);
   cursor: not-allowed;
-  border-color: var(--dyn-color-border-disabled, #e5e7eb);
 }
 
-.dyn-input:read-only {
-  background-color: var(--dyn-color-surface-readonly, #f9fafb);
-  cursor: default;
+/* Readonly */
+.input--readonly,
+.input[readonly] {
+  background: var(--dyn-input-readonly-bg);
 }
 
-/* Size variants */
-.dyn-input--small {
-  font-size: var(--dyn-font-size-sm, 14px);
-  padding: var(--dyn-spacing-xs, 6px) var(--dyn-spacing-sm, 8px);
-  height: 32px;
+/* Sizes */
+.input--small {
+  --dyn-input-height: 2.25rem;
+  height: var(--dyn-input-height);
+  font-size: var(--dyn-font-size-sm, var(--font-size-sm, 0.875rem));
+  padding: var(--dyn-spacing-xs, var(--spacing-xs, 0.375rem)) var(--dyn-spacing-sm, var(--spacing-sm, 0.75rem));
 }
 
-.dyn-input--medium {
-  height: 40px;
+.input--medium {
+  --dyn-input-height: 2.5rem;
+  height: var(--dyn-input-height);
 }
 
-.dyn-input--large {
-  font-size: var(--dyn-font-size-lg, 18px);
-  padding: var(--dyn-spacing-md, 12px) var(--dyn-spacing-lg, 16px);
-  height: 48px;
+.input--large {
+  --dyn-input-height: 3rem;
+  height: var(--dyn-input-height);
+  font-size: var(--dyn-font-size-md, var(--font-size-md, 1rem));
+  padding: var(--dyn-spacing-md, var(--spacing-md, 0.75rem)) var(--dyn-spacing-lg, var(--spacing-lg, 1.5rem));
 }
 
-/* State variants */
-.dyn-input--error {
-  border-color: var(--dyn-color-error, #f44336);
+/* States */
+.input--error {
+  border-color: var(--dyn-input-error);
 }
 
-.dyn-input--error:focus {
-  box-shadow: 0 0 0 3px var(--dyn-color-error-alpha, rgba(244, 67, 54, 0.1));
+.input--focused {
+  border-color: var(--dyn-input-border-focus);
 }
 
-.dyn-input--focused {
-  border-color: var(--dyn-color-primary, #0066cc);
+.input--with-icon {
+  padding-left: var(--dyn-spacing-xl, var(--spacing-xl, 2.5rem));
 }
 
-.dyn-input--with-icon {
-  padding-left: var(--dyn-spacing-xl, 40px);
+.input--clearable {
+  padding-right: var(--dyn-spacing-xl, var(--spacing-xl, 2.5rem));
 }
 
-.dyn-input--cleanable {
-  padding-right: var(--dyn-spacing-xl, 40px);
-}
-
-.dyn-input-icon-container {
+/* Icon container */
+.icon-container {
   position: absolute;
-  left: var(--dyn-spacing-md, 12px);
+  left: var(--dyn-spacing-md, var(--spacing-md, 1rem));
   top: 50%;
   transform: translateY(-50%);
-  color: var(--dyn-color-text-secondary, #666);
+  color: var(--dyn-color-text-secondary, var(--color-text-secondary, #6b7280));
   pointer-events: none;
-  z-index: 1;
 }
 
-.dyn-input-clean-button {
+/* Clear button */
+.clear-button {
   position: absolute;
-  right: var(--dyn-spacing-sm, 8px);
+  right: var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem));
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  background: transparent;
   border: none;
-  cursor: pointer;
-  color: var(--dyn-color-text-secondary, #666);
-  padding: var(--dyn-spacing-xs, 4px);
-  border-radius: var(--dyn-border-radius-sm, 3px);
-  display: flex;
+  color: var(--dyn-color-text-secondary, var(--color-text-secondary, #6b7280));
+  padding: var(--dyn-spacing-xs, var(--spacing-xs, 0.25rem));
+  border-radius: var(--dyn-border-radius-sm, var(--border-radius-sm, 0.25rem));
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
-.dyn-input-clean-button:hover {
-  color: var(--dyn-color-text-primary, #333);
-  background-color: var(--dyn-color-surface-hover, #f3f4f6);
+.clear-button:hover {
+  color: var(--dyn-color-text-primary, var(--color-text-primary, #111827));
+  background-color: var(--dyn-color-surface-hover, var(--color-surface-hover, #f3f4f6));
 }
 
-.dyn-input-clean-button:focus {
-  outline: 2px solid var(--dyn-color-primary, #0066cc);
+.clear-button:focus-visible {
+  outline: 2px solid var(--dyn-input-border-focus);
   outline-offset: 2px;
+}
+
+/* Responsive touch target */
+@media (max-width: 767px) {
+  .input,
+  .input--small,
+  .input--medium,
+  .input--large {
+    min-height: var(--dyn-size-touch-target, var(--size-touch-target, 44px));
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .input {
+    transition: none;
+  }
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .input {
+    border-width: 2px;
+  }
 }

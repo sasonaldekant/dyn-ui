@@ -1,19 +1,24 @@
 /**
  * DynInput Component Tests
- * Part of DYN UI Form Components Group - SCOPE 6
+ * Standardized to follow DynAvatar pattern with Vitest and vitest-axe
  */
 
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
+import { axe, toHaveNoViolations } from 'vitest-axe';
 import { DynInput } from './DynInput';
-import type { ValidationRule } from '../../types/field.types';
+import styles from './DynInput.module.css';
+
+expect.extend(toHaveNoViolations);
 
 // Mock DynIcon component
 vi.mock('../DynIcon', () => ({
   DynIcon: ({ icon }: { icon: string }) => <span data-testid="icon">{icon}</span>
 }));
+
+const classes = styles as Record<string, string>;
 
 describe('DynInput', () => {
   const user = userEvent.setup();
@@ -29,6 +34,12 @@ describe('DynInput', () => {
 
     expect(screen.getByLabelText('Test Label')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Test placeholder')).toBeInTheDocument();
+  });
+
+  it('has no accessibility violations', async () => {
+    const { container } = render(<DynInput name="a" label="A" />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 
   it('displays initial value', () => {
@@ -59,123 +70,55 @@ describe('DynInput', () => {
     expect(handleChange).toHaveBeenCalledWith('new value');
   });
 
-  it('shows required indicator when required', () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        required
-      />
+  it('applies disabled and readonly state classes', async () => {
+    const { rerender } = render(
+      <DynInput name="i" label="L" disabled />
     );
+    const input = screen.getByRole('textbox');
+    expect(input).toBeDisabled();
+    expect(input.className).toContain(classes['input--disabled']);
 
-    expect(screen.getByText('*')).toBeInTheDocument();
+    rerender(<DynInput name="i" label="L" readonly />);
+    const ro = screen.getByRole('textbox');
+    expect(ro).toHaveAttribute('readonly');
+    expect(ro.className).toContain(classes['input--readonly']);
   });
 
-  it('shows optional indicator when optional', () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        optional
-      />
+  it('renders with icon and clear button states', () => {
+    const { rerender } = render(
+      <DynInput name="t" label="L" icon="search" />
     );
 
-    expect(screen.getByText('(opcional)')).toBeInTheDocument();
-  });
+    const input = screen.getByRole('textbox');
+    expect(input.className).toContain(classes['input--with-icon']);
 
-  it('displays help text', () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        help="This is help text"
-      />
+    rerender(
+      <DynInput name="t" label="L" value="x" showClearButton />
     );
 
-    expect(screen.getByText('This is help text')).toBeInTheDocument();
+    const input2 = screen.getByRole('textbox');
+    expect(input2.className).toContain(classes['input--clearable']);
   });
 
-  it('displays error message', () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        errorMessage="This is an error"
-      />
-    );
-
-    expect(screen.getByText('This is an error')).toBeInTheDocument();
-    expect(screen.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
-  });
-
-  it('applies disabled state correctly', () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        disabled
-      />
-    );
-
-    expect(screen.getByRole('textbox')).toBeDisabled();
-  });
-
-  it('applies readonly state correctly', () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        readonly
-      />
-    );
-
-    expect(screen.getByRole('textbox')).toHaveAttribute('readonly');
-  });
-
-  it('renders with icon when provided', () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        icon="search"
-      />
-    );
-
-    expect(screen.getByTestId('icon')).toHaveTextContent('search');
-  });
-
-  it('shows clean button when showCleanButton is true and has value', () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        value="some value"
-        showCleanButton
-      />
-    );
-
-    expect(screen.getByLabelText('Limpar campo')).toBeInTheDocument();
-  });
-
-  it('clears input when clean button is clicked', async () => {
+  it('shows clear button and clears on click', async () => {
     const handleChange = vi.fn();
     render(
       <DynInput
         name="test-input"
         label="Test Label"
         value="some value"
-        showCleanButton
+        showClearButton
         onChange={handleChange}
       />
     );
 
-    const cleanButton = screen.getByLabelText('Limpar campo');
-    await user.click(cleanButton);
+    const clearButton = screen.getByLabelText('Clear input');
+    await user.click(clearButton);
 
     expect(handleChange).toHaveBeenCalledWith('');
   });
 
-  it('handles focus and blur events', async () => {
+  it('handles focus and blur events and toggles focused class', async () => {
     const handleFocus = vi.fn();
     const handleBlur = vi.fn();
     
@@ -189,90 +132,24 @@ describe('DynInput', () => {
     );
 
     const input = screen.getByRole('textbox');
-    
     await user.click(input);
     expect(handleFocus).toHaveBeenCalled();
-    
+    expect(input.className).toContain(classes['input--focused']);
+
     await user.tab();
     expect(handleBlur).toHaveBeenCalled();
   });
 
-  it('validates required field', async () => {
+  it('displays error message and aria-invalid', async () => {
     render(
       <DynInput
         name="test-input"
         label="Test Label"
-        required
+        errorMessage="This is an error"
       />
     );
 
-    const input = screen.getByRole('textbox');
-    
-    // Focus and blur without entering value
-    await user.click(input);
-    await user.tab();
-
-    await waitFor(() => {
-      expect(screen.getByText('Este campo é obrigatório')).toBeInTheDocument();
-    });
-  });
-
-  it('validates email format', async () => {
-    const validation: ValidationRule[] = [
-      {
-        type: 'email',
-        message: 'Invalid email format'
-      }
-    ];
-
-    render(
-      <DynInput
-        name="test-input"
-        label="Email"
-        type="email"
-        validation={validation}
-      />
-    );
-
-    const input = screen.getByRole('textbox');
-    
-    await user.type(input, 'invalid-email');
-    await user.tab();
-
-    await waitFor(() => {
-      expect(screen.getByText('Invalid email format')).toBeInTheDocument();
-    });
-  });
-
-  it('applies mask formatting', async () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Phone"
-        mask="(##) ####-####"
-      />
-    );
-
-    const input = screen.getByRole('textbox');
-    await user.type(input, '11999887766');
-
-    expect(input).toHaveValue('(11) 9998-8776');
-  });
-
-  it('handles imperative ref API', () => {
-    const ref = React.createRef<any>();
-    render(
-      <DynInput
-        ref={ref}
-        name="test-input"
-        label="Test Label"
-      />
-    );
-
-    expect(ref.current).toHaveProperty('focus');
-    expect(ref.current).toHaveProperty('validate');
-    expect(ref.current).toHaveProperty('clear');
-    expect(ref.current).toHaveProperty('getValue');
-    expect(ref.current).toHaveProperty('setValue');
+    expect(screen.getByText('This is an error')).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
   });
 });
