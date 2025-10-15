@@ -235,5 +235,4 @@ export const DynButton = forwardRef<DynButtonRef, DynButtonProps>(
   }
 );
 
-export default DynButton;
 DynButton.displayName = 'DynButton';
