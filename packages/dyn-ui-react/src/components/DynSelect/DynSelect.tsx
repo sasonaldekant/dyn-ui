@@ -1,349 +1,213 @@
-/**
- * DynSelect - Advanced select component with search and virtual scrolling
- * Part of DYN UI Form Components Group - SCOPE 6
- */
+import React, { useEffect, useMemo, useRef, useState, forwardRef } from 'react';
+import { cn } from '../../utils/classNames';
+import { generateId } from '../../utils/accessibility';
+import styles from './DynSelect.module.scss';
 
-import React, {
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-  useState,
-  useEffect,
-  useMemo
-} from 'react';
-import classNames from 'classnames';
-import type { DynSelectProps, DynFieldRef, SelectOption } from '../../types/field.types';
-import { DynFieldContainer } from '../DynFieldContainer';
-import { useDynFieldValidation } from '../../hooks/useDynFieldValidation';
-import { DynIcon } from '../DynIcon';
-import './DynSelect.module.css';
+// Types kept local to avoid breaking public API; align to DynAvatar patterns
+export type DynSelectOption = { value: string; label: string; disabled?: boolean };
+export interface DynSelectProps {
+  options: DynSelectOption[];
+  value?: string;
+  defaultValue?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  onChange?: (value: string) => void;
+  className?: string;
+  id?: string;
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+  'data-testid'?: string;
+}
+export interface DynSelectRef { focus: () => void; blur: () => void; open: () => void; close: () => void; }
 
-export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
+const getStyleClass = (n: string) => (styles as Record<string, string>)[n] || '';
+
+export const DynSelect = forwardRef<DynSelectRef, DynSelectProps>(
   (
     {
-      name,
-      label,
-      help,
-      placeholder = 'Selecione...',
-      disabled = false,
-      readonly = false,
-      required = false,
-      optional = false,
-      visible = true,
-      value: propValue,
-      errorMessage,
-      validation,
-      className,
-      options = [],
-      multiple = false,
-      searchable = false,
-      virtualScroll = false,
-      loading = false,
-      size = 'medium',
+      options,
+      value,
+      defaultValue,
+      placeholder = 'Select…',
+      disabled,
       onChange,
-      onBlur,
-      onFocus
+      className,
+      id,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'data-testid': dataTestId,
+      ...rest
     },
     ref
   ) => {
-    const [value, setValue] = useState<string | string[]>(propValue || (multiple ? [] : ''));
-    const [isOpen, setIsOpen] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [focused, setFocused] = useState(false);
-    const selectRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    const { error, validate, clearError } = useDynFieldValidation({
-      value,
-      required,
-      validation,
-      customError: errorMessage
+    const [internalId] = useState(() => id || generateId('select'));
+    const isControlled = value !== undefined;
+    const [current, setCurrent] = useState<string | undefined>(value ?? defaultValue);
+    const [open, setOpen] = useState(false);
+    const [activeIndex, setActiveIndex] = useState<number>(() => {
+      const idx = options.findIndex(o => o.value === (value ?? defaultValue));
+      return idx >= 0 ? idx : 0;
     });
 
-    useImperativeHandle(ref, () => ({
-      focus: () => inputRef.current?.focus(),
-      validate: () => validate(),
-      clear: () => {
-        setValue(multiple ? [] : '');
-        onChange?.(multiple ? [] : '');
-        clearError();
-      },
-      getValue: () => value,
-      setValue: (newValue: any) => {
-        setValue(newValue);
-        onChange?.(newValue);
-      }
-    }));
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const listboxRef = useRef<HTMLDivElement | null>(null);
 
-    const filteredOptions = useMemo(() => {
-      if (!searchable || !searchTerm) return options;
-      return options.filter(option =>
-        option.label.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }, [options, searchTerm, searchable]);
-
-    const selectedOptions = useMemo(() => {
-      if (multiple && Array.isArray(value)) {
-        return options.filter(option => value.includes(option.value));
-      } else if (!multiple) {
-        return options.find(option => option.value === value) || null;
-      }
-      return null;
-    }, [options, value, multiple]);
-
+    useEffect(() => { if (isControlled) setCurrent(value); }, [isControlled, value]);
     useEffect(() => {
-      setValue(propValue || (multiple ? [] : ''));
-    }, [propValue, multiple]);
+      if (!open) return;
+      const el = document.getElementById(`${internalId}-option-${activeIndex}`);
+      el?.scrollIntoView?.({ block: 'nearest' });
+    }, [open, activeIndex, internalId]);
 
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
-          setIsOpen(false);
-          setSearchTerm('');
-        }
-      };
+    const selectedOption = useMemo(() => options.find(o => o.value === current), [options, current]);
 
-      if (isOpen) {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-      }
-    }, [isOpen]);
-
-    const handleToggle = () => {
-      if (!disabled && !readonly) {
-        setIsOpen(prev => !prev);
-        if (!isOpen) {
-          inputRef.current?.focus();
-        }
-      }
+    const setSelected = (val: string) => {
+      if (!isControlled) setCurrent(val);
+      onChange?.(val);
     };
 
-    const handleOptionSelect = (option: SelectOption) => {
-      if (option.disabled) return;
+    const openList = () => { if (!disabled) setOpen(true); };
+    const closeList = () => setOpen(false);
+    const toggleList = () => (open ? closeList() : openList());
 
-      if (multiple && Array.isArray(value)) {
-        const newValue = value.includes(option.value)
-          ? value.filter(v => v !== option.value)
-          : [...value, option.value];
-        setValue(newValue);
-        onChange?.(newValue);
-      } else {
-        setValue(option.value);
-        onChange?.(option.value);
-        setIsOpen(false);
-        setSearchTerm('');
-      }
-
-      clearError();
-    };
-
-    const handleRemoveOption = (optionValue: any, event: React.MouseEvent) => {
-      event.stopPropagation();
-      if (multiple && Array.isArray(value)) {
-        const newValue = value.filter(v => v !== optionValue);
-        setValue(newValue);
-        onChange?.(newValue);
+    const moveActive = (delta: number) => {
+      if (!options.length) return;
+      const len = options.length;
+      let idx = activeIndex;
+      for (let i = 0; i < len; i++) {
+        idx = (idx + delta + len) % len;
+        if (!options[idx]?.disabled) { setActiveIndex(idx); break; }
       }
     };
 
-    const handleBlur = () => {
-      setFocused(false);
-      validate();
-      onBlur?.();
-    };
-
-    const handleFocus = () => {
-      setFocused(true);
-      clearError();
-      onFocus?.();
-    };
-
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchTerm(e.target.value);
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const onTriggerKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
       switch (e.key) {
+        case 'ArrowDown':
+        case 'ArrowUp':
+          e.preventDefault();
+          if (!open) openList();
+          moveActive(e.key === 'ArrowDown' ? 1 : -1);
+          break;
         case 'Enter':
-        case ' ':
-          if (!isOpen) {
-            e.preventDefault();
-            setIsOpen(true);
-          }
+        case ' ': // Space
+          e.preventDefault();
+          if (!open) openList(); else selectActive();
           break;
         case 'Escape':
-          setIsOpen(false);
-          setSearchTerm('');
+          if (open) { e.preventDefault(); closeList(); }
           break;
-        case 'ArrowDown':
-          if (!isOpen) {
-            setIsOpen(true);
+        case 'Home':
+          e.preventDefault(); setActiveIndex(0); if (!open) openList();
+          break;
+        case 'End':
+          e.preventDefault(); setActiveIndex(Math.max(0, options.length - 1)); if (!open) openList();
+          break;
+        default:
+          // typeahead: jump to first option starting with typed char
+          if (e.key.length === 1 && /\S/.test(e.key)) {
+            const ch = e.key.toLowerCase();
+            const start = (activeIndex + 1) % options.length;
+            const seq = [...options.slice(start), ...options.slice(0, start)];
+            const found = seq.findIndex(o => !o.disabled && o.label.toLowerCase().startsWith(ch));
+            if (found >= 0) setActiveIndex((start + found) % options.length);
           }
           break;
       }
     };
 
-    if (!visible) return null;
-
-    const resolvedError = errorMessage ?? (error || undefined);
-
-    const selectClasses = classNames(
-      'dyn-select',
-      `dyn-select--${size}`,
-      {
-        'dyn-select--open': isOpen,
-        'dyn-select--focused': focused,
-        'dyn-select--error': Boolean(resolvedError),
-        'dyn-select--disabled': disabled,
-        'dyn-select--readonly': readonly,
-        'dyn-select--searchable': searchable,
-        'dyn-select--multiple': multiple,
-        'dyn-select--loading': loading
-      }
-    );
-
-    const getDisplayText = () => {
-      if (loading) return 'Carregando...';
-
-      if (multiple && Array.isArray(selectedOptions) && selectedOptions.length > 0) {
-        return `${selectedOptions.length} selecionado(s)`;
-      } else if (!multiple && selectedOptions) {
-        return (selectedOptions as SelectOption).label;
-      }
-
-      return placeholder;
+    const selectActive = () => {
+      const opt = options[activeIndex];
+      if (!opt || opt.disabled) return;
+      setSelected(opt.value);
+      closeList();
+      triggerRef.current?.focus();
     };
 
-    const showPlaceholder = !selectedOptions ||
-      (multiple && Array.isArray(selectedOptions) && selectedOptions.length === 0);
+    const onListKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      switch (e.key) {
+        case 'ArrowDown': e.preventDefault(); moveActive(1); break;
+        case 'ArrowUp': e.preventDefault(); moveActive(-1); break;
+        case 'Home': e.preventDefault(); setActiveIndex(0); break;
+        case 'End': e.preventDefault(); setActiveIndex(Math.max(0, options.length - 1)); break;
+        case 'Enter':
+        case ' ': e.preventDefault(); selectActive(); break;
+        case 'Escape': e.preventDefault(); closeList(); triggerRef.current?.focus(); break;
+      }
+    };
+
+    // activedescendant points to option id when open
+    const activeOptionId = open ? `${internalId}-option-${activeIndex}` : undefined;
+    const listboxId = `${internalId}-listbox`;
 
     return (
-      <DynFieldContainer
-        label={label}
-        helpText={help}
-        required={required}
-        optional={optional}
-        errorText={resolvedError}
-        className={className}
-        htmlFor={name}
-      >
-        <div ref={selectRef} className="dyn-select-container">
+      <div className={cn(getStyleClass('root'), className)} data-testid={dataTestId || 'dyn-select'} {...rest}>
+        <button
+          ref={triggerRef}
+          id={internalId}
+          type="button"
+          role="combobox"
+          className={getStyleClass('trigger')}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={listboxId}
+          aria-activedescendant={activeOptionId}
+          aria-disabled={disabled || undefined}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+          onClick={toggleList}
+          onKeyDown={onTriggerKeyDown}
+          disabled={disabled}
+        >
+          <span className={getStyleClass('trigger__label')}>
+            {selectedOption ? selectedOption.label : placeholder}
+          </span>
+          <span className={getStyleClass('trigger__icon')} aria-hidden="true" />
+        </button>
+
+        {open && (
           <div
-            className={selectClasses}
-            onClick={handleToggle}
-            onKeyDown={handleKeyDown}
-            tabIndex={disabled ? -1 : 0}
-            role="combobox"
-            aria-expanded={isOpen}
-            aria-haspopup="listbox"
-            aria-invalid={Boolean(resolvedError)}
-            aria-describedby={
-              resolvedError ? `${name}-error` : help ? `${name}-help` : undefined
-            }
-            onBlur={handleBlur}
-            onFocus={handleFocus}
+            ref={listboxRef}
+            id={listboxId}
+            role="listbox"
+            className={getStyleClass('listbox')}
+            tabIndex={-1}
+            onKeyDown={onListKeyDown}
           >
-            <input
-              ref={inputRef}
-              type="hidden"
-              id={name}
-              name={name}
-              value={multiple && Array.isArray(value) ? value.join(',') : value || ''}
-            />
-
-            <div className="dyn-select-content">
-              {multiple && Array.isArray(selectedOptions) && selectedOptions.length > 0 ? (
-                <div className="dyn-select-tags">
-                  {selectedOptions.map((option) => (
-                    <span key={option.value} className="dyn-select-tag">
-                      {option.label}
-                      <button
-                        type="button"
-                        className="dyn-select-tag-remove"
-                        onClick={(e) => handleRemoveOption(option.value, e)}
-                        aria-label={`Remover ${option.label}`}
-                      >
-                        <DynIcon icon="dyn-icon-close" />
-                      </button>
-                    </span>
-                  ))}
+            {options.map((opt, idx) => {
+              const selected = current === opt.value;
+              const active = idx === activeIndex;
+              return (
+                <div
+                  id={`${internalId}-option-${idx}`}
+                  key={opt.value}
+                  role="option"
+                  aria-selected={selected}
+                  aria-disabled={opt.disabled || undefined}
+                  className={cn(
+                    getStyleClass('option'),
+                    selected && getStyleClass('option--selected'),
+                    active && getStyleClass('option--active'),
+                    opt.disabled && getStyleClass('option--disabled')
+                  )}
+                  onMouseEnter={() => !opt.disabled && setActiveIndex(idx)}
+                  onMouseDown={e => e.preventDefault()}
+                  onClick={() => { if (!opt.disabled) { setActiveIndex(idx); setSelected(opt.value); closeList(); triggerRef.current?.focus(); }}}
+                >
+                  <span className={getStyleClass('option__label')}>{opt.label}</span>
                 </div>
-              ) : (
-                <span className={classNames('dyn-select-text', {
-                  'dyn-select-placeholder': showPlaceholder
-                })}>
-                  {getDisplayText()}
-                </span>
-              )}
-            </div>
-
-            <div className="dyn-select-arrow">
-              <DynIcon
-                icon={loading ? "dyn-icon-loading" : "dyn-icon-arrow-down"}
-                className={classNames({
-                  'dyn-select-arrow--up': isOpen && !loading
-                })}
-              />
-            </div>
+              );
+            })}
           </div>
+        )}
 
-          {isOpen && (
-            <div className="dyn-select-dropdown">
-              {searchable && (
-                <div className="dyn-select-search">
-                  <input
-                    type="text"
-                    placeholder="Pesquisar..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    className="dyn-select-search-input"
-                  />
-                </div>
-              )}
-
-              <div className="dyn-select-options" role="listbox">
-                {filteredOptions.length === 0 ? (
-                  <div className="dyn-select-empty">
-                    {searchTerm ? 'Nenhum resultado encontrado' : 'Nenhuma opção disponível'}
-                  </div>
-                ) : (
-                  filteredOptions.map((option) => {
-                    const isSelected = multiple && Array.isArray(value)
-                      ? value.includes(option.value)
-                      : value === option.value;
-
-                    return (
-                      <div
-                        key={option.value}
-                        className={classNames('dyn-select-option', {
-                          'dyn-select-option--selected': isSelected,
-                          'dyn-select-option--disabled': option.disabled
-                        })}
-                        role="option"
-                        aria-selected={isSelected}
-                        onClick={() => handleOptionSelect(option)}
-                      >
-                        {multiple && (
-                          <span className={classNames('dyn-select-checkbox', {
-                            'dyn-select-checkbox--checked': isSelected
-                          })}>
-                            {isSelected && <DynIcon icon="dyn-icon-check" />}
-                          </span>
-                        )}
-                        <span className="dyn-select-option-text">{option.label}</span>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </DynFieldContainer>
+        {/* SR announcements */}
+        <span className="dyn-sr-only" aria-live="polite">
+          {open ? 'List opened' : 'List closed'}
+        </span>
+      </div>
     );
   }
 );
 
-DynSelect.displayName = 'DynSelect';
-
 export default DynSelect;
+DynSelect.displayName = 'DynSelect';
