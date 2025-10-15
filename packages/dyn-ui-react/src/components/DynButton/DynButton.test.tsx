@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { axe, toHaveNoViolations } from 'vitest-axe';
+import { axe, toHaveNoViolations } from 'jest-axe';
 import { describe, expect, it, vi } from 'vitest';
-import DynButton from './DynButton';
+import { DynButton } from './DynButton';
 import styles from './DynButton.module.css';
 
 // Extend Vitest matchers
