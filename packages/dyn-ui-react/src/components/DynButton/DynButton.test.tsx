@@ -1,10 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { axe, toHaveNoViolations } from 'jest-axe';
+import { axe, toHaveNoViolations } from 'vitest-axe';
 import { describe, expect, it, vi } from 'vitest';
 import DynButton from './DynButton';
 import styles from './DynButton.module.css';
 
-// Extend Jest matchers
+// Extend Vitest matchers
 expect.extend(toHaveNoViolations);
 
 const classes = styles as Record<string, string>;
