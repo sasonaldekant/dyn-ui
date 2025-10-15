@@ -1,19 +1,19 @@
 .root {
-  --dyn-button-bg: var(--dyn-color-primary, #2563eb);
-  --dyn-button-border: var(--dyn-color-primary, #2563eb);
-  --dyn-button-color: var(--dyn-color-primary-contrast, #ffffff);
-  --dyn-button-bg-hover: var(--dyn-color-primary-hover, #1d4ed8);
-  --dyn-button-border-hover: var(--dyn-color-primary-hover, #1d4ed8);
+  --dyn-button-bg: var(--dyn-color-primary, var(--color-primary, #2563eb));
+  --dyn-button-border: var(--dyn-color-primary, var(--color-primary, #2563eb));
+  --dyn-button-color: var(--dyn-color-primary-contrast, var(--color-primary-contrast, #ffffff));
+  --dyn-button-bg-hover: var(--dyn-color-primary-hover, var(--color-primary-hover, #1d4ed8));
+  --dyn-button-border-hover: var(--dyn-color-primary-hover, var(--color-primary-hover, #1d4ed8));
   --dyn-button-color-hover: var(--dyn-button-color);
-  --dyn-button-bg-active: var(--dyn-color-primary-active, #1e3a8a);
-  --dyn-button-border-active: var(--dyn-color-primary-active, #1e3a8a);
+  --dyn-button-bg-active: var(--dyn-color-primary-active, var(--color-primary-active, #1e3a8a));
+  --dyn-button-border-active: var(--dyn-color-primary-active, var(--color-primary-active, #1e3a8a));
   --dyn-button-color-active: var(--dyn-button-color);
-  --dyn-button-shadow-hover: 0 8px 16px rgba(37, 99, 235, 0.18);
-  --dyn-button-shadow-active: 0 4px 10px rgba(30, 64, 175, 0.24);
-  --dyn-button-padding-y: 0.5rem;
-  --dyn-button-padding-x: 1rem;
-  --dyn-button-gap: 0.5rem;
-  --dyn-button-min-height: 2.5rem;
+  --dyn-button-shadow-hover: var(--dyn-shadow-md, var(--shadow-md, 0 8px 16px rgba(37, 99, 235, 0.18)));
+  --dyn-button-shadow-active: var(--dyn-shadow-sm, var(--shadow-sm, 0 4px 10px rgba(30, 64, 175, 0.24)));
+  --dyn-button-padding-y: var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem));
+  --dyn-button-padding-x: var(--dyn-spacing-md, var(--spacing-md, 1rem));
+  --dyn-button-gap: var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem));
+  --dyn-button-min-height: var(--dyn-size-md, var(--size-md, 2.5rem));
 
   position: relative;
   display: inline-flex;
@@ -22,28 +22,40 @@
   gap: var(--dyn-button-gap);
   padding: var(--dyn-button-padding-y) var(--dyn-button-padding-x);
   min-height: var(--dyn-button-min-height);
-  border-radius: var(--dyn-border-radius-md, 0.5rem);
+  border-radius: var(--dyn-border-radius-md, var(--border-radius-md, 0.5rem));
   border: 1px solid var(--dyn-button-border);
   background-color: var(--dyn-button-bg);
   color: var(--dyn-button-color);
-  font-family: var(--dyn-font-family-base, inherit);
-  font-size: var(--dyn-font-size-sm, 0.875rem);
-  font-weight: var(--dyn-font-weight-medium, 500);
-  line-height: 1.4;
+  font-family: var(--dyn-font-family-base, var(--font-family-base, inherit));
+  font-size: var(--dyn-font-size-sm, var(--font-size-sm, 0.875rem));
+  font-weight: var(--dyn-font-weight-medium, var(--font-weight-medium, 500));
+  line-height: var(--dyn-line-height-base, var(--line-height-base, 1.4));
   text-decoration: none;
   cursor: pointer;
   user-select: none;
   transition:
-    background-color 0.18s ease,
-    color 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    transform 0.18s ease;
+    background-color var(--dyn-transition-base, 0.18s ease),
+    color var(--dyn-transition-base, 0.18s ease),
+    border-color var(--dyn-transition-base, 0.18s ease),
+    box-shadow var(--dyn-transition-base, 0.18s ease),
+    transform var(--dyn-transition-base, 0.18s ease);
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none;
+  }
+
+  .spinner {
+    animation: none;
+  }
 }
 
 .root:focus-visible {
-  outline: 3px solid var(--dyn-color-focus-ring, rgba(37, 99, 235, 0.35));
-  outline-offset: 3px;
+  outline: 3px solid var(--dyn-color-focus-ring, var(--color-focus-ring, rgba(37, 99, 235, 0.35)));
+  outline-offset: var(--dyn-focus-ring-offset, var(--focus-ring-offset, 3px));
+  z-index: 1;
 }
 
 .root:hover:not(:disabled):not(.loading) {
@@ -64,66 +76,66 @@
 
 .root:disabled {
   cursor: not-allowed;
-  opacity: 0.56;
+  opacity: var(--dyn-opacity-disabled, var(--opacity-disabled, 0.56));
   box-shadow: none;
   transform: none;
 }
 
 .kindPrimary {
-  --dyn-button-bg: var(--dyn-color-primary, #2563eb);
-  --dyn-button-border: var(--dyn-color-primary, #2563eb);
-  --dyn-button-color: var(--dyn-color-primary-contrast, #ffffff);
-  --dyn-button-bg-hover: var(--dyn-color-primary-hover, #1d4ed8);
-  --dyn-button-border-hover: var(--dyn-color-primary-hover, #1d4ed8);
-  --dyn-button-bg-active: var(--dyn-color-primary-active, #1e40af);
-  --dyn-button-border-active: var(--dyn-color-primary-active, #1e40af);
+  --dyn-button-bg: var(--dyn-color-primary, var(--color-primary, #2563eb));
+  --dyn-button-border: var(--dyn-color-primary, var(--color-primary, #2563eb));
+  --dyn-button-color: var(--dyn-color-primary-contrast, var(--color-primary-contrast, #ffffff));
+  --dyn-button-bg-hover: var(--dyn-color-primary-hover, var(--color-primary-hover, #1d4ed8));
+  --dyn-button-border-hover: var(--dyn-color-primary-hover, var(--color-primary-hover, #1d4ed8));
+  --dyn-button-bg-active: var(--dyn-color-primary-active, var(--color-primary-active, #1e40af));
+  --dyn-button-border-active: var(--dyn-color-primary-active, var(--color-primary-active, #1e40af));
 }
 
 .kindSecondary {
   --dyn-button-bg: transparent;
-  --dyn-button-border: var(--dyn-color-primary, #2563eb);
-  --dyn-button-color: var(--dyn-color-primary, #2563eb);
-  --dyn-button-color-hover: var(--dyn-color-primary-hover, #1d4ed8);
-  --dyn-button-color-active: var(--dyn-color-primary-active, #1e40af);
-  --dyn-button-bg-hover: var(--dyn-color-surface-subtle, rgba(37, 99, 235, 0.08));
-  --dyn-button-border-hover: var(--dyn-color-primary-hover, #1d4ed8);
-  --dyn-button-bg-active: var(--dyn-color-surface-muted, rgba(37, 99, 235, 0.16));
-  --dyn-button-border-active: var(--dyn-color-primary-active, #1e40af);
+  --dyn-button-border: var(--dyn-color-primary, var(--color-primary, #2563eb));
+  --dyn-button-color: var(--dyn-color-primary, var(--color-primary, #2563eb));
+  --dyn-button-color-hover: var(--dyn-color-primary-hover, var(--color-primary-hover, #1d4ed8));
+  --dyn-button-color-active: var(--dyn-color-primary-active, var(--color-primary-active, #1e40af));
+  --dyn-button-bg-hover: var(--dyn-color-surface-subtle, var(--color-surface-subtle, rgba(37, 99, 235, 0.08)));
+  --dyn-button-border-hover: var(--dyn-color-primary-hover, var(--color-primary-hover, #1d4ed8));
+  --dyn-button-bg-active: var(--dyn-color-surface-muted, var(--color-surface-muted, rgba(37, 99, 235, 0.16)));
+  --dyn-button-border-active: var(--dyn-color-primary-active, var(--color-primary-active, #1e40af));
 }
 
 .kindTertiary {
   --dyn-button-bg: transparent;
   --dyn-button-border: transparent;
-  --dyn-button-color: var(--dyn-color-primary, #2563eb);
-  --dyn-button-color-hover: var(--dyn-color-primary-hover, #1d4ed8);
-  --dyn-button-color-active: var(--dyn-color-primary-active, #1e40af);
-  --dyn-button-bg-hover: var(--dyn-color-surface-subtle, rgba(37, 99, 235, 0.1));
+  --dyn-button-color: var(--dyn-color-primary, var(--color-primary, #2563eb));
+  --dyn-button-color-hover: var(--dyn-color-primary-hover, var(--color-primary-hover, #1d4ed8));
+  --dyn-button-color-active: var(--dyn-color-primary-active, var(--color-primary-active, #1e40af));
+  --dyn-button-bg-hover: var(--dyn-color-surface-subtle, var(--color-surface-subtle, rgba(37, 99, 235, 0.1)));
   --dyn-button-border-hover: transparent;
-  --dyn-button-bg-active: var(--dyn-color-surface-muted, rgba(37, 99, 235, 0.18));
+  --dyn-button-bg-active: var(--dyn-color-surface-muted, var(--color-surface-muted, rgba(37, 99, 235, 0.18)));
   --dyn-button-border-active: transparent;
 }
 
 .sizeSmall {
-  --dyn-button-padding-y: 0.375rem;
-  --dyn-button-padding-x: 0.75rem;
-  --dyn-button-gap: 0.375rem;
-  --dyn-button-min-height: 2.25rem;
-  font-size: var(--dyn-font-size-xs, 0.75rem);
+  --dyn-button-padding-y: var(--dyn-spacing-xs, var(--spacing-xs, 0.375rem));
+  --dyn-button-padding-x: var(--dyn-spacing-sm, var(--spacing-sm, 0.75rem));
+  --dyn-button-gap: var(--dyn-spacing-xs, var(--spacing-xs, 0.375rem));
+  --dyn-button-min-height: var(--dyn-size-sm, var(--size-sm, 2.25rem));
+  font-size: var(--dyn-font-size-xs, var(--font-size-xs, 0.75rem));
 }
 
 .sizeMedium {
-  --dyn-button-padding-y: 0.5rem;
-  --dyn-button-padding-x: 1rem;
-  --dyn-button-gap: 0.5rem;
-  --dyn-button-min-height: 2.5rem;
+  --dyn-button-padding-y: var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem));
+  --dyn-button-padding-x: var(--dyn-spacing-md, var(--spacing-md, 1rem));
+  --dyn-button-gap: var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem));
+  --dyn-button-min-height: var(--dyn-size-md, var(--size-md, 2.5rem));
 }
 
 .sizeLarge {
-  --dyn-button-padding-y: 0.75rem;
-  --dyn-button-padding-x: 1.5rem;
-  --dyn-button-gap: 0.625rem;
-  --dyn-button-min-height: 3rem;
-  font-size: var(--dyn-font-size-md, 1rem);
+  --dyn-button-padding-y: var(--dyn-spacing-md, var(--spacing-md, 0.75rem));
+  --dyn-button-padding-x: var(--dyn-spacing-lg, var(--spacing-lg, 1.5rem));
+  --dyn-button-gap: var(--dyn-spacing-md, var(--spacing-md, 0.625rem));
+  --dyn-button-min-height: var(--dyn-size-lg, var(--size-lg, 3rem));
+  font-size: var(--dyn-font-size-md, var(--font-size-md, 1rem));
 }
 
 .fullWidth {
@@ -139,8 +151,8 @@
 }
 
 .iconOnly {
-  --dyn-button-padding-x: 0.75rem;
-  --dyn-button-padding-y: 0.75rem;
+  --dyn-button-padding-x: var(--dyn-spacing-md, var(--spacing-md, 0.75rem));
+  --dyn-button-padding-y: var(--dyn-spacing-md, var(--spacing-md, 0.75rem));
   width: var(--dyn-button-min-height);
   min-width: var(--dyn-button-min-height);
 }
@@ -151,6 +163,19 @@
 
 .loading .content {
   opacity: 0;
+}
+
+/* Screen reader only content - following DynAvatar pattern */
+.dyn-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 .visuallyHidden {
@@ -192,12 +217,12 @@
 .spinner {
   position: absolute;
   inset: 50% auto auto 50%;
-  width: 1rem;
-  height: 1rem;
+  width: var(--dyn-size-xs, var(--size-xs, 1rem));
+  height: var(--dyn-size-xs, var(--size-xs, 1rem));
   border-radius: 50%;
   border: 2px solid currentColor;
   border-top-color: transparent;
-  animation: dynButtonSpin 0.9s linear infinite;
+  animation: dynButtonSpin var(--dyn-animation-duration-base, 0.9s) linear infinite;
   transform: translate(-50%, -50%);
 }
 
@@ -208,63 +233,63 @@
 }
 
 .danger.kindPrimary {
-  --dyn-button-bg: var(--dyn-color-danger, #d32f2f);
-  --dyn-button-border: var(--dyn-color-danger, #d32f2f);
-  --dyn-button-color: var(--dyn-color-danger-contrast, #ffffff);
-  --dyn-button-bg-hover: var(--dyn-color-danger-hover, #b71c1c);
-  --dyn-button-border-hover: var(--dyn-color-danger-hover, #b71c1c);
-  --dyn-button-bg-active: var(--dyn-color-danger-active, #991b1b);
-  --dyn-button-border-active: var(--dyn-color-danger-active, #991b1b);
+  --dyn-button-bg: var(--dyn-color-danger, var(--color-danger, #d32f2f));
+  --dyn-button-border: var(--dyn-color-danger, var(--color-danger, #d32f2f));
+  --dyn-button-color: var(--dyn-color-danger-contrast, var(--color-danger-contrast, #ffffff));
+  --dyn-button-bg-hover: var(--dyn-color-danger-hover, var(--color-danger-hover, #b71c1c));
+  --dyn-button-border-hover: var(--dyn-color-danger-hover, var(--color-danger-hover, #b71c1c));
+  --dyn-button-bg-active: var(--dyn-color-danger-active, var(--color-danger-active, #991b1b));
+  --dyn-button-border-active: var(--dyn-color-danger-active, var(--color-danger-active, #991b1b));
 }
 
 .danger.kindSecondary {
   --dyn-button-bg: transparent;
-  --dyn-button-border: var(--dyn-color-danger, #d32f2f);
-  --dyn-button-color: var(--dyn-color-danger, #d32f2f);
-  --dyn-button-color-hover: var(--dyn-color-danger-hover, #b71c1c);
-  --dyn-button-color-active: var(--dyn-color-danger-active, #991b1b);
-  --dyn-button-bg-hover: var(--dyn-color-surface-subtle, rgba(211, 47, 47, 0.08));
-  --dyn-button-border-hover: var(--dyn-color-danger-hover, #b71c1c);
-  --dyn-button-bg-active: var(--dyn-color-surface-muted, rgba(211, 47, 47, 0.16));
-  --dyn-button-border-active: var(--dyn-color-danger-active, #991b1b);
+  --dyn-button-border: var(--dyn-color-danger, var(--color-danger, #d32f2f));
+  --dyn-button-color: var(--dyn-color-danger, var(--color-danger, #d32f2f));
+  --dyn-button-color-hover: var(--dyn-color-danger-hover, var(--color-danger-hover, #b71c1c));
+  --dyn-button-color-active: var(--dyn-color-danger-active, var(--color-danger-active, #991b1b));
+  --dyn-button-bg-hover: var(--dyn-color-surface-subtle, var(--color-surface-subtle, rgba(211, 47, 47, 0.08)));
+  --dyn-button-border-hover: var(--dyn-color-danger-hover, var(--color-danger-hover, #b71c1c));
+  --dyn-button-bg-active: var(--dyn-color-surface-muted, var(--color-surface-muted, rgba(211, 47, 47, 0.16)));
+  --dyn-button-border-active: var(--dyn-color-danger-active, var(--color-danger-active, #991b1b));
 }
 
 .danger.kindTertiary {
   --dyn-button-bg: transparent;
   --dyn-button-border: transparent;
-  --dyn-button-color: var(--dyn-color-danger, #d32f2f);
-  --dyn-button-color-hover: var(--dyn-color-danger-hover, #b71c1c);
-  --dyn-button-color-active: var(--dyn-color-danger-active, #991b1b);
-  --dyn-button-bg-hover: var(--dyn-color-surface-subtle, rgba(211, 47, 47, 0.12));
+  --dyn-button-color: var(--dyn-color-danger, var(--color-danger, #d32f2f));
+  --dyn-button-color-hover: var(--dyn-color-danger-hover, var(--color-danger-hover, #b71c1c));
+  --dyn-button-color-active: var(--dyn-color-danger-active, var(--color-danger-active, #991b1b));
+  --dyn-button-bg-hover: var(--dyn-color-surface-subtle, var(--color-surface-subtle, rgba(211, 47, 47, 0.12)));
   --dyn-button-border-hover: transparent;
-  --dyn-button-bg-active: var(--dyn-color-surface-muted, rgba(211, 47, 47, 0.18));
+  --dyn-button-bg-active: var(--dyn-color-surface-muted, var(--color-surface-muted, rgba(211, 47, 47, 0.18)));
   --dyn-button-border-active: transparent;
 }
 
 /* Responsive design */
 @media (max-width: 767px) {
   .root {
-    min-height: 44px;
-    font-size: var(--dyn-font-size-base, 1rem);
-    --dyn-button-padding-y: 0.625rem;
-    --dyn-button-padding-x: 1rem;
+    min-height: var(--dyn-size-touch-target, var(--size-touch-target, 44px));
+    font-size: var(--dyn-font-size-base, var(--font-size-base, 1rem));
+    --dyn-button-padding-y: var(--dyn-spacing-sm, var(--spacing-sm, 0.625rem));
+    --dyn-button-padding-x: var(--dyn-spacing-md, var(--spacing-md, 1rem));
   }
 
   .sizeSmall {
-    min-height: 40px;
-    --dyn-button-padding-y: 0.5rem;
-    --dyn-button-padding-x: 0.875rem;
+    min-height: var(--dyn-size-touch-target-sm, var(--size-touch-target-sm, 40px));
+    --dyn-button-padding-y: var(--dyn-spacing-sm, var(--spacing-sm, 0.5rem));
+    --dyn-button-padding-x: var(--dyn-spacing-md, var(--spacing-md, 0.875rem));
   }
 
   .sizeLarge {
-    min-height: 52px;
-    --dyn-button-padding-y: 0.875rem;
-    --dyn-button-padding-x: 1.75rem;
+    min-height: var(--dyn-size-touch-target-lg, var(--size-touch-target-lg, 52px));
+    --dyn-button-padding-y: var(--dyn-spacing-lg, var(--spacing-lg, 0.875rem));
+    --dyn-button-padding-x: var(--dyn-spacing-xl, var(--spacing-xl, 1.75rem));
   }
 
   .iconOnly {
-    min-width: 44px;
-    width: 44px;
+    min-width: var(--dyn-size-touch-target, var(--size-touch-target, 44px));
+    width: var(--dyn-size-touch-target, var(--size-touch-target, 44px));
     --dyn-button-padding-x: 0;
     --dyn-button-padding-y: 0;
   }
@@ -279,60 +304,77 @@
   }
 
   .iconOnlyOnMobile {
-    width: 44px;
-    min-width: 44px;
+    width: var(--dyn-size-touch-target, var(--size-touch-target, 44px));
+    min-width: var(--dyn-size-touch-target, var(--size-touch-target, 44px));
     --dyn-button-padding-x: 0;
     --dyn-button-padding-y: 0;
   }
 }
 
-/* Dark theme */
+/* Dark theme support */
 @media (prefers-color-scheme: dark) {
   .kindPrimary {
-    --dyn-button-bg: var(--dyn-color-primary-dark, #3b82f6);
-    --dyn-button-border: var(--dyn-color-primary-dark, #3b82f6);
-    --dyn-button-bg-hover: var(--dyn-color-primary-dark-hover, #2563eb);
-    --dyn-button-border-hover: var(--dyn-color-primary-dark-hover, #2563eb);
-    --dyn-button-bg-active: var(--dyn-color-primary-dark-active, #1d4ed8);
-    --dyn-button-border-active: var(--dyn-color-primary-dark-active, #1d4ed8);
+    --dyn-button-bg: var(--dyn-color-primary-dark, var(--color-primary-dark, #3b82f6));
+    --dyn-button-border: var(--dyn-color-primary-dark, var(--color-primary-dark, #3b82f6));
+    --dyn-button-bg-hover: var(--dyn-color-primary-dark-hover, var(--color-primary-dark-hover, #2563eb));
+    --dyn-button-border-hover: var(--dyn-color-primary-dark-hover, var(--color-primary-dark-hover, #2563eb));
+    --dyn-button-bg-active: var(--dyn-color-primary-dark-active, var(--color-primary-dark-active, #1d4ed8));
+    --dyn-button-border-active: var(--dyn-color-primary-dark-active, var(--color-primary-dark-active, #1d4ed8));
   }
 
   .kindSecondary {
-    --dyn-button-border: var(--dyn-color-primary-dark, #3b82f6);
-    --dyn-button-color: var(--dyn-color-primary-dark, #3b82f6);
-    --dyn-button-color-hover: var(--dyn-color-primary-dark-hover, #2563eb);
-    --dyn-button-color-active: var(--dyn-color-primary-dark-active, #1d4ed8);
-    --dyn-button-border-hover: var(--dyn-color-primary-dark-hover, #2563eb);
-    --dyn-button-border-active: var(--dyn-color-primary-dark-active, #1d4ed8);
+    --dyn-button-border: var(--dyn-color-primary-dark, var(--color-primary-dark, #3b82f6));
+    --dyn-button-color: var(--dyn-color-primary-dark, var(--color-primary-dark, #3b82f6));
+    --dyn-button-color-hover: var(--dyn-color-primary-dark-hover, var(--color-primary-dark-hover, #2563eb));
+    --dyn-button-color-active: var(--dyn-color-primary-dark-active, var(--color-primary-dark-active, #1d4ed8));
+    --dyn-button-border-hover: var(--dyn-color-primary-dark-hover, var(--color-primary-dark-hover, #2563eb));
+    --dyn-button-border-active: var(--dyn-color-primary-dark-active, var(--color-primary-dark-active, #1d4ed8));
   }
 
   .kindTertiary {
-    --dyn-button-color: var(--dyn-color-primary-dark, #3b82f6);
-    --dyn-button-color-hover: var(--dyn-color-primary-dark-hover, #2563eb);
-    --dyn-button-color-active: var(--dyn-color-primary-dark-active, #1d4ed8);
+    --dyn-button-color: var(--dyn-color-primary-dark, var(--color-primary-dark, #3b82f6));
+    --dyn-button-color-hover: var(--dyn-color-primary-dark-hover, var(--color-primary-dark-hover, #2563eb));
+    --dyn-button-color-active: var(--dyn-color-primary-dark-active, var(--color-primary-dark-active, #1d4ed8));
   }
 
   .danger.kindPrimary {
-    --dyn-button-bg: var(--dyn-color-danger-dark, #ef4444);
-    --dyn-button-border: var(--dyn-color-danger-dark, #ef4444);
-    --dyn-button-bg-hover: var(--dyn-color-danger-dark-hover, #dc2626);
-    --dyn-button-border-hover: var(--dyn-color-danger-dark-hover, #dc2626);
-    --dyn-button-bg-active: var(--dyn-color-danger-dark-active, #b91c1c);
-    --dyn-button-border-active: var(--dyn-color-danger-dark-active, #b91c1c);
+    --dyn-button-bg: var(--dyn-color-danger-dark, var(--color-danger-dark, #ef4444));
+    --dyn-button-border: var(--dyn-color-danger-dark, var(--color-danger-dark, #ef4444));
+    --dyn-button-bg-hover: var(--dyn-color-danger-dark-hover, var(--color-danger-dark-hover, #dc2626));
+    --dyn-button-border-hover: var(--dyn-color-danger-dark-hover, var(--color-danger-dark-hover, #dc2626));
+    --dyn-button-bg-active: var(--dyn-color-danger-dark-active, var(--color-danger-dark-active, #b91c1c));
+    --dyn-button-border-active: var(--dyn-color-danger-dark-active, var(--color-danger-dark-active, #b91c1c));
   }
 
   .danger.kindSecondary {
-    --dyn-button-border: var(--dyn-color-danger-dark, #ef4444);
-    --dyn-button-color: var(--dyn-color-danger-dark, #ef4444);
-    --dyn-button-color-hover: var(--dyn-color-danger-dark-hover, #dc2626);
-    --dyn-button-color-active: var(--dyn-color-danger-dark-active, #b91c1c);
-    --dyn-button-border-hover: var(--dyn-color-danger-dark-hover, #dc2626);
-    --dyn-button-border-active: var(--dyn-color-danger-dark-active, #b91c1c);
+    --dyn-button-border: var(--dyn-color-danger-dark, var(--color-danger-dark, #ef4444));
+    --dyn-button-color: var(--dyn-color-danger-dark, var(--color-danger-dark, #ef4444));
+    --dyn-button-color-hover: var(--dyn-color-danger-dark-hover, var(--color-danger-dark-hover, #dc2626));
+    --dyn-button-color-active: var(--dyn-color-danger-dark-active, var(--color-danger-dark-active, #b91c1c));
+    --dyn-button-border-hover: var(--dyn-color-danger-dark-hover, var(--color-danger-dark-hover, #dc2626));
+    --dyn-button-border-active: var(--dyn-color-danger-dark-active, var(--color-danger-dark-active, #b91c1c));
   }
 
   .danger.kindTertiary {
-    --dyn-button-color: var(--dyn-color-danger-dark, #ef4444);
-    --dyn-button-color-hover: var(--dyn-color-danger-dark-hover, #dc2626);
-    --dyn-button-color-active: var(--dyn-color-danger-dark-active, #b91c1c);
+    --dyn-button-color: var(--dyn-color-danger-dark, var(--color-danger-dark, #ef4444));
+    --dyn-button-color-hover: var(--dyn-color-danger-dark-hover, var(--color-danger-dark-hover, #dc2626));
+    --dyn-button-color-active: var(--dyn-color-danger-dark-active, var(--color-danger-dark-active, #b91c1c));
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .root {
+    border-width: 2px;
+  }
+
+  .root:focus-visible {
+    outline-width: 4px;
+    outline-offset: 2px;
+  }
+
+  .kindTertiary {
+    --dyn-button-border: var(--dyn-color-border, var(--color-border, currentColor));
+    border-width: 1px;
   }
 }
