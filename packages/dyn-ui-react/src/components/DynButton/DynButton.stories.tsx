@@ -177,7 +177,7 @@ export const Interactive: Story = {
           <DynButton label="Large" size="large" />
         </div>
       </div>
-      
+
       <div>
         <h3 style={{ marginBottom: '0.5rem' }}>With Icons</h3>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -186,7 +186,7 @@ export const Interactive: Story = {
           <DynButton icon="help" aria-label="Help" kind="tertiary" />
         </div>
       </div>
-      
+
       <div>
         <h3 style={{ marginBottom: '0.5rem' }}>States</h3>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -196,7 +196,7 @@ export const Interactive: Story = {
           <DynButton label="Full Width" fullWidth />
         </div>
       </div>
-      
+
       <div>
         <h3 style={{ marginBottom: '0.5rem' }}>Danger Variants</h3>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -248,7 +248,7 @@ export const Accessibility: Story = {
           Saves your work without publishing it
         </p>
       </div>
-      
+
       <div>
         <h3 style={{ marginBottom: '0.5rem' }}>Loading Announcements</h3>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -264,7 +264,7 @@ export const Accessibility: Story = {
           Loading buttons announce their state to screen readers
         </p>
       </div>
-      
+
       <div>
         <h3 style={{ marginBottom: '0.5rem' }}>Icon-Only Buttons</h3>
         <div style={{ display: 'flex', gap: '1rem' }}>
@@ -291,15 +291,12 @@ export const Accessibility: Story = {
  * Dark theme variants and theming capabilities.
  */
 export const DarkTheme: Story = {
-  parameters: {
-    backgrounds: { default: 'dark' },
-  },
   render: () => (
-    <div 
-      data-theme="dark" 
-      style={{ 
-        padding: '2rem', 
-        background: '#1a1a1a', 
+    <div
+      data-theme="dark"
+      style={{
+        padding: '2rem',
+        background: '#1a1a1a',
         borderRadius: '0.5rem',
         display: 'flex',
         flexDirection: 'column',
@@ -314,7 +311,7 @@ export const DarkTheme: Story = {
           <DynButton label="Tertiary" kind="tertiary" />
         </div>
       </div>
-      
+
       <div>
         <h3 style={{ color: 'white', marginBottom: '1rem' }}>Danger States</h3>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -323,7 +320,7 @@ export const DarkTheme: Story = {
           <DynButton label="Cancel" kind="tertiary" danger />
         </div>
       </div>
-      
+
       <div>
         <h3 style={{ color: 'white', marginBottom: '1rem' }}>With Icons & States</h3>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -335,6 +332,7 @@ export const DarkTheme: Story = {
     </div>
   ),
   parameters: {
+    ackgrounds: { default: 'dark' },
     docs: {
       description: {
         story: 'Dark theme implementation showing how buttons adapt their colors and contrast ratios for optimal visibility and accessibility in dark environments. All accessibility standards are maintained across themes.',
@@ -357,15 +355,15 @@ export const ResponsiveBehavior: Story = {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <DynButton label="Hidden on mobile" hideOnMobile icon="desktop" />
           <DynButton label="Settings" icon="settings" iconOnlyOnMobile />
-          <DynButton 
-            label="Download Report" 
-            icon="download" 
-            iconOnlyOnMobile 
+          <DynButton
+            label="Download Report"
+            icon="download"
+            iconOnlyOnMobile
             kind="secondary"
           />
         </div>
       </div>
-      
+
       <div>
         <h3 style={{ marginBottom: '1rem' }}>Touch Targets</h3>
         <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '1rem' }}>
