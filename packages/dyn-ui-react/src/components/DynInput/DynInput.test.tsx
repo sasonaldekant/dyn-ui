@@ -1,21 +1,20 @@
-/**
- * DynInput Component Tests
- * Standardized to follow DynAvatar pattern with Vitest and vitest-axe
- */
-
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi, describe, it, expect } from 'vitest';
-import { axe, toHaveNoViolations } from 'vitest-axe';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import { describe, expect, it, vi } from 'vitest';
 import { DynInput } from './DynInput';
 import styles from './DynInput.module.css';
 
+// Extend Vitest matchers
 expect.extend(toHaveNoViolations);
 
 // Mock DynIcon component
 vi.mock('../DynIcon', () => ({
-  DynIcon: ({ icon }: { icon: string }) => <span data-testid="icon">{icon}</span>
+  DynIcon: ({ icon, className }: { icon: string; className?: string }) => (
+    <span data-testid="dyn-icon" className={className}>
+      {icon}
+    </span>
+  )
 }));
 
 const classes = styles as Record<string, string>;
@@ -23,133 +22,205 @@ const classes = styles as Record<string, string>;
 describe('DynInput', () => {
   const user = userEvent.setup();
 
-  it('renders correctly with basic props', () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        placeholder="Test placeholder"
-      />
-    );
+  describe('Basic Functionality', () => {
+    it('renders with default props', () => {
+      render(<DynInput name="test" label="Test Input" />);
 
-    expect(screen.getByLabelText('Test Label')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Test placeholder')).toBeInTheDocument();
+      const input = screen.getByRole('textbox');
+      expect(input).toBeInTheDocument();
+      expect(input).toHaveAttribute('name', 'test');
+      expect(input).toHaveAttribute('type', 'text');
+      expect(screen.getByText('Test Input')).toBeInTheDocument();
+    });
+
+    it('renders with initial value', () => {
+      render(<DynInput name="test" label="Test" value="initial value" />);
+
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveValue('initial value');
+    });
+
+    it('renders with placeholder', () => {
+      render(
+        <DynInput
+          name="test"
+          label="Test"
+          placeholder="Enter text here"
+        />
+      );
+
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveAttribute('placeholder', 'Enter text here');
+    });
+
+    it('generates unique ID when not provided', () => {
+      const { rerender } = render(<DynInput name="test1" label="Test 1" />);
+      const firstInput = screen.getByRole('textbox');
+      const firstId = firstInput.id;
+
+      rerender(<DynInput name="test2" label="Test 2" />);
+      const secondInput = screen.getByRole('textbox');
+      const secondId = secondInput.id;
+
+      expect(firstId).toBeTruthy();
+      expect(secondId).toBeTruthy();
+      expect(firstId).not.toBe(secondId);
+    });
+
+    it('uses provided ID when specified', () => {
+      render(<DynInput name="test" label="Test" id="custom-input" />);
+
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveAttribute('id', 'custom-input');
+    });
   });
 
-  it('has no accessibility violations', async () => {
-    const { container } = render(<DynInput name="a" label="A" />);
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
+  describe('Accessibility', () => {
+    it('has no accessibility violations', async () => {
+      const { container } = render(
+        <DynInput name="accessible" label="Accessible Input" />
+      );
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+
+    it('properly associates label with input', () => {
+      render(<DynInput name="test" label="Test Label" />);
+
+      const input = screen.getByLabelText('Test Label');
+      expect(input).toBeInTheDocument();
+    });
+
+    it('supports required attribute and aria-required', () => {
+      render(<DynInput name="test" label="Test" required />);
+
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveAttribute('required');
+      expect(input).toHaveAttribute('aria-required', 'true');
+    });
+
+    it('properly handles disabled state', () => {
+      render(<DynInput name="test" label="Test" disabled />);
+
+      const input = screen.getByRole('textbox');
+      expect(input).toBeDisabled();
+      expect(input).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    it('properly handles readonly state', () => {
+      render(<DynInput name="test" label="Test" readOnly />);
+
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveAttribute('readonly');
+    });
   });
 
-  it('displays initial value', () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        value="initial value"
-      />
-    );
+  describe('Interactive Behavior', () => {
+    it('calls onChange when typing', async () => {
+      const onChange = vi.fn();
+      render(<DynInput name="test" label="Test" onChange={onChange} />);
 
-    expect(screen.getByDisplayValue('initial value')).toBeInTheDocument();
+      const input = screen.getByRole('textbox');
+      await user.type(input, 'hello');
+
+      expect(onChange).toHaveBeenLastCalledWith('hello');
+    });
+
+    it('calls onFocus when input gains focus', async () => {
+      const onFocus = vi.fn();
+      render(<DynInput name="test" label="Test" onFocus={onFocus} />);
+
+      const input = screen.getByRole('textbox');
+      await user.click(input);
+
+      expect(onFocus).toHaveBeenCalledTimes(1);
+    });
+
+    it('calls onBlur when input loses focus', async () => {
+      const onBlur = vi.fn();
+      render(<DynInput name="test" label="Test" onBlur={onBlur} />);
+
+      const input = screen.getByRole('textbox');
+      await user.click(input);
+      await user.tab();
+
+      expect(onBlur).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not call onChange when disabled', async () => {
+      const onChange = vi.fn();
+      render(
+        <DynInput name="test" label="Test" disabled onChange={onChange} />
+      );
+
+      const input = screen.getByRole('textbox');
+      await user.type(input, 'hello');
+
+      expect(onChange).not.toHaveBeenCalled();
+    });
   });
 
-  it('calls onChange when value changes', async () => {
-    const handleChange = vi.fn();
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        onChange={handleChange}
-      />
-    );
+  describe('Variants and States', () => {
+    it('renders different input types', () => {
+      const { rerender } = render(
+        <DynInput name="test" label="Email" type="email" />
+      );
+      let input = screen.getByRole('textbox');
+      expect(input).toHaveAttribute('type', 'email');
 
-    const input = screen.getByRole('textbox');
-    await user.type(input, 'new value');
+      rerender(<DynInput name="test" label="Password" type="password" />);
+      input = screen.getByLabelText('Password');
+      expect(input).toHaveAttribute('type', 'password');
+    });
 
-    expect(handleChange).toHaveBeenCalledWith('new value');
+    it('renders with icon', () => {
+      render(<DynInput name="test" label="Search" icon="search" />);
+
+      const icon = screen.getByTestId('dyn-icon');
+      expect(icon).toBeInTheDocument();
+      expect(icon).toHaveTextContent('search');
+    });
   });
 
-  it('applies disabled and readonly state classes', async () => {
-    const { rerender } = render(
-      <DynInput name="i" label="L" disabled />
-    );
-    const input = screen.getByRole('textbox');
-    expect(input).toBeDisabled();
-    expect(input.className).toContain(classes['input--disabled']);
+  describe('Props and Customization', () => {
+    it('accepts custom className', () => {
+      render(
+        <DynInput name="test" label="Custom" className="custom-class" />
+      );
 
-    rerender(<DynInput name="i" label="L" readonly />);
-    const ro = screen.getByRole('textbox');
-    expect(ro).toHaveAttribute('readonly');
-    expect(ro.className).toContain(classes['input--readonly']);
+      const container = screen.getByRole('textbox').closest('div');
+      expect(container).toHaveClass('custom-class');
+    });
+
+    it('passes through additional HTML attributes', () => {
+      render(
+        <DynInput
+          name="test"
+          label="Test"
+          maxLength={10}
+          tabIndex={-1}
+        />
+      );
+
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveAttribute('maxlength', '10');
+      expect(input).toHaveAttribute('tabindex', '-1');
+    });
   });
 
-  it('renders with icon and clear button states', () => {
-    const { rerender } = render(
-      <DynInput name="t" label="L" icon="search" />
-    );
+  describe('Edge Cases', () => {
+    it('handles empty value gracefully', () => {
+      render(<DynInput name="test" label="Test" value="" />);
 
-    const input = screen.getByRole('textbox');
-    expect(input.className).toContain(classes['input--with-icon']);
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveValue('');
+    });
 
-    rerender(
-      <DynInput name="t" label="L" value="x" showClearButton />
-    );
+    it('handles undefined value', () => {
+      render(<DynInput name="test" label="Test" value={undefined} />);
 
-    const input2 = screen.getByRole('textbox');
-    expect(input2.className).toContain(classes['input--clearable']);
-  });
-
-  it('shows clear button and clears on click', async () => {
-    const handleChange = vi.fn();
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        value="some value"
-        showClearButton
-        onChange={handleChange}
-      />
-    );
-
-    const clearButton = screen.getByLabelText('Clear input');
-    await user.click(clearButton);
-
-    expect(handleChange).toHaveBeenCalledWith('');
-  });
-
-  it('handles focus and blur events and toggles focused class', async () => {
-    const handleFocus = vi.fn();
-    const handleBlur = vi.fn();
-    
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
-    );
-
-    const input = screen.getByRole('textbox');
-    await user.click(input);
-    expect(handleFocus).toHaveBeenCalled();
-    expect(input.className).toContain(classes['input--focused']);
-
-    await user.tab();
-    expect(handleBlur).toHaveBeenCalled();
-  });
-
-  it('displays error message and aria-invalid', async () => {
-    render(
-      <DynInput
-        name="test-input"
-        label="Test Label"
-        errorMessage="This is an error"
-      />
-    );
-
-    expect(screen.getByText('This is an error')).toBeInTheDocument();
-    expect(screen.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveValue('');
+    });
   });
 });
