@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
 import { DynBox } from './DynBox';
 
 const meta: Meta<typeof DynBox> = {
@@ -35,9 +34,8 @@ const meta: Meta<typeof DynBox> = {
       description: 'Margin on all sides using design tokens',
     },
     bg: {
-      control: { type: 'select' },
-      options: ['primary', 'secondary', 'tertiary', 'success', 'warning', 'danger'],
-      description: 'Background color variant',
+      control: { type: 'text' },
+      description: 'Background color variant or custom CSS color',
     },
     display: {
       control: { type: 'select' },
@@ -47,6 +45,10 @@ const meta: Meta<typeof DynBox> = {
     interactive: {
       control: { type: 'boolean' },
       description: 'Enable interactive styles and keyboard navigation',
+    },
+    onClick: {
+      action: 'clicked',
+      description: 'Click handler for interactive boxes',
     },
   },
 };
@@ -135,7 +137,7 @@ export const Interactive: Story = {
         aria-label="Interactive primary button"
         bg="primary"
         color="#ffffff"
-        onClick={action('Primary clicked')}
+        onClick={() => console.log('Primary clicked')}
       >
         Primary Interactive Box - Click or press Enter/Space
       </DynBox>
@@ -147,7 +149,7 @@ export const Interactive: Story = {
         color="#ffffff"
         p="md"
         borderRadius="md"
-        onClick={action('Secondary clicked')}
+        onClick={() => console.log('Secondary clicked')}
       >
         Secondary Interactive Box - Focus with Tab
       </DynBox>
@@ -159,7 +161,7 @@ export const Interactive: Story = {
         border
         p="md"
         borderRadius="md"
-        onClick={action('Tab clicked')}
+        onClick={() => console.log('Tab clicked')}
         focusOnMount
       >
         Custom Role Interactive Box (Tab) - Auto-focused
@@ -173,7 +175,7 @@ export const Interactive: Story = {
         borderRadius="md"
         ariaLiveMessage="Status updated successfully"
         ariaLivePoliteness="assertive"
-        onClick={action('Live message clicked')}
+        onClick={() => console.log('Live message clicked')}
       >
         Box with Live Region Announcements - Screen reader accessible
       </DynBox>
@@ -248,7 +250,7 @@ export const Accessibility: Story = {
             p="sm"
             borderRadius="sm"
             aria-label="Confirm action"
-            onClick={action('Confirm')}
+            onClick={() => console.log('Confirm')}
           >
             Confirm
           </DynBox>
@@ -260,7 +262,7 @@ export const Accessibility: Story = {
             p="sm"
             borderRadius="sm"
             aria-label="Cancel action"
-            onClick={action('Cancel')}
+            onClick={() => console.log('Cancel')}
           >
             Cancel
           </DynBox>
@@ -481,7 +483,7 @@ export const DarkTheme: Story = {
         shadow="md"
         p="md"
         borderRadius="md"
-        onClick={action('Dark theme interaction')}
+        onClick={() => console.log('Dark theme interaction')}
         aria-label="Interactive element in dark theme"
       >
         <h3 style={{ margin: '0 0 0.5rem 0' }}>Interactive Elements</h3>

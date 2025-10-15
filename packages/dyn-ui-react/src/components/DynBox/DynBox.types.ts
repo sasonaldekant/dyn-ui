@@ -19,8 +19,13 @@ export type BoxDisplay =
 
 export type BoxPosition = 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
 export type SpacingSize = '0' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'auto';
-export type BackgroundVariant = 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger';
-export type BorderRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+
+// Allow both predefined variants and custom colors
+export type BackgroundVariant = 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | string;
+
+// Allow both predefined radius tokens and custom values
+export type BorderRadius = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full' | string;
+
 export type Shadow = 'sm' | 'md' | 'lg';
 export type TextAlign = 'left' | 'center' | 'right' | 'justify';
 export type Overflow = 'visible' | 'hidden' | 'auto' | 'scroll';
@@ -108,7 +113,7 @@ export interface DynBoxOwnProps
   /** Maximum height */
   maxHeight?: string | number;
 
-  /** Background color variant */
+  /** Background color variant or custom color */
   bg?: BackgroundVariant;
   /** Custom background color */
   backgroundColor?: string;
@@ -126,7 +131,7 @@ export interface DynBoxOwnProps
   borderBottom?: boolean;
   /** Apply border on left */
   borderLeft?: boolean;
-  /** Border radius token */
+  /** Border radius token or custom value */
   borderRadius?: BorderRadius;
   /** Custom border radius */
   customBorderRadius?: string;
