@@ -1,280 +1,122 @@
-import React, { useState, useCallback } from 'react';
-import classNames from 'classnames';
-import { DynListViewProps } from './DynListView.types';
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { cn } from '../../utils/classNames';
+import { generateId } from '../../utils/accessibility';
 import styles from './DynListView.module.css';
-// Import other components as needed
-// import DynCheckbox from '../DynCheckbox';
-// import DynButton from '../DynButton';
-// import DynIcon from '../DynIcon';
+import type { DynListViewProps } from './DynListView.types';
 
-const DynListView: React.FC<DynListViewProps> = ({
-  data = [],
-  actions = [],
-  loading = false,
-  size = 'medium',
-  bordered = true,
-  selectable = false,
-  selectedKeys = [],
-  itemKey = 'id',
-  renderItem,
-  onSelectionChange,
-  emptyText = 'No data available',
-  height,
-  className,
-}) => {
-  const [internalSelection, setInternalSelection] = useState<string[]>(selectedKeys);
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+const getStyleClass = (n: string) => (styles as Record<string, string>)[n] || '';
 
-  // Get item key function
-  const getItemKey = useCallback(
-    (item: any, index: number): string => {
-      if (typeof itemKey === 'function') {
-        return itemKey(item);
+export const DynListView = forwardRef<HTMLDivElement, DynListViewProps>(function DynListView(
+  {
+    items,
+    value,
+    defaultValue,
+    multiSelect = false,
+    disabled = false,
+    onChange,
+    className,
+    id,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy,
+    'data-testid': dataTestId,
+    ...rest
+  }, ref) {
+  const [internalId] = useState(() => id || generateId('listview'));
+  const isControlled = value !== undefined;
+  const [selected, setSelected] = useState<string[] | string | undefined>(
+    value ?? (multiSelect ? [] : defaultValue)
+  );
+  const [activeIndex, setActiveIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => { if (isControlled) setSelected(value as any); }, [isControlled, value]);
+
+  const itemIds = useMemo(() => items.map((_, i) => `${internalId}-option-${i}`), [items, internalId]);
+  const listboxId = `${internalId}-listbox`;
+
+  const isSelected = (val: string) => {
+    return multiSelect ? Array.isArray(selected) && selected.includes(val) : selected === val;
+  };
+
+  const commit = (vals: string[] | string) => {
+    if (!isControlled) setSelected(vals as any);
+    onChange?.(vals as any);
+  };
+
+  const toggle = (val: string) => {
+    if (multiSelect) {
+      const current = Array.isArray(selected) ? selected : [];
+      const next = current.includes(val) ? current.filter(v => v !== val) : [...current, val];
+      commit(next);
+    } else {
+      commit(val);
+    }
+  };
+
+  const moveActive = (delta: number) => {
+    const count = items.length; if (!count) return;
+    setActiveIndex(idx => (idx + delta + count) % count);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    switch (e.key) {
+      case 'ArrowDown': e.preventDefault(); moveActive(1); break;
+      case 'ArrowUp': e.preventDefault(); moveActive(-1); break;
+      case 'Home': e.preventDefault(); setActiveIndex(0); break;
+      case 'End': e.preventDefault(); setActiveIndex(Math.max(0, items.length - 1)); break;
+      case 'PageDown': e.preventDefault(); moveActive(5); break;
+      case 'PageUp': e.preventDefault(); moveActive(-5); break;
+      case 'Enter':
+      case ' ': {
+        e.preventDefault();
+        const val = items[activeIndex]?.value;
+        if (val) toggle(val);
+        break;
       }
-      return item[itemKey] || index.toString();
-    },
-    [itemKey]
-  );
-
-  // Handle selection
-  const handleItemSelection = useCallback(
-    (itemKey: string, checked: boolean) => {
-      const newSelection = checked
-        ? [...internalSelection, itemKey]
-        : internalSelection.filter(key => key !== itemKey);
-      
-      setInternalSelection(newSelection);
-      onSelectionChange?.(newSelection, newSelection.map(key => 
-        data.find((item, idx) => getItemKey(item, idx) === key)
-      ).filter(Boolean));
-    },
-    [internalSelection, onSelectionChange, data, getItemKey]
-  );
-
-  const handleSelectAll = useCallback(
-    (checked: boolean) => {
-      const newSelection = checked
-        ? data.map((item, idx) => getItemKey(item, idx))
-        : [];
-      
-      setInternalSelection(newSelection);
-      onSelectionChange?.(newSelection, checked ? data : []);
-    },
-    [data, getItemKey, onSelectionChange]
-  );
-
-  // Handle item expansion
-  const handleItemExpand = useCallback(
-    (itemKey: string) => {
-      setExpandedItems(prev => {
-        const newExpanded = new Set(prev);
-        if (newExpanded.has(itemKey)) {
-          newExpanded.delete(itemKey);
-        } else {
-          newExpanded.add(itemKey);
-        }
-        return newExpanded;
-      });
-    },
-    []
-  );
-
-  // Check if all items are selected
-  const isAllSelected = data.length > 0 && data.every((item, idx) => 
-    internalSelection.includes(getItemKey(item, idx))
-  );
-
-  const isIndeterminate = internalSelection.length > 0 && 
-    internalSelection.length < data.length;
-
-  // Render actions for an item
-  const renderItemActions = useCallback(
-    (item: any, index: number) => {
-      if (!actions.length) return null;
-
-      const visibleActions = actions.filter(action => 
-        action.visible ? action.visible(item) : true
-      );
-
-      if (!visibleActions.length) return null;
-
-      return (
-        <div className={styles['dyn-list-view__item-actions']}>
-          {/* Render action buttons - TODO: import DynButton */}
-          {visibleActions.map(action => (
-            <button
-              key={action.key}
-              type="button"
-              onClick={() => action.onClick(item, index)}
-              className={styles['dyn-list-view__action-button']}
-              disabled={action.disabled ? action.disabled(item) : false}
-            >
-              {action.title}
-            </button>
-          ))}
-        </div>
-      );
-    },
-    [actions]
-  );
-
-  // Default item renderer
-  const defaultRenderItem = useCallback(
-    (item: any, index: number) => {
-      const key = getItemKey(item, index);
-      const isExpanded = expandedItems.has(key);
-      
-      return (
-        <div className={styles['dyn-list-view__item-content']}>
-          <div className={styles['dyn-list-view__item-header']}>
-            <div className={styles['dyn-list-view__item-info']}>
-              {/* Expand/Collapse button if item has expandable content */}
-              {typeof item === 'object' && Object.keys(item).length > 3 && (
-                <button
-                  type="button"
-                  onClick={() => handleItemExpand(key)}
-                  className={styles['dyn-list-view__expand-button']}
-                >
-                  {isExpanded ? '▼' : '▶'}
-                </button>
-              )}
-              
-              <div className={styles['dyn-list-view__item-text']}>
-                {/* Primary text - try to find title, name, or first string property */}
-                <div className={styles['dyn-list-view__item-title']}>
-                  {item.title || item.name || item.label || 
-                   Object.values(item).find(val => typeof val === 'string') || 
-                   'Item'}
-                </div>
-                
-                {/* Secondary text */}
-                {item.description && (
-                  <div className={styles['dyn-list-view__item-description']}>
-                    {item.description}
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            {renderItemActions(item, index)}
-          </div>
-          
-          {/* Expanded content */}
-          {isExpanded && (
-            <div className={styles['dyn-list-view__item-details']}>
-              {Object.entries(item)
-                .filter(([key, value]) => 
-                  !['title', 'name', 'label', 'description'].includes(key) &&
-                  value !== null && value !== undefined
-                )
-                .map(([key, value]) => (
-                  <div key={key} className={styles['dyn-list-view__item-field']}>
-                    <strong>{key}:</strong> {String(value)}
-                  </div>
-                ))
-              }
-            </div>
-          )}
-        </div>
-      );
-    },
-    [getItemKey, expandedItems, handleItemExpand, renderItemActions]
-  );
-
-  const listViewClasses = classNames(
-    styles['dyn-list-view'],
-    styles[`dyn-list-view--${size}`],
-    {
-      [styles['dyn-list-view--bordered']]: bordered,
-      [styles['dyn-list-view--selectable']]: selectable,
-      [styles['dyn-list-view--loading']]: loading,
-      [styles['dyn-list-view--fixed-height']]: !!height,
-    },
-    className
-  );
-
-  if (loading) {
-    return (
-      <div className={listViewClasses}>
-        <div className={styles['dyn-list-view__loading']}>
-          <span>Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data.length) {
-    return (
-      <div className={listViewClasses}>
-        <div className={styles['dyn-list-view__empty']}>
-          <span>{emptyText}</span>
-        </div>
-      </div>
-    );
-  }
+      case 'Escape':
+        // allow parent to close popover if used inside
+        break;
+    }
+  };
 
   return (
-    <div className={listViewClasses} style={{ height }}>
-      {/* Header with select all */}
-      {selectable && (
-        <div className={styles['dyn-list-view__header']}>
-          <input
-            type="checkbox"
-            checked={isAllSelected}
-            ref={input => {
-              if (input) input.indeterminate = isIndeterminate;
-            }}
-            onChange={(e) => handleSelectAll(e.target.checked)}
-          />
-          <span className={styles['dyn-list-view__select-all-text']}>
-            {internalSelection.length > 0 
-              ? `${internalSelection.length} selected`
-              : 'Select all'
-            }
-          </span>
-        </div>
-      )}
-      
-      {/* List content */}
-      <div className={styles['dyn-list-view__content']}>
-        {data.map((item, index) => {
-          const key = getItemKey(item, index);
-          const isSelected = internalSelection.includes(key);
-          
-          return (
-            <div
-              key={key}
-              className={classNames(
-                styles['dyn-list-view__item'],
-                {
-                  [styles['dyn-list-view__item--selected']]: isSelected,
-                }
-              )}
-            >
-              {/* Selection checkbox */}
-              {selectable && (
-                <div className={styles['dyn-list-view__item-selection']}>
-                  <input
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={(e) => handleItemSelection(key, e.target.checked)}
-                  />
-                </div>
-              )}
-              
-              {/* Item content */}
-              <div className={styles['dyn-list-view__item-body']}>
-                {renderItem ? renderItem(item, index) : defaultRenderItem(item, index)}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+    <div
+      ref={ref}
+      id={internalId}
+      role="listbox"
+      aria-multiselectable={multiSelect || undefined}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
+      aria-activedescendant={itemIds[activeIndex]}
+      className={cn(getStyleClass('root'), className)}
+      data-testid={dataTestId || 'dyn-listview'}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      {...rest}
+    >
+      {items.map((it, i) => {
+        const selectedState = isSelected(it.value);
+        return (
+          <div
+            key={it.value}
+            id={itemIds[i]}
+            role="option"
+            aria-selected={selectedState}
+            className={cn(
+              getStyleClass('option'),
+              selectedState && getStyleClass('option--selected'),
+              i === activeIndex && getStyleClass('option--active')
+            )}
+            onMouseEnter={() => setActiveIndex(i)}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => toggle(it.value)}
+          >
+            <span className={getStyleClass('option__label')}>{it.label}</span>
+          </div>
+        );
+      })}
     </div>
   );
-};
-
-DynListView.displayName = 'DynListView';
+});
 
 export default DynListView;
-export { DynListView };
