@@ -1,11 +1,3 @@
-export { DynBadge } from './DynBadge';
-export { default } from './DynBadge';
-
-export type {
-  DynBadgeProps,
-  DynBadgeRef,
-  DynBadgeVariant,
-  DynBadgeColor,
-  DynBadgePosition,
-  ComponentSize as DynBadgeSize
-} from './DynBadge.types';
+export { default as DynBadge } from "./DynBadge";
+export { DynBadge } from "./DynBadge";
+export type * from "./DynBadge.types";
