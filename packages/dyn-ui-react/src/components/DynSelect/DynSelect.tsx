@@ -169,8 +169,8 @@ export const DynSelect = forwardRef<DynFieldRef, DynSelectProps>(
           if (!isOpen) {
             e.preventDefault();
             setIsOpen(true);
-            break;
           }
+          break;
         case 'Escape':
           setIsOpen(false);
           setSearchTerm('');
