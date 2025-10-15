@@ -1,13 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { axe } from 'vitest-axe';
+import { axe, toHaveNoViolations } from 'vitest-axe';
 import { describe, expect, it, vi } from 'vitest';
-// Remove import { toHaveNoViolations } from 'vitest-axe';
-// Use axeMatchers instead:
 import DynButton from './DynButton';
 import styles from './DynButton.module.css';
 
 // Extend Vitest matchers
-expect.extend(axe);
+expect.extend(toHaveNoViolations);
 
 const classes = styles as Record<string, string>;
 
@@ -15,7 +13,7 @@ describe('DynButton', () => {
   describe('Basic Functionality', () => {
     it('renders with default props', () => {
       render(<DynButton label="Save" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveTextContent('Save');
       expect(button).toHaveClass(classes.root!);
@@ -26,7 +24,7 @@ describe('DynButton', () => {
 
     it('renders without label when only icon is provided', () => {
       render(<DynButton icon="download" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass(classes.iconOnly!);
       expect(button.querySelector(`.${classes.icon}`)).toBeInTheDocument();
@@ -39,7 +37,7 @@ describe('DynButton', () => {
           <span>Custom Content</span>
         </DynButton>
       );
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveTextContent('Custom Content');
     });
@@ -48,11 +46,11 @@ describe('DynButton', () => {
       const { rerender } = render(<DynButton label="Test" />);
       const firstButton = screen.getByTestId('dyn-button');
       const firstId = firstButton.id;
-
+      
       rerender(<DynButton label="Test 2" />);
       const secondButton = screen.getByTestId('dyn-button');
       const secondId = secondButton.id;
-
+      
       expect(firstId).toBeTruthy();
       expect(secondId).toBeTruthy();
       expect(firstId).not.toBe(secondId);
@@ -60,7 +58,7 @@ describe('DynButton', () => {
 
     it('uses provided ID when specified', () => {
       render(<DynButton label="Test" id="custom-button" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveAttribute('id', 'custom-button');
     });
@@ -70,19 +68,19 @@ describe('DynButton', () => {
     it('has no accessibility violations', async () => {
       const { container } = render(<DynButton label="Accessible Button" />);
       const results = await axe(container);
-      expect(results as any).toHaveNoViolations();
+      expect(results).toHaveNoViolations();
     });
 
     it('provides proper ARIA labels for icon-only buttons', () => {
       render(<DynButton icon="download" aria-label="Download file" />);
-
+      
       const button = screen.getByRole('button', { name: 'Download file' });
       expect(button).toHaveAttribute('aria-label', 'Download file');
     });
 
     it('auto-generates ARIA label from icon name when no label provided', () => {
       render(<DynButton icon="download" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveAttribute('aria-label', 'download');
     });
@@ -95,7 +93,7 @@ describe('DynButton', () => {
           aria-controls="main-menu"
         />
       );
-
+      
       const button = screen.getByRole('button', { name: 'Menu' });
       expect(button).toHaveAttribute('aria-expanded', 'false');
       expect(button).toHaveAttribute('aria-controls', 'main-menu');
@@ -103,17 +101,17 @@ describe('DynButton', () => {
 
     it('supports ARIA pressed state for toggle buttons', () => {
       render(<DynButton label="Toggle" aria-pressed={false} />);
-
+      
       const button = screen.getByRole('button', { name: 'Toggle' });
       expect(button).toHaveAttribute('aria-pressed', 'false');
     });
 
     it('announces loading state to screen readers', () => {
       render(<DynButton label="Submit" loading />);
-
+      
       const button = screen.getByRole('button', { name: 'Submit' });
       expect(button).toHaveAttribute('aria-busy', 'true');
-
+      
       const announcement = button.querySelector('.dyn-sr-only');
       expect(announcement).toHaveAttribute('aria-live', 'polite');
       expect(announcement).toHaveTextContent('Loading…');
@@ -127,7 +125,7 @@ describe('DynButton', () => {
           loadingText="Saving your changes..."
         />
       );
-
+      
       const button = screen.getByRole('button', { name: 'Save' });
       const announcement = button.querySelector('.dyn-sr-only');
       expect(announcement).toHaveTextContent('Saving your changes...');
@@ -138,7 +136,7 @@ describe('DynButton', () => {
       let button = screen.getByRole('button', { name: 'Test' });
       expect(button).toBeDisabled();
       expect(button).toHaveAttribute('aria-disabled', 'true');
-
+      
       rerender(<DynButton label="Test" loading />);
       button = screen.getByRole('button', { name: 'Test' });
       expect(button).toBeDisabled();
@@ -150,7 +148,7 @@ describe('DynButton', () => {
     it('calls onClick handler when clicked', () => {
       const onClick = vi.fn();
       render(<DynButton label="Click me" onClick={onClick} />);
-
+      
       fireEvent.click(screen.getByRole('button', { name: 'Click me' }));
       expect(onClick).toHaveBeenCalledTimes(1);
     });
@@ -158,7 +156,7 @@ describe('DynButton', () => {
     it('prevents onClick when disabled', () => {
       const onClick = vi.fn();
       render(<DynButton label="Disabled" disabled onClick={onClick} />);
-
+      
       fireEvent.click(screen.getByRole('button', { name: 'Disabled' }));
       expect(onClick).not.toHaveBeenCalled();
     });
@@ -166,7 +164,7 @@ describe('DynButton', () => {
     it('prevents onClick when loading', () => {
       const onClick = vi.fn();
       render(<DynButton label="Loading" loading onClick={onClick} />);
-
+      
       fireEvent.click(screen.getByRole('button', { name: 'Loading' }));
       expect(onClick).not.toHaveBeenCalled();
     });
@@ -174,7 +172,7 @@ describe('DynButton', () => {
     it('activates on Space key press', () => {
       const onClick = vi.fn();
       render(<DynButton label="Space test" onClick={onClick} />);
-
+      
       const button = screen.getByRole('button', { name: 'Space test' });
       fireEvent.keyDown(button, { key: ' ', code: 'Space' });
       expect(onClick).toHaveBeenCalledTimes(1);
@@ -183,7 +181,7 @@ describe('DynButton', () => {
     it('activates on Spacebar key press (legacy)', () => {
       const onClick = vi.fn();
       render(<DynButton label="Spacebar test" onClick={onClick} />);
-
+      
       const button = screen.getByRole('button', { name: 'Spacebar test' });
       fireEvent.keyDown(button, { key: 'Spacebar' });
       expect(onClick).toHaveBeenCalledTimes(1);
@@ -192,7 +190,7 @@ describe('DynButton', () => {
     it('does not activate on Space when disabled', () => {
       const onClick = vi.fn();
       render(<DynButton label="Disabled" disabled onClick={onClick} />);
-
+      
       const button = screen.getByRole('button', { name: 'Disabled' });
       fireEvent.keyDown(button, { key: ' ' });
       expect(onClick).not.toHaveBeenCalled();
@@ -201,7 +199,7 @@ describe('DynButton', () => {
     it('does not activate on Space when loading', () => {
       const onClick = vi.fn();
       render(<DynButton label="Loading" loading onClick={onClick} />);
-
+      
       const button = screen.getByRole('button', { name: 'Loading' });
       fireEvent.keyDown(button, { key: ' ' });
       expect(onClick).not.toHaveBeenCalled();
@@ -210,7 +208,7 @@ describe('DynButton', () => {
     it('calls custom onKeyDown handler', () => {
       const onKeyDown = vi.fn();
       render(<DynButton label="Key test" onKeyDown={onKeyDown} />);
-
+      
       const button = screen.getByRole('button', { name: 'Key test' });
       fireEvent.keyDown(button, { key: 'Enter' });
       expect(onKeyDown).toHaveBeenCalledTimes(1);
@@ -219,7 +217,7 @@ describe('DynButton', () => {
     it('calls onBlur handler when focus is lost', () => {
       const onBlur = vi.fn();
       render(<DynButton label="Blur test" onBlur={onBlur} />);
-
+      
       const button = screen.getByRole('button', { name: 'Blur test' });
       fireEvent.blur(button);
       expect(onBlur).toHaveBeenCalledTimes(1);
@@ -229,56 +227,56 @@ describe('DynButton', () => {
   describe('Variants and States', () => {
     it('renders primary kind by default', () => {
       render(<DynButton label="Primary" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass(classes.kindPrimary!);
     });
 
     it('renders secondary kind correctly', () => {
       render(<DynButton label="Secondary" kind="secondary" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass(classes.kindSecondary!);
     });
 
     it('renders tertiary kind correctly', () => {
       render(<DynButton label="Tertiary" kind="tertiary" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass(classes.kindTertiary!);
     });
 
     it('renders small size correctly', () => {
       render(<DynButton label="Small" size="small" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass(classes.sizeSmall!);
     });
 
     it('renders medium size by default', () => {
       render(<DynButton label="Medium" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass(classes.sizeMedium!);
     });
 
     it('renders large size correctly', () => {
       render(<DynButton label="Large" size="large" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass(classes.sizeLarge!);
     });
 
     it('renders danger state correctly', () => {
       render(<DynButton label="Delete" danger />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass(classes.danger!);
     });
 
     it('renders loading state with spinner', () => {
       render(<DynButton label="Loading" loading />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass(classes.loading!);
       expect(button.querySelector(`.${classes.spinner}`)).toBeInTheDocument();
@@ -287,7 +285,7 @@ describe('DynButton', () => {
 
     it('renders full width correctly', () => {
       render(<DynButton label="Full Width" fullWidth />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass(classes.fullWidth!);
     });
@@ -301,7 +299,7 @@ describe('DynButton', () => {
           iconOnlyOnMobile
         />
       );
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass(classes.hideOnMobile!);
       expect(button).toHaveClass(classes.iconOnlyOnMobile!);
@@ -311,7 +309,7 @@ describe('DynButton', () => {
   describe('Props and Customization', () => {
     it('accepts custom className', () => {
       render(<DynButton label="Custom" className="custom-class" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveClass('custom-class');
       expect(button).toHaveClass(classes.root!);
@@ -319,14 +317,14 @@ describe('DynButton', () => {
 
     it('accepts custom data-testid', () => {
       render(<DynButton label="Test" data-testid="custom-button" />);
-
+      
       const button = screen.getByTestId('custom-button');
       expect(button).toBeInTheDocument();
     });
 
     it('accepts custom role', () => {
       render(<DynButton label="Custom role" role="menuitem" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveAttribute('role', 'menuitem');
     });
@@ -335,7 +333,7 @@ describe('DynButton', () => {
       const { rerender } = render(<DynButton label="Submit" type="submit" />);
       let button = screen.getByTestId('dyn-button');
       expect(button).toHaveAttribute('type', 'submit');
-
+      
       rerender(<DynButton label="Reset" type="reset" />);
       button = screen.getByTestId('dyn-button');
       expect(button).toHaveAttribute('type', 'reset');
@@ -343,7 +341,7 @@ describe('DynButton', () => {
 
     it('handles string children correctly', () => {
       render(<DynButton>String child</DynButton>);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveTextContent('String child');
       expect(button.querySelector(`.${classes.label}`)).toHaveTextContent('String child');
@@ -351,7 +349,7 @@ describe('DynButton', () => {
 
     it('handles empty string children', () => {
       render(<DynButton>   </DynButton>);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button.querySelector(`.${classes.label}`)).not.toBeInTheDocument();
     });
@@ -359,7 +357,7 @@ describe('DynButton', () => {
     it('renders ReactNode icon correctly', () => {
       const CustomIcon = () => <span data-testid="custom-icon">🎯</span>;
       render(<DynButton icon={<CustomIcon />} label="Custom icon" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       const icon = screen.getByTestId('custom-icon');
       expect(button).toContainElement(icon);
@@ -374,7 +372,7 @@ describe('DynButton', () => {
           title="Button tooltip"
         />
       );
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button).toHaveAttribute('tabIndex', '-1');
       expect(button).toHaveAttribute('title', 'Button tooltip');
@@ -384,21 +382,21 @@ describe('DynButton', () => {
   describe('Edge Cases', () => {
     it('handles empty label gracefully', () => {
       render(<DynButton label="" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button.querySelector(`.${classes.label}`)).not.toBeInTheDocument();
     });
 
     it('handles whitespace-only label', () => {
       render(<DynButton label="   " />);
-
+      
       const button = screen.getByTestId('dyn-button');
       expect(button.querySelector(`.${classes.label}`)).not.toBeInTheDocument();
     });
 
     it('handles empty loadingText gracefully', () => {
       render(<DynButton label="Test" loading loadingText="" />);
-
+      
       const button = screen.getByTestId('dyn-button');
       const announcement = button.querySelector('.dyn-sr-only');
       expect(announcement).toHaveTextContent('Loading…'); // Falls back to default
@@ -406,7 +404,7 @@ describe('DynButton', () => {
 
     it('handles undefined loadingText', () => {
       render(<DynButton label="Test" loading loadingText={undefined} />);
-
+      
       const button = screen.getByTestId('dyn-button');
       const announcement = button.querySelector('.dyn-sr-only');
       expect(announcement).toHaveTextContent('Loading…'); // Falls back to default
@@ -414,7 +412,7 @@ describe('DynButton', () => {
 
     it('handles non-string loadingText', () => {
       render(<DynButton label="Test" loading loadingText={123 as any} />);
-
+      
       const button = screen.getByTestId('dyn-button');
       const announcement = button.querySelector('.dyn-sr-only');
       expect(announcement).toHaveTextContent('Loading…'); // Falls back to default
