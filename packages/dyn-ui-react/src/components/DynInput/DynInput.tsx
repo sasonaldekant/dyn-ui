@@ -1,52 +1,72 @@
-/**
- * DynInput - Advanced input component with validation and masking
- * Part of DYN UI Form Components Group - SCOPE 6
- */
-
-import React, { forwardRef, useImperativeHandle, useRef, useState, useEffect } from 'react';
-import classNames from 'classnames';
-import type { DynInputProps, DynFieldRef } from '../../types/field.types';
+import React, { forwardRef, useImperativeHandle, useRef, useState, useEffect, useMemo } from 'react';
+import { cn } from '../../utils/classNames';
+import { generateId } from '../../utils/accessibility';
+import type {
+  DynInputProps,
+  DynInputRef,
+  DynInputDefaultProps,
+} from './DynInput.types';
+import { DYN_INPUT_DEFAULT_PROPS } from './DynInput.types';
 import { DynFieldContainer } from '../DynFieldContainer';
 import { useDynFieldValidation } from '../../hooks/useDynFieldValidation';
 import { useDynMask } from '../../hooks/useDynMask';
 import { DynIcon } from '../DynIcon';
-import './DynInput.module.css';
+import styles from './DynInput.module.css';
 
-export const DynInput = forwardRef<DynFieldRef, DynInputProps>(
+/**
+ * Safely access CSS module classes
+ */
+const getStyleClass = (className: string): string => {
+  return (styles as Record<string, string>)[className] || '';
+};
+
+type DynInputComponentProps = DynInputProps & DynInputDefaultProps;
+
+export const DynInput = forwardRef<DynInputRef, DynInputProps>(
   (
     {
       name,
       label,
       help,
       placeholder,
-      disabled = false,
-      readonly = false,
-      required = false,
-      optional = false,
-      visible = true,
+      disabled = DYN_INPUT_DEFAULT_PROPS.disabled,
+      readonly = DYN_INPUT_DEFAULT_PROPS.readonly,
+      required = DYN_INPUT_DEFAULT_PROPS.required,
+      optional = DYN_INPUT_DEFAULT_PROPS.optional,
+      visible = DYN_INPUT_DEFAULT_PROPS.visible,
       value: propValue = '',
       errorMessage,
       validation,
       className,
-      type = 'text',
-      size = 'medium',
+      type = DYN_INPUT_DEFAULT_PROPS.type,
+      size = DYN_INPUT_DEFAULT_PROPS.size,
       maxLength,
       minLength,
       mask,
-      maskFormatModel = false,
+      maskFormatModel = DYN_INPUT_DEFAULT_PROPS.maskFormatModel,
       pattern,
       icon,
-      showCleanButton = false,
+      showClearButton = DYN_INPUT_DEFAULT_PROPS.showClearButton,
       step,
       min,
       max,
       onChange,
       onBlur,
-      onFocus
+      onFocus,
+      onValidate,
+      id,
+      'aria-label': ariaLabel,
+      'aria-describedby': ariaDescribedBy,
+      'aria-labelledby': ariaLabelledBy,
+      'data-testid': dataTestId,
+      role,
+      children,
+      ...rest
     },
     ref
   ) => {
-    const [value, setValue] = useState<string>(propValue);
+    const [internalId] = useState(() => id || name || generateId('input'));
+    const [value, setValue] = useState<string>(String(propValue));
     const [focused, setFocused] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -63,24 +83,43 @@ export const DynInput = forwardRef<DynFieldRef, DynInputProps>(
       maskFormatModel
     );
 
+    // Memoized computations
+    const displayValue = useMemo(() => {
+      return mask ? maskedValue : value;
+    }, [mask, maskedValue, value]);
+
+    const resolvedError = useMemo(() => {
+      return errorMessage ?? (error || undefined);
+    }, [errorMessage, error]);
+
+    const hasValue = Boolean(value && value.length > 0);
+    const showClearBtn = showClearButton && hasValue && !readonly && !disabled;
+
     useImperativeHandle(ref, () => ({
       focus: () => inputRef.current?.focus(),
-      validate: () => validate(),
+      blur: () => inputRef.current?.blur(),
       clear: () => {
         setValue('');
         onChange?.('');
         clearError();
       },
       getValue: () => (mask && !maskFormatModel ? unmaskValue(value) : value),
-      setValue: (newValue: any) => {
+      setValue: (newValue: string | number) => {
         const stringValue = String(newValue);
         setValue(stringValue);
         onChange?.(stringValue);
-      }
+      },
+      validate: () => {
+        const isValid = validate();
+        onValidate?.(isValid, error);
+        return isValid;
+      },
+      clearError: () => clearError(),
+      getElement: () => inputRef.current,
     }));
 
     useEffect(() => {
-      setValue(propValue);
+      setValue(String(propValue));
     }, [propValue]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,19 +137,19 @@ export const DynInput = forwardRef<DynFieldRef, DynInputProps>(
       clearError();
     };
 
-    const handleBlur = () => {
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
       setFocused(false);
       validate();
-      onBlur?.();
+      onBlur?.(e);
     };
 
-    const handleFocus = () => {
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
       setFocused(true);
       clearError();
-      onFocus?.();
+      onFocus?.(e);
     };
 
-    const handleClean = () => {
+    const handleClear = () => {
       setValue('');
       onChange?.('');
       clearError();
@@ -119,22 +158,29 @@ export const DynInput = forwardRef<DynFieldRef, DynInputProps>(
 
     if (!visible) return null;
 
-    const resolvedError = errorMessage ?? (error || undefined);
-
-    const inputClasses = classNames(
-      'dyn-input',
-      `dyn-input--${size}`,
+    // Generate CSS classes safely
+    const inputClasses = cn(
+      getStyleClass('input'),
+      getStyleClass(`input--${size}`),
       {
-        'dyn-input--focused': focused,
-        'dyn-input--error': Boolean(resolvedError),
-        'dyn-input--disabled': disabled,
-        'dyn-input--readonly': readonly,
-        'dyn-input--with-icon': !!icon,
-        'dyn-input--cleanable': showCleanButton && value && !readonly && !disabled
-      }
+        [getStyleClass('input--focused')]: focused,
+        [getStyleClass('input--error')]: Boolean(resolvedError),
+        [getStyleClass('input--disabled')]: disabled,
+        [getStyleClass('input--readonly')]: readonly,
+        [getStyleClass('input--with-icon')]: !!icon,
+        [getStyleClass('input--clearable')]: showClearBtn
+      },
+      className
     );
 
-    const displayValue = mask ? maskedValue : value;
+    const containerClasses = cn(
+      getStyleClass('container'),
+      {
+        [getStyleClass('container--focused')]: focused,
+        [getStyleClass('container--error')]: Boolean(resolvedError),
+        [getStyleClass('container--disabled')]: disabled,
+      }
+    );
 
     return (
       <DynFieldContainer
@@ -144,18 +190,22 @@ export const DynInput = forwardRef<DynFieldRef, DynInputProps>(
         optional={optional}
         errorText={resolvedError}
         className={className}
-        htmlFor={name}
+        htmlFor={internalId}
       >
-        <div className="dyn-input-container">
+        <div className={containerClasses}>
           {icon && (
-            <div className="dyn-input-icon-container">
-              <DynIcon icon={icon} />
+            <div className={getStyleClass('icon-container')}>
+              {typeof icon === 'string' ? (
+                <DynIcon icon={icon} aria-hidden="true" />
+              ) : (
+                <span aria-hidden="true">{icon}</span>
+              )}
             </div>
           )}
           
           <input
             ref={inputRef}
-            id={name}
+            id={internalId}
             name={name}
             type={type === 'number' ? 'text' : type}
             className={inputClasses}
@@ -169,32 +219,41 @@ export const DynInput = forwardRef<DynFieldRef, DynInputProps>(
             step={step}
             min={min}
             max={max}
+            required={required}
             onChange={handleChange}
             onBlur={handleBlur}
             onFocus={handleFocus}
-            aria-invalid={Boolean(resolvedError)}
+            aria-label={ariaLabel}
             aria-describedby={
-              resolvedError ? `${name}-error` : help ? `${name}-help` : undefined
+              ariaDescribedBy ||
+              (resolvedError ? `${internalId}-error` : help ? `${internalId}-help` : undefined)
             }
+            aria-labelledby={ariaLabelledBy}
+            aria-invalid={Boolean(resolvedError)}
+            data-testid={dataTestId || 'dyn-input'}
+            role={role}
+            {...rest}
           />
           
-          {showCleanButton && value && !readonly && !disabled && (
+          {showClearBtn && (
             <button
               type="button"
-              className="dyn-input-clean-button"
-              onClick={handleClean}
+              className={getStyleClass('clear-button')}
+              onClick={handleClear}
               tabIndex={-1}
-              aria-label="Limpar campo"
+              aria-label="Clear input"
             >
-              <DynIcon icon="dyn-icon-close" />
+              <DynIcon icon="close" aria-hidden="true" />
             </button>
           )}
         </div>
+
+        {/* Children content for additional input elements or decorations */}
+        {children}
       </DynFieldContainer>
     );
   }
 );
 
-DynInput.displayName = 'DynInput';
-
 export default DynInput;
+DynInput.displayName = 'DynInput';
