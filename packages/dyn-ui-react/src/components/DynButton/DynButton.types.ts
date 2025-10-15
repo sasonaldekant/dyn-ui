@@ -5,14 +5,25 @@ import type {
   MouseEventHandler,
   ReactNode,
 } from 'react';
-import type { BaseComponentProps } from '../../types';
+import type { BaseComponentProps, AccessibilityProps } from '../../types';
 
+/**
+ * Button kind/variant types following design system standards
+ */
 export type DynButtonKind = 'primary' | 'secondary' | 'tertiary';
 
+/**
+ * Button size variants using design token scale
+ */
 export type DynButtonSize = 'small' | 'medium' | 'large';
 
+/**
+ * Props interface for DynButton component
+ * Follows DynAvatar's standardized pattern with BaseComponentProps and AccessibilityProps
+ */
 export interface DynButtonProps
   extends BaseComponentProps,
+    AccessibilityProps,
     Omit<
       ButtonHTMLAttributes<HTMLButtonElement>,
       | 'type'
@@ -26,7 +37,9 @@ export interface DynButtonProps
       | 'aria-describedby'
       | 'aria-pressed'
       | keyof BaseComponentProps
+      | keyof AccessibilityProps
     > {
+
   /** Button text label */
   label?: string;
 
@@ -48,6 +61,9 @@ export interface DynButtonProps
   /** Button kind/variant */
   kind?: DynButtonKind;
 
+  /** Button size */
+  size?: DynButtonSize;
+
   /** Disabled state */
   disabled?: boolean;
 
@@ -60,23 +76,14 @@ export interface DynButtonProps
   /** Display as icon-only on mobile while keeping the label accessible */
   iconOnlyOnMobile?: boolean;
 
-  /** Accessible label override */
-  ariaLabel?: string;
-
-  /** Accessible expanded state */
-  ariaExpanded?: boolean;
+  /** Accessible expanded state (for dropdown buttons, etc.) */
+  'aria-expanded'?: boolean;
 
   /** ID reference of the element controlled by the button */
-  ariaControls?: string;
-
-  /** ID reference of elements describing the button */
-  ariaDescribedBy?: string;
+  'aria-controls'?: string;
 
   /** Pressed/toggled state for ARIA toggle buttons */
-  ariaPressed?: boolean;
-
-  /** Button size */
-  size?: DynButtonSize;
+  'aria-pressed'?: boolean;
 
   /** Blur event handler */
   onBlur?: FocusEventHandler<HTMLButtonElement>;
@@ -88,25 +95,34 @@ export interface DynButtonProps
   onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
 }
 
+/**
+ * Ref type for DynButton component
+ */
 export type DynButtonRef = HTMLButtonElement;
 
+/**
+ * Default props type for DynButton
+ */
 export type DynButtonDefaultProps = Required<
   Pick<
     DynButtonProps,
-    |
-      'type'
-      | 'kind'
-      | 'size'
-      | 'loading'
-      | 'loadingText'
-      | 'danger'
-      | 'disabled'
-      | 'fullWidth'
-      | 'hideOnMobile'
-      | 'iconOnlyOnMobile'
+    | 'type'
+    | 'kind'
+    | 'size'
+    | 'loading'
+    | 'loadingText'
+    | 'danger'
+    | 'disabled'
+    | 'fullWidth'
+    | 'hideOnMobile'
+    | 'iconOnlyOnMobile'
   >
 >;
 
+/**
+ * Default props values for DynButton component
+ * Provides sensible defaults for all optional props
+ */
 export const DYN_BUTTON_DEFAULT_PROPS: DynButtonDefaultProps = {
   type: 'button',
   kind: 'primary',
@@ -118,4 +134,4 @@ export const DYN_BUTTON_DEFAULT_PROPS: DynButtonDefaultProps = {
   fullWidth: false,
   hideOnMobile: false,
   iconOnlyOnMobile: false,
-};
+} as const;
