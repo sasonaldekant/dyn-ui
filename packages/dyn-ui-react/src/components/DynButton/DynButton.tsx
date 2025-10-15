@@ -1,15 +1,11 @@
-import {
-  Children,
-  forwardRef,
-  useMemo,
-} from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 import type {
   FocusEventHandler,
-  ForwardedRef,
   KeyboardEventHandler,
   MouseEventHandler,
 } from 'react';
 import { cn } from '../../utils/classNames';
+import { generateId } from '../../utils/accessibility';
 import { DynIcon } from '../DynIcon';
 import type {
   DynButtonDefaultProps,
@@ -21,235 +17,245 @@ import type {
 import { DYN_BUTTON_DEFAULT_PROPS } from './DynButton.types';
 import styles from './DynButton.module.css';
 
-const KIND_CLASS_MAP: Record<DynButtonKind, string> = {
-  primary: styles.kindPrimary!,
-  secondary: styles.kindSecondary!,
-  tertiary: styles.kindTertiary!,
+/**
+ * Safely access CSS module classes
+ */
+const getStyleClass = (className: string): string => {
+  return (styles as Record<string, string>)[className] || '';
 };
 
-const SIZE_CLASS_MAP: Record<DynButtonSize, string> = {
-  small: styles.sizeSmall!,
-  medium: styles.sizeMedium!,
-  large: styles.sizeLarge!,
+/**
+ * Normalize ARIA label values
+ */
+const normalizeAriaLabel = (value: string | undefined): string | undefined =>
+  value?.trim() ? value.trim() : undefined;
+
+/**
+ * Generate appropriate ARIA label for icon-only buttons
+ */
+const generateIconAriaLabel = (icon: string | React.ReactNode): string | undefined => {
+  if (typeof icon !== 'string') return undefined;
+
+  return icon
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 };
 
 type DynButtonComponentProps = DynButtonProps & DynButtonDefaultProps;
 
-const normalizeAriaLabel = (value: string | undefined) =>
-  value?.trim() ? value.trim() : undefined;
+export const DynButton = forwardRef<DynButtonRef, DynButtonProps>(
+  (
+    {
+      label,
+      icon,
+      type = DYN_BUTTON_DEFAULT_PROPS.type,
+      kind = DYN_BUTTON_DEFAULT_PROPS.kind,
+      size = DYN_BUTTON_DEFAULT_PROPS.size,
+      loading = DYN_BUTTON_DEFAULT_PROPS.loading,
+      loadingText = DYN_BUTTON_DEFAULT_PROPS.loadingText,
+      danger = DYN_BUTTON_DEFAULT_PROPS.danger,
+      disabled = DYN_BUTTON_DEFAULT_PROPS.disabled,
+      fullWidth = DYN_BUTTON_DEFAULT_PROPS.fullWidth,
+      hideOnMobile = DYN_BUTTON_DEFAULT_PROPS.hideOnMobile,
+      iconOnlyOnMobile = DYN_BUTTON_DEFAULT_PROPS.iconOnlyOnMobile,
+      onClick,
+      onBlur,
+      onKeyDown: userOnKeyDown,
+      children,
+      className,
+      id,
+      'aria-label': ariaLabel,
+      'aria-describedby': ariaDescribedBy,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-expanded': ariaExpanded,
+      'aria-controls': ariaControls,
+      'aria-pressed': ariaPressed,
+      'data-testid': dataTestId,
+      role,
+      ...rest
+    },
+    ref
+  ) => {
+    const [internalId] = useState(() => id || generateId('button'));
 
-const DynButtonComponent = (
-  props: DynButtonProps,
-  ref: ForwardedRef<DynButtonRef>
-) => {
-  const {
-    label,
-    icon,
-    type = DYN_BUTTON_DEFAULT_PROPS.type,
-    kind = DYN_BUTTON_DEFAULT_PROPS.kind,
-    size = DYN_BUTTON_DEFAULT_PROPS.size,
-    loading = DYN_BUTTON_DEFAULT_PROPS.loading,
-    loadingText = DYN_BUTTON_DEFAULT_PROPS.loadingText,
-    danger = DYN_BUTTON_DEFAULT_PROPS.danger,
-    disabled = DYN_BUTTON_DEFAULT_PROPS.disabled,
-    fullWidth = DYN_BUTTON_DEFAULT_PROPS.fullWidth,
-    hideOnMobile = DYN_BUTTON_DEFAULT_PROPS.hideOnMobile,
-    iconOnlyOnMobile = DYN_BUTTON_DEFAULT_PROPS.iconOnlyOnMobile,
-    ariaLabel,
-    ariaExpanded,
-    ariaControls,
-    ariaDescribedBy,
-    ariaPressed,
-    onBlur,
-    onClick,
-    onKeyDown: userOnKeyDown,
-    children,
-    className,
-    id,
-    'data-testid': dataTestId,
-    ...rest
-  } = props as DynButtonComponentProps;
+    // Memoized computations
+    const trimmedLabel = useMemo(
+      () => (typeof label === 'string' ? label.trim() : ''),
+      [label]
+    );
 
-  const trimmedLabel = useMemo(
-    () => (typeof label === 'string' ? label.trim() : ''),
-    [label]
-  );
+    const hasLabel = trimmedLabel.length > 0;
+    const childrenCount = React.Children.count(children);
+    const hasChildrenContent = childrenCount > 0;
+    const isIconOnly = Boolean(icon) && !hasLabel && !hasChildrenContent;
+    const isDisabled = disabled || loading;
 
-  const hasLabel = trimmedLabel.length > 0;
-  const childrenCount = Children.count(children);
-  const hasChildrenContent = childrenCount > 0;
-  const isIconOnly = Boolean(icon) && !hasLabel && !hasChildrenContent;
+    // Generate appropriate ARIA label for accessibility
+    const iconAriaLabel = useMemo(() => {
+      return generateIconAriaLabel(icon);
+    }, [icon]);
 
-  const normalizedIconLabel = useMemo(() => {
-    if (typeof icon !== 'string') {
-      return undefined;
-    }
+    const computedAriaLabel = normalizeAriaLabel(
+      ariaLabel ?? (isIconOnly ? trimmedLabel || iconAriaLabel || 'Button' : undefined)
+    );
 
-    return icon
-      .replace(/[-_]+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-  }, [icon]);
+    // Normalize loading text
+    const normalizedLoadingText = useMemo(() => {
+      if (typeof loadingText !== 'string') {
+        return DYN_BUTTON_DEFAULT_PROPS.loadingText;
+      }
+      const trimmed = loadingText.trim();
+      return trimmed || DYN_BUTTON_DEFAULT_PROPS.loadingText;
+    }, [loadingText]);
 
-  const computedAriaLabel = normalizeAriaLabel(
-    ariaLabel ??
-      (isIconOnly ? trimmedLabel || normalizedIconLabel || 'Button' : undefined)
-  );
+    // Icon size mapping
+    const iconSizeToken = useMemo(() => {
+      switch (size) {
+        case 'small':
+          return 'small' as const;
+        case 'large':
+          return 'large' as const;
+        default:
+          return 'medium' as const;
+      }
+    }, [size]);
 
-  const isDisabled = disabled || loading;
+    // Render icon element
+    const iconElement = useMemo(() => {
+      if (!icon) return null;
 
-  const normalizedLoadingText = useMemo(() => {
-    if (typeof loadingText !== 'string') {
-      return DYN_BUTTON_DEFAULT_PROPS.loadingText;
-    }
+      if (typeof icon === 'string') {
+        return (
+          <DynIcon
+            icon={icon}
+            aria-hidden="true"
+            className={getStyleClass('icon')}
+            size={iconSizeToken}
+          />
+        );
+      }
 
-    const trimmed = loadingText.trim();
-    return trimmed || DYN_BUTTON_DEFAULT_PROPS.loadingText;
-  }, [loadingText]);
-
-  const iconSizeToken = useMemo(() => {
-    switch (size) {
-      case 'small':
-        return 'small' as const;
-      case 'large':
-        return 'large' as const;
-      default:
-        return 'medium' as const;
-    }
-  }, [size]);
-
-  const iconElement = useMemo(() => {
-    if (!icon) {
-      return null;
-    }
-
-    if (typeof icon === 'string') {
       return (
-        <DynIcon
-          icon={icon}
-          aria-hidden
-          className={styles.icon}
-          size={iconSizeToken}
-        />
+        <span className={getStyleClass('icon')} aria-hidden="true">
+          {icon}
+        </span>
       );
-    }
+    }, [icon, iconSizeToken]);
+
+    // Render children content
+    const childrenContent = useMemo(() => {
+      if (!hasChildrenContent) return null;
+
+      if (typeof children === 'string') {
+        const trimmedChildren = children.trim();
+        if (!trimmedChildren) return null;
+        return <span className={getStyleClass('label')}>{trimmedChildren}</span>;
+      }
+
+      return children;
+    }, [children, hasChildrenContent]);
+
+    // Render label element
+    const labelElement = hasLabel ? (
+      <span className={getStyleClass('label')}>{trimmedLabel}</span>
+    ) : null;
+
+    // Generate CSS classes safely
+    const kindClass = getStyleClass(`kind${kind.charAt(0).toUpperCase() + kind.slice(1)}`);
+    const sizeClass = getStyleClass(`size${size.charAt(0).toUpperCase() + size.slice(1)}`);
+    const dangerClass = getStyleClass('danger');
+    const loadingClass = getStyleClass('loading');
+    const iconOnlyClass = getStyleClass('iconOnly');
+    const fullWidthClass = getStyleClass('fullWidth');
+    const hideOnMobileClass = getStyleClass('hideOnMobile');
+    const iconOnlyOnMobileClass = getStyleClass('iconOnlyOnMobile');
+
+    const buttonClassName = cn(
+      getStyleClass('root'),
+      kindClass,
+      sizeClass,
+      {
+        [dangerClass]: danger && dangerClass,
+        [loadingClass]: loading && loadingClass,
+        [iconOnlyClass]: isIconOnly && iconOnlyClass,
+        [fullWidthClass]: fullWidth && fullWidthClass,
+        [hideOnMobileClass]: hideOnMobile && hideOnMobileClass,
+        [iconOnlyOnMobileClass]: iconOnlyOnMobile && iconOnlyOnMobileClass,
+      },
+      className
+    );
+
+    // Event handlers
+    const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
+      if (isDisabled) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      onClick?.(event);
+    };
+
+    const handleBlur: FocusEventHandler<HTMLButtonElement> = (event) => {
+      onBlur?.(event);
+    };
+
+    const handleKeyDown: KeyboardEventHandler<HTMLButtonElement> = (event) => {
+      if (event.key === ' ' || event.key === 'Spacebar') {
+        event.preventDefault();
+        if (!isDisabled) {
+          event.currentTarget.click();
+        }
+      }
+      userOnKeyDown?.(event);
+    };
 
     return (
-      <span className={styles.icon} aria-hidden="true">
-        {icon}
-      </span>
+      <button
+        ref={ref}
+        id={internalId}
+        type={type}
+        className={buttonClassName}
+        data-testid={dataTestId ?? 'dyn-button'}
+        aria-label={computedAriaLabel}
+        aria-describedby={ariaDescribedBy}
+        aria-labelledby={ariaLabelledBy}
+        aria-expanded={ariaExpanded}
+        aria-controls={ariaControls}
+        aria-pressed={typeof ariaPressed === 'boolean' ? ariaPressed : undefined}
+        aria-busy={loading || undefined}
+        aria-disabled={isDisabled || undefined}
+        disabled={isDisabled}
+        role={role}
+        onClick={handleClick}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        {...rest}
+      >
+        <span className={getStyleClass('content')}>
+          {iconElement}
+          {labelElement}
+          {childrenContent}
+        </span>
+        
+        {/* Loading spinner and accessibility announcements */}
+        {loading && (
+          <>
+            <span className={getStyleClass('spinner')} aria-hidden="true" />
+            <span
+              className="dyn-sr-only"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {normalizedLoadingText}
+            </span>
+          </>
+        )}
+      </button>
     );
-  }, [icon, iconSizeToken]);
+  }
+);
 
-  const childrenContent = useMemo(() => {
-    if (!hasChildrenContent) {
-      return null;
-    }
-
-    if (typeof children === 'string') {
-      const trimmedChildren = children.trim();
-      if (!trimmedChildren) {
-        return null;
-      }
-
-      return <span className={styles.label}>{trimmedChildren}</span>;
-    }
-
-    return children;
-  }, [children, hasChildrenContent]);
-
-  const labelElement = hasLabel ? (
-    <span className={styles.label}>{trimmedLabel}</span>
-  ) : null;
-
-  const buttonClassName = cn(
-    styles.root,
-    KIND_CLASS_MAP[kind] ?? KIND_CLASS_MAP.primary,
-    SIZE_CLASS_MAP[size] ?? SIZE_CLASS_MAP.medium,
-    {
-      [styles.danger!]: danger,
-      [styles.loading!]: loading,
-      [styles.iconOnly!]: isIconOnly,
-      [styles.fullWidth!]: fullWidth,
-      [styles.hideOnMobile!]: hideOnMobile,
-      [styles.iconOnlyOnMobile!]: iconOnlyOnMobile,
-    },
-    className
-  );
-
-  const handleClick: MouseEventHandler<HTMLButtonElement> = event => {
-    if (isDisabled) {
-      event.preventDefault();
-      event.stopPropagation();
-      return;
-    }
-
-    onClick?.(event);
-  };
-
-  const handleBlur: FocusEventHandler<HTMLButtonElement> = event => {
-    onBlur?.(event);
-  };
-
-  const handleKeyDown: KeyboardEventHandler<HTMLButtonElement> = event => {
-    if (event.key === ' ' || event.key === 'Spacebar') {
-      event.preventDefault();
-
-      if (!isDisabled) {
-        event.currentTarget.click();
-      }
-    }
-
-    userOnKeyDown?.(event);
-  };
-
-  return (
-    <button
-      ref={ref}
-      id={id}
-      type={type}
-      className={buttonClassName}
-      data-testid={dataTestId ?? 'dyn-button'}
-      aria-label={computedAriaLabel}
-      aria-expanded={ariaExpanded}
-      aria-controls={ariaControls}
-      aria-describedby={ariaDescribedBy}
-      aria-pressed={
-        typeof ariaPressed === 'boolean' ? ariaPressed : undefined
-      }
-      aria-busy={loading || undefined}
-      aria-disabled={isDisabled || undefined}
-      disabled={isDisabled}
-      onClick={handleClick}
-      onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
-      {...rest}
-    >
-      <span className={styles.content}>
-        {iconElement}
-        {labelElement}
-        {childrenContent}
-      </span>
-      {loading ? (
-        <>
-          <span className={styles.spinner} aria-hidden="true" />
-          <span
-            className={styles.visuallyHidden}
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            {normalizedLoadingText}
-          </span>
-        </>
-      ) : null}
-    </button>
-  );
-};
-
-const DynButton = forwardRef<DynButtonRef, DynButtonProps>(DynButtonComponent);
-
-DynButton.displayName = 'DynButton';
-
-export { DynButton };
 export default DynButton;
+DynButton.displayName = 'DynButton';
