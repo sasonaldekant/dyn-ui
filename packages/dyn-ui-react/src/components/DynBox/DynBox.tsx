@@ -66,18 +66,18 @@ const getStyleClass = (className: string): string => {
 
 /**
  * DynBox – polymorphic, token-aware layout primitive
- * 
+ *
  * A flexible container component that serves as the foundational layout primitive
  * for the dyn-ui design system. Follows the DynAvatar gold standard template
  * with comprehensive accessibility, design token integration, and type safety.
- * 
+ *
  * @example
  * ```tsx
  * // Basic usage
  * <DynBox p="md" bg="tertiary" borderRadius="md">
  *   Content goes here
  * </DynBox>
- * 
+ *
  * // Interactive box with accessibility
  * <DynBox
  *   interactive
@@ -87,7 +87,7 @@ const getStyleClass = (className: string): string => {
  * >
  *   Click me
  * </DynBox>
- * 
+ *
  * // Polymorphic rendering
  * <DynBox as="section" display="flex" gap="sm">
  *   Rendered as a section element
@@ -206,7 +206,7 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
   const finalId = id || generateId('dyn-box');
   const liveRegionId = `${finalId}-live`;
   const shouldRenderLiveRegion = Boolean(ariaLiveMessage);
-  
+
   // Compute describedBy value with live region support
   const describedBy = useMemo(() => {
     if (!shouldRenderLiveRegion) {
@@ -508,7 +508,7 @@ const DynBoxComponent = <E extends ElementType = 'div'>(
       {...rest}
     >
       {children}
-      
+
       {/* Live region for screen reader announcements - following DynAvatar pattern */}
       {shouldRenderLiveRegion && (
         <span
