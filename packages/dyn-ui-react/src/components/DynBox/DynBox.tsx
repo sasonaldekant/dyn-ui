@@ -218,7 +218,7 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
   };
 
   const getResponsiveClasses = () => {
-    const classes = [];
+    const classes = [] as Array<string | null | undefined>;
     if (hideOnMobile) classes.push(getStyleClass('box--mobile-hidden'));
     if (hideOnTablet) classes.push(getStyleClass('box--tablet-hidden'));
     if (hideOnDesktop) classes.push(getStyleClass('box--desktop-hidden'));
@@ -269,8 +269,8 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
 
   const styleVars: React.CSSProperties = {
     // canonical width/height vars
-    ...(width !== undefined ? { ['--dyn-box-width' as any]: typeof width === 'number' ? `${width}px` : width } : {}),
-    ...(height !== undefined ? { ['--dyn-box-height' as any]: typeof height === 'number' ? `${height}px` : height } : {}),
+    ...(width !== undefined ? { ['--dyn-box-width' as any]: typeof width === 'number' ? `${width}` : width } : {}),
+    ...(height !== undefined ? { ['--dyn-box-height' as any]: typeof height === 'number' ? `${height}` : height } : {}),
     ...(maxWidth ? { ['--dyn-box-max-width' as any]: typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth } : {}),
     ...(maxHeight ? { ['--dyn-box-max-height' as any]: typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight } : {}),
     ...(minWidth ? { ['--dyn-box-min-width' as any]: typeof minWidth === 'number' ? `${minWidth}px` : minWidth } : {}),
@@ -278,7 +278,7 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
     // positioning
     ...(top !== undefined ? { ['--dyn-box-top' as any]: typeof top === 'number' ? `${top}px` : top } : {}),
     ...(right !== undefined ? { ['--dyn-box-right' as any]: typeof right === 'number' ? `${right}px` : right } : {}),
-    ...(bottom !== undefined ? { ['--dyn-box-bottom' as any]: typeof bottom === 'number' ? `${bottom}px` : bottom } : {}),
+    ...(bottom !== undefined ? { ['--dyn-box-bottom' as any]: typeof bottom === 'number' ? `${bottom}` : bottom } : {}),
     ...(left !== undefined ? { ['--dyn-box-left' as any]: typeof left === 'number' ? `${left}px` : left } : {}),
     ...(zIndex !== undefined ? { ['--dyn-box-z-index' as any]: zIndex } : {}),
     // background and color
@@ -290,7 +290,7 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
     ...(customBorderRadius ? { ['--dyn-box-radius' as any]: customBorderRadius } : {}),
     ...(finalRadius && !['none', 'xs', 'sm', 'md', 'lg', 'xl', 'full'].includes(finalRadius) ? { ['--dyn-box-radius' as any]: finalRadius } : {}),
     // spacing tokens with proper CSS var generation
-    ...(finalPadding && !['0', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'].includes(finalPadding) ? { ['--dyn-box-padding' as any]: finalPadding } : {}),
+    ...(finalPadding && !['0', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'].includes(finalPadding) ? { ['--dyn-box-padding' as any]: finalPadding } : finalPadding ? { ['--dyn-box-padding' as any]: getSpacingVar(finalPadding) } : {}),
     ...(px ? { ['--dyn-box-padding-left' as any]: getSpacingVar(px), ['--dyn-box-padding-right' as any]: getSpacingVar(px) } : {}),
     ...(py ? { ['--dyn-box-padding-top' as any]: getSpacingVar(py), ['--dyn-box-padding-bottom' as any]: getSpacingVar(py) } : {}),
     ...(pt ? { ['--dyn-box-padding-top' as any]: getSpacingVar(pt) } : {}),
