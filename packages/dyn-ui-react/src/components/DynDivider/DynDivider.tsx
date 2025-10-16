@@ -50,7 +50,7 @@ const DynDividerComponent = (
     styleClass,
     colorClass,
     spacingClass,
-    labelContent && styles.withLabel,
+    Boolean(labelContent) && styles.withLabel,
     labelPositionClass,
     className
   );

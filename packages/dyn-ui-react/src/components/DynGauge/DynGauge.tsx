@@ -82,7 +82,7 @@ export const DynGauge = forwardRef<HTMLDivElement, DynGaugeProps>((props, ref) =
   const subtitleId = subtitle ? `${componentId}-subtitle` : undefined;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
   const currentValueRef = useRef<number>(clampGaugeValue(value, min, max));
 
   const gaugeDimensions = gaugeDimensionsMap[size] ?? gaugeDimensionsMap.medium;
