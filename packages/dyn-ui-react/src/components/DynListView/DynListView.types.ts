@@ -1,8 +1,14 @@
-import { BaseComponentProps } from '../../types';
+import { BaseComponentProps, AccessibilityProps } from '../../types';
 import { ReactNode } from 'react';
 
 export interface ListViewItem {
   id: string | number;
+  label?: string;
+  value?: any;
+  description?: string;
+  icon?: string | ReactNode;
+  disabled?: boolean;
+  selected?: boolean;
   [key: string]: any;
 }
 
@@ -26,9 +32,27 @@ export interface ListAction {
 
 export type ListViewSize = 'small' | 'medium' | 'large';
 
-export interface DynListViewProps extends BaseComponentProps {
-  /** Data array to display */
-  data: ListViewItem[];
+export interface DynListViewProps extends BaseComponentProps, AccessibilityProps {
+  /** Items to display in list */
+  items?: ListViewItem[];
+  
+  /** Data array to display (legacy alias for items) */
+  data?: ListViewItem[];
+  
+  /** Currently selected value(s) */
+  value?: string | string[];
+  
+  /** Default selected value(s) */
+  defaultValue?: string | string[];
+  
+  /** Allow multiple selections */
+  multiSelect?: boolean;
+  
+  /** Disable entire list */
+  disabled?: boolean;
+  
+  /** Selection change handler */
+  onChange?: (value: string | string[], items: ListViewItem | ListViewItem[]) => void;
   
   /** Available actions for each item */
   actions?: ListAction[];
@@ -62,4 +86,16 @@ export interface DynListViewProps extends BaseComponentProps {
   
   /** Fixed height for scrollable list */
   height?: number | string;
+  
+  /** ARIA label for list */
+  'aria-label'?: string;
+  
+  /** ARIA labelledby for list */
+  'aria-labelledby'?: string;
+}
+
+export interface DynListViewRef {
+  focus: () => void;
+  selectAll: () => void;
+  clearSelection: () => void;
 }
