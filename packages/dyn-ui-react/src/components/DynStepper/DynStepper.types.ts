@@ -3,9 +3,12 @@
  * Step navigation component types with advanced progression features
  */
 
+import type { BaseComponentProps, AccessibilityProps } from '../../types';
+
 export interface StepItem {
   id: string;
-  title: string;
+  title?: string;
+  label?: string; // alias for title
   description?: string;
   icon?: string | React.ReactNode;
   content?: React.ReactNode;
@@ -14,29 +17,84 @@ export interface StepItem {
   error?: boolean;
   optional?: boolean;
   tooltip?: string;
+  status?: 'inactive' | 'active' | 'completed' | 'error' | 'disabled';
 }
 
-export interface DynStepperProps {
-  steps: StepItem[];
+export interface DynStepperProps extends BaseComponentProps, AccessibilityProps {
+  /** Array of step items */
+  steps?: StepItem[];
+  
+  /** Current active step value/id */
+  value?: string | number;
+  
+  /** Default active step value/id */
+  defaultValue?: string | number;
+  
+  /** Current active step index */
   activeStep?: number;
+  
+  /** Default active step index */
   defaultActiveStep?: number;
+  
+  /** Step change handler */
+  onChange?: (value: string | number, step: StepItem, index: number) => void;
+  
+  /** Stepper orientation */
   orientation?: 'horizontal' | 'vertical';
+  
+  /** Visual variant */
   variant?: 'default' | 'numbered' | 'dots' | 'progress';
+  
+  /** Size variant */
   size?: 'small' | 'medium' | 'large';
+  
+  /** Whether steps must be completed in order */
   linear?: boolean;
+  
+  /** Show step labels/titles */
   showLabels?: boolean;
+  
+  /** Show step descriptions */
   showDescription?: boolean;
+  
+  /** Allow clicking on steps to navigate */
   clickableSteps?: boolean;
+  
+  /** Additional CSS classes */
   className?: string;
+  
+  /** CSS class for step elements */
   stepClassName?: string;
+  
+  /** CSS class for content container */
   contentClassName?: string;
+  
+  /** Step change handler (legacy) */
   onStepChange?: (step: number, stepData: StepItem) => void;
+  
+  /** Step click handler */
   onStepClick?: (step: number, stepData: StepItem) => boolean | void;
+  
+  /** Custom step content renderer */
   renderStepContent?: (step: StepItem, index: number) => React.ReactNode;
+  
+  /** Custom step icon renderer */
   renderStepIcon?: (step: StepItem, index: number, isActive: boolean) => React.ReactNode;
+  
+  /** Component ID */
+  id?: string;
+  
+  /** ARIA label */
+  'aria-label'?: string;
+  
+  /** ARIA labelledby */
+  'aria-labelledby'?: string;
+  
+  /** Test ID */
+  'data-testid'?: string;
 }
 
-export interface DynStepperHandle {
+export interface DynStepperRef {
   nextStep: () => boolean;
   prevStep: () => boolean;
   goToStep: (step: number) => boolean;
@@ -46,6 +104,10 @@ export interface DynStepperHandle {
   completeStep: (step: number) => void;
   errorStep: (step: number, hasError: boolean) => void;
 }
+
+// Legacy alias
+export type DynStepperHandle = DynStepperRef;
+export type DynStep = StepItem;
 
 // Default configuration
 export const STEPPER_DEFAULTS = {

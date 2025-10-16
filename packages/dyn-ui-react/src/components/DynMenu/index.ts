@@ -1,2 +1,2 @@
 export { DynMenu } from './DynMenu';
-export type { DynMenuProps } from './DynMenu.types';
+export type { DynMenuProps, MenuItem } from './DynMenu.types';
