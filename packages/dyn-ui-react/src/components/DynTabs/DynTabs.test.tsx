@@ -7,7 +7,7 @@ import { describe, it, test, expect, beforeEach, vi } from 'vitest';
 import React, { createRef } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { axe } from 'jest-axe';
+import { testA11y } from '../../testing/accessibility';
 import { DynTabs } from './DynTabs';
 import { DynTabsRef, DynTabItem } from './DynTabs.types';
 import styles from './DynTabs.module.css';
@@ -123,9 +123,7 @@ describe('DynTabs', () => {
 
   describe('Accessibility', () => {
     test('has no accessibility violations', async () => {
-      const { container } = render(<DynTabs {...defaultProps} />);
-      const results = await axe(container);
-      expect(results).toHaveNoViolations();
+      await testA11y(<DynTabs {...defaultProps} />);
     });
 
     test('implements proper ARIA tablist pattern', () => {

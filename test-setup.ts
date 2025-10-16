@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
-import 'jest-axe/extend-expect';
 
 // Make vi globally available
 (globalThis as any).vi = vi;

@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
-import { axe } from 'jest-axe';
 import DynTable from './DynTable';
 import { DynTableColumn, TableAction } from './DynTable.types';
 
@@ -62,13 +61,13 @@ describe('DynTable', () => {
 
     it('renders all columns and data', () => {
       render(<DynTable data={sampleData} columns={sampleColumns} />);
-      
+
       // Headers
       expect(screen.getByText('Name')).toBeInTheDocument();
       expect(screen.getByText('Age')).toBeInTheDocument();
       expect(screen.getByText('Email')).toBeInTheDocument();
       expect(screen.getByText('Active')).toBeInTheDocument();
-      
+
       // Data
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
@@ -92,34 +91,34 @@ describe('DynTable', () => {
     it('handles row selection', () => {
       const onSelectionChange = vi.fn();
       render(
-        <DynTable 
-          data={sampleData} 
-          columns={sampleColumns} 
+        <DynTable
+          data={sampleData}
+          columns={sampleColumns}
           selectable="multiple"
           onSelectionChange={onSelectionChange}
         />
       );
-      
+
       const checkboxes = screen.getAllByRole('checkbox');
       fireEvent.click(checkboxes[1]); // Click first row checkbox
-      
+
       expect(onSelectionChange).toHaveBeenCalledWith(['1'], [sampleData[0]]);
     });
 
     it('handles select all', () => {
       const onSelectionChange = vi.fn();
       render(
-        <DynTable 
-          data={sampleData} 
-          columns={sampleColumns} 
+        <DynTable
+          data={sampleData}
+          columns={sampleColumns}
           selectable="multiple"
           onSelectionChange={onSelectionChange}
         />
       );
-      
+
       const selectAllCheckbox = screen.getAllByRole('checkbox')[0];
       fireEvent.click(selectAllCheckbox);
-      
+
       expect(onSelectionChange).toHaveBeenCalledWith(['1', '2', '3'], sampleData);
     });
   });
@@ -134,33 +133,33 @@ describe('DynTable', () => {
     it('handles column sorting', () => {
       const onSort = vi.fn();
       render(
-        <DynTable 
-          data={sampleData} 
-          columns={sampleColumns} 
+        <DynTable
+          data={sampleData}
+          columns={sampleColumns}
           onSort={onSort}
         />
       );
-      
+
       const nameHeader = screen.getByText('Name').closest('th');
       fireEvent.click(nameHeader!);
-      
+
       expect(onSort).toHaveBeenCalledWith('name', 'asc');
     });
 
     it('toggles sort direction on repeated clicks', () => {
       const onSort = vi.fn();
       render(
-        <DynTable 
-          data={sampleData} 
-          columns={sampleColumns} 
+        <DynTable
+          data={sampleData}
+          columns={sampleColumns}
           onSort={onSort}
         />
       );
-      
+
       const nameHeader = screen.getByText('Name').closest('th');
       fireEvent.click(nameHeader!);
       fireEvent.click(nameHeader!);
-      
+
       expect(onSort).toHaveBeenNthCalledWith(1, 'name', 'asc');
       expect(onSort).toHaveBeenNthCalledWith(2, 'name', 'desc');
     });
@@ -175,10 +174,10 @@ describe('DynTable', () => {
 
     it('calls action onClick handler', () => {
       render(<DynTable data={sampleData} columns={sampleColumns} actions={sampleActions} />);
-      
+
       const editButtons = screen.getAllByText('Edit');
       fireEvent.click(editButtons[0]);
-      
+
       expect(sampleActions[0].onClick).toHaveBeenCalledWith(sampleData[0], 0);
     });
   });
@@ -198,7 +197,7 @@ describe('DynTable', () => {
           render: (value) => <strong>Custom: {value}</strong>,
         },
       ];
-      
+
       render(<DynTable data={sampleData} columns={customColumns} />);
       expect(screen.getByText(/Custom: John Doe/)).toBeInTheDocument();
     });
@@ -214,13 +213,13 @@ describe('DynTable', () => {
 
     it('renders pagination controls', () => {
       render(
-        <DynTable 
-          data={sampleData} 
-          columns={sampleColumns} 
+        <DynTable
+          data={sampleData}
+          columns={sampleColumns}
           pagination={pagination}
         />
       );
-      
+
       expect(screen.getByText('Previous')).toBeInTheDocument();
       expect(screen.getByText('Next')).toBeInTheDocument();
       expect(screen.getByText('Page 1')).toBeInTheDocument();
@@ -228,16 +227,16 @@ describe('DynTable', () => {
 
     it('handles pagination changes', () => {
       render(
-        <DynTable 
-          data={sampleData} 
-          columns={sampleColumns} 
+        <DynTable
+          data={sampleData}
+          columns={sampleColumns}
           pagination={pagination}
         />
       );
-      
+
       const nextButton = screen.getByText('Next');
       fireEvent.click(nextButton);
-      
+
       expect(pagination.onChange).toHaveBeenCalledWith(2, 2);
     });
   });
@@ -255,7 +254,7 @@ describe('DynTable', () => {
         <DynTable data={sampleData} columns={sampleColumns} size="small" />
       );
       expect(container.firstChild).toHaveClass('dyn-table--small');
-      
+
       rerender(<DynTable data={sampleData} columns={sampleColumns} size="large" />);
       expect(container.firstChild).toHaveClass('dyn-table--large');
     });
@@ -265,7 +264,7 @@ describe('DynTable', () => {
         <DynTable data={sampleData} columns={sampleColumns} striped />
       );
       expect(container.firstChild).toHaveClass('dyn-table--striped');
-      
+
       rerender(
         <DynTable data={sampleData} columns={sampleColumns} bordered={false} />
       );

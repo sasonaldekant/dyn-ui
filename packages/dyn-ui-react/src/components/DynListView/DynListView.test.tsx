@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
-import { axe } from 'jest-axe';
 import DynListView from './DynListView';
 import { ListAction } from './DynListView.types';
 
@@ -71,32 +70,32 @@ describe('DynListView', () => {
     it('handles item selection', () => {
       const onSelectionChange = vi.fn();
       render(
-        <DynListView 
-          data={sampleData} 
-          selectable 
+        <DynListView
+          data={sampleData}
+          selectable
           onSelectionChange={onSelectionChange}
         />
       );
-      
+
       const checkboxes = screen.getAllByRole('checkbox');
       fireEvent.click(checkboxes[1]); // Click first item checkbox
-      
+
       expect(onSelectionChange).toHaveBeenCalledWith(['1'], [sampleData[0]]);
     });
 
     it('handles select all', () => {
       const onSelectionChange = vi.fn();
       render(
-        <DynListView 
-          data={sampleData} 
-          selectable 
+        <DynListView
+          data={sampleData}
+          selectable
           onSelectionChange={onSelectionChange}
         />
       );
-      
+
       const selectAllCheckbox = screen.getAllByRole('checkbox')[0];
       fireEvent.click(selectAllCheckbox);
-      
+
       expect(onSelectionChange).toHaveBeenCalledWith(['1', '2', '3'], sampleData);
     });
   });
@@ -110,10 +109,10 @@ describe('DynListView', () => {
 
     it('calls action onClick handler', () => {
       render(<DynListView data={sampleData} actions={sampleActions} />);
-      
+
       const editButtons = screen.getAllByText('Edit');
       fireEvent.click(editButtons[0]);
-      
+
       expect(sampleActions[0].onClick).toHaveBeenCalledWith(sampleData[0], 0);
     });
   });
@@ -122,7 +121,7 @@ describe('DynListView', () => {
     it('uses custom renderItem function', () => {
       const customRender = vi.fn((item) => <div>Custom: {item.title}</div>);
       render(<DynListView data={sampleData} renderItem={customRender} />);
-      
+
       expect(screen.getByText('Custom: Item 1')).toBeInTheDocument();
       expect(customRender).toHaveBeenCalledWith(sampleData[0], 0);
     });
@@ -138,7 +137,7 @@ describe('DynListView', () => {
         prop3: 'value3',
         prop4: 'value4',
       }];
-      
+
       render(<DynListView data={complexData} />);
       const expandButton = screen.getByRole('button');
       expect(expandButton).toBeInTheDocument();
@@ -153,11 +152,11 @@ describe('DynListView', () => {
         prop2: 'value2',
         prop3: 'value3',
       }];
-      
+
       render(<DynListView data={complexData} />);
       const expandButton = screen.getByRole('button');
       fireEvent.click(expandButton);
-      
+
       expect(screen.getByText(/prop1:/)).toBeInTheDocument();
       expect(screen.getByText(/value1/)).toBeInTheDocument();
     });
@@ -176,7 +175,7 @@ describe('DynListView', () => {
         <DynListView data={sampleData} size="small" />
       );
       expect(container.firstChild).toHaveClass('dyn-list-view--small');
-      
+
       rerender(<DynListView data={sampleData} size="large" />);
       expect(container.firstChild).toHaveClass('dyn-list-view--large');
     });

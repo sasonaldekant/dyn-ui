@@ -146,8 +146,8 @@ export type DynBoxProps<E extends ElementType = 'div'> = PolymorphicComponentPro
   DynBoxOwnProps
 > & {
   as?: E;
-  onClick?: MouseEventHandler<E>;
-  onKeyDown?: KeyboardEventHandler<E>;
+  onClick?: MouseEventHandler<any>;
+  onKeyDown?: KeyboardEventHandler<any>;
 };
 
 export type DynBoxRef<E extends ElementType = 'div'> = ComponentRef<E>;

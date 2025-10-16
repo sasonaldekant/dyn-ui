@@ -1,12 +1,11 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { axe, toHaveNoViolations } from 'jest-axe';
+import { testA11y } from '../../testing/accessibility';
 import { describe, expect, it, vi } from 'vitest';
 import { DynInput } from './DynInput';
 import styles from './DynInput.module.css';
 
-// Extend Vitest matchers
-expect.extend(toHaveNoViolations);
+// Accessibility assertions use axe-core directly
 
 // Mock DynIcon component
 vi.mock('../DynIcon', () => ({
@@ -80,8 +79,7 @@ describe('DynInput', () => {
       const { container } = render(
         <DynInput name="accessible" label="Accessible Input" />
       );
-      const results = await axe(container);
-      expect(results).toHaveNoViolations();
+  await testA11y(<DynInput name="accessible" label="Accessible Input" />);
     });
 
     it('properly associates label with input', () => {

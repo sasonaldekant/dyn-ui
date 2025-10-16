@@ -59,7 +59,9 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
       const next = (idx + delta + count) % count;
       const nextItem = items[next];
       if (nextItem?.disabled) return; // simple guard; could loop to next enabled if needed
-      onSelect(nextItem.value);
+      if (nextItem?.value) {
+        onSelect(nextItem.value);
+      }
       tabsRef.current[next]?.focus();
     };
 
@@ -80,7 +82,9 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
           break;
         case 'Home':
           e.preventDefault();
-          onSelect(items[0].value);
+          if (items[0]?.value) {
+            onSelect(items[0].value);
+          }
           tabsRef.current[0]?.focus();
           break;
         case 'End':

@@ -8,6 +8,8 @@ import { DynPageProps } from '../../types/layout.types';
 import { classNames } from '../../utils/classNames';
 import { DynButton } from '../DynButton';
 
+export type DynButtonKind = 'primary' | 'secondary' | 'danger';
+
 export const DynPage: React.FC<DynPageProps> = ({
   title,
   subtitle,
@@ -123,7 +125,7 @@ export const DynPage: React.FC<DynPageProps> = ({
     <div className={pageClasses} id={id} data-testid={testId}>
       <header className="dyn-page-header">
         {renderBreadcrumbs()}
-        
+
         <div className="dyn-page-title-section">
           <div className="dyn-page-title-content">
             <h1 className="dyn-page-title">{title}</h1>

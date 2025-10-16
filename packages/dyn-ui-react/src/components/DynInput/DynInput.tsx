@@ -49,11 +49,11 @@ type DynInputComponentProps = DynInputProps & DynInputDefaultProps;
 
 /**
  * DynInput - Enterprise-grade input component
- * 
+ *
  * A highly accessible and configurable input component that supports validation,
  * masking, icons, and various input types. Built following the DynAvatar gold standard
  * for consistency and reliability.
- * 
+ *
  * @example
  * ```tsx
  * <DynInput
@@ -82,7 +82,7 @@ export const DynInput = forwardRef<DynInputRef, DynInputProps>(
       visible = DYN_INPUT_DEFAULT_PROPS.visible,
       value: propValue = '',
       errorMessage,
-      validation,
+      validation: Array.isArray(validation) ? validation : validation ? [validation] : undefined,
       className,
       type = DYN_INPUT_DEFAULT_PROPS.type,
       size = DYN_INPUT_DEFAULT_PROPS.size,
@@ -198,7 +198,7 @@ export const DynInput = forwardRef<DynInputRef, DynInputProps>(
         setValue(newValue);
         onChange?.(type === 'number' ? Number(newValue) : newValue);
       }
-      
+
       clearError();
     };
 
@@ -216,7 +216,7 @@ export const DynInput = forwardRef<DynInputRef, DynInputProps>(
 
     const handleClear = () => {
       if (!isInteractive) return;
-      
+
       setValue('');
       onChange?.('');
       clearError();
@@ -314,7 +314,7 @@ export const DynInput = forwardRef<DynInputRef, DynInputProps>(
       >
         <div className={containerClasses}>
           {iconElement}
-          
+
           <input
             ref={inputRef}
             id={internalId}
@@ -347,7 +347,7 @@ export const DynInput = forwardRef<DynInputRef, DynInputProps>(
             role={role}
             {...rest}
           />
-          
+
           {clearButtonElement}
         </div>
 

@@ -1,11 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { axe, toHaveNoViolations } from 'jest-axe';
+import { testA11y } from '../../testing/accessibility';
 import { describe, expect, it, vi } from 'vitest';
 import { DynButton } from './DynButton';
 import styles from './DynButton.module.css';
 
-// Extend Vitest matchers
-expect.extend(toHaveNoViolations);
+// `toHaveNoViolations` is registered globally in vitest.setup.ts
 
 const classes = styles as Record<string, string>;
 
@@ -66,9 +65,7 @@ describe('DynButton', () => {
 
   describe('Accessibility', () => {
     it('has no accessibility violations', async () => {
-      const { container } = render(<DynButton label="Accessible Button" />);
-      const results = await axe(container);
-      expect(results).toHaveNoViolations();
+      await testA11y(<DynButton label="Accessible Button" />);
     });
 
     it('provides proper ARIA labels for icon-only buttons', () => {

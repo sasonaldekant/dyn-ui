@@ -1,10 +1,11 @@
+import * as React from 'react';
 import { createRef } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { testAccessibility } from '../../test-utils';
 import { DynBox } from './DynBox';
-import { DYN_BOX_DEFAULT_PROPS } from './DynBox.types';
+import { DYN_BOX_DEFAULT_PROPS, DynBoxOwnProps } from './DynBox.types';
 import styles from './DynBox.module.css';
 
 const getStyleClass = (className: string): string => {
@@ -15,7 +16,7 @@ describe('DynBox', () => {
   describe('Basic Functionality', () => {
     it('exports a React component', () => {
       expect(DynBox).toBeDefined();
-      expect(DynBox.displayName).toBe('DynBox');
+      expect((DynBox as any).displayName).toBe('DynBox');
     });
 
     it('renders with default props', () => {
@@ -35,9 +36,9 @@ describe('DynBox', () => {
     });
 
     it('supports polymorphic rendering and ref forwarding', () => {
-      const ref = createRef<HTMLDivElement>();
+      const ref = createRef<any>();
       const { rerender } = render(
-        <DynBox ref={ref} data-testid="polymorphic">
+        <DynBox ref={ref as any} data-testid="polymorphic">
           Content
         </DynBox>
       );
@@ -45,7 +46,7 @@ describe('DynBox', () => {
       expect(screen.getByTestId('polymorphic').tagName).toBe('DIV');
 
       rerender(
-        <DynBox as="section" ref={ref} data-testid="polymorphic">
+        <DynBox as="section" ref={ref as any} data-testid="polymorphic">
           Content
         </DynBox>
       );
@@ -820,3 +821,7 @@ describe('DynBox', () => {
     });
   });
 });
+
+// Tests import the real `DynBox` from the component module above.
+// The test file should not declare or export the component implementation.
+// Any stray component/type definitions were removed to avoid conflicts with the real module.

@@ -24,43 +24,41 @@ const FILTERED_PROPS = new Set([
 /**
  * DynBox — layout container following DynAvatar gold standard patterns.
  */
-export const DynBox = forwardRef<DynBoxRef, DynBoxProps>(
-  (
-    {
-      as: Component = 'div',
-      padding = 'md',
-      radius = 'md',
-      shadow = 'none',
-      border = 'default',
-      background = 'surface',
-      align,
-      justify,
-      direction = 'column',
-      gap = 'md',
-      wrap,
-      width,
-      height,
-      maxWidth,
-      maxHeight,
-      minWidth,
-      minHeight,
-      className,
-      style,
-      id,
-      role,
-      'aria-label': ariaLabel,
-      'aria-describedby': ariaDescribedBy,
-      'aria-labelledby': ariaLabelledBy,
-      'data-testid': dataTestId = 'dyn-box',
-      focusOnMount,
-      interactive,
-      ariaLiveMessage,
-      ariaLivePoliteness = 'polite',
-      children,
-      ...rest
-    },
-    ref
-  ) => {
+function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>, ref: DynBoxRef<E>) {
+  const {
+    as,
+    padding = 'md',
+    radius = 'md',
+    shadow = 'none',
+    border = 'default',
+    background = 'surface',
+    align,
+    justify,
+    direction = 'column',
+    gap = 'md',
+    wrap,
+    width,
+    height,
+    maxWidth,
+    maxHeight,
+    minWidth,
+    minHeight,
+    className,
+    style,
+    id,
+    role,
+    'aria-label': ariaLabel,
+    'aria-describedby': ariaDescribedBy,
+    'aria-labelledby': ariaLabelledBy,
+    'data-testid': dataTestId = 'dyn-box',
+    focusOnMount,
+    interactive,
+    ariaLiveMessage,
+    ariaLivePoliteness = 'polite',
+    children,
+    ...rest
+  } = props;
+  const Component = (as ?? 'div') as React.ElementType;
     // Use dyn-box prefix expected by tests when id not provided
     const internalId = useMemo(() => id || generateId('dyn-box'), [id]);
 
@@ -137,32 +135,38 @@ export const DynBox = forwardRef<DynBoxRef, DynBoxProps>(
       }
     };
 
-    const element = React.createElement(
-      Component as any,
-      {
-        ref,
-        id: internalId,
-        role: interactive ? (role ?? 'button') : role,
-        className: classes,
-        style: styleVars,
-        'aria-label': ariaLabel,
-        'aria-describedby': describedBy,
-        'aria-labelledby': ariaLabelledBy,
-        'data-testid': dataTestId,
-        tabIndex: interactive ? ((domProps as any).tabIndex ?? 0) : (domProps as any).tabIndex,
-        onKeyDown,
-        ...domProps,
-      } as any,
-      children,
-      ariaLiveMessage && (
-        <span id={liveRegionId} aria-live={ariaLivePoliteness} className="sr-only">
-          {ariaLiveMessage}
-        </span>
-      )
-    );
+  const element = React.createElement(
+    Component as any,
+    {
+      ref,
+      id: internalId,
+      role: interactive ? (role ?? 'button') : role,
+      className: classes,
+      style: styleVars,
+      'aria-label': ariaLabel,
+      'aria-describedby': describedBy,
+      'aria-labelledby': ariaLabelledBy,
+      'data-testid': dataTestId,
+      tabIndex: interactive ? ((domProps as any).tabIndex ?? 0) : (domProps as any).tabIndex,
+      onKeyDown,
+      ...domProps,
+    } as any,
+    children,
+    ariaLiveMessage && (
+      <span id={liveRegionId} aria-live={ariaLivePoliteness} className="sr-only">
+        {ariaLiveMessage}
+      </span>
+    )
+  );
 
-    return element;
-  }
-);
+  return element;
+}
 
-DynBox.displayName = 'DynBox';
+// Preserve polymorphic generic on exported component
+const _DynBox = forwardRef(DynBoxInner as any) as React.NamedExoticComponent<any>;
+export const DynBox = _DynBox as <E extends React.ElementType = 'div'>(
+  props: DynBoxProps<E> & { ref?: DynBoxRef<E> }
+) => React.ReactElement | null;
+
+// Assign displayName to the component
+(_DynBox as React.NamedExoticComponent).displayName = 'DynBox';
