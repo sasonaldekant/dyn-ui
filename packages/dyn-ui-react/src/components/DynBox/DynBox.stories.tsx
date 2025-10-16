@@ -105,7 +105,7 @@ export const Variants: Story = {
         <strong>Danger</strong>
         <br />Error state indication
       </DynBox>
-      <DynBox border borderRadius="md" p="sm">
+      <DynBox border="default" borderRadius="md" p="sm">
         <strong>Neutral</strong>
         <br />Border-only variant
       </DynBox>
@@ -158,7 +158,7 @@ export const Interactive: Story = {
         interactive
         role="tab"
         aria-label="Custom tab element"
-        border
+        border="default"
         p="md"
         borderRadius="md"
         onClick={() => console.log('Tab clicked')}
@@ -234,7 +234,7 @@ export const Accessibility: Story = {
 
       <DynBox
         as="section"
-        border
+        border="default"
         p="md"
         borderRadius="md"
         role="complementary"
@@ -311,8 +311,8 @@ export const LayoutSystem: Story = {
         <DynBox
           display="flex"
           flexDirection="row"
-          justifyContent="space-between"
-          alignItems="center"
+          justify="space-between"
+          align="center"
           gap="md"
           bg="tertiary"
           p="md"
@@ -552,7 +552,7 @@ export const Performance: Story = {
       </DynBox>
 
       {/* Edge cases */}
-      <DynBox border p="md" borderRadius="md">
+      <DynBox border="default"  p="md" borderRadius="md">
         <h3 style={{ margin: '0 0 1rem 0' }}>Edge Cases Handled</h3>
         <DynBox display="flex" flexDirection="column" gap="sm">
           <DynBox bg="tertiary" p="sm" borderRadius="sm" width={0} height={0}>

@@ -43,6 +43,12 @@ export const DynBox = forwardRef<DynBoxRef, DynBoxProps>(
   ) => {
     const internalId = useMemo(() => id || generateId('box'), [id]);
 
+    // Extract data-testid from rest props to avoid union type complexity
+    const { ['data-testid']: dataTestIdFromRest, ...restProps } = rest as React.HTMLAttributes<HTMLDivElement>;
+    const dataTestId = typeof dataTestIdFromRest === 'string' && dataTestIdFromRest.length > 0
+      ? dataTestIdFromRest
+      : 'dyn-box';
+
     const classes = cn(
       getStyleClass('root'),
       getStyleClass(`pad-${padding}`),
