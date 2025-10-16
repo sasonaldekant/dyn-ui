@@ -48,8 +48,13 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
   const internalId = useMemo(() => id || generateId('dyn-box'), [id]);
   const domProps = Object.fromEntries(Object.entries(rest).filter(([k]) => !FILTERED_PROPS.has(k)));
 
-  // expose ref even if parent passed function ref; ensure we can focus
-  const elementRef = (ref as any) || React.createRef<HTMLElement>();
+  // Stable ref that also forwards
+  const elementRef = React.useRef<HTMLElement | null>(null);
+  const setRefs = (node: any) => {
+    elementRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref && 'current' in (ref as any)) (ref as any).current = node;
+  };
 
   const legacyAliases: string[] = ['box'];
   const finalDirection = flexDirection || direction;
@@ -131,15 +136,12 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
   } as React.CSSProperties;
 
   useEffect(() => {
-    if (focusOnMount) {
+    if (focusOnMount && interactive) {
       queueMicrotask?.(() => {
-        try {
-          const el = (elementRef.current ?? (ref as any)?.current) as HTMLElement | undefined;
-          el?.focus?.();
-        } catch {}
+        try { elementRef.current?.focus?.(); } catch {}
       });
     }
-  }, [focusOnMount]);
+  }, [focusOnMount, interactive]);
 
   const liveRegionId = ariaLiveMessage ? `${internalId}-liveregion` : undefined;
   const describedBy = [ariaDescribedBy, liveRegionId].filter(Boolean).join(' ') || undefined;
@@ -156,7 +158,7 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
   const element = React.createElement(
     Component as any,
     {
-      ref: elementRef,
+      ref: setRefs,
       id: internalId,
       role: interactive ? (role ?? 'button') : role,
       className: classes,
