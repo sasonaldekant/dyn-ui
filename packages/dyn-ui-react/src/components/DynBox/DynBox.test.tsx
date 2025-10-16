@@ -89,27 +89,27 @@ describe('DynBox', () => {
     it('generates proper ID when not provided', () => {
       render(<DynBox data-testid="auto-id" />);
       const element = screen.getByTestId('auto-id');
-      
+
       expect(element.id).toMatch(/^dyn-box-\d+$/);
     });
 
     it('uses custom ID when provided', () => {
       render(<DynBox id="custom-id" data-testid="custom-id-box" />);
       const element = screen.getByTestId('custom-id-box');
-      
+
       expect(element.id).toBe('custom-id');
     });
 
     it('forwards additional props correctly', () => {
       render(
-        <DynBox 
+        <DynBox
           data-testid="forwarded-props"
           data-custom="value"
           title="Tooltip text"
         />
       );
       const element = screen.getByTestId('forwarded-props');
-      
+
       expect(element).toHaveAttribute('data-custom', 'value');
       expect(element).toHaveAttribute('title', 'Tooltip text');
     });
@@ -251,7 +251,7 @@ describe('DynBox', () => {
 
       const element = screen.getByTestId('sr-test');
       const srElement = element.querySelector('.dyn-sr-only');
-      
+
       expect(srElement).toBeInTheDocument();
       expect(srElement).toHaveTextContent('Screen reader message');
     });
@@ -264,10 +264,10 @@ describe('DynBox', () => {
       const user = userEvent.setup();
 
       render(
-        <DynBox 
-          interactive 
-          onClick={onClick} 
-          onKeyDown={onKeyDown} 
+        <DynBox
+          interactive
+          onClick={onClick}
+          onKeyDown={onKeyDown}
           aria-label="Interactive"
           data-testid="interactive-box"
         >
@@ -276,7 +276,7 @@ describe('DynBox', () => {
       );
 
       const element = screen.getByTestId('interactive-box');
-      
+
       // Test click
       await user.click(element);
       expect(onClick).toHaveBeenCalledTimes(1);
@@ -285,17 +285,17 @@ describe('DynBox', () => {
       element.focus();
       await user.keyboard('{Enter}');
       expect(onClick).toHaveBeenCalledTimes(2);
-      
+
       await user.keyboard(' ');
       expect(onClick).toHaveBeenCalledTimes(3);
-      
+
       // onKeyDown should be called for each keypress
       expect(onKeyDown).toHaveBeenCalledTimes(2);
     });
 
     it('handles interactive state with proper attributes', () => {
       render(
-        <DynBox 
+        <DynBox
           interactive
           aria-label="Interactive box"
           data-testid="interactive-attrs"
@@ -310,7 +310,7 @@ describe('DynBox', () => {
 
     it('respects custom role for interactive elements', () => {
       render(
-        <DynBox 
+        <DynBox
           interactive
           role="tab"
           aria-label="Tab element"
@@ -324,7 +324,7 @@ describe('DynBox', () => {
 
     it('respects custom tabIndex', () => {
       render(
-        <DynBox 
+        <DynBox
           interactive
           tabIndex={-1}
           aria-label="Custom tabIndex"
@@ -338,7 +338,7 @@ describe('DynBox', () => {
 
     it('handles non-interactive state correctly', () => {
       render(
-        <DynBox 
+        <DynBox
           aria-label="Non-interactive"
           data-testid="non-interactive"
         >
@@ -357,7 +357,7 @@ describe('DynBox', () => {
       const user = userEvent.setup();
 
       render(
-        <DynBox 
+        <DynBox
           onClick={onClick}
           data-testid="click-only"
         >
@@ -366,11 +366,11 @@ describe('DynBox', () => {
       );
 
       const element = screen.getByTestId('click-only');
-      
+
       // Click should work
       await user.click(element);
       expect(onClick).toHaveBeenCalledTimes(1);
-      
+
       // Keyboard should not trigger click
       element.focus();
       await user.keyboard('{Enter}');
@@ -425,7 +425,7 @@ describe('DynBox', () => {
 
     it('applies background variant and border utilities', () => {
       render(
-        <DynBox data-testid="variant-box" bg="primary" border borderRadius="md" shadow="lg" />
+        <DynBox data-testid="variant-box" bg="primary" border="default"  borderRadius="md" shadow="lg" />
       );
 
       const element = screen.getByTestId('variant-box');
@@ -437,12 +437,12 @@ describe('DynBox', () => {
 
     it('applies all background variants', () => {
       const variants = ['primary', 'secondary', 'tertiary', 'success', 'warning', 'danger'] as const;
-      
+
       variants.forEach(variant => {
         const { unmount } = render(
           <DynBox bg={variant} data-testid={`bg-${variant}`} />
         );
-        
+
         expect(screen.getByTestId(`bg-${variant}`)).toHaveClass(getStyleClass(`box--bg-${variant}`));
         unmount();
       });
@@ -450,9 +450,9 @@ describe('DynBox', () => {
 
     it('handles custom background colors', () => {
       render(
-        <DynBox 
+        <DynBox
           data-testid="custom-bg"
-          bg="rgba(255,255,255,0.1)" 
+          bg="rgba(255,255,255,0.1)"
         />
       );
 
@@ -466,9 +466,9 @@ describe('DynBox', () => {
 
     it('handles custom border radius values', () => {
       render(
-        <DynBox 
+        <DynBox
           data-testid="custom-radius"
-          borderRadius="20px" 
+          borderRadius="20px"
         />
       );
 
@@ -486,8 +486,8 @@ describe('DynBox', () => {
           data-testid="flex-box"
           display="flex"
           flexDirection="column"
-          justifyContent="center"
-          alignItems="flex-start"
+          justify="center"
+          align="flex-start"
           gap="sm"
           rowGap="md"
           columnGap="lg"
@@ -552,12 +552,12 @@ describe('DynBox', () => {
 
     it('applies display variants correctly', () => {
       const displays = ['flex', 'inline-flex', 'grid', 'inline-grid', 'inline', 'inline-block', 'none'] as const;
-      
+
       displays.forEach(display => {
         const { unmount } = render(
           <DynBox display={display} data-testid={`display-${display}`} />
         );
-        
+
         expect(screen.getByTestId(`display-${display}`)).toHaveClass(getStyleClass(`box--${display}`));
         unmount();
       });
@@ -688,20 +688,20 @@ describe('DynBox', () => {
           p="lg"
           m="sm"
           bg="primary"
-          border
+          border="default"
           borderRadius="md"
           shadow="lg"
           display="flex"
           flexDirection="row"
-          justifyContent="space-between"
-          alignItems="center"
+          justify="space-between"
+          align="center"
           gap="md"
           cssVars={{ '--custom': 'value' }}
         />
       );
 
       const element = screen.getByTestId('complex-box');
-      
+
       // Check CSS classes
       expect(element).toHaveClass(getStyleClass('box'));
       expect(element).toHaveClass(getStyleClass('box--bg-primary'));
@@ -709,7 +709,7 @@ describe('DynBox', () => {
       expect(element).toHaveClass(getStyleClass('box--rounded-md'));
       expect(element).toHaveClass(getStyleClass('box--shadow-lg'));
       expect(element).toHaveClass(getStyleClass('box--flex'));
-      
+
       // Check CSS variables
       expect(element).toHaveStyle({
         '--dyn-box-padding': 'var(--dyn-spacing-lg, var(--spacing-lg, 1.5rem))',
@@ -737,7 +737,7 @@ describe('DynBox', () => {
 
       const element = screen.getByTestId('undefined-props');
       expect(element).toBeInTheDocument();
-      
+
       // Check that style attribute exists but doesn't contain these variables
       const styleAttr = element.getAttribute('style');
       if (styleAttr) {
@@ -767,7 +767,7 @@ describe('DynBox', () => {
       // CSS modules may return a hashed class name even for non-existent classes
       // So we just test that it returns a string (empty or hashed)
       expect(typeof nonExistentClass).toBe('string');
-      
+
       render(
         <DynBox
           data-testid="missing-class"
@@ -787,7 +787,7 @@ describe('DynBox', () => {
 
     it('maintains performance with complex prop combinations', () => {
       const startTime = performance.now();
-      
+
       render(
         <DynBox
           data-testid="performance-test"
@@ -796,25 +796,25 @@ describe('DynBox', () => {
           width={500} height={300} minWidth={200} maxWidth={800}
           minHeight={100} maxHeight={600}
           bg="primary" color="#ffffff" backgroundColor="rgba(0,0,0,0.1)"
-          border borderTop borderRight borderBottom borderLeft
+          border="default"  borderTop borderRight borderBottom borderLeft
           borderRadius="lg" customBorderRadius="20px"
           shadow="md" textAlign="center"
           overflow="hidden" overflowX="scroll" overflowY="auto"
-          display="flex" flexDirection="column" flexWrap="wrap"
-          justifyContent="center" alignItems="stretch" alignContent="flex-start"
+          display="flex" flexDirection="column" wrap="wrap"
+          justify="center" align="stretch" alignContent="flex-start"
           gap="lg" rowGap="md" columnGap="sm"
           position="relative" top={10} right={20} bottom={30} left={40} zIndex={999}
           interactive hideOnMobile tabletOnly
           cssVars={{ '--test': 'value', '--another': '42px' }}
         />
       );
-      
+
       const endTime = performance.now();
       const renderTime = endTime - startTime;
-      
+
       // Ensure render completes within reasonable time (adjust threshold as needed)
       expect(renderTime).toBeLessThan(100); // 100ms threshold
-      
+
       const element = screen.getByTestId('performance-test');
       expect(element).toBeInTheDocument();
     });
