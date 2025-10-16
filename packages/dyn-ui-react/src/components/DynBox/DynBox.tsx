@@ -87,5 +87,4 @@ export const DynBox = forwardRef<DynBoxRef, DynBoxProps>(
   }
 );
 
-export default DynBox;
 DynBox.displayName = 'DynBox';
