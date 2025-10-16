@@ -21,12 +21,13 @@ export type BoxPosition = 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky
 export type SpacingSize = '0' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'auto';
 
 // Allow both predefined variants and custom colors
-export type BackgroundVariant = 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | string;
+export type BackgroundVariant = 'surface' | 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | 'none' | string;
 
 // Allow both predefined radius tokens and custom values
 export type BorderRadius = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full' | string;
 
-export type Shadow = 'sm' | 'md' | 'lg';
+export type BorderVariant = 'none' | 'default' | 'subtle' | 'strong' | string;
+export type Shadow = 'none' | 'sm' | 'md' | 'lg' | string;
 export type TextAlign = 'left' | 'center' | 'right' | 'justify';
 export type Overflow = 'visible' | 'hidden' | 'auto' | 'scroll';
 
@@ -70,8 +71,8 @@ export interface DynBoxOwnProps
   /** Position property */
   position?: BoxPosition;
 
-  /** Padding (all sides) */
-  p?: SpacingSize;
+  /** Padding (all sides) - used in implementation */
+  padding?: SpacingSize;
   /** Horizontal padding */
   px?: SpacingSize;
   /** Vertical padding */
@@ -113,8 +114,8 @@ export interface DynBoxOwnProps
   /** Maximum height */
   maxHeight?: string | number;
 
-  /** Background color variant or custom color */
-  bg?: BackgroundVariant;
+  /** Background color variant or custom color - used in implementation */
+  background?: BackgroundVariant;
   /** Custom background color */
   backgroundColor?: string;
 
@@ -122,7 +123,7 @@ export interface DynBoxOwnProps
   color?: string;
 
   /** Apply border on all sides */
-  border?: boolean;
+  border?: BorderVariant;
   /** Apply border on top */
   borderTop?: boolean;
   /** Apply border on right */
@@ -131,8 +132,8 @@ export interface DynBoxOwnProps
   borderBottom?: boolean;
   /** Apply border on left */
   borderLeft?: boolean;
-  /** Border radius token or custom value */
-  borderRadius?: BorderRadius;
+  /** Border radius token or custom value - used in implementation */
+  radius?: BorderRadius;
   /** Custom border radius */
   customBorderRadius?: string;
 
@@ -149,17 +150,17 @@ export interface DynBoxOwnProps
   /** Vertical overflow behaviour */
   overflowY?: Overflow;
 
-  /** Flexbox direction */
-  flexDirection?: FlexDirection;
-  /** Flexbox wrap */
-  flexWrap?: FlexWrap;
-  /** Flexbox justify content */
-  justifyContent?: JustifyContent;
-  /** Flexbox align items */
-  alignItems?: AlignItems;
+  /** Flexbox direction - used in implementation */
+  direction?: FlexDirection;
+  /** Flexbox wrap - used in implementation */
+  wrap?: FlexWrap;
+  /** Flexbox justify content - used in implementation */
+  justify?: JustifyContent;
+  /** Flexbox align items - used in implementation */
+  align?: AlignItems;
   /** Flexbox align content */
   alignContent?: AlignContent;
-  /** Gap */
+  /** Gap - used in implementation */
   gap?: SpacingSize;
   /** Row gap */
   rowGap?: SpacingSize;
