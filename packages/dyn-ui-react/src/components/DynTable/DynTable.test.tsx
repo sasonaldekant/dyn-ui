@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+import { axe } from 'jest-axe';
 import DynTable from './DynTable';
 import { DynTableColumn, TableAction } from './DynTable.types';
 
@@ -21,20 +22,20 @@ const sampleActions: TableAction[] = [
   {
     key: 'edit',
     title: 'Edit',
-    onClick: jest.fn(),
+    onClick: vi.fn(),
   },
   {
     key: 'delete',
     title: 'Delete',
     type: 'danger',
-    onClick: jest.fn(),
+    onClick: vi.fn(),
   },
 ];
 
 describe('DynTable', () => {
   beforeEach(() => {
     sampleActions.forEach(action => {
-      (action.onClick as jest.Mock).mockClear();
+      (action.onClick as ReturnType<typeof vi.fn>).mockClear();
     });
   });
 
@@ -89,7 +90,7 @@ describe('DynTable', () => {
     });
 
     it('handles row selection', () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       render(
         <DynTable 
           data={sampleData} 
@@ -106,7 +107,7 @@ describe('DynTable', () => {
     });
 
     it('handles select all', () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       render(
         <DynTable 
           data={sampleData} 
@@ -131,7 +132,7 @@ describe('DynTable', () => {
     });
 
     it('handles column sorting', () => {
-      const onSort = jest.fn();
+      const onSort = vi.fn();
       render(
         <DynTable 
           data={sampleData} 
@@ -147,7 +148,7 @@ describe('DynTable', () => {
     });
 
     it('toggles sort direction on repeated clicks', () => {
-      const onSort = jest.fn();
+      const onSort = vi.fn();
       render(
         <DynTable 
           data={sampleData} 
@@ -208,7 +209,7 @@ describe('DynTable', () => {
       current: 1,
       pageSize: 2,
       total: 10,
-      onChange: jest.fn(),
+      onChange: vi.fn(),
     };
 
     it('renders pagination controls', () => {
