@@ -1,3 +1,2 @@
-export { default as DynTabs } from "./DynTabs";
-export { DynTabs } from "./DynTabs";
-export type * from "./DynTabs.types";
+export { DynTabs } from './DynTabs';
+export type { DynTabsProps } from './DynTabs.types';
