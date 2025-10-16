@@ -6,32 +6,21 @@ import styles from './DynBox.module.css';
 
 const getStyleClass = (name: string) => (styles as Record<string, string>)[name] || '';
 
-// Props that should NOT be passed to DOM
 const FILTERED_PROPS = new Set([
-  'as', 'padding', 'p', 'px', 'py', 'pt', 'pr', 'pb', 'pl',
-  'm', 'mx', 'my', 'mt', 'mr', 'mb', 'ml',
-  'radius', 'borderRadius', 'customBorderRadius', 'shadow', 'border',
-  'background', 'bg', 'backgroundColor', 'color',
-  'align', 'justify', 'direction', 'flexDirection', 'wrap', 'gap', 'rowGap', 'columnGap',
-  'gridTemplateColumns', 'gridTemplateRows', 'gridTemplateAreas',
-  'top', 'right', 'bottom', 'left', 'zIndex',
-  'interactive', 'cssVars', 'ariaLiveMessage', 'ariaLivePoliteness', 'focusOnMount',
-  'display', 'position', 'textAlign', 'overflow', 'overflowX', 'overflowY',
-  'alignContent', 'width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight',
-  'hideOnMobile', 'hideOnTablet', 'hideOnDesktop', 'mobileOnly', 'tabletOnly', 'desktopOnly'
+  'as','padding','p','px','py','pt','pr','pb','pl','m','mx','my','mt','mr','mb','ml',
+  'radius','borderRadius','customBorderRadius','shadow','border','background','bg','backgroundColor','color',
+  'align','justify','direction','flexDirection','wrap','gap','rowGap','columnGap',
+  'gridTemplateColumns','gridTemplateRows','gridTemplateAreas','top','right','bottom','left','zIndex',
+  'interactive','cssVars','ariaLiveMessage','ariaLivePoliteness','focusOnMount','display','position','textAlign','overflow','overflowX','overflowY',
+  'alignContent','width','height','minWidth','minHeight','maxWidth','maxHeight','hideOnMobile','hideOnTablet','hideOnDesktop','mobileOnly','tabletOnly','desktopOnly'
 ]);
 
 const isToken = (v?: string) => v && ['0','xs','sm','md','lg','xl','2xl'].includes(v);
-const toTokenVar = (v: string) => `var(--dyn-spacing-${v}, var(--spacing-${v}, ${({
-  '0':'0','xs':'0.25rem','sm':'0.5rem','md':'1rem','lg':'1.5rem','xl':'2rem','2xl':'3rem'
-} as Record<string,string>)[v]}))`;
+const toTokenVar = (v: string) => `var(--dyn-spacing-${v}, var(--spacing-${v}, ${({'0':'0','xs':'0.25rem','sm':'0.5rem','md':'1rem','lg':'1.5rem','xl':'2rem','2xl':'3rem'} as Record<string,string>)[v]}))`;
 
 function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>, ref: DynBoxRef<E>) {
   const {
-    as,
-    padding,
-    p,
-    px, py, pt, pr, pb, pl,
+    as, padding, p, px, py, pt, pr, pb, pl,
     m, mx, my, mt, mr, mb, ml,
     radius = 'md', borderRadius, customBorderRadius,
     shadow = 'none', border = 'default',
@@ -40,8 +29,7 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
     direction = 'column', flexDirection, wrap,
     gap = 'md', rowGap, columnGap,
     gridTemplateColumns, gridTemplateRows, gridTemplateAreas,
-    alignContent,
-    display, position, textAlign, overflow, overflowX, overflowY,
+    alignContent, display, position, textAlign, overflow, overflowX, overflowY,
     width, height, maxWidth, maxHeight, minWidth, minHeight,
     top, right, bottom, left, zIndex,
     className, style, id, role,
@@ -58,8 +46,10 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
 
   const Component = (as ?? 'div') as React.ElementType;
   const internalId = useMemo(() => id || generateId('dyn-box'), [id]);
-
   const domProps = Object.fromEntries(Object.entries(rest).filter(([k]) => !FILTERED_PROPS.has(k)));
+
+  // expose ref even if parent passed function ref; ensure we can focus
+  const elementRef = (ref as any) || React.createRef<HTMLElement>();
 
   const legacyAliases: string[] = ['box'];
   const finalDirection = flexDirection || direction;
@@ -68,7 +58,7 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
   if (['primary','secondary','success','warning','danger'].includes(finalBackground as string)) legacyAliases.push(`box--bg-${finalBackground}`);
 
   const finalRadius = borderRadius || customBorderRadius || radius;
-  const basePadding = p ?? padding; // bez default-a; undefined ostaje undefined radi testa
+  const basePadding = p ?? padding; // keep undefined if not provided
 
   const classes = cn(
     getStyleClass('box'),
@@ -141,10 +131,15 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
   } as React.CSSProperties;
 
   useEffect(() => {
-    if (focusOnMount && (ref as any)?.current) {
-      queueMicrotask?.(() => { try { (ref as any).current?.focus?.(); } catch {} });
+    if (focusOnMount) {
+      queueMicrotask?.(() => {
+        try {
+          const el = (elementRef.current ?? (ref as any)?.current) as HTMLElement | undefined;
+          el?.focus?.();
+        } catch {}
+      });
     }
-  }, [focusOnMount, ref]);
+  }, [focusOnMount]);
 
   const liveRegionId = ariaLiveMessage ? `${internalId}-liveregion` : undefined;
   const describedBy = [ariaDescribedBy, liveRegionId].filter(Boolean).join(' ') || undefined;
@@ -161,7 +156,7 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
   const element = React.createElement(
     Component as any,
     {
-      ref,
+      ref: elementRef,
       id: internalId,
       role: interactive ? (role ?? 'button') : role,
       className: classes,
