@@ -1,6 +1,6 @@
 import type {
   ComponentPropsWithoutRef,
-  ElementRef,
+  ComponentRef,
   ElementType,
   KeyboardEventHandler,
   MouseEventHandler,
@@ -145,12 +145,12 @@ export type DynBoxProps<E extends ElementType = 'div'> = PolymorphicComponentPro
   E,
   DynBoxOwnProps
 > & {
-  as?: E | keyof JSX.IntrinsicElements;
-  onClick?: MouseEventHandler<ElementRef<E>>;
-  onKeyDown?: KeyboardEventHandler<ElementRef<E>>;
+  as?: E;
+  onClick?: MouseEventHandler<E>;
+  onKeyDown?: KeyboardEventHandler<E>;
 };
 
-export type DynBoxRef<E extends ElementType = 'div'> = ElementRef<E>;
+export type DynBoxRef<E extends ElementType = 'div'> = ComponentRef<E>;
 
 export interface DynBoxDefaultProps {
   'data-testid': string;
