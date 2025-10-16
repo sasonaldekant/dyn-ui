@@ -22,6 +22,8 @@ export type DynBadgeVariant = 'solid' | 'soft' | 'outline' | 'dot';
 export type DynBadgeColor = DynBadgeSemanticColor | (string & {});
 export type DynBadgePosition = 'topRight' | 'topLeft' | 'bottomRight' | 'bottomLeft';
 
+
+
 /**
  * Props interface for DynBadge component
  * Clean TypeScript implementation following DynAvatar gold standard

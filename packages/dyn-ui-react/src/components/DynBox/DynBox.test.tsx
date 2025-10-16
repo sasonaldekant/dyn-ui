@@ -35,7 +35,7 @@ describe('DynBox', () => {
     });
 
     it('supports polymorphic rendering and ref forwarding', () => {
-      const ref = createRef<HTMLElement>();
+      const ref = createRef<HTMLDivElement>();
       const { rerender } = render(
         <DynBox ref={ref} data-testid="polymorphic">
           Content

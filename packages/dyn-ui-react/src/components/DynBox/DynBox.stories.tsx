@@ -141,7 +141,7 @@ export const Interactive: Story = {
       >
         Primary Interactive Box - Click or press Enter/Space
       </DynBox>
-      
+
       <DynBox
         interactive
         aria-label="Interactive secondary button"
@@ -153,7 +153,7 @@ export const Interactive: Story = {
       >
         Secondary Interactive Box - Focus with Tab
       </DynBox>
-      
+
       <DynBox
         interactive
         role="tab"
@@ -166,7 +166,7 @@ export const Interactive: Story = {
       >
         Custom Role Interactive Box (Tab) - Auto-focused
       </DynBox>
-      
+
       <DynBox
         interactive
         aria-label="Interactive with live announcements"
@@ -200,10 +200,10 @@ export const Interactive: Story = {
 export const Accessibility: Story = {
   render: (args) => (
     <DynBox {...args} display="flex" flexDirection="column" gap="md" role="main">
-      <DynBox 
+      <DynBox
         as="section"
-        bg="tertiary" 
-        p="md" 
+        bg="tertiary"
+        p="md"
         borderRadius="md"
         role="region"
         aria-labelledby="responsive-heading"
@@ -214,7 +214,7 @@ export const Accessibility: Story = {
           This content adapts to different screen sizes. Resize your viewport to see responsive helpers in action.
         </p>
       </DynBox>
-      
+
       <DynBox
         as="section"
         bg="primary"
@@ -231,7 +231,7 @@ export const Accessibility: Story = {
           Screen readers receive real-time updates via the aria-live region. Status changes are announced automatically.
         </p>
       </DynBox>
-      
+
       <DynBox
         as="section"
         border
@@ -268,7 +268,7 @@ export const Accessibility: Story = {
           </DynBox>
         </DynBox>
       </DynBox>
-      
+
       <DynBox
         as="section"
         bg="warning"
@@ -323,7 +323,7 @@ export const LayoutSystem: Story = {
           <DynBox bg="success" color="#ffffff" p="sm" borderRadius="sm">Item 3</DynBox>
         </DynBox>
       </DynBox>
-      
+
       {/* Grid Layout */}
       <DynBox as="section">
         <h3 style={{ margin: '0 0 1rem 0' }}>Grid Layout</h3>
@@ -349,7 +349,7 @@ export const LayoutSystem: Story = {
           ))}
         </DynBox>
       </DynBox>
-      
+
       {/* Complex Layout */}
       <DynBox as="section">
         <h3 style={{ margin: '0 0 1rem 0' }}>Complex Layout</h3>
@@ -363,38 +363,38 @@ export const LayoutSystem: Story = {
           p="sm"
           borderRadius="md"
         >
-          <DynBox 
-            bg="primary" 
-            color="#ffffff" 
-            p="sm" 
+          <DynBox
+            bg="primary"
+            color="#ffffff"
+            p="sm"
             borderRadius="sm"
             style={{ gridArea: 'header' }}
             textAlign="center"
           >
             Header
           </DynBox>
-          <DynBox 
-            bg="secondary" 
-            color="#ffffff" 
-            p="sm" 
+          <DynBox
+            bg="secondary"
+            color="#ffffff"
+            p="sm"
             borderRadius="sm"
             style={{ gridArea: 'sidebar' }}
           >
             Sidebar
           </DynBox>
-          <DynBox 
-            bg="success" 
-            color="#ffffff" 
-            p="sm" 
+          <DynBox
+            bg="success"
+            color="#ffffff"
+            p="sm"
             borderRadius="sm"
             style={{ gridArea: 'content' }}
           >
             Main Content Area
           </DynBox>
-          <DynBox 
-            bg="warning" 
-            color="#ffffff" 
-            p="sm" 
+          <DynBox
+            bg="warning"
+            color="#ffffff"
+            p="sm"
             borderRadius="sm"
             style={{ gridArea: 'footer' }}
             textAlign="center"
@@ -424,22 +424,22 @@ export const Polymorphic: Story = {
         <h1 style={{ margin: 0 }}>Header Element</h1>
         <p style={{ margin: '0.5rem 0 0 0', opacity: 0.9 }}>Rendered as &lt;header&gt;</p>
       </DynBox>
-      
+
       <DynBox as="nav" bg="secondary" color="#ffffff" p="md" borderRadius="md">
         <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem' }}>Navigation</h2>
         <p style={{ margin: 0, opacity: 0.9 }}>Rendered as &lt;nav&gt; with proper semantics</p>
       </DynBox>
-      
+
       <DynBox as="main" bg="tertiary" p="md" borderRadius="md">
         <h2 style={{ margin: '0 0 0.5rem 0' }}>Main Content</h2>
         <p style={{ margin: 0 }}>Rendered as &lt;main&gt; for primary content</p>
       </DynBox>
-      
+
       <DynBox as="aside" bg="success" color="#ffffff" p="md" borderRadius="md">
         <h3 style={{ margin: '0 0 0.5rem 0' }}>Sidebar Content</h3>
         <p style={{ margin: 0, opacity: 0.9 }}>Rendered as &lt;aside&gt; for supplementary content</p>
       </DynBox>
-      
+
       <DynBox as="footer" bg="warning" color="#ffffff" p="md" borderRadius="md">
         <h3 style={{ margin: '0 0 0.5rem 0' }}>Footer Information</h3>
         <p style={{ margin: 0, opacity: 0.9 }}>Rendered as &lt;footer&gt; with footer semantics</p>
@@ -465,18 +465,18 @@ export const DarkTheme: Story = {
         <h3 style={{ margin: '0 0 0.5rem 0' }}>Primary Theme</h3>
         <p style={{ margin: 0 }}>DynBox adapts to dark mode using CSS custom properties and design tokens.</p>
       </DynBox>
-      
+
       <DynBox bg="secondary" shadow="sm" color="#ffffff" p="md" borderRadius="md">
         <h3 style={{ margin: '0 0 0.5rem 0' }}>Secondary Theme</h3>
         <p style={{ margin: 0 }}>Automatic theme switching based on user preferences.</p>
       </DynBox>
-      
+
       <DynBox bg="tertiary" shadow="sm" p="md" borderRadius="md">
         <h3 style={{ margin: '0 0 0.5rem 0' }}>Adaptive Colors</h3>
         <p style={{ margin: 0 }}>Text and background colors automatically adjust for optimal contrast.</p>
       </DynBox>
-      
-      <DynBox 
+
+      <DynBox
         interactive
         bg="success"
         color="#ffffff"
@@ -523,7 +523,7 @@ export const Performance: Story = {
           <li>Type-safe prop handling</li>
         </ul>
       </DynBox>
-      
+
       {/* Large number of boxes to test performance */}
       <DynBox bg="primary" color="#ffffff" p="md" borderRadius="md">
         <h3 style={{ margin: '0 0 1rem 0' }}>Stress Test Grid</h3>
@@ -550,7 +550,7 @@ export const Performance: Story = {
           ))}
         </DynBox>
       </DynBox>
-      
+
       {/* Edge cases */}
       <DynBox border p="md" borderRadius="md">
         <h3 style={{ margin: '0 0 1rem 0' }}>Edge Cases Handled</h3>
@@ -558,16 +558,16 @@ export const Performance: Story = {
           <DynBox bg="tertiary" p="sm" borderRadius="sm" width={0} height={0}>
             Zero dimensions handled gracefully
           </DynBox>
-          <DynBox 
-            p="xl" m="auto" 
-            backgroundColor="rgba(255, 0, 0, 0.1)" 
+          <DynBox
+            p="xl" m="auto"
+            backgroundColor="rgba(255, 0, 0, 0.1)"
             customBorderRadius="20px"
           >
             Custom CSS values override tokens
           </DynBox>
-          <DynBox 
-            hideOnMobile 
-            tabletOnly 
+          <DynBox
+            hideOnMobile
+            tabletOnly
             desktopOnly={false}
             style={{ backgroundColor: 'var(--custom-color, #f0f0f0)' }}
             p="sm"
