@@ -20,12 +20,8 @@ export type BoxDisplay =
 export type BoxPosition = 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
 export type SpacingSize = '0' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'auto';
 
-// Allow both predefined variants and custom colors
 export type BackgroundVariant = 'surface' | 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | 'none' | string;
-
-// Allow both predefined radius tokens and custom values
 export type BorderRadius = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full' | string;
-
 export type BorderVariant = 'none' | 'default' | 'subtle' | 'strong' | string;
 export type Shadow = 'none' | 'sm' | 'md' | 'lg' | string;
 export type TextAlign = 'left' | 'center' | 'right' | 'justify';
@@ -43,9 +39,6 @@ export type JustifyContent =
 export type AlignItems = 'stretch' | 'flex-start' | 'flex-end' | 'center' | 'baseline';
 export type AlignContent = 'stretch' | 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around';
 
-/**
- * Responsive visibility helpers following DynAvatar contract
- */
 export interface ResponsiveVisibilityProps {
   hideOnMobile?: boolean;
   hideOnTablet?: boolean;
@@ -58,157 +51,101 @@ export interface ResponsiveVisibilityProps {
 type PolymorphicComponentProps<E extends ElementType, P> = P &
   Omit<ComponentPropsWithoutRef<E>, keyof P>;
 
-/**
- * Core DynBox props composed with system base props
- */
 export interface DynBoxOwnProps
   extends BaseComponentProps,
     AccessibilityProps,
     ResponsiveVisibilityProps {
-  /** Display property */
   display?: BoxDisplay;
-
-  /** Position property */
   position?: BoxPosition;
 
-  /** Padding (all sides) - used in implementation */
+  // Primary spacing API
   padding?: SpacingSize;
-  /** Horizontal padding */
+  p?: SpacingSize; // alias for padding
   px?: SpacingSize;
-  /** Vertical padding */
   py?: SpacingSize;
-  /** Padding top */
   pt?: SpacingSize;
-  /** Padding right */
   pr?: SpacingSize;
-  /** Padding bottom */
   pb?: SpacingSize;
-  /** Padding left */
   pl?: SpacingSize;
 
-  /** Margin (all sides) */
   m?: SpacingSize;
-  /** Horizontal margin */
   mx?: SpacingSize;
-  /** Vertical margin */
   my?: SpacingSize;
-  /** Margin top */
   mt?: SpacingSize;
-  /** Margin right */
   mr?: SpacingSize;
-  /** Margin bottom */
   mb?: SpacingSize;
-  /** Margin left */
   ml?: SpacingSize;
 
-  /** Width */
   width?: string | number;
-  /** Height */
   height?: string | number;
-  /** Minimum width */
   minWidth?: string | number;
-  /** Minimum height */
   minHeight?: string | number;
-  /** Maximum width */
   maxWidth?: string | number;
-  /** Maximum height */
   maxHeight?: string | number;
 
-  /** Background color variant or custom color - used in implementation */
+  // Color API
   background?: BackgroundVariant;
-  /** Custom background color */
+  bg?: BackgroundVariant; // alias for background
   backgroundColor?: string;
-
-  /** Text color */
   color?: string;
 
-  /** Apply border on all sides */
+  // Border API
   border?: BorderVariant;
-  /** Apply border on top */
   borderTop?: boolean;
-  /** Apply border on right */
   borderRight?: boolean;
-  /** Apply border on bottom */
   borderBottom?: boolean;
-  /** Apply border on left */
   borderLeft?: boolean;
-  /** Border radius token or custom value - used in implementation */
   radius?: BorderRadius;
-  /** Custom border radius */
+  borderRadius?: BorderRadius; // alias for radius
   customBorderRadius?: string;
 
-  /** Shadow token */
+  // Effects
   shadow?: Shadow;
 
-  /** Text alignment */
   textAlign?: TextAlign;
 
-  /** Overflow behaviour */
+  // Overflow
   overflow?: Overflow;
-  /** Horizontal overflow behaviour */
   overflowX?: Overflow;
-  /** Vertical overflow behaviour */
   overflowY?: Overflow;
 
-  /** Flexbox direction - used in implementation */
+  // Flex/Grid
   direction?: FlexDirection;
-  /** Flexbox wrap - used in implementation */
+  flexDirection?: FlexDirection; // alias for direction
   wrap?: FlexWrap;
-  /** Flexbox justify content - used in implementation */
   justify?: JustifyContent;
-  /** Flexbox align items - used in implementation */
   align?: AlignItems;
-  /** Flexbox align content */
   alignContent?: AlignContent;
-  /** Gap - used in implementation */
   gap?: SpacingSize;
-  /** Row gap */
   rowGap?: SpacingSize;
-  /** Column gap */
   columnGap?: SpacingSize;
 
-  /** Grid template columns */
   gridTemplateColumns?: string;
-  /** Grid template rows */
   gridTemplateRows?: string;
-  /** Grid template areas */
   gridTemplateAreas?: string;
 
-  /** Top offset */
+  // Positioning
   top?: string | number;
-  /** Right offset */
   right?: string | number;
-  /** Bottom offset */
   bottom?: string | number;
-  /** Left offset */
   left?: string | number;
-  /** z-index */
   zIndex?: number;
 
-  /** Enable interactive styles */
   interactive?: boolean;
 
-  /** Custom CSS variables */
   cssVars?: Record<string, string | number>;
 
-  /** Optional live region announcement */
   ariaLiveMessage?: string;
-  /** Politeness setting for the live region */
   ariaLivePoliteness?: 'polite' | 'assertive' | 'off';
 
-  /** Automatically focus the DynBox when it mounts */
   focusOnMount?: boolean;
 }
 
-/**
- * Full DynBox prop signature including polymorphic element overrides
- */
 export type DynBoxProps<E extends ElementType = 'div'> = PolymorphicComponentProps<
   E,
   DynBoxOwnProps
 > & {
-  /** Element to render as */
-  as?: E;
+  as?: E | keyof JSX.IntrinsicElements;
   onClick?: MouseEventHandler<ElementRef<E>>;
   onKeyDown?: KeyboardEventHandler<ElementRef<E>>;
 };
