@@ -21,6 +21,28 @@ const FILTERED_PROPS = new Set([
   'hideOnMobile', 'hideOnTablet', 'hideOnDesktop', 'mobileOnly', 'tabletOnly', 'desktopOnly'
 ]);
 
+// Helper function to convert spacing values to CSS variables
+const getSpacingVar = (value: string): string => {
+  if (['0', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'].includes(value)) {
+    return `var(--dyn-spacing-${value}, var(--spacing-${value}, ${getSpacingFallback(value)}))`;
+  }
+  return value;
+};
+
+// Fallback values for spacing tokens
+const getSpacingFallback = (value: string): string => {
+  const fallbacks = {
+    '0': '0',
+    'xs': '0.25rem',
+    'sm': '0.5rem', 
+    'md': '1rem',
+    'lg': '1.5rem',
+    'xl': '2rem',
+    '2xl': '3rem'
+  };
+  return fallbacks[value as keyof typeof fallbacks] || value;
+};
+
 /**
  * DynBox — layout container following DynAvatar gold standard patterns.
  */
@@ -133,29 +155,113 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
   const finalRadius = borderRadius || customBorderRadius || radius;
   const finalPadding = p || padding;
 
+  // Helper functions for CSS classes based on CSS module
+  const getPaddingClass = (value?: string) => {
+    if (!value || !['0', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'].includes(value)) return null;
+    return getStyleClass(`box--p-${value}`);
+  };
+
+  const getBackgroundClass = (value?: string) => {
+    if (value && ['primary', 'secondary', 'tertiary', 'success', 'warning', 'danger'].includes(value)) {
+      return getStyleClass(`box--bg-${value}`);
+    }
+    return null;
+  };
+
+  const getDisplayClass = (value?: string) => {
+    if (value && ['flex', 'inline-flex', 'grid', 'inline-grid', 'inline', 'inline-block', 'none'].includes(value)) {
+      return getStyleClass(`box--${value}`);
+    }
+    return null;
+  };
+
+  const getPositionClass = (value?: string) => {
+    if (value && ['absolute', 'relative', 'fixed', 'sticky'].includes(value)) {
+      return getStyleClass(`box--${value}`);
+    }
+    return null;
+  };
+
+  const getRadiusClass = (value?: string) => {
+    if (value && ['none', 'sm', 'md', 'lg', 'xl', 'full'].includes(value)) {
+      return getStyleClass(`box--rounded-${value}`);
+    }
+    return null;
+  };
+
+  const getShadowClass = (value?: string) => {
+    if (value && ['sm', 'md', 'lg'].includes(value)) {
+      return getStyleClass(`box--shadow-${value}`);
+    }
+    return null;
+  };
+
+  const getTextAlignClass = (value?: string) => {
+    if (value && ['left', 'center', 'right', 'justify'].includes(value)) {
+      return getStyleClass(`box--text-${value}`);
+    }
+    return null;
+  };
+
+  const getOverflowClass = (value?: string) => {
+    if (value && ['hidden', 'auto', 'scroll'].includes(value)) {
+      return getStyleClass(`box--overflow-${value}`);
+    }
+    return null;
+  };
+
+  const getBorderClass = () => {
+    if (border === 'default') {
+      return getStyleClass('box--border');
+    }
+    return null;
+  };
+
+  const getResponsiveClasses = () => {
+    const classes = [];
+    if (hideOnMobile) classes.push(getStyleClass('box--mobile-hidden'));
+    if (hideOnTablet) classes.push(getStyleClass('box--tablet-hidden'));
+    if (hideOnDesktop) classes.push(getStyleClass('box--desktop-hidden'));
+    if (mobileOnly) {
+      classes.push(getStyleClass('box--tablet-hidden'));
+      classes.push(getStyleClass('box--desktop-hidden'));
+    }
+    if (tabletOnly) {
+      classes.push(getStyleClass('box--mobile-hidden'));
+      classes.push(getStyleClass('box--desktop-hidden'));
+    }
+    if (desktopOnly) {
+      classes.push(getStyleClass('box--mobile-hidden'));
+      classes.push(getStyleClass('box--tablet-hidden'));
+    }
+    return classes;
+  };
+
   const classes = cn(
-    getStyleClass('root'),
-    finalPadding && getStyleClass(`pad-${finalPadding}`),
-    finalRadius && getStyleClass(`rad-${finalRadius}`),
-    shadow && getStyleClass(`shadow-${shadow}`),
-    border && getStyleClass(`border-${border}`),
-    finalBackground && getStyleClass(`bg-${finalBackground}`),
-    finalDirection && getStyleClass(`dir-${finalDirection}`),
-    align && getStyleClass(`align-${align}`),
-    justify && getStyleClass(`justify-${justify}`),
-    gap && getStyleClass(`gap-${gap}`),
-    wrap && getStyleClass(`wrap-${wrap}`),
-    display && getStyleClass(`display-${display}`),
-    position && getStyleClass(`position-${position}`),
-    textAlign && getStyleClass(`text-${textAlign}`),
-    overflow && getStyleClass(`overflow-${overflow}`),
-    // Responsive visibility
-    hideOnMobile && getStyleClass('hide-mobile'),
-    hideOnTablet && getStyleClass('hide-tablet'), 
-    hideOnDesktop && getStyleClass('hide-desktop'),
-    mobileOnly && getStyleClass('mobile-only'),
-    tabletOnly && getStyleClass('tablet-only'),
-    desktopOnly && getStyleClass('desktop-only'),
+    // Base class from CSS module
+    getStyleClass('box'),
+    // Padding
+    getPaddingClass(finalPadding),
+    // Background 
+    getBackgroundClass(finalBackground),
+    // Display
+    getDisplayClass(display),
+    // Position
+    getPositionClass(position),
+    // Border radius
+    getRadiusClass(finalRadius),
+    // Shadow
+    getShadowClass(shadow),
+    // Border
+    getBorderClass(),
+    // Text align
+    getTextAlignClass(textAlign),
+    // Overflow
+    getOverflowClass(overflow),
+    // Interactive
+    interactive && getStyleClass('box--interactive'),
+    // Responsive
+    ...getResponsiveClasses(),
     // legacy aliases for tests
     ...legacyAliases,
     className
@@ -163,8 +269,8 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
 
   const styleVars: React.CSSProperties = {
     // canonical width/height vars
-    ...(width ? { ['--dyn-box-width' as any]: typeof width === 'number' ? `${width}px` : width } : {}),
-    ...(height ? { ['--dyn-box-height' as any]: typeof height === 'number' ? `${height}px` : height } : {}),
+    ...(width !== undefined ? { ['--dyn-box-width' as any]: typeof width === 'number' ? `${width}px` : width } : {}),
+    ...(height !== undefined ? { ['--dyn-box-height' as any]: typeof height === 'number' ? `${height}px` : height } : {}),
     ...(maxWidth ? { ['--dyn-box-max-width' as any]: typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth } : {}),
     ...(maxHeight ? { ['--dyn-box-max-height' as any]: typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight } : {}),
     ...(minWidth ? { ['--dyn-box-min-width' as any]: typeof minWidth === 'number' ? `${minWidth}px` : minWidth } : {}),
@@ -178,26 +284,42 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
     // background and color
     ...(backgroundColor ? { ['--dyn-box-bg' as any]: backgroundColor } : {}),
     ...(color ? { ['--dyn-box-color' as any]: color } : {}),
-    // spacing tokens
-    ...(px ? { ['--dyn-box-padding-x' as any]: px } : {}),
-    ...(py ? { ['--dyn-box-padding-y' as any]: py } : {}),
-    ...(pt ? { ['--dyn-box-padding-top' as any]: pt } : {}),
-    ...(pr ? { ['--dyn-box-padding-right' as any]: pr } : {}),
-    ...(pb ? { ['--dyn-box-padding-bottom' as any]: pb } : {}),
-    ...(pl ? { ['--dyn-box-padding-left' as any]: pl } : {}),
-    ...(m ? { ['--dyn-box-margin' as any]: m } : {}),
-    ...(mx ? { ['--dyn-box-margin-x' as any]: mx } : {}),
-    ...(my ? { ['--dyn-box-margin-y' as any]: my } : {}),
-    ...(mt ? { ['--dyn-box-margin-top' as any]: mt } : {}),
-    ...(mr ? { ['--dyn-box-margin-right' as any]: mr } : {}),
-    ...(mb ? { ['--dyn-box-margin-bottom' as any]: mb } : {}),
-    ...(ml ? { ['--dyn-box-margin-left' as any]: ml } : {}),
+    // Custom background colors that aren't in predefined variants
+    ...(finalBackground && !['primary', 'secondary', 'tertiary', 'success', 'warning', 'danger', 'surface'].includes(finalBackground) ? { ['--dyn-box-bg' as any]: finalBackground } : {}),
+    // Custom radius that isn't in predefined sizes
+    ...(customBorderRadius ? { ['--dyn-box-radius' as any]: customBorderRadius } : {}),
+    ...(finalRadius && !['none', 'xs', 'sm', 'md', 'lg', 'xl', 'full'].includes(finalRadius) ? { ['--dyn-box-radius' as any]: finalRadius } : {}),
+    // spacing tokens with proper CSS var generation
+    ...(finalPadding && !['0', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'].includes(finalPadding) ? { ['--dyn-box-padding' as any]: finalPadding } : {}),
+    ...(px ? { ['--dyn-box-padding-left' as any]: getSpacingVar(px), ['--dyn-box-padding-right' as any]: getSpacingVar(px) } : {}),
+    ...(py ? { ['--dyn-box-padding-top' as any]: getSpacingVar(py), ['--dyn-box-padding-bottom' as any]: getSpacingVar(py) } : {}),
+    ...(pt ? { ['--dyn-box-padding-top' as any]: getSpacingVar(pt) } : {}),
+    ...(pr ? { ['--dyn-box-padding-right' as any]: getSpacingVar(pr) } : {}),
+    ...(pb ? { ['--dyn-box-padding-bottom' as any]: getSpacingVar(pb) } : {}),
+    ...(pl ? { ['--dyn-box-padding-left' as any]: getSpacingVar(pl) } : {}),
+    ...(m ? { ['--dyn-box-margin' as any]: getSpacingVar(m) } : {}),
+    ...(mx ? { ['--dyn-box-margin-left' as any]: mx === 'auto' ? 'auto' : getSpacingVar(mx), ['--dyn-box-margin-right' as any]: mx === 'auto' ? 'auto' : getSpacingVar(mx) } : {}),
+    ...(my ? { ['--dyn-box-margin-top' as any]: getSpacingVar(my), ['--dyn-box-margin-bottom' as any]: getSpacingVar(my) } : {}),
+    ...(mt ? { ['--dyn-box-margin-top' as any]: getSpacingVar(mt) } : {}),
+    ...(mr ? { ['--dyn-box-margin-right' as any]: mr === 'auto' ? 'auto' : getSpacingVar(mr) } : {}),
+    ...(mb ? { ['--dyn-box-margin-bottom' as any]: mb === '0' ? '0' : getSpacingVar(mb) } : {}),
+    ...(ml ? { ['--dyn-box-margin-left' as any]: ml === 'auto' ? 'auto' : getSpacingVar(ml) } : {}),
+    // flex properties
+    ...(finalDirection ? { ['--dyn-box-flex-direction' as any]: finalDirection } : {}),
+    ...(wrap ? { ['--dyn-box-flex-wrap' as any]: wrap } : {}),
+    ...(justify ? { ['--dyn-box-justify-content' as any]: justify } : {}),
+    ...(align ? { ['--dyn-box-align-items' as any]: align } : {}),
+    ...(alignContent ? { ['--dyn-box-align-content' as any]: alignContent } : {}),
+    ...(gap && !['xs', 'sm', 'md', 'lg', 'xl', '2xl'].includes(gap) ? { ['--dyn-box-gap' as any]: gap } : gap ? { ['--dyn-box-gap' as any]: getSpacingVar(gap) } : {}),
     // gap and grid
-    ...(rowGap ? { ['--dyn-box-row-gap' as any]: rowGap } : {}),
-    ...(columnGap ? { ['--dyn-box-column-gap' as any]: columnGap } : {}),
-    ...(gridTemplateColumns ? { ['--dyn-box-grid-template-columns' as any]: gridTemplateColumns } : {}),
-    ...(gridTemplateRows ? { ['--dyn-box-grid-template-rows' as any]: gridTemplateRows } : {}),
-    ...(gridTemplateAreas ? { ['--dyn-box-grid-template-areas' as any]: gridTemplateAreas } : {}),
+    ...(rowGap ? { ['--dyn-box-row-gap' as any]: getSpacingVar(rowGap) } : {}),
+    ...(columnGap ? { ['--dyn-box-column-gap' as any]: getSpacingVar(columnGap) } : {}),
+    ...(gridTemplateColumns ? { ['--dyn-box-grid-columns' as any]: gridTemplateColumns } : {}),
+    ...(gridTemplateRows ? { ['--dyn-box-grid-rows' as any]: gridTemplateRows } : {}),
+    ...(gridTemplateAreas ? { ['--dyn-box-grid-areas' as any]: gridTemplateAreas } : {}),
+    // overflow
+    ...(overflowX ? { ['--dyn-box-overflow-x' as any]: overflowX } : {}),
+    ...(overflowY ? { ['--dyn-box-overflow-y' as any]: overflowY } : {}),
     // merge cssVars if provided
     ...(cssVars as any),
     ...style,
@@ -241,7 +363,13 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
     } as any,
     children,
     ariaLiveMessage && (
-      <span id={liveRegionId} aria-live={ariaLivePoliteness} className="sr-only">
+      <span 
+        key="liveregion"
+        id={liveRegionId} 
+        aria-live={ariaLivePoliteness}
+        aria-atomic="true"
+        className="dyn-sr-only"
+      >
         {ariaLiveMessage}
       </span>
     )
