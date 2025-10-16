@@ -4,13 +4,18 @@ import { BaseComponentProps, ComponentSize, AccessibilityProps } from '../../typ
 export type DynTabsSize = ComponentSize;
 export type DynTabsPosition = 'top' | 'bottom' | 'left' | 'right';
 export type DynTabsVariant = 'default' | 'underlined' | 'pills' | 'bordered';
+export type DynTabsOrientation = 'horizontal' | 'vertical';
+export type DynTabsActivation = 'auto' | 'manual';
 
 /**
  * Individual tab item configuration
  */
 export interface DynTabItem {
-  /** Unique identifier for the tab */
-  id: string;
+  /** Unique identifier/value for the tab */
+  id?: string;
+  
+  /** Value for the tab (can be used instead of id) */
+  value?: string;
   
   /** Display label for the tab */
   label: string;
@@ -46,7 +51,10 @@ export interface DynTabsProps extends
   /** Array of tab items to display */
   items: DynTabItem[];
   
-  /** Currently active tab ID (controlled) */
+  /** Currently active tab ID/value (controlled) */
+  value?: string;
+  
+  /** Currently active tab ID (controlled - alias for value) */
   activeTab?: string;
   
   /** Default active tab ID (uncontrolled) */
@@ -55,11 +63,20 @@ export interface DynTabsProps extends
   /** Position of tabs relative to content */
   position?: DynTabsPosition;
   
+  /** Orientation of tabs */
+  orientation?: DynTabsOrientation;
+  
+  /** Activation mode */
+  activation?: DynTabsActivation;
+  
   /** Visual variant of the tabs */
   variant?: DynTabsVariant;
   
   /** Size of the tab elements */
   size?: DynTabsSize;
+  
+  /** Whether tabs should fit container width */
+  fitted?: boolean;
   
   /** Enable horizontal scrolling for overflow tabs */
   scrollable?: boolean;
@@ -121,8 +138,11 @@ export interface DynTabsRef extends HTMLDivElement {
  */
 export const DYN_TABS_DEFAULT_PROPS = {
   position: 'top' as const,
+  orientation: 'horizontal' as const,
+  activation: 'auto' as const,
   variant: 'default' as const,
   size: 'medium' as const,
+  fitted: false,
   scrollable: false,
   closable: false,
   lazy: false,
