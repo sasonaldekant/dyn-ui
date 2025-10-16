@@ -149,7 +149,10 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
   const onKeyDown: React.KeyboardEventHandler = (e) => {
     (domProps as any).onKeyDown?.(e as any);
     if (!interactive) return;
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === 'Enter') {
+      (domProps as any).onClick?.(e as any);
+    }
+    if (e.key === ' ') {
       (domProps as any).onClick?.(e as any);
       e.preventDefault();
     }
