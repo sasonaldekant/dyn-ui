@@ -70,7 +70,7 @@ export const DynBox = forwardRef<DynBoxRef, DynBoxProps>(
 
     return (
       <Component
-        ref={ref as React.Ref<HTMLElement>}
+        ref={ref}
         id={internalId}
         role={role}
         className={classes}
