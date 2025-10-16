@@ -7,7 +7,7 @@ import { describe, it, test, expect, beforeEach, vi } from 'vitest';
 import React, { createRef } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { axe } from 'vitest-axe';
+import { axe } from 'jest-axe';
 import { DynTabs } from './DynTabs';
 import { DynTabsRef, DynTabItem } from './DynTabs.types';
 import styles from './DynTabs.module.css';

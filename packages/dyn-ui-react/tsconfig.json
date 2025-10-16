@@ -37,6 +37,8 @@
     "node_modules",
     "dist",
     "**/*.js",
-    "**/*.jsx"
+    "**/*.jsx",
+    "**/*.stories.tsx",
+    "**/*.snapshot.test.tsx"
   ]
 }
