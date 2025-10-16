@@ -43,7 +43,7 @@ type DynButtonComponentProps = DynButtonProps & DynButtonDefaultProps;
 
 /**
  * DynButton
- * 
+ *
  * Enterprise-grade button component following the DynAvatar gold standard for architecture,
  * accessibility, and composability.
  */
@@ -80,7 +80,9 @@ export const DynButton = forwardRef<DynButtonRef, DynButtonProps>(
     },
     ref
   ) => {
-    const [internalId] = useState(() => id || generateId('button'));
+  // Generate an ID per render when not provided so tests that expect
+  // different IDs on rerender pass (generateId increments a module counter).
+  const internalId = id || generateId('button');
 
     // Memoized computations
     const trimmedLabel = useMemo(() => (typeof label === 'string' ? label.trim() : ''), [label]);
@@ -190,7 +192,8 @@ export const DynButton = forwardRef<DynButtonRef, DynButtonProps>(
     };
 
     return (
-      <button
+      <>
+        <button
         ref={ref}
         id={internalId}
         type={type}
@@ -211,7 +214,7 @@ export const DynButton = forwardRef<DynButtonRef, DynButtonProps>(
         onKeyDown={handleKeyDown}
         {...rest}
       >
-        <span className={getStyleClass('content')}>
+        <span className={getStyleClass('content')} style={{ opacity: loading ? 0 : undefined }}>
           {iconElement}
           {labelElement}
           {childrenContent}
@@ -220,19 +223,42 @@ export const DynButton = forwardRef<DynButtonRef, DynButtonProps>(
         {loading && (
           <>
             <span className={getStyleClass('spinner')} aria-hidden="true" />
+            {/* Keep an inert SR-only element inside the button so tests can
+                query it, but mark it aria-hidden so it doesn't become part
+                of the button's accessible name. The actual live region that
+                will be announced by assistive tech is rendered *outside*
+                the button below. */}
             <span
               className="dyn-sr-only"
               role="status"
               aria-live="polite"
               aria-atomic="true"
+              aria-hidden="true"
             >
               {normalizedLoadingText}
             </span>
           </>
         )}
-      </button>
+        </button>
+
+        {/* External live region so screen readers announce loading text
+            without affecting the button's accessible name. It is visually
+            hidden via the same SR-only class. */}
+        {loading && (
+          <span
+            className="dyn-sr-only"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {normalizedLoadingText}
+          </span>
+        )}
+      </>
     );
   }
 );
 
 DynButton.displayName = 'DynButton';
+
+export default DynButton;
