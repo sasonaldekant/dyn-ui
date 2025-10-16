@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+import { axe } from 'jest-axe';
 import DynListView from './DynListView';
 import { ListAction } from './DynListView.types';
 
@@ -14,20 +15,20 @@ const sampleActions: ListAction[] = [
   {
     key: 'edit',
     title: 'Edit',
-    onClick: jest.fn(),
+    onClick: vi.fn(),
   },
   {
     key: 'delete',
     title: 'Delete',
     type: 'danger',
-    onClick: jest.fn(),
+    onClick: vi.fn(),
   },
 ];
 
 describe('DynListView', () => {
   beforeEach(() => {
     sampleActions.forEach(action => {
-      (action.onClick as jest.Mock).mockClear();
+      (action.onClick as ReturnType<typeof vi.fn>).mockClear();
     });
   });
 
@@ -68,7 +69,7 @@ describe('DynListView', () => {
     });
 
     it('handles item selection', () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       render(
         <DynListView 
           data={sampleData} 
@@ -84,7 +85,7 @@ describe('DynListView', () => {
     });
 
     it('handles select all', () => {
-      const onSelectionChange = jest.fn();
+      const onSelectionChange = vi.fn();
       render(
         <DynListView 
           data={sampleData} 
@@ -119,7 +120,7 @@ describe('DynListView', () => {
 
   describe('Custom rendering', () => {
     it('uses custom renderItem function', () => {
-      const customRender = jest.fn((item) => <div>Custom: {item.title}</div>);
+      const customRender = vi.fn((item) => <div>Custom: {item.title}</div>);
       render(<DynListView data={sampleData} renderItem={customRender} />);
       
       expect(screen.getByText('Custom: Item 1')).toBeInTheDocument();
