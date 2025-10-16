@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { render } from '@testing-library/react';
-import { axe } from 'vitest-axe';
+import { axe } from 'jest-axe';
 
 export interface AccessibilityTestOptions {
   /** Additional configuration forwarded to axe-core (inferred from vitest-axe) */
