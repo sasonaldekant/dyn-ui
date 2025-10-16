@@ -23,8 +23,8 @@ export const DynTable: React.FC<DynTableProps> = ({
 
   const handleSort = (key: string) => {
     if (!sortable) return;
-    const direction = sortBy && sortBy.key === key && sortBy.direction === 'asc' ? 'desc' : 'asc';
-    onSort?.({ key, direction });
+    const direction = sortBy && sortBy.column === key && sortBy.direction === 'asc' ? 'desc' : 'asc';
+    onSort?.(key, direction);
   };
 
   return (
@@ -33,7 +33,7 @@ export const DynTable: React.FC<DynTableProps> = ({
         <thead className={getStyleClass('thead')}>
           <tr role="row">
             {columns.map(col => {
-              const isSorted = sortBy?.key === col.key;
+              const isSorted = sortBy?.column === col.key;
               return (
                 <th
                   key={col.key}

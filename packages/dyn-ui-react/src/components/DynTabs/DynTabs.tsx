@@ -30,7 +30,9 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
   ) => {
     const [internalId] = useState(() => id || generateId('tabs'));
     const isControlled = value !== undefined;
-    const [current, setCurrent] = useState<string | undefined>(value ?? defaultValue ?? items?.[0]?.value);
+    const [current, setCurrent] = useState<string | undefined>(
+      value !== undefined ? String(value) : defaultValue !== undefined ? String(defaultValue) : items?.[0]?.value !== undefined ? String(items[0].value) : undefined
+    );
 
     useEffect(() => {
       if (isControlled) setCurrent(value);
