@@ -159,6 +159,12 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
   const element = React.createElement(
     Component as any,
     {
+      // Spread user provided DOM props first so that internal handlers like
+      // onKeyDown can wrap and call them. If we spread domProps last they
+      // would overwrite our internal handlers and break expected behaviour
+      // (e.g. triggering click on Enter/Space and forwarding the event to
+      // user's onKeyDown).
+      ...domProps,
       ref: setRefs,
       id: internalId,
       role: interactive ? (role ?? 'button') : role,
@@ -170,7 +176,6 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
       'data-testid': dataTestId,
       tabIndex: interactive ? ((domProps as any).tabIndex ?? 0) : (domProps as any).tabIndex,
       onKeyDown,
-      ...domProps,
     } as any,
     children,
     ariaLiveMessage && (

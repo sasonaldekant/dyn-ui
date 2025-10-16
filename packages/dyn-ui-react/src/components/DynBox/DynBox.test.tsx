@@ -547,7 +547,7 @@ describe('DynBox', () => {
         '--dyn-box-right': '20px',
         '--dyn-box-bottom': '0',
         '--dyn-box-left': 'auto',
-        '--dyn-box-z-index': 999,
+        '--dyn-box-z-index': '999',
       });
     });
 
