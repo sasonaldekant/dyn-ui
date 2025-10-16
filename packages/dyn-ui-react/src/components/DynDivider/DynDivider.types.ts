@@ -1,5 +1,5 @@
 import type { ComponentPropsWithoutRef, ElementRef } from 'react';
-import type { BaseComponentProps, AccessibilityProps } from '../../types';
+import type { BaseComponentProps, AccessibilityProps } from '../../types/theme';
 
 // Local type definitions (previously from ../../types)
 export type DynDividerColor = 'default' | 'subtle' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
