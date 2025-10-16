@@ -36,18 +36,13 @@ export const DynBox = forwardRef<DynBoxRef, DynBoxProps>(
       'aria-label': ariaLabel,
       'aria-describedby': ariaDescribedBy,
       'aria-labelledby': ariaLabelledBy,
+      'data-testid': dataTestId = 'dyn-box',
       children,
       ...rest
     },
     ref
   ) => {
     const internalId = useMemo(() => id || generateId('box'), [id]);
-
-    // Extract data-testid from rest props to avoid union type complexity
-    const { ['data-testid']: dataTestIdFromRest, ...restProps } = rest as React.HTMLAttributes<HTMLDivElement>;
-    const dataTestId = typeof dataTestIdFromRest === 'string' && dataTestIdFromRest.length > 0
-      ? dataTestIdFromRest
-      : 'dyn-box';
 
     const classes = cn(
       getStyleClass('root'),
@@ -74,21 +69,22 @@ export const DynBox = forwardRef<DynBoxRef, DynBoxProps>(
       ...style,
     } as React.CSSProperties;
 
-    return (
-      <Component
-        ref={ref}
-        id={internalId}
-        role={role}
-        className={classes}
-        style={styleVars}
-        aria-label={ariaLabel}
-        aria-describedby={ariaDescribedBy}
-        aria-labelledby={ariaLabelledBy}
-        data-testid={rest['data-testid'] || 'dyn-box'}
-        {...rest}
-      >
-        {children}
-      </Component>
+    // Use React.createElement to avoid complex union types with polymorphic components
+    return React.createElement(
+      Component,
+      {
+        ref,
+        id: internalId,
+        role,
+        className: classes,
+        style: styleVars,
+        'aria-label': ariaLabel,
+        'aria-describedby': ariaDescribedBy,
+        'aria-labelledby': ariaLabelledBy,
+        'data-testid': dataTestId,
+        ...rest
+      } as any,
+      children
     );
   }
 );
