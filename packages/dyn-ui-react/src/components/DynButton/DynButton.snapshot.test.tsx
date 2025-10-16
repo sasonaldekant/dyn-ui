@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import DynButton from './DynButton';
+import { DynButton } from './DynButton';
 import { describe, it, expect } from 'vitest';
 
 describe('DynButton', () => {
