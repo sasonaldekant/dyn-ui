@@ -27,6 +27,7 @@ export { DynTabs } from './DynTabs';
 export { DynToolbar } from './DynToolbar';
 export { DynTreeView } from './DynTreeView';
 export { ThemeSwitcher } from './ThemeSwitcher';
+export { Themep } from './ThemeSwitcher';
 
 // Type exports
 export type * from './DynAvatar';
