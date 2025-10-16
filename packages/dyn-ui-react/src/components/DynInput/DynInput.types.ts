@@ -67,6 +67,9 @@ export interface DynInputProps
 
   /** Help text displayed below the input */
   help?: string;
+  
+  /** Help text displayed below the input (alias for help) */
+  helpText?: string;
 
   /** Input type */
   type?: DynInputType;
@@ -84,6 +87,9 @@ export interface DynInputProps
   disabled?: boolean;
 
   /** Whether the input is readonly */
+  readOnly?: boolean;
+  
+  /** Whether the input is readonly (alias) */
   readonly?: boolean;
 
   /** Whether the input is required */
@@ -95,11 +101,29 @@ export interface DynInputProps
   /** Whether the input is visible */
   visible?: boolean;
 
+  /** Whether the input is in invalid state */
+  invalid?: boolean;
+  
+  /** Whether the input is in valid state */
+  valid?: boolean;
+
   /** Custom error message */
   errorMessage?: string;
+  
+  /** Success message when valid */
+  successMessage?: string;
 
-  /** Validation rule function */
+  /** Validation rule function or array of functions */
   validation?: DynInputValidationRule | DynInputValidationRule[];
+  
+  /** Validation rules array (alias) */
+  validationRules?: DynInputValidationRule[];
+  
+  /** Whether to validate on change */
+  validateOnChange?: boolean;
+  
+  /** Whether to validate on blur */
+  validateOnBlur?: boolean;
 
   /** Icon to display inside the input */
   icon?: string | ReactNode;
@@ -112,6 +136,9 @@ export interface DynInputProps
 
   /** Whether to format the model value with mask */
   maskFormatModel?: boolean;
+  
+  /** Loading state */
+  loading?: boolean;
 
   /** Minimum value for number inputs */
   min?: number;
@@ -123,7 +150,7 @@ export interface DynInputProps
   step?: number;
 
   /** Change event handler */
-  onChange?: (value: string | number) => void;
+  onChange?: (value: string) => void;
 
   /** Blur event handler */
   onBlur?: FocusEventHandler<HTMLInputElement>;
@@ -133,6 +160,9 @@ export interface DynInputProps
 
   /** Validation event handler */
   onValidate?: (isValid: boolean, errorMessage?: string) => void;
+  
+  /** Key down event handler */
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
 /**
@@ -154,8 +184,8 @@ export interface DynInputRef {
   /** Set the input value programmatically */
   setValue: (value: string | number) => void;
   
-  /** Validate the input and return validation result */
-  validate: () => boolean;
+  /** Validate the input and return validation result (async for compatibility) */
+  validate: () => Promise<boolean>;
   
   /** Clear any validation errors */
   clearError: () => void;
@@ -173,7 +203,7 @@ export type DynInputDefaultProps = Required<
     | 'type'
     | 'size'
     | 'disabled'
-    | 'readonly'
+    | 'readOnly'
     | 'required'
     | 'optional'
     | 'visible'
@@ -189,7 +219,7 @@ export const DYN_INPUT_DEFAULT_PROPS: DynInputDefaultProps = {
   type: 'text',
   size: 'medium',
   disabled: false,
-  readonly: false,
+  readOnly: false,
   required: false,
   optional: false,
   visible: true,

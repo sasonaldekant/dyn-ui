@@ -23,8 +23,10 @@
     "test": "vitest run --config ../../vitest.config.ts",
     "test:coverage": "vitest run --coverage --config ../../vitest.config.ts",
     "test:watch": "vitest --config ../../vitest.config.ts",
+    "test:ui": "vitest --ui --config ../../vitest.config.ts",
     "size-check": "npm run build && du -sh dist/* || echo 'Size check complete'",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf node_modules dist"
   },
   "dependencies": {
     "classnames": "^2.5.1"
@@ -33,23 +35,28 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@rollup/plugin-terser": "^0.4.4",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.2",
     "@testing-library/jest-dom": "^6.1.4",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
     "axe-core": "^4.11.0",
     "jest-axe": "^8.0.0",
     "@vitejs/plugin-react": "^4.0.0",
-    "@vitest/ui": "^1.0.0",
     "autoprefixer": "^10.4.16",
     "happy-dom": "^12.10.3",
     "postcss": "^8.4.31",
     "postcss-nested": "^6.0.1",
     "rollup": "^3.29.5",
     "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
     "typescript": "^5.0.0",
-    "vite": "^4.0.0"
+    "vite": "^4.0.0",
+    "vitest": "^1.0.0"
   },
   "peerDependencies": {
     "react": ">=18",
@@ -66,7 +73,8 @@
     "components",
     "design-system",
     "typescript",
-    "dyn-ui"
+    "dyn-ui",
+    "vitest"
   ],
   "author": "Mladen Gasic",
   "license": "MIT"
