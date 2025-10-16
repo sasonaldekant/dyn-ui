@@ -5,7 +5,7 @@ import type {
   KeyboardEventHandler,
   MouseEventHandler,
 } from 'react';
-import type { AccessibilityProps, BaseComponentProps } from '../../types';
+import type { AccessibilityProps, BaseComponentProps } from '../../types/theme';
 
 export type BoxDisplay =
   | 'block'
