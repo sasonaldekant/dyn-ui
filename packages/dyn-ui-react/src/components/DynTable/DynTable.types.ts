@@ -1,4 +1,4 @@
-import { BaseComponentProps } from '../../types';
+import { BaseComponentProps, AccessibilityProps } from '../../types';
 import { ReactNode } from 'react';
 
 export type TableSortDirection = 'asc' | 'desc';
@@ -10,6 +10,7 @@ export type TableSize = 'small' | 'medium' | 'large';
 export interface DynTableColumn {
   key: string;
   title: string;
+  header?: string; // alias for title (legacy compatibility)
   type?: TableCellType;
   align?: TableCellAlign;
   width?: number | string;
@@ -35,7 +36,7 @@ export interface TablePagination {
   onChange?: (page: number, pageSize: number) => void;
 }
 
-export interface DynTableProps extends BaseComponentProps {
+export interface DynTableProps extends BaseComponentProps, AccessibilityProps {
   /** Data array to display */
   data: any[];
   
@@ -63,6 +64,9 @@ export interface DynTableProps extends BaseComponentProps {
   /** Row selection type */
   selectable?: TableSelectionType;
   
+  /** Enable global sorting */
+  sortable?: boolean;
+  
   /** Currently selected row keys */
   selectedKeys?: string[];
   
@@ -89,6 +93,12 @@ export interface DynTableProps extends BaseComponentProps {
   
   /** Fixed height for scrollable table */
   height?: number | string;
+  
+  /** ARIA label for table */
+  'aria-label'?: string;
+  
+  /** ARIA labelledby for table */
+  'aria-labelledby'?: string;
 }
 
 export type DynTableType = DynTableProps;
