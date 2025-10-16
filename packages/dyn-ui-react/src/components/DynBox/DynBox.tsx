@@ -98,7 +98,7 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
     ...(right !== undefined ? { ['--dyn-box-right' as any]: typeof right === 'number' ? `${right}px` : right } : {}),
     ...(bottom !== undefined ? { ['--dyn-box-bottom' as any]: typeof bottom === 'number' ? (bottom === 0 ? '0' : `${bottom}px`) : bottom } : {}),
     ...(left !== undefined ? { ['--dyn-box-left' as any]: typeof left === 'number' ? `${left}px` : left } : {}),
-    ...(zIndex !== undefined ? { ['--dyn-box-z-index' as any]: zIndex } : {}),
+    ...(zIndex !== undefined ? { ['--dyn-box-z-index' as any]: String(zIndex) } : {}),
     ...(backgroundColor ? { ['--dyn-box-bg' as any]: backgroundColor } : {}),
     ...(color ? { ['--dyn-box-color' as any]: color } : {}),
     ...(finalBackground && !['primary','secondary','tertiary','success','warning','danger','surface'].includes(finalBackground as string) ? { ['--dyn-box-bg' as any]: finalBackground as any } : {}),
@@ -149,12 +149,10 @@ function DynBoxInner<E extends React.ElementType = 'div'>(props: DynBoxProps<E>,
   const onKeyDown: React.KeyboardEventHandler = (e) => {
     (domProps as any).onKeyDown?.(e as any);
     if (!interactive) return;
-    if (e.key === 'Enter') {
+    // Ensure Enter and Space both trigger clicks in tests
+    if (e.key === 'Enter' || e.key === ' ') {
       (domProps as any).onClick?.(e as any);
-    }
-    if (e.key === ' ') {
-      (domProps as any).onClick?.(e as any);
-      e.preventDefault();
+      if (e.key === ' ') e.preventDefault();
     }
   };
 
