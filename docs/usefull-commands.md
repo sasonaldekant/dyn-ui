@@ -90,3 +90,10 @@ pnpm build
 
 # Opcija 5: Otvori VS Code i vidi greške vizuelno
 code .
+
+
+
+pnpm install
+pnpm -r type-check
+pnpm -r build
+pnpm -r test
