@@ -5,7 +5,7 @@
 
 import type { ReactNode } from 'react';
 import type { DynBadgeColor, DynBadgeVariant } from '../DynBadge/DynBadge.types';
-import type { BaseComponentProps, AccessibilityProps } from '../../types';
+import type { BaseComponentProps, AccessibilityProps } from '../../types/theme';
 
 export interface MenuBadge {
   /** Badge numeric indicator */
@@ -35,13 +35,17 @@ export interface MenuItem {
   icon?: string | React.ReactNode;
   shortLabel?: string;
   link?: string;
-  action?: () => void;
+  action?: string | (() => void);
   badge?: MenuBadge;
   subItems?: MenuItem[];
+  children?: MenuItem[]; // alias for subItems for compatibility
   disabled?: boolean;
   visible?: boolean;
   type?: 'divider' | 'item';
 }
+
+// Alias for backward compatibility
+export type DynMenuItem = MenuItem;
 
 export interface MenuLiterals {
   collapse: string;
@@ -53,7 +57,7 @@ export type MenuOrientation = 'horizontal' | 'vertical';
 
 export interface DynMenuProps extends BaseComponentProps, AccessibilityProps {
   /** Menu items array */
-  items?: MenuItem[];
+  items: MenuItem[];
   
   /** Legacy menu items prop (alias for items) */
   menus?: MenuItem[];
@@ -92,7 +96,7 @@ export interface DynMenuProps extends BaseComponentProps, AccessibilityProps {
   onMenuClick?: (item: MenuItem) => void;
   
   /** Generic action handler (alias for onMenuClick) */
-  onAction?: (item: MenuItem) => void;
+  onAction?: (item: MenuItem | string) => void;
   
   /** Menu ID for ARIA */
   id?: string;
@@ -105,6 +109,9 @@ export interface DynMenuProps extends BaseComponentProps, AccessibilityProps {
   
   /** ARIA describedby for menu */
   'aria-describedby'?: string;
+  
+  /** Test ID */
+  'data-testid'?: string;
 }
 
 export interface DynMenuRef {
