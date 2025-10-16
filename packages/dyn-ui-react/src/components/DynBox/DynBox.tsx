@@ -6,6 +6,21 @@ import styles from './DynBox.module.css';
 
 const getStyleClass = (name: string) => (styles as Record<string, string>)[name] || '';
 
+// Props that should NOT be passed to DOM
+const FILTERED_PROPS = new Set([
+  'as', 'padding', 'p', 'px', 'py', 'pt', 'pr', 'pb', 'pl',
+  'm', 'mx', 'my', 'mt', 'mr', 'mb', 'ml',
+  'radius', 'borderRadius', 'customBorderRadius', 'shadow', 'border',
+  'background', 'bg', 'backgroundColor', 'color',
+  'align', 'justify', 'direction', 'flexDirection', 'wrap', 'gap', 'rowGap', 'columnGap',
+  'gridTemplateColumns', 'gridTemplateRows', 'gridTemplateAreas',
+  'top', 'right', 'bottom', 'left', 'zIndex',
+  'interactive', 'cssVars', 'ariaLiveMessage', 'ariaLivePoliteness', 'focusOnMount',
+  'display', 'position', 'textAlign', 'overflow', 'overflowX', 'overflowY',
+  'alignContent', 'width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight',
+  'hideOnMobile', 'hideOnTablet', 'hideOnDesktop', 'mobileOnly', 'tabletOnly', 'desktopOnly'
+]);
+
 /**
  * DynBox — layout container following DynAvatar gold standard patterns.
  */
@@ -43,6 +58,11 @@ export const DynBox = forwardRef<DynBoxRef, DynBoxProps>(
     ref
   ) => {
     const internalId = useMemo(() => id || generateId('box'), [id]);
+
+    // Filter out DynBox-specific props from rest
+    const domProps = Object.fromEntries(
+      Object.entries(rest).filter(([key]) => !FILTERED_PROPS.has(key))
+    );
 
     const classes = cn(
       getStyleClass('root'),
@@ -82,7 +102,7 @@ export const DynBox = forwardRef<DynBoxRef, DynBoxProps>(
         'aria-describedby': ariaDescribedBy,
         'aria-labelledby': ariaLabelledBy,
         'data-testid': dataTestId,
-        ...rest
+        ...domProps // Only clean DOM props
       } as any,
       children
     );
