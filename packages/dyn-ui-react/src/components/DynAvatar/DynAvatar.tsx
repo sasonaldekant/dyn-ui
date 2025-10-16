@@ -221,5 +221,4 @@ export const DynAvatar = forwardRef<DynAvatarRef, DynAvatarProps>(
   }
 );
 
-export default DynAvatar;
 DynAvatar.displayName = 'DynAvatar';

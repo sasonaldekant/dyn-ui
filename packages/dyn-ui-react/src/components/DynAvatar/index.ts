@@ -1,3 +1,2 @@
-export {default} from "./DynAvatar";
-export { DynAvatar } from "./DynAvatar";
-export type * from "./DynAvatar.types";
+export { DynAvatar } from './DynAvatar';
+export type { DynAvatarProps } from './DynAvatar.types';
