@@ -2,5 +2,18 @@
   "name": "dyn-ui",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@9.12.0"
+  "packageManager": "pnpm@9.12.0",
+  "clean": "rimraf node_modules dist",
+  "devDependencies": {
+    "@storybook/react": "^9.1.10",
+    "@storybook/react-vite": "^9.1.10",
+    "@types/jest-axe": "^3.5.9",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^9.37.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^1.0.0"
+  }
 }
