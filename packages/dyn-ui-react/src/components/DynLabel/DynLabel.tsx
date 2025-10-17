@@ -13,8 +13,12 @@ export const DynLabel: React.FC<DynLabelProps> = ({
   required = false,
   optional = false,
   helpText,
-  className
+  className,
+  ...restProps
 }: DynLabelProps) => {
+  // Use label element when htmlFor is provided, otherwise use span
+  const ElementType = htmlFor ? 'label' : 'span';
+
   const labelClasses = classNames(
     styles['dyn-label'],
     disabled && styles['dyn-label--disabled'],
@@ -58,12 +62,13 @@ export const DynLabel: React.FC<DynLabelProps> = ({
         className={labelClasses}
         htmlFor={htmlFor}
         aria-describedby={helpText && htmlFor ? `${htmlFor}-help` : undefined}
+        {...restProps}
       >
         <span className={styles['dyn-label-text']}>
           {children}
           {renderRequirementIndicator()}
         </span>
-      </label>
+      </ElementType>
       {renderHelpText()}
     </div>
   );
