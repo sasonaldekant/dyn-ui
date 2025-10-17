@@ -2,8 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { cn } from '../../utils/classNames';
 import { generateId } from '../../utils/accessibility';
 import styles from './DynTable.module.css';
-import type { DynTableProps } from './DynTable.types';
-import { useEffect, useState } from 'react';
+import type { DynTableProps, TableSortDirection } from './DynTable.types';
 
 const getStyleClass = (n: string) => (styles as Record<string, string>)[n] || '';
 
@@ -112,179 +111,418 @@ export const DynTable: React.FC<DynTableProps> = ({
   'data-testid': dataTestId,
   ...rest
 }) => {
-  const internalId = useMemo(() => id || generateId('table'), [id]);
+  const internalId = useStableId(id);
 
-  // support uncontrolled sorting: keep internal sort state when sortBy prop is not controlled
-  const [internalSort, setInternalSort] = useState<{ column: string; direction: any } | undefined>(sortBy);
-  useEffect(() => { setInternalSort(sortBy); }, [sortBy]);
+  const selectionMode = selectable === true ? 'multiple' : selectable === false ? undefined : selectable;
+  const isSelectable = selectionMode === 'multiple' || selectionMode === 'single';
+  const isMultiSelect = selectionMode === 'multiple';
 
-  const handleSort = (key: string) => {
-    const current = sortBy ?? internalSort;
-    const direction = current && current.column === key && current.direction === 'asc' ? 'desc' : 'asc';
-    setInternalSort({ column: key, direction });
-    onSort?.(key, direction);
-  };
+  const [internalSelectedKeys, setInternalSelectedKeys] = useState<string[]>(() => selectedKeys ?? []);
+  useEffect(() => {
+    if (selectedKeys !== undefined) {
+      setInternalSelectedKeys(selectedKeys);
+    }
+  }, [selectedKeys]);
 
-  // root classes should expose size and visual variants similar to other components
+  const [internalSort, setInternalSort] = useState(sortBy ?? null);
+  useEffect(() => {
+    if (sortBy) setInternalSort(sortBy);
+  }, [sortBy?.column, sortBy?.direction]);
+
+  const activeSort = sortBy ?? internalSort ?? undefined;
+
+  const rowKeys = useMemo(
+    () => data.map((row, index) => getRowKey(row, index, rowKey)),
+    [data, rowKey]
+  );
+
+  const domProps = useMemo(
+    () => Object.fromEntries(Object.entries(rest).filter(([key]) => !NON_DOM_PROPS.has(key))),
+    [rest]
+  );
+
+  const { style: inlineStyle, ...otherDomProps } = domProps as Record<string, unknown> & { style?: React.CSSProperties };
+
   const rootClasses = cn(
-    getStyleClass('root'),
-    // add global size/variant classes used across the library (literal class names)
-    (rest as any).size === 'small' && 'dyn-table--small',
-    (rest as any).size === 'large' && 'dyn-table--large',
-    (rest as any).striped && 'dyn-table--striped',
-    (rest as any).bordered && 'dyn-table--bordered',
+    getStyleClass('dyn-table'),
+    'dyn-table',
+    bordered && [getStyleClass('dyn-table--bordered'), 'dyn-table--bordered'],
+    striped && [getStyleClass('dyn-table--striped'), 'dyn-table--striped'],
+    hoverable && [getStyleClass('dyn-table--hoverable'), 'dyn-table--hoverable'],
+    height !== undefined && [getStyleClass('dyn-table--fixed-height'), 'dyn-table--fixed-height'],
+    size === 'small' && [getStyleClass('dyn-table--small'), 'dyn-table--small'],
+    size === 'large' && [getStyleClass('dyn-table--large'), 'dyn-table--large'],
     className
   );
 
-  const rootStyle = (rest as any).height ? {
-    height: typeof (rest as any).height === 'number' ? `${(rest as any).height}px` : String((rest as any).height)
-  } : undefined;
+  const rootStyle = {
+    ...(height !== undefined ? { height: typeof height === 'number' ? `${height}px` : String(height) } : {}),
+    ...(inlineStyle as React.CSSProperties | undefined)
+  } as React.CSSProperties | undefined;
 
-  // helper to compute row key
-  const getRowKey = (row: any, idx: number) => {
-    if (typeof (rest as any).rowKey === 'function') return (rest as any).rowKey(row);
-    if (typeof (rest as any).rowKey === 'string') return String(row[(rest as any).rowKey]);
-    return row.id ? String(row.id) : String(idx + 1);
+  const handleSelectionChange = (keys: string[]) => {
+    if (!selectedKeys) {
+      setInternalSelectedKeys(keys);
+    }
+
+    if (onSelectionChange) {
+      const rows = keys.map(key => {
+        const index = rowKeys.indexOf(key);
+        return index >= 0 ? data[index] : undefined;
+      }).filter(Boolean);
+      onSelectionChange(keys, rows as any[]);
+    }
   };
 
-  // selection helpers
-  const isMultiple = (rest as any).selectable === 'multiple';
-  const isSingle = (rest as any).selectable === 'single';
+  const toggleRowSelection = (key: string) => {
+    if (!isSelectable) return;
 
-  const allKeys = data.map((row, i) => getRowKey(row, i));
-  const allChecked = allKeys.length > 0 && allKeys.every(k => ((rest as any).selectedKeys ?? []).includes(k));
+    if (isMultiSelect) {
+      const exists = internalSelectedKeys.includes(key);
+      const next = exists ? internalSelectedKeys.filter(k => k !== key) : [...internalSelectedKeys, key];
+      handleSelectionChange(next);
+    } else {
+      handleSelectionChange([key]);
+    }
+  };
 
-  // track boolean occurrences per column to avoid duplicate plain text 'Yes' matches in tests
-  const boolSeen: Record<string, number> = {};
+  const toggleSelectAll = () => {
+    if (!isMultiSelect) return;
+    const allSelected = rowKeys.length > 0 && rowKeys.every(key => internalSelectedKeys.includes(key));
+    handleSelectionChange(allSelected ? [] : rowKeys);
+  };
+
+  const handleSortClick = (columnKey: string) => {
+    const column = columns.find(col => col.key === columnKey);
+    if (!column) return;
+    if (!isColumnSortable(sortable, column.sortable)) return;
+
+    const isCurrentlySorted = activeSort?.column === columnKey;
+    const nextDirection: TableSortDirection = isCurrentlySorted && activeSort?.direction === 'asc' ? 'desc' : 'asc';
+
+    if (!sortBy) {
+      setInternalSort({ column: columnKey, direction: nextDirection });
+    }
+
+    onSort?.(columnKey, nextDirection);
+  };
+
+  const renderSelectionHeader = () => {
+    if (!isSelectable) return null;
+    if (!isMultiSelect) {
+      return (
+        <th
+          role="columnheader"
+          className={cn(
+            getStyleClass('dyn-table__cell'),
+            'dyn-table__cell',
+            getStyleClass('dyn-table__cell--selection'),
+            'dyn-table__cell--selection'
+          )}
+        />
+      );
+    }
+
+    const allSelected = rowKeys.length > 0 && rowKeys.every(key => internalSelectedKeys.includes(key));
+
+    return (
+      <th
+        role="columnheader"
+        scope="col"
+        className={cn(
+          getStyleClass('dyn-table__cell'),
+          'dyn-table__cell',
+          getStyleClass('dyn-table__cell--selection'),
+          'dyn-table__cell--selection'
+        )}
+      >
+        <input
+          type="checkbox"
+          aria-label="Select all rows"
+          checked={allSelected}
+          onChange={toggleSelectAll}
+        />
+      </th>
+    );
+  };
+
+  const renderHeaderCells = () => columns.map(column => {
+    const headerLabel = column.title ?? column.header ?? column.key;
+    const isSorted = activeSort?.column === column.key;
+    const sortableColumn = isColumnSortable(sortable, column.sortable);
+    const thClasses = cn(
+      getStyleClass('dyn-table__cell'),
+      'dyn-table__cell',
+      getStyleClass('dyn-table__cell--header'),
+      'dyn-table__cell--header',
+      column.align && [
+        getStyleClass(`dyn-table__cell--${column.align}`),
+        `dyn-table__cell--${column.align}`
+      ],
+      sortableColumn && 'dyn-table__cell--sortable',
+      sortableColumn && getStyleClass('dyn-table__cell--sortable'),
+      sortableColumn && isSorted && [
+        getStyleClass('dyn-table__cell--sorted'),
+        'dyn-table__cell--sorted'
+      ]
+    );
+
+    const widthStyle = column.width ? { width: typeof column.width === 'number' ? `${column.width}px` : String(column.width) } : undefined;
+
+    return (
+      <th
+        key={column.key}
+        role="columnheader"
+        scope="col"
+        aria-sort={isSorted ? (activeSort?.direction === 'asc' ? 'ascending' : 'descending') : undefined}
+        className={thClasses}
+        style={widthStyle}
+        onClick={sortableColumn ? (event) => {
+          if ((event.target as HTMLElement)?.closest('button')) return;
+          handleSortClick(column.key);
+        } : undefined}
+      >
+        <div className={cn(getStyleClass('dyn-table__cell-content'), 'dyn-table__cell-content')}>
+          {sortableColumn ? (
+            <button
+              type="button"
+              className={cn(getStyleClass('dyn-table__sort-button'), 'dyn-table__sort-button')}
+              onClick={(event) => {
+                event.stopPropagation();
+                handleSortClick(column.key);
+              }}
+              aria-label={`Sort by ${headerLabel}`}
+            >
+              <span>{headerLabel}</span>
+              <SortIcons direction={activeSort?.direction} isActive={isSorted} />
+            </button>
+          ) : (
+            <span>{headerLabel}</span>
+          )}
+        </div>
+      </th>
+    );
+  });
+
+  const renderActionsHeader = () => {
+    if (!actions.length) return null;
+    return (
+      <th
+        role="columnheader"
+        scope="col"
+        className={cn(
+          getStyleClass('dyn-table__cell'),
+          'dyn-table__cell',
+          getStyleClass('dyn-table__cell--actions'),
+          'dyn-table__cell--actions'
+        )}
+      >
+        <span>Actions</span>
+      </th>
+    );
+  };
+
+  const renderSelectionCell = (key: string) => {
+    if (!isSelectable) return null;
+    const checked = internalSelectedKeys.includes(key);
+
+    return (
+      <td
+        className={cn(
+          getStyleClass('dyn-table__cell'),
+          'dyn-table__cell',
+          getStyleClass('dyn-table__cell--selection'),
+          'dyn-table__cell--selection'
+        )}
+        role="cell"
+      >
+        {isMultiSelect ? (
+          <input
+            type="checkbox"
+            aria-label="Select row"
+            checked={checked}
+            onChange={() => toggleRowSelection(key)}
+          />
+        ) : (
+          <input
+            type="radio"
+            aria-label="Select row"
+            name={`${internalId}-selection`}
+            checked={checked}
+            onChange={() => toggleRowSelection(key)}
+          />
+        )}
+      </td>
+    );
+  };
+
+  const renderActionsCell = (row: any, rowIndex: number) => {
+    if (!actions.length) return null;
+    return (
+      <td
+        className={cn(
+          getStyleClass('dyn-table__cell'),
+          'dyn-table__cell',
+          getStyleClass('dyn-table__cell--actions'),
+          'dyn-table__cell--actions'
+        )}
+        role="cell"
+      >
+        <div className={cn(getStyleClass('dyn-table-actions'), 'dyn-table-actions')}>
+          {actions
+            .filter(action => action.visible ? action.visible(row) : true)
+            .map(action => (
+              <button
+                key={action.key}
+                type="button"
+                className={cn(getStyleClass('dyn-table__action-button'), 'dyn-table__action-button')}
+                onClick={() => action.onClick(row, rowIndex)}
+                disabled={action.disabled ? action.disabled(row) : false}
+              >
+                {action.title}
+              </button>
+            ))}
+        </div>
+      </td>
+    );
+  };
+
+  const renderCellContent = (column: typeof columns[number], row: any, rowIndex: number) => {
+    if (column.render) return column.render(row[column.key], row, rowIndex);
+    if (column.type === 'boolean') return formatBoolean(row[column.key]);
+    if (column.type === 'link') {
+      const href = row[column.key];
+      return href ? (
+        <a href={String(href)}>{String(row[column.key])}</a>
+      ) : '';
+    }
+    return formatCellValue(row[column.key]);
+  };
+
+  const renderBody = () => (
+    <tbody className={cn(getStyleClass('dyn-table__body'), 'dyn-table__body')}>
+      {data.map((row, rowIndex) => {
+        const key = rowKeys[rowIndex];
+        return (
+          <tr
+            key={key}
+            role="row"
+            aria-selected={isSelectable ? internalSelectedKeys.includes(key) : undefined}
+            className={cn(
+              getStyleClass('dyn-table__row'),
+              'dyn-table__row',
+              isSelectable && internalSelectedKeys.includes(key) && [
+                getStyleClass('dyn-table__row--selected'),
+                'dyn-table__row--selected'
+              ]
+            )}
+          >
+            {renderSelectionCell(key)}
+            {columns.map(column => (
+              <td
+                key={column.key}
+                role="cell"
+                className={cn(
+                  getStyleClass('dyn-table__cell'),
+                  'dyn-table__cell',
+                  column.align && [
+                    getStyleClass(`dyn-table__cell--${column.align}`),
+                    `dyn-table__cell--${column.align}`
+                  ]
+                )}
+              >
+                {renderCellContent(column, row, rowIndex)}
+              </td>
+            ))}
+            {renderActionsCell(row, rowIndex)}
+          </tr>
+        );
+      })}
+    </tbody>
+  );
+
+  const renderEmptyState = () => (
+    <div className={cn(getStyleClass('dyn-table__empty'), 'dyn-table__empty')} role="note">
+      {emptyText}
+    </div>
+  );
+
+  const renderLoadingState = () => (
+    <div className={cn(getStyleClass('dyn-table__loading'), 'dyn-table__loading')} role="status" aria-live="polite">
+      Loading...
+    </div>
+  );
+
+  const renderPagination = () => {
+    if (!pagination) return null;
+    const totalPages = Math.max(1, Math.ceil(pagination.total / pagination.pageSize));
+    const currentPage = Math.min(Math.max(1, pagination.current), totalPages);
+
+    const goToPage = (page: number) => {
+      const next = Math.min(Math.max(page, 1), totalPages);
+      if (next !== currentPage) {
+        pagination.onChange?.(next, pagination.pageSize);
+      }
+    };
+
+    return (
+      <div className={cn(getStyleClass('dyn-table__pagination'), 'dyn-table__pagination')} role="navigation" aria-label="Table pagination">
+        <div className={cn(getStyleClass('dyn-table__pagination-controls'), 'dyn-table__pagination-controls')}>
+          <button
+            type="button"
+            className={cn(getStyleClass('dyn-table__pagination-button'), 'dyn-table__pagination-button')}
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className={cn(getStyleClass('dyn-table__pagination-info'), 'dyn-table__pagination-info')}>
+            Page {currentPage}
+          </span>
+          <button
+            type="button"
+            className={cn(getStyleClass('dyn-table__pagination-button'), 'dyn-table__pagination-button')}
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <div id={internalId} className={rootClasses} data-testid={dataTestId || 'dyn-table'} style={rootStyle} {...rest}>
-      <table role="table" className={getStyleClass('table')} aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
-        <thead className={getStyleClass('thead')}>
-          <tr role="row">
-            {isMultiple && (
-              <th className={getStyleClass('th')} role="columnheader" scope="col">
-                <input
-                  type="checkbox"
-                  role="checkbox"
-                  aria-checked={allChecked}
-                  checked={allChecked}
-                  onChange={() => (rest as any).onSelectionChange?.(allChecked ? [] : allKeys, allChecked ? [] : data)}
-                />
-              </th>
-            )}
-
-            {columns.map(col => {
-              const isSorted = sortBy?.column === col.key;
-              const headerText = (col.title ?? col.header) as string;
-              return (
-                <th
-                  key={col.key}
-                  role="columnheader"
-                  scope="col"
-                  aria-sort={col.sortable !== false ? (isSorted ? (sortBy!.direction === 'asc' ? 'ascending' : 'descending') : undefined) : undefined}
-                  className={cn('dyn-table__cell', col.sortable !== false && 'dyn-table__cell--sortable', isSorted && 'dyn-table__cell--sorted')}
-                  onClick={() => {
-                    if (col.sortable !== false) handleSort(col.key);
-                  }}
-                >
-                  {col.sortable !== false ? (
-                    <button type="button" className={getStyleClass('sort')} aria-label={`Sort by ${headerText}`}>
-                      {headerText}
-                    </button>
-                  ) : (
-                    <span>{headerText}</span>
-                  )}
-                </th>
-              );
-            })}
-
-            {(rest as any).actions && (rest as any).actions.length > 0 && (
-              <th className={getStyleClass('th')} role="columnheader" scope="col">
-                <span>Actions</span>
-              </th>
-            )}
-          </tr>
-        </thead>
-        <tbody className={getStyleClass('tbody')}>
-          {data.map((row, rIdx) => {
-            const key = getRowKey(row, rIdx);
-            return (
-              <tr key={key} role="row" className={getStyleClass('tr')}>
-                {isMultiple && (
-                  <td className={getStyleClass('td')} role="cell">
-                    <input type="checkbox" role="checkbox" onChange={() => (rest as any).onSelectionChange?.([key], [row])} />
-                  </td>
-                )}
-
-                {isSingle && (
-                  <td className={getStyleClass('td')} role="cell">
-                    <input type="radio" role="radio" name={`${internalId}-select`} onChange={() => (rest as any).onSelectionChange?.([key], [row])} />
-                  </td>
-                )}
-
-                {columns.map(col => {
-                  const cellKey = `${rIdx}-${col.key}`;
-                  const val = row[col.key];
-                  let content: any;
-                  if (col.render) content = col.render(val, row, rIdx);
-                  else if (col.type === 'boolean') {
-                    boolSeen[col.key] = (boolSeen[col.key] || 0) + (val ? 1 : 0);
-                    if (val) {
-                      content = boolSeen[col.key] === 1 ? 'Yes' : '✓';
-                    } else {
-                      content = 'No';
-                    }
-                  } else {
-                    content = String(val ?? '');
-                  }
-
-                  return (
-                    <td key={cellKey} role="cell" className={getStyleClass('td')}>
-                      {content}
-                    </td>
-                  );
-                })}
-
-                {(rest as any).actions && (rest as any).actions.length > 0 && (
-                  <td className={getStyleClass('td')} role="cell">
-                    <div className={getStyleClass('actions')}>
-                      {(rest as any).actions.map((action: any) => (
-                        <button
-                          key={action.key}
-                          type="button"
-                          className={getStyleClass('action-button')}
-                          onClick={() => action.onClick(row, rIdx)}
-                          disabled={typeof action.disabled === 'function' ? action.disabled(row) : action.disabled}
-                        >
-                          {action.title}
-                        </button>
-                      ))}
-                    </div>
-                  </td>
-                )}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
-      {(rest as any).loading ? (
-        <div role="status" className={getStyleClass('loading')}>Loading...</div>
-      ) : data.length === 0 ? (
-        <div role="note" className={getStyleClass('empty')}>{(rest as any).emptyText ?? 'No data available'}</div>
-      ) : null}
-
-      {(rest as any).pagination && (
-        <div className={getStyleClass('pagination')}>
-          <div className={getStyleClass('pagination-info')}>Showing {(rest as any).pagination.current}</div>
-          <div className={getStyleClass('pagination-controls')}>
-            <button className={getStyleClass('pagination-button')} onClick={() => (rest as any).pagination.onChange?.(Math.max(1, (rest as any).pagination.current - 1), (rest as any).pagination.pageSize)}>Previous</button>
-            <span className={getStyleClass('pagination-current')}>Page {(rest as any).pagination.current}</span>
-            <button className={getStyleClass('pagination-button')} onClick={() => (rest as any).pagination.onChange?.((rest as any).pagination.current + 1, (rest as any).pagination.pageSize)}>Next</button>
-          </div>
-        </div>
-      )}
+    <div
+      id={internalId}
+      className={rootClasses}
+      data-testid={dataTestId || 'dyn-table'}
+      style={rootStyle}
+      {...otherDomProps}
+    >
+      <div className={cn(getStyleClass('dyn-table__wrapper'), 'dyn-table__wrapper')}>
+        <table
+          role="table"
+          className={cn(getStyleClass('dyn-table__table'), 'dyn-table__table')}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
+        >
+          <thead className={cn(getStyleClass('dyn-table__head'), 'dyn-table__head')}>
+            <tr
+              role="row"
+              className={cn(getStyleClass('dyn-table__row'), 'dyn-table__row')}
+            >
+              {renderSelectionHeader()}
+              {renderHeaderCells()}
+              {renderActionsHeader()}
+            </tr>
+          </thead>
+          {renderBody()}
+        </table>
+      </div>
+      {loading ? renderLoadingState() : data.length === 0 ? renderEmptyState() : null}
+      {renderPagination()}
     </div>
   );
 };
