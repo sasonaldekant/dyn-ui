@@ -6,6 +6,13 @@ import type { DynListViewProps, ListViewItem, ListAction } from './DynListView.t
 
 const getStyleClass = (n: string) => (styles as Record<string, string>)[n] || '';
 
+const isComplexItem = (item: any) => {
+  // Consider item complex if it has more than typical display fields
+  const displayKeys = new Set(['id','title','label','value','description','icon','disabled','selected']);
+  const keys = Object.keys(item || {});
+  return keys.filter(k => !displayKeys.has(k)).length >= 3; // threshold can be tuned
+};
+
 export const DynListView = forwardRef<HTMLDivElement, DynListViewProps>(function DynListView(
   {
     items = [],
@@ -43,6 +50,7 @@ export const DynListView = forwardRef<HTMLDivElement, DynListViewProps>(function
     value ?? (multiSelect ? [] : defaultValue)
   );
   const [activeIndex, setActiveIndex] = useState(0);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   useEffect(() => { 
     if (isControlled) setSelected(value as any); 
@@ -55,25 +63,22 @@ export const DynListView = forwardRef<HTMLDivElement, DynListViewProps>(function
 
   const getItemKey = (item: ListViewItem, index: number): string => {
     if (typeof itemKey === 'function') return itemKey(item);
-    if (typeof itemKey === 'string') return String(item[itemKey]);
+    if (typeof itemKey === 'string') return String((item as any)[itemKey]);
     return item.id ? String(item.id) : item.value ? String(item.value) : String(index);
   };
 
   const isSelected = (val: string) => {
-    return multiSelect ? Array.isArray(selected) && selected.includes(val) : selected === val;
+    return multiSelect || selectable ? Array.isArray(selected) && selected.includes(val) : selected === val;
   };
 
   const commit = (vals: string[] | string) => {
     if (!isControlled) setSelected(vals as any);
     
-    // Find corresponding items
-    const selectedItems = listItems.filter(item => {
-      const key = getItemKey(item, 0);
-      return multiSelect ? (vals as string[]).includes(key) : vals === key;
-    });
+    const valArray = Array.isArray(vals) ? vals : [vals];
+    const selectedItems = listItems.filter((item, idx) => valArray.includes(getItemKey(item, idx)));
     
-    onChange?.(vals as any, multiSelect ? selectedItems : selectedItems[0]);
-    onSelectionChange?.(Array.isArray(vals) ? vals : [vals], selectedItems);
+    onChange?.(vals as any, (multiSelect || selectable) ? selectedItems : selectedItems[0]);
+    onSelectionChange?.(valArray, selectedItems);
   };
 
   const toggle = (val: string) => {
@@ -124,6 +129,9 @@ export const DynListView = forwardRef<HTMLDivElement, DynListViewProps>(function
     height: typeof height === 'number' ? `${height}px` : String(height) 
   } : undefined;
 
+  const allKeys = listItems.map((item, i) => getItemKey(item, i));
+  const allChecked = (multiSelect || selectable) && allKeys.length > 0 && allKeys.every(k => isSelected(k));
+
   return (
     <div
       ref={ref}
@@ -140,6 +148,22 @@ export const DynListView = forwardRef<HTMLDivElement, DynListViewProps>(function
       style={rootStyle}
       {...rest}
     >
+      {(multiSelect || selectable) && (
+        <div className={getStyleClass('option')}
+             role="option"
+             aria-selected={allChecked}
+        >
+          <input
+            type="checkbox"
+            role="checkbox"
+            aria-checked={allChecked}
+            checked={allChecked}
+            onChange={() => commit(allChecked ? [] : allKeys)}
+          />
+          <span className={getStyleClass('option__label')}>Select All</span>
+        </div>
+      )}
+
       {loading ? (
         <div role="status" className={getStyleClass('loading')}>
           Loading...
@@ -152,7 +176,10 @@ export const DynListView = forwardRef<HTMLDivElement, DynListViewProps>(function
         listItems.map((item, i) => {
           const key = getItemKey(item, i);
           const selectedState = isSelected(key);
-          
+          const title = (item as any).title ?? (item as any).label ?? (item as any).value ?? String((item as any).id ?? i + 1);
+          const desc = (item as any).description;
+          const complex = isComplexItem(item);
+
           return (
             <div
               key={key}
@@ -187,58 +214,61 @@ export const DynListView = forwardRef<HTMLDivElement, DynListViewProps>(function
                   renderItem(item, i)
                 ) : (
                   <>
-                    {item.icon && (
-                      <span className={getStyleClass('option__icon')}>
-                        {typeof item.icon === 'string' ? <i className={item.icon} /> : item.icon}
-                      </span>
-                    )}
                     <span className={getStyleClass('option__label')}>
-                      {item.label || item.value || String(item.id)}
+                      {title}
                     </span>
-                    {item.description && (
+                    {desc && (
                       <span className={getStyleClass('option__description')}>
-                        {item.description}
+                        {desc}
                       </span>
                     )}
                   </>
                 )}
               </div>
 
+              {complex && (
+                <button
+                  type="button"
+                  className={getStyleClass('option__expand')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setExpanded(prev => ({ ...prev, [key]: !prev[key] }));
+                  }}
+                  aria-expanded={!!expanded[key]}
+                >
+                  {expanded[key] ? 'Collapse' : 'Expand'}
+                </button>
+              )}
+
               {actions && actions.length > 0 && (
                 <div 
                   className={getStyleClass('option__actions')} 
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {actions.map((action) => {
-                    const isVisible = !action.visible || action.visible(item);
-                    const isDisabled = action.disabled ? action.disabled(item) : false;
-                    
-                    if (!isVisible) return null;
-                    
-                    return (
-                      <button
-                        key={action.key}
-                        type="button"
-                        disabled={isDisabled}
-                        className={cn(
-                          getStyleClass('action-button'),
-                          getStyleClass(`action-button--${action.type || 'default'}`)
-                        )}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          action.onClick(item, i);
-                        }}
-                        title={action.title}
-                      >
-                        {action.icon && (
-                          <span className={getStyleClass('action-button__icon')}>
-                            {typeof action.icon === 'string' ? <i className={action.icon} /> : action.icon}
-                          </span>
-                        )}
-                        {action.title}
-                      </button>
-                    );
-                  })}
+                  {actions.map((action) => (
+                    <button
+                      key={action.key}
+                      type="button"
+                      className={cn(
+                        getStyleClass('action-button'),
+                        getStyleClass(`action-button--${action.type || 'default'}`)
+                      )}
+                      onClick={() => action.onClick(item, i)}
+                      title={action.title}
+                    >
+                      {action.title}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {expanded[key] && (
+                <div className={getStyleClass('option__details')}>
+                  {Object.entries(item).map(([k, v]) => (
+                    <div key={k}>
+                      <strong>{k}:</strong> {String(v)}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
