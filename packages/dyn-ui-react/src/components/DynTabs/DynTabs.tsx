@@ -60,6 +60,17 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
 
     const [current, setCurrent] = useState<string | undefined>(getInitial());
 
+    // Lazy: track loading states
+    const [loaded, setLoaded] = useState<Record<string, boolean>>({});
+
+    // Pre-mark initial current as not loaded for immediate placeholder
+    useEffect(() => {
+      if (lazy && current && loaded[current] === undefined) {
+        setLoaded(prev => ({ ...prev, [current]: false }));
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     // Sync controlled
     useEffect(() => {
       if (controlledVal !== undefined) setCurrent(String(controlledVal));
@@ -81,15 +92,14 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
     }
 
     const tabsRef = useRef<Array<HTMLButtonElement | null>>([]);
-    const [loaded, setLoaded] = useState<Record<string, boolean>>({});
 
     const onSelect = (val: string, focusPanel = false) => {
       if (!isControlled) setCurrent(val);
       onChange?.(val);
       if (lazy && loaded[val] === undefined) {
-        // mark only the selected tab as loading initially
+        // Immediately show loading for the newly selected tab
         setLoaded(prev => ({ ...prev, [val]: false }));
-        // simulate async completion in next microtask
+        // Complete loading in a microtask
         queueMicrotask(() => setLoaded(prev => ({ ...prev, [val]: true })));
       }
       if (focusPanel) {
@@ -186,7 +196,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
             const selected = item.processedValue === current;
             const tabId = `${internalId}-tab-${item.processedValue}`;
             const panelId = `${internalId}-panel-${item.processedValue}`;
-            const tabClass = cn(
+            const wrapperClass = cn(
               css('tab'),
               size && css(`tab--${size}`),
               variant && css(`tab--${variant}`),
@@ -195,7 +205,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
               item.closable && css('tab--closable')
             );
             return (
-              <div key={item.processedKey} className={tabClass} role="presentation" data-status={item.disabled ? 'disabled' : selected ? 'active' : 'inactive'}>
+              <div key={item.processedKey} className={wrapperClass} role="presentation" data-status={item.disabled ? 'disabled' : selected ? 'active' : 'inactive'}>
                 <button
                   ref={(el) => { tabsRef.current[index] = el; return el; }}
                   id={tabId}
@@ -237,7 +247,10 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
           const tabId = `${internalId}-tab-${item.processedValue}`;
           const panelId = `${internalId}-panel-${item.processedValue}`;
           const panelClass = cn(css('panel'), animated && css('panel--animated'));
-          const isLoaded = !lazy || loaded[item.processedValue] === true || item.processedValue === current;
+
+          const isLoaded = !lazy ? true : loaded[item.processedValue] === true;
+          const showLoading = lazy && selected && !isLoaded;
+
           return (
             <div
               key={`panel-${item.processedKey}`}
@@ -248,12 +261,12 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
               tabIndex={-1}
               className={panelClass}
             >
-              {lazy && selected && !isLoaded && (
+              {showLoading && (
                 <div className={css('panel__loading')} aria-label="Loading content">
                   {loadingComponent || <span>Loading tab content</span>}
                 </div>
               )}
-              {(!lazy || isLoaded) && (typeof item.content === 'function' ? item.content({ value: item.processedValue, selected }) : item.content)}
+              {!showLoading && (typeof item.content === 'function' ? item.content({ value: item.processedValue, selected }) : item.content)}
             </div>
           );
         })}
