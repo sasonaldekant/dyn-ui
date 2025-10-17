@@ -29,49 +29,55 @@ export interface TreeCheckInfo {
 export interface DynTreeViewProps extends BaseComponentProps {
   /** Tree data */
   treeData: TreeNode[];
-  
+
   /** Show checkboxes for selection */
   checkable?: boolean;
-  
+
   /** Allow node selection */
   selectable?: boolean;
-  
+
   /** Allow multiple selection */
   multiple?: boolean;
-  
+
   /** Expanded node keys */
   expandedKeys?: string[];
-  
+
   /** Checked node keys */
   checkedKeys?: string[];
-  
+
   /** Selected node keys */
   selectedKeys?: string[];
-  
+
   /** Expand all nodes by default */
   defaultExpandAll?: boolean;
-  
+
   /** Show node icons */
   showIcon?: boolean;
-  
+
   /** Show connecting lines */
   showLine?: boolean;
-  
+
+  /** Show search input */
+  showSearch?: boolean;
+
+  /** If true, checking nodes does not cascade to parent/children */
+  checkStrictly?: boolean;
+
   /** Enable search functionality */
   searchable?: boolean;
-  
+
   /** Expand callback */
   onExpand?: (expandedKeys: string[]) => void;
-  
+
   /** Check callback */
   onCheck?: (checkedKeys: string[], info: TreeCheckInfo) => void;
-  
+
   /** Select callback */
   onSelect?: (selectedKeys: string[], info: TreeSelectInfo) => void;
-  
+
   /** Search callback */
   onSearch?: (value: string) => void;
-  
+
   /** Fixed height for scrollable tree */
   height?: number | string;
 }
