@@ -173,7 +173,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
             return (
               <button
                 key={item.processedKey}
-                ref={(el) => { tabsRef.current[index] = el; return el; }}
+                ref={(el) => { tabsRef.current[index] = el; }}
                 id={tabId}
                 role="tab"
                 type="button"
