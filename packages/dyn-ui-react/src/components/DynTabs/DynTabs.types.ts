@@ -8,20 +8,25 @@ export type DynTabsOrientation = 'horizontal' | 'vertical';
 export type DynTabsActivation = 'auto' | 'manual';
 
 /**
+ * Content function type for tab items
+ */
+export type TabContentFunction = (params: { value: string; selected: boolean }) => ReactNode;
+
+/**
  * Individual tab item configuration
  */
 export interface DynTabItem {
-  /** Unique identifier/value for the tab */
+  /** Unique identifier for the tab (legacy support) */
   id?: string;
   
-  /** Value for the tab (can be used instead of id) */
-  value?: string;
+  /** Value for the tab - preferred over id */
+  value?: string | number;
   
   /** Display label for the tab */
   label: string;
   
-  /** Content to display when tab is active */
-  content: ReactNode;
+  /** Content to display when tab is active - can be ReactNode or function */
+  content: ReactNode | TabContentFunction;
   
   /** Whether the tab is disabled */
   disabled?: boolean;
@@ -37,6 +42,12 @@ export interface DynTabItem {
   
   /** Tooltip text for the tab */
   tooltip?: string;
+  
+  /** Additional CSS class name for the tab */
+  className?: string;
+  
+  /** Additional data attributes */
+  'data-testid'?: string;
 }
 
 /**
@@ -52,13 +63,16 @@ export interface DynTabsProps extends
   items: DynTabItem[];
   
   /** Currently active tab ID/value (controlled) */
-  value?: string;
+  value?: string | number;
   
   /** Currently active tab ID (controlled - alias for value) */
-  activeTab?: string;
+  activeTab?: string | number;
   
   /** Default active tab ID (uncontrolled) */
-  defaultActiveTab?: string;
+  defaultValue?: string | number;
+  
+  /** Default active tab ID (uncontrolled - alias for defaultValue) */
+  defaultActiveTab?: string | number;
   
   /** Position of tabs relative to content */
   position?: DynTabsPosition;
@@ -110,13 +124,16 @@ export interface DynTabsProps extends
   
   /** Called when add tab button is clicked */
   onTabAdd?: () => void;
+  
+  /** Called when a tab is clicked (before onChange) */
+  onTabClick?: (tabId: string, event: React.MouseEvent) => boolean | void;
 }
 
 /**
  * Ref type for DynTabs component
  * Includes imperative methods following DynAvatar pattern
  */
-export interface DynTabsRef extends HTMLDivElement {
+export interface DynTabsRef {
   /** Focus the tabs container */
   focus: () => void;
   
@@ -124,13 +141,61 @@ export interface DynTabsRef extends HTMLDivElement {
   blur: () => void;
   
   /** Focus specific tab by ID */
-  focusTab?: (tabId: string) => void;
+  focusTab: (tabId: string) => void;
   
   /** Get currently active tab ID */
-  getActiveTab?: () => string | undefined;
+  getActiveTab: () => string | undefined;
   
   /** Programmatically set active tab */
-  setActiveTab?: (tabId: string) => void;
+  setActiveTab: (tabId: string) => void;
+  
+  /** Get all tab elements */
+  getTabs: () => HTMLButtonElement[];
+  
+  /** Get tab element by ID */
+  getTabElement: (tabId: string) => HTMLButtonElement | null;
+  
+  /** Get active tab element */
+  getActiveTabElement: () => HTMLButtonElement | null;
+  
+  /** Get tab panel element by ID */
+  getTabPanel: (tabId: string) => HTMLDivElement | null;
+  
+  /** Get active tab panel element */
+  getActiveTabPanel: () => HTMLDivElement | null;
+}
+
+/**
+ * Extended tab item with processed values for internal use
+ */
+export interface ProcessedTabItem extends DynTabItem {
+  /** Processed value ensuring string type */
+  processedValue: string;
+  
+  /** Processed key for React rendering */
+  processedKey: string;
+}
+
+/**
+ * Tab navigation event types
+ */
+export type TabNavigationDirection = 'next' | 'previous' | 'first' | 'last';
+
+/**
+ * Tab change event data
+ */
+export interface TabChangeEvent {
+  /** The new active tab ID */
+  activeTab: string;
+  
+  /** The previous active tab ID */
+  previousTab?: string;
+  
+  /** The tab item data */
+  tabData: DynTabItem;
+  
+  /** Navigation method used */
+  trigger: 'click' | 'keyboard' | 'programmatic';
 }
 
 /**
@@ -148,4 +213,41 @@ export const DYN_TABS_DEFAULT_PROPS = {
   lazy: false,
   animated: true,
   addable: false,
+} as const;
+
+/**
+ * Tab keyboard navigation keys
+ */
+export const TAB_NAVIGATION_KEYS = {
+  ARROW_LEFT: 'ArrowLeft',
+  ARROW_RIGHT: 'ArrowRight',
+  ARROW_UP: 'ArrowUp',
+  ARROW_DOWN: 'ArrowDown',
+  HOME: 'Home',
+  END: 'End',
+  ENTER: 'Enter',
+  SPACE: ' ',
+  TAB: 'Tab',
+} as const;
+
+/**
+ * CSS class names used by DynTabs
+ */
+export const DYN_TABS_CLASSES = {
+  root: 'dyn-tabs',
+  tablist: 'dyn-tabs__list',
+  tab: 'dyn-tabs__tab',
+  tabIcon: 'dyn-tabs__tab-icon',
+  tabLabel: 'dyn-tabs__tab-label',
+  tabBadge: 'dyn-tabs__tab-badge',
+  tabpanel: 'dyn-tabs__panel',
+  // States
+  selected: 'dyn-tabs__tab--selected',
+  disabled: 'dyn-tabs__tab--disabled',
+  active: 'dyn-tabs__panel--active',
+  // Variants
+  horizontal: 'dyn-tabs--horizontal',
+  vertical: 'dyn-tabs--vertical',
+  fitted: 'dyn-tabs--fitted',
+  scrollable: 'dyn-tabs--scrollable',
 } as const;
