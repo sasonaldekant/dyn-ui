@@ -28,6 +28,12 @@ export { DynToolbar } from './DynToolbar';
 export { DynTreeView } from './DynTreeView';
 export { ThemeSwitcher } from './ThemeSwitcher';
 
+// Re-export theme/provider utilities and helpers expected by tests
+export { ThemeProvider, useTheme } from '../theme/ThemeProvider';
+export { IconDictionaryProvider } from '../providers';
+export { classNames, createClassNameGenerator, combineClasses } from '../utils/classNames';
+export { generateInitials } from '../utils/dynFormatters';
+
 // Type exports
 export type * from './DynAvatar';
 export type * from './DynBadge';

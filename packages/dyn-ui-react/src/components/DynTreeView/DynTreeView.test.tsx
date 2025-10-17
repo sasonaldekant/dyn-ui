@@ -180,15 +180,15 @@ describe('DynTreeView', () => {
         <DynTreeView treeData={sampleTreeData} checkable />
       );
 
-      expect(container.firstChild).toHaveClass(expect.stringContaining('checkable')); // CSS module friendly
+  expect(container.firstChild as Element).toHaveClass(expect.stringContaining('checkable')); // CSS module friendly
 
       rerender(<DynTreeView treeData={sampleTreeData} showLine />);
       expect(container.firstChild).toHaveClass(expect.stringContaining('show-line')); // CSS module friendly
 
-      expect(container.firstChild?.className).toMatch(/checkable/i); // CSS module friendly
+  expect((container.firstChild as Element | null)?.className).toMatch(/checkable/i); // CSS module friendly
 
       rerender(<DynTreeView treeData={sampleTreeData} showLine />);
-      expect(container.firstChild?.className).toMatch(/show-line/i); // CSS module friendly
+  expect((container.firstChild as Element | null)?.className).toMatch(/show-line/i); // CSS module friendly
 
     });
   });
