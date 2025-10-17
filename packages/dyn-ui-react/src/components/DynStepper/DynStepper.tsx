@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState, useCallback } from 'react';
+import React, { forwardRef, useImperativeHandle, useState, useCallback, useEffect } from 'react';
 import { cn } from '../../utils/classNames';
 import { generateId } from '../../utils/accessibility';
 import styles from './DynStepper.module.css';
@@ -11,17 +11,35 @@ function clamp(n: number, min: number, max: number) {
 }
 
 /**
+ * Convert value to step index
+ */
+function valueToIndex(value: string | number | undefined, steps: StepItem[]): number {
+  if (value === undefined) return 0;
+  
+  if (typeof value === 'number') {
+    return Math.max(0, Math.min(value, steps.length - 1));
+  }
+  
+  // String value - find by step id
+  const index = steps.findIndex(step => step.id === value);
+  return index >= 0 ? index : 0;
+}
+
+/**
  * DynStepper — standardized: ids, a11y, predictable events, linear/non-linear.
- * Complete implementation with all test fixes and missing functionality.
+ * Complete implementation with backward compatibility for legacy value/defaultValue props.
  */
 export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
   (
     {
       steps = [],
-      value,
-      defaultValue = 0,
+      // New API
       activeStep: controlledActiveStep,
       defaultActiveStep = 0,
+      // Legacy API - maintain backward compatibility
+      value: controlledValue,
+      defaultValue = 0,
+      // Common props
       linear = true,
       onChange,
       onStepChange,
@@ -43,51 +61,102 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
     ref
   ) => {
     const [internalId] = useState(() => id || generateId('stepper'));
-    const isControlled = controlledActiveStep !== undefined;
-    const [internalActiveStep, setInternalActiveStep] = useState(
-      isControlled ? (controlledActiveStep as number) : (defaultActiveStep || 0)
-    );
     
-    const activeStep = isControlled ? (controlledActiveStep as number) : internalActiveStep;
+    // Determine controlled state and initial value with proper priority:
+    // 1. activeStep (new API) takes precedence
+    // 2. value (legacy API) as fallback  
+    // 3. defaultActiveStep (new API default)
+    // 4. defaultValue (legacy API default)
+    const isControlledByActiveStep = controlledActiveStep !== undefined;
+    const isControlledByValue = controlledValue !== undefined;
+    const isControlled = isControlledByActiveStep || isControlledByValue;
+    
+    const getInitialStep = () => {
+      if (isControlledByActiveStep) return controlledActiveStep;
+      if (isControlledByValue) return valueToIndex(controlledValue, steps);
+      if (defaultActiveStep !== 0) return defaultActiveStep;
+      return valueToIndex(defaultValue, steps);
+    };
+    
+    const [internalActiveStep, setInternalActiveStep] = useState(getInitialStep);
+    
+    // Get current active step with proper priority
+    const getCurrentActiveStep = () => {
+      if (isControlledByActiveStep) return controlledActiveStep as number;
+      if (isControlledByValue) return valueToIndex(controlledValue, steps);
+      return internalActiveStep;
+    };
+    
+    const activeStep = getCurrentActiveStep();
+    
+    // Handle controlled value changes (both new and legacy API)
+    useEffect(() => {
+      if (isControlledByActiveStep) {
+        // New API - direct numeric control
+        return; // activeStep is already handled above
+      }
+      if (isControlledByValue) {
+        // Legacy API - value can be string (step id) or number (index)
+        const newIndex = valueToIndex(controlledValue, steps);
+        if (newIndex !== internalActiveStep) {
+          setInternalActiveStep(newIndex);
+        }
+      }
+    }, [controlledValue, isControlledByActiveStep, isControlledByValue, steps, internalActiveStep]);
 
     if (!steps || steps.length === 0) return null;
 
     const maxIndex = steps.length - 1;
+    const clampedActiveStep = clamp(activeStep, 0, maxIndex);
+
+    // Enhanced change handler that supports both APIs
+    const notifyChange = useCallback((newIndex: number, step: StepItem) => {
+      // Call legacy onChange with both value formats
+      if (onChange) {
+        if (isControlledByValue && typeof controlledValue === 'string') {
+          // If controlled by string value, callback with step id
+          onChange(step.id, step, newIndex);
+        } else {
+          // Otherwise callback with numeric index  
+          onChange(newIndex, step, newIndex);
+        }
+      }
+      
+      // Call legacy onStepChange
+      onStepChange?.(newIndex, step);
+    }, [onChange, onStepChange, controlledValue, isControlledByValue]);
 
     // Imperative API methods
     const nextStep = useCallback((): boolean => {
-      if (activeStep >= steps.length - 1) return false;
+      if (clampedActiveStep >= steps.length - 1) return false;
       
-      const newStep = activeStep + 1;
+      const newStep = clampedActiveStep + 1;
       if (!isControlled) setInternalActiveStep(newStep);
-      onChange?.(newStep, steps[newStep], newStep);
-      onStepChange?.(newStep, steps[newStep]);
+      notifyChange(newStep, steps[newStep]);
       return true;
-    }, [activeStep, steps.length, isControlled, onChange, onStepChange, steps]);
+    }, [clampedActiveStep, steps.length, isControlled, notifyChange, steps]);
 
     const prevStep = useCallback((): boolean => {
-      if (activeStep <= 0) return false;
+      if (clampedActiveStep <= 0) return false;
       
-      const newStep = activeStep - 1;
+      const newStep = clampedActiveStep - 1;
       if (!isControlled) setInternalActiveStep(newStep);
-      onChange?.(newStep, steps[newStep], newStep);
-      onStepChange?.(newStep, steps[newStep]);
+      notifyChange(newStep, steps[newStep]);
       return true;
-    }, [activeStep, isControlled, onChange, onStepChange, steps]);
+    }, [clampedActiveStep, isControlled, notifyChange, steps]);
 
     const goToStep = useCallback((stepIndex: number): boolean => {
-      if (stepIndex < 0 || stepIndex >= steps.length) return false;
-      if (linear && stepIndex > activeStep + 1) return false;
+      const clampedIndex = clamp(stepIndex, 0, maxIndex);
+      if (linear && clampedIndex > clampedActiveStep + 1) return false;
       
-      if (!isControlled) setInternalActiveStep(stepIndex);
-      onChange?.(stepIndex, steps[stepIndex], stepIndex);
-      onStepChange?.(stepIndex, steps[stepIndex]);
+      if (!isControlled) setInternalActiveStep(clampedIndex);
+      notifyChange(clampedIndex, steps[clampedIndex]);
       return true;
-    }, [activeStep, steps.length, linear, isControlled, onChange, onStepChange, steps]);
+    }, [clampedActiveStep, maxIndex, linear, isControlled, notifyChange, steps]);
 
     const getCurrentStep = useCallback((): number => {
-      return activeStep;
-    }, [activeStep]);
+      return clampedActiveStep;
+    }, [clampedActiveStep]);
 
     const getStepData = useCallback((stepIndex: number): StepItem | undefined => {
       return steps[stepIndex];
@@ -96,7 +165,13 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
     const validateStep = useCallback((stepIndex: number): boolean => {
       const step = steps[stepIndex];
       if (!step) return false;
-      // Add custom validation logic here if needed
+      
+      // Use custom validator if provided
+      if (step.validator) {
+        return step.validator(step);
+      }
+      
+      // Default validation
       return !step.error && !step.disabled;
     }, [steps]);
 
@@ -105,6 +180,7 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
       if (step) {
         step.completed = true;
         step.status = 'completed';
+        step.state = 'completed';
       }
     }, [steps]);
 
@@ -113,6 +189,7 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
       if (step) {
         step.error = hasError;
         step.status = hasError ? 'error' : 'inactive';
+        step.state = hasError ? 'error' : 'pending';
       }
     }, [steps]);
 
@@ -131,7 +208,7 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
     const isStepDisabled = (index: number): boolean => {
       const step = steps[index];
       if (step?.disabled) return true;
-      if (linear && index > activeStep + 1) return true;
+      if (linear && index > clampedActiveStep + 1) return true;
       return false;
     };
 
@@ -156,13 +233,13 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
       const classes = [getStyleClass('item')];
       const step = steps[index];
       
-      if (index === activeStep) {
+      if (index === clampedActiveStep) {
         classes.push(getStyleClass('item--current'), 'item--current');
       }
-      if (step?.completed || index < activeStep) {
+      if (step?.completed || step?.state === 'completed' || index < clampedActiveStep) {
         classes.push(getStyleClass('item--completed'), 'item--completed');
       }
-      if (step?.error) {
+      if (step?.error || step?.state === 'error') {
         classes.push(getStyleClass('item--error'), 'item--error');
       }
       if (step?.disabled || isStepDisabled(index)) {
@@ -184,7 +261,7 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
 
     const getPanelClassName = (index: number) => {
       const classes = [getStyleClass('panel')];
-      if (index !== activeStep) classes.push(getStyleClass('panel--hidden'));
+      if (index !== clampedActiveStep) classes.push(getStyleClass('panel--hidden'));
       return cn(...classes);
     };
 
@@ -195,14 +272,14 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
     const handleStepClick = (index: number) => {
       if (!clickableSteps || isStepDisabled(index)) return;
       
-      const clickResult = onStepClick?.(index, steps[index]);
+      const step = steps[index];
+      const clickResult = onStepClick?.(index, step);
       if (clickResult === false) return; // Allow onStepClick to prevent navigation
       
-      if (linear && index > activeStep + 1) return;
+      if (linear && index > clampedActiveStep + 1) return;
       
       if (!isControlled) setInternalActiveStep(index);
-      onChange?.(index, steps[index], index);
-      onStepChange?.(index, steps[index]);
+      notifyChange(index, step);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -244,8 +321,8 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
             <li key={step.id || index} className={getItemClassName(index)}>
               <button
                 {...(variant === 'tabs' ? { role: 'tab' } : {})}
-                aria-current={index === activeStep ? 'step' : undefined}
-                aria-selected={variant === 'tabs' ? index === activeStep : undefined}
+                aria-current={index === clampedActiveStep ? 'step' : undefined}
+                aria-selected={variant === 'tabs' ? index === clampedActiveStep : undefined}
                 className={getButtonClassName(index)}
                 id={getStepId(index)}
                 type="button"
@@ -254,7 +331,7 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
                 aria-describedby={step.description ? getStepDescId(index) : undefined}
                 title={step.tooltip}
               >
-                {renderStepIcon ? renderStepIcon(step, index, index === activeStep) : (
+                {renderStepIcon ? renderStepIcon(step, index, index === clampedActiveStep) : (
                   <>
                     <span aria-hidden="true" className={getStyleClass('button__index')}>
                       {index + 1}
@@ -280,14 +357,14 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
         {variant === 'progress' && (
           <div 
             role="progressbar" 
-            aria-valuenow={activeStep + 1} 
+            aria-valuenow={clampedActiveStep + 1} 
             aria-valuemin={1} 
             aria-valuemax={steps.length}
             className={getStyleClass('progressBar')}
           >
             <div 
               className={getStyleClass('progressFill')}
-              style={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
+              style={{ width: `${((clampedActiveStep + 1) / steps.length) * 100}%` }}
             />
           </div>
         )}
@@ -300,12 +377,12 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
             role={variant === 'tabs' ? 'tabpanel' : 'region'}
             aria-labelledby={getStepId(index)}
             tabIndex={-1}
-            hidden={index !== activeStep}
+            hidden={index !== clampedActiveStep}
           >
             {renderStepContent ? 
               renderStepContent(step, index) : 
               (typeof step.content === 'function' ? 
-                step.content({ index, selected: index === activeStep }) : 
+                step.content({ index, selected: index === clampedActiveStep }) : 
                 step.content
               )
             }
