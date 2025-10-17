@@ -185,8 +185,8 @@ describe('DynTable', () => {
   describe('Cell Formatting', () => {
     it('formats boolean values correctly', () => {
       render(<DynTable data={sampleData} columns={sampleColumns} />);
-      expect(screen.getByText('Yes')).toBeInTheDocument(); // true value
-      expect(screen.getByText('No')).toBeInTheDocument(); // false value
+      expect(screen.getAllByText('Yes')).toHaveLength(2); // true values
+      expect(screen.getAllByText('No')).toHaveLength(1); // false value
     });
 
     it('handles custom cell renderers', () => {
