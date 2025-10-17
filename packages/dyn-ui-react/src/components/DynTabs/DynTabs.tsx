@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState, useEffect, forwardRef } from 'react';
+import React, { useMemo, useRef, useState, useEffect, useLayoutEffect, forwardRef } from 'react';
 import { cn } from '../../utils/classNames';
 import { generateId } from '../../utils/accessibility';
 import styles from './DynTabs.module.css';
@@ -91,17 +91,20 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
       return null;
     }
 
-    const tabsRef = useRef<Array<HTMLButtonElement | null>>([]);
+  const tabsRef = useRef<Array<HTMLButtonElement | null>>([]);
+  const tablistRef = useRef<HTMLDivElement | null>(null);
+
+  // positions for close buttons keyed by processedValue
+  const [closePositions, setClosePositions] = useState<Record<string, { left: number; top: number }>>({});
 
     const onSelect = (val: string, focusPanel = false) => {
       if (!isControlled) setCurrent(val);
       onChange?.(val);
       if (lazy) {
-        setLoaded(prev => {
-          if (prev[val] === true) return prev;
-          return { ...prev, [val]: false };
-        });
-        queueMicrotask(() => setLoaded(prev => ({ ...prev, [val]: true })));
+        // Immediately show loading for the newly selected tab (always set to false first)
+        setLoaded(prev => ({ ...prev, [val]: false }));
+  // Complete loading after a short delay so the loading state is observable
+  setTimeout(() => setLoaded(prev => ({ ...prev, [val]: true })), 50);
       }
       if (focusPanel) {
         const panel = document.getElementById(`${internalId}-panel-${val}`);
@@ -164,7 +167,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
         case ' ': {
           if (activation === 'manual') {
             e.preventDefault();
-            const target = e.target as HTMLButtonElement;
+            const target = e.target as HTMLElement;
             const val = target.getAttribute('data-value');
             if (val) onSelect(val, true);
           }
@@ -182,6 +185,46 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
 
     const listClass = cn(css('tablist'));
 
+    // measure tabs and compute close button positions
+    useLayoutEffect(() => {
+      const container = tablistRef.current;
+      if (!container) return;
+
+      const measure = () => {
+        const containerRect = container.getBoundingClientRect();
+        const positions: Record<string, { left: number; top: number }> = {};
+
+        processedItems.forEach((item, index) => {
+          if (!(closable || item.closable)) return;
+          const el = tabsRef.current[index];
+          if (!el) return;
+          const r = el.getBoundingClientRect();
+          const left = r.left - containerRect.left + r.width - 8; // align near right edge
+          const top = r.top - containerRect.top + r.height / 2; // center vertically
+          positions[item.processedValue] = { left, top };
+        });
+
+        setClosePositions(positions);
+      };
+
+      measure();
+
+      // observe resizes
+      const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+      if (ro) {
+        ro.observe(container);
+        tabsRef.current.forEach(el => el && ro.observe(el));
+      }
+
+      window.addEventListener('resize', measure);
+      return () => {
+        window.removeEventListener('resize', measure);
+        if (ro) {
+          ro.disconnect();
+        }
+      };
+    }, [processedItems, closable, size, position, variant]);
+
     return (
       <div id={internalId} className={rootClass} data-testid={dataTestId || 'test-tabs'} {...rest}>
         <div
@@ -192,12 +235,14 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
           aria-orientation={orientation}
           className={listClass}
           onKeyDown={handleKeyDown}
+          ref={tablistRef}
         >
-          {processedItems.map((item, index) => {
+            {processedItems.map((item, index) => {
             const selected = item.processedValue === current;
             const tabId = `${internalId}-tab-${item.processedValue}`;
             const panelId = `${internalId}-panel-${item.processedValue}`;
-            const wrapperClass = cn(
+            // Move tab-related classes and status onto the actual tab element (button)
+            const tabClass = cn(
               css('tab'),
               size && css(`tab--${size}`),
               variant && css(`tab--${variant}`),
@@ -205,19 +250,21 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
               item.disabled && css('tab--disabled'),
               item.closable && css('tab--closable')
             );
+
             return (
-              <div key={item.processedKey} className={wrapperClass} role="presentation" data-status={item.disabled ? 'disabled' : selected ? 'active' : 'inactive'}>
+              <React.Fragment key={item.processedKey}>
                 <button
                   ref={(el) => { tabsRef.current[index] = el; }}
                   id={tabId}
                   role="tab"
                   type="button"
-                  className={css('tab__content')}
+                  className={cn(tabClass, css('tab__content'))}
                   data-value={item.processedValue}
                   aria-selected={selected}
                   aria-controls={panelId}
                   aria-disabled={item.disabled || undefined}
                   tabIndex={selected ? 0 : -1}
+                  data-status={item.disabled ? 'disabled' : selected ? 'active' : 'inactive'}
                   onClick={() => !item.disabled && onSelect(item.processedValue, activation === 'auto')}
                   disabled={item.disabled}
                 >
@@ -227,18 +274,36 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
                     <span className={css('tab__badge')} aria-hidden="true">{item.badge}</span>
                   )}
                 </button>
-                {(closable || item.closable) && (
-                  <button
-                    type="button"
-                    className={css('tab__close')}
-                    aria-label={`Close ${item.label}`}
-                    data-testid={`${dataTestId || 'test-tabs'}-close-${item.processedValue}`}
-                    onClick={(e) => { e.stopPropagation(); onTabClose?.(item.processedValue); }}
-                  >
-                    ×
-                  </button>
-                )}
-              </div>
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        {/* Separate container for close buttons so they are not direct children of the tablist.
+            Close buttons are absolutely positioned to visually align with their tabs. */}
+        <div className={css('tab-close-container')} aria-hidden={true}>
+          {processedItems.map((item) => {
+            if (!(closable || item.closable)) return null;
+            const pos = closePositions[item.processedValue];
+            const style: React.CSSProperties = pos ? {
+              position: 'absolute',
+              left: `${pos.left}px`,
+              top: `${pos.top}px`,
+              transform: 'translate(-50%, -50%)'
+            } : { visibility: 'hidden' };
+
+            return (
+              <button
+                key={`close-${item.processedKey}`}
+                type="button"
+                className={cn(css('tab__close'), css('tab__close--positioned'))}
+                aria-label={`Close ${item.label}`}
+                data-testid={`${dataTestId || 'test-tabs'}-close-${item.processedValue}`}
+                onClick={(e) => { e.stopPropagation(); onTabClose?.(item.processedValue); }}
+                style={style}
+              >
+                ×
+              </button>
             );
           })}
         </div>
