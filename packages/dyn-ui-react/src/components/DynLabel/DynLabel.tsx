@@ -1,7 +1,10 @@
 import * as React from 'react';
-import classNames from 'classnames';
 import { DynLabelProps } from '../../types/label.types';
 import styles from './DynLabel.module.css';
+
+// Lightweight replacement for the 'classnames' package to avoid adding an external dependency.
+const classNames = (...args: Array<string | false | null | undefined>) =>
+  args.filter(Boolean).join(' ');
 
 export const DynLabel: React.FC<DynLabelProps> = ({
   children,
@@ -31,10 +34,7 @@ export const DynLabel: React.FC<DynLabelProps> = ({
 
     if (optional) {
       return (
-        <span 
-          className={`${styles['dyn-label-requirement']} ${styles['dyn-label--optional']}`}
-          data-testid="optional-indicator"
-        >
+        <span className={`${styles['dyn-label-requirement']} ${styles['dyn-label--optional']}`}>
           <span className={styles['dyn-label-optional-text']}>(optional)</span>
         </span>
       );

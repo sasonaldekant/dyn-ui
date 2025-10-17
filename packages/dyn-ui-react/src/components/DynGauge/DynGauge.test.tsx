@@ -101,11 +101,10 @@ describe('DynGauge', () => {
 
     const legend = screen.getByText('Low').closest('figcaption');
     expect(legend).not.toBeNull();
-      const legendScope = within(legend!);
-  
-      expect(legendScope.getByText('Low')).toBeInTheDocument();
-      expect(legendScope.getByText('Medium')).toBeInTheDocument();
-      expect(legendScope.getByText('Medium')).toBeInTheDocument();
-    });
-  
+    const legendScope = within(legend!);
+
+    expect(legendScope.getByText('Low')).toBeInTheDocument();
+    expect(legendScope.getByText('Medium')).toBeInTheDocument();
   });
+
+});
