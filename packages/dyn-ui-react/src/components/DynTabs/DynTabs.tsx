@@ -4,74 +4,92 @@ import { generateId } from '../../utils/accessibility';
 import styles from './DynTabs.module.css';
 import type { DynTabsProps, DynTabsRef } from './DynTabs.types';
 
-const getStyleClass = (name: string) => (styles as Record<string, string>)[name] || '';
+const css = (n: string) => (styles as Record<string, string>)[n] || '';
 
 export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
   (
     {
       items = [],
       value,
+      activeTab,
       defaultValue,
+      defaultActiveTab,
       onChange,
+      onTabClose,
+      closable,
+      position = 'top',
       orientation = 'horizontal',
       activation = 'auto',
+      variant = 'default',
+      size = 'medium',
       fitted = false,
+      scrollable = false,
+      lazy = false,
+      animated = true,
       className,
       id,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': ariaDescribedBy,
       'data-testid': dataTestId,
+      loadingComponent,
       ...rest
     },
     ref
   ) => {
     const [internalId] = useState(() => id || generateId('tabs'));
-    const isControlled = value !== undefined;
 
-    // Build processed items once per items change
-    const processedItems = useMemo(() => {
-      return items.map((item, index) => {
-        const processedValue =
-          item.value != null ? String(item.value)
-          : item.id != null ? String(item.id)
-          : `tab-${index}`;
-        const processedKey =
-          item.id != null ? String(item.id)
-          : item.value != null ? String(item.value)
-          : `tab-${index}`;
-        return { ...item, processedValue, processedKey } as typeof item & { processedValue: string; processedKey: string };
-      });
-    }, [items]);
+    // Build processed items
+    const processedItems = useMemo(() => items.map((item, index) => {
+      const processedValue = item.value != null ? String(item.value) : item.id != null ? String(item.id) : `tab-${index}`;
+      const processedKey = item.id != null ? String(item.id) : item.value != null ? String(item.value) : `tab-${index}`;
+      return { ...item, processedValue, processedKey } as typeof item & { processedValue: string; processedKey: string };
+    }), [items]);
 
-    // Initial current based on processedItems
-    const getInitialValue = (): string | undefined => {
-      if (value !== undefined) return String(value);
+    // Determine control mode and initial
+    const controlledVal = activeTab ?? value;
+    const isControlled = controlledVal !== undefined;
+
+    const getInitial = (): string | undefined => {
+      if (controlledVal !== undefined) return String(controlledVal);
+      if (defaultActiveTab !== undefined) return String(defaultActiveTab);
       if (defaultValue !== undefined) return String(defaultValue);
-      return processedItems[0]?.processedValue;
+      const firstEnabled = processedItems.find(i => !i.disabled) ?? processedItems[0];
+      return firstEnabled?.processedValue;
     };
 
-    const [current, setCurrent] = useState<string | undefined>(getInitialValue());
+    const [current, setCurrent] = useState<string | undefined>(getInitial());
 
-    // Keep current in sync for controlled usage
+    // Sync controlled
     useEffect(() => {
-      if (isControlled && value !== undefined) setCurrent(String(value));
-    }, [isControlled, value]);
+      if (controlledVal !== undefined) setCurrent(String(controlledVal));
+    }, [controlledVal]);
 
-    // If items change and current becomes invalid, reset to first enabled tab
+    // Guard if items change
     useEffect(() => {
       if (!processedItems.length) return;
       const exists = processedItems.some(i => i.processedValue === current);
       if (!exists) {
         const firstEnabled = processedItems.find(i => !i.disabled) ?? processedItems[0];
-        setCurrent(firstEnabled.processedValue);
+        setCurrent(firstEnabled?.processedValue);
       }
     }, [processedItems, current]);
 
+    // Early return for empty items per tests
+    if (!processedItems.length) {
+      return null;
+    }
+
     const tabsRef = useRef<Array<HTMLButtonElement | null>>([]);
+    const [loaded, setLoaded] = useState<Record<string, boolean>>({});
 
     const onSelect = (val: string, focusPanel = false) => {
       if (!isControlled) setCurrent(val);
       onChange?.(val);
+      if (lazy && !loaded[val]) {
+        setLoaded(prev => ({ ...prev, [val]: false }));
+        queueMicrotask(() => setLoaded(prev => ({ ...prev, [val]: true })));
+      }
       if (focusPanel) {
         const panel = document.getElementById(`${internalId}-panel-${val}`);
         panel?.focus?.();
@@ -83,7 +101,6 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
       return processedItems.findIndex(i => i.processedValue === current);
     }, [processedItems, current]);
 
-    // Loop-to-next-enabled navigation
     const moveFocus = (startIndex: number, delta: number) => {
       const count = processedItems.length;
       if (count === 0) return;
@@ -109,21 +126,12 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
     const handleKeyDown = (e: React.KeyboardEvent) => {
       const isH = orientation === 'horizontal';
       switch (e.key) {
-        case 'ArrowRight':
-          if (isH) { e.preventDefault(); focusTabByOffset(1); }
-          break;
-        case 'ArrowLeft':
-          if (isH) { e.preventDefault(); focusTabByOffset(-1); }
-          break;
-        case 'ArrowDown':
-          if (!isH) { e.preventDefault(); focusTabByOffset(1); }
-          break;
-        case 'ArrowUp':
-          if (!isH) { e.preventDefault(); focusTabByOffset(-1); }
-          break;
+        case 'ArrowRight': if (isH) { e.preventDefault(); focusTabByOffset(1); } break;
+        case 'ArrowLeft':  if (isH) { e.preventDefault(); focusTabByOffset(-1);} break;
+        case 'ArrowDown':  if (!isH){ e.preventDefault(); focusTabByOffset(1); } break;
+        case 'ArrowUp':    if (!isH){ e.preventDefault(); focusTabByOffset(-1);} break;
         case 'Home': {
           e.preventDefault();
-          if (!processedItems.length) return;
           const first = processedItems.find(i => !i.disabled) ?? processedItems[0];
           const idx = processedItems.indexOf(first);
           onSelect(first.processedValue);
@@ -132,7 +140,6 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
         }
         case 'End': {
           e.preventDefault();
-          if (!processedItems.length) return;
           const rev = [...processedItems].reverse();
           const last = rev.find(i => !i.disabled) ?? rev[0];
           const idx = processedItems.indexOf(last);
@@ -141,7 +148,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
           break;
         }
         case 'Enter':
-        case ' ': // Space
+        case ' ': {
           if (activation === 'manual') {
             e.preventDefault();
             const target = e.target as HTMLButtonElement;
@@ -149,27 +156,44 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
             if (val) onSelect(val, true);
           }
           break;
+        }
       }
     };
 
+    const rootClass = cn(
+      css('tabs'),
+      position && css(`tabs--${position}`),
+      scrollable && css('tabs--scrollable'),
+      className
+    );
+
+    const listClass = cn(
+      css('tablist'),
+    );
+
     return (
-      <div id={internalId} className={cn(getStyleClass('root'), className)} data-testid={dataTestId || 'dyn-tabs'} {...rest}>
+      <div id={internalId} className={rootClass} data-testid={dataTestId || 'test-tabs'} {...rest}>
         <div
           role="tablist"
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
           aria-orientation={orientation}
-          className={cn(
-            getStyleClass('tablist'),
-            orientation === 'vertical' && getStyleClass('tablist-vertical'),
-            fitted && getStyleClass('tablist-fitted')
-          )}
+          className={listClass}
           onKeyDown={handleKeyDown}
         >
           {processedItems.map((item, index) => {
             const selected = item.processedValue === current;
             const tabId = `${internalId}-tab-${item.processedValue}`;
             const panelId = `${internalId}-panel-${item.processedValue}`;
+            const tabClass = cn(
+              css('tab'),
+              size && css(`tab--${size}`),
+              variant && css(`tab--${variant}`),
+              selected && css('tab--active'),
+              item.disabled && css('tab--disabled'),
+              item.closable && css('tab--closable')
+            );
             return (
               <button
                 key={item.processedKey}
@@ -177,23 +201,31 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
                 id={tabId}
                 role="tab"
                 type="button"
-                className={cn(
-                  getStyleClass('tab'),
-                  selected && getStyleClass('tab--selected'),
-                  item.disabled && getStyleClass('tab--disabled')
-                )}
+                className={tabClass}
                 data-value={item.processedValue}
                 aria-selected={selected}
                 aria-controls={panelId}
                 aria-disabled={item.disabled || undefined}
+                data-status={item.disabled ? 'disabled' : selected ? 'active' : 'inactive'}
                 tabIndex={selected ? 0 : -1}
-                onClick={() => onSelect(item.processedValue, activation === 'auto')}
+                onClick={() => !item.disabled && onSelect(item.processedValue, activation === 'auto')}
                 disabled={item.disabled}
               >
-                {item.icon && <span className={getStyleClass('tab__icon')} aria-hidden="true">{item.icon}</span>}
-                <span className={getStyleClass('tab__label')}>{item.label}</span>
+                {item.icon && <span className={css('tab__icon')} aria-hidden="true">{item.icon}</span>}
+                <span className={css('tab__label')}>{item.label}</span>
                 {item.badge && (
-                  <span className={getStyleClass('tab__badge')} aria-hidden="true">{item.badge}</span>
+                  <span className={css('tab__badge')} aria-hidden="true">{item.badge}</span>
+                )}
+                {(closable || item.closable) && (
+                  <button
+                    type="button"
+                    className={css('tab__close')}
+                    aria-label={`Close ${item.label}`}
+                    data-testid={`${dataTestId || 'test-tabs'}-close-${item.processedValue}`}
+                    onClick={(e) => { e.stopPropagation(); onTabClose?.(item.processedValue); }}
+                  >
+                    ×
+                  </button>
                 )}
               </button>
             );
@@ -204,6 +236,8 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
           const selected = item.processedValue === current;
           const tabId = `${internalId}-tab-${item.processedValue}`;
           const panelId = `${internalId}-panel-${item.processedValue}`;
+          const panelClass = cn(css('panel'), animated && css('panel--animated'));
+          const isLoaded = !lazy || !!loaded[item.processedValue];
           return (
             <div
               key={`panel-${item.processedKey}`}
@@ -212,9 +246,14 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
               aria-labelledby={tabId}
               hidden={!selected}
               tabIndex={-1}
-              className={cn(getStyleClass('tabpanel'), selected && getStyleClass('tabpanel--active'))}
+              className={panelClass}
             >
-              {typeof item.content === 'function' ? item.content({ value: item.processedValue, selected }) : item.content}
+              {lazy && !isLoaded && (
+                <div className={css('panel__loading')} aria-label="Loading content">
+                  {loadingComponent || <span>Loading tab content</span>}
+                </div>
+              )}
+              {(!lazy || isLoaded) && (typeof item.content === 'function' ? item.content({ value: item.processedValue, selected }) : item.content)}
             </div>
           );
         })}
