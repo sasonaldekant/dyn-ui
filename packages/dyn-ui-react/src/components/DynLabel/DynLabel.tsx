@@ -34,7 +34,10 @@ export const DynLabel: React.FC<DynLabelProps> = ({
 
     if (optional) {
       return (
-        <span className={`${styles['dyn-label-requirement']} ${styles['dyn-label--optional']}`}>
+        <span 
+          className={`${styles['dyn-label-requirement']} ${styles['dyn-label--optional']}`}
+          data-testid="optional-indicator"
+        >
           <span className={styles['dyn-label-optional-text']}>(optional)</span>
         </span>
       );
