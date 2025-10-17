@@ -1,0 +1,237 @@
+/**
+ * DynSelect - CSS Module Styles (Converted from SCSS)
+ * Part of DYN UI Form Components Group - SCOPE 6
+ */
+
+.dyn-select-container {
+  position: relative;
+  width: 100%;
+}
+
+.dyn-select {
+  position: relative;
+  min-height: 40px;
+  width: 100%;
+  font-family: var(--dyn-font-family, system-ui, -apple-system, sans-serif);
+  font-size: var(--dyn-font-size-base, 16px);
+  color: var(--dyn-color-text-primary, #333);
+  background-color: var(--dyn-color-surface, #fff);
+  border: 1px solid var(--dyn-color-border, #d1d5db);
+  border-radius: var(--dyn-border-radius-md, 6px);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--dyn-spacing-sm, 8px) var(--dyn-spacing-md, 12px);
+}
+
+.dyn-select:hover:not(.dyn-select--disabled):not(.dyn-select--readonly) {
+  border-color: var(--dyn-color-border-hover, #9ca3af);
+}
+
+.dyn-select--focused,
+.dyn-select--open {
+  border-color: var(--dyn-color-primary, #0066cc);
+  box-shadow: 0 0 0 3px var(--dyn-color-primary-alpha, rgba(0, 102, 204, 0.1));
+}
+
+.dyn-select--error {
+  border-color: var(--dyn-color-error, #f44336);
+}
+
+.dyn-select--error.dyn-select--focused {
+  box-shadow: 0 0 0 3px var(--dyn-color-error-alpha, rgba(244, 67, 54, 0.1));
+}
+
+.dyn-select--disabled {
+  background-color: var(--dyn-color-surface-disabled, #f3f4f6);
+  color: var(--dyn-color-text-disabled, #9ca3af);
+  cursor: not-allowed;
+  border-color: var(--dyn-color-border-disabled, #e5e7eb);
+}
+
+.dyn-select--readonly {
+  background-color: var(--dyn-color-surface-readonly, #f9fafb);
+  cursor: default;
+}
+
+.dyn-select--loading {
+  cursor: wait;
+}
+
+/* Size variants */
+.dyn-select--small {
+  font-size: var(--dyn-font-size-sm, 14px);
+  min-height: 32px;
+  padding: var(--dyn-spacing-xs, 6px) var(--dyn-spacing-sm, 8px);
+}
+
+.dyn-select--large {
+  font-size: var(--dyn-font-size-lg, 18px);
+  min-height: 48px;
+  padding: var(--dyn-spacing-md, 12px) var(--dyn-spacing-lg, 16px);
+}
+
+.dyn-select-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+.dyn-select-text {
+  line-height: 1.5;
+}
+
+.dyn-select-text.dyn-select-placeholder {
+  color: var(--dyn-color-text-placeholder, #9ca3af);
+}
+
+.dyn-select-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dyn-spacing-xs, 4px);
+  align-items: center;
+}
+
+.dyn-select-tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--dyn-color-primary-light, #e3f2fd);
+  color: var(--dyn-color-primary-dark, #1565c0);
+  padding: var(--dyn-spacing-xs, 4px) var(--dyn-spacing-sm, 8px);
+  border-radius: var(--dyn-border-radius-sm, 4px);
+  font-size: var(--dyn-font-size-sm, 14px);
+  line-height: 1.2;
+  gap: var(--dyn-spacing-xs, 4px);
+}
+
+.dyn-select-tag-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+}
+
+.dyn-select-tag-remove:hover {
+  background-color: var(--dyn-color-primary-alpha, rgba(0, 102, 204, 0.1));
+}
+
+.dyn-select-arrow {
+  margin-left: var(--dyn-spacing-sm, 8px);
+  color: var(--dyn-color-text-secondary, #666);
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dyn-select-arrow--up {
+  transform: rotate(180deg);
+}
+
+.dyn-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: var(--dyn-spacing-xs, 4px);
+  background-color: var(--dyn-color-surface, #fff);
+  border: 1px solid var(--dyn-color-border, #d1d5db);
+  border-radius: var(--dyn-border-radius-md, 6px);
+  box-shadow: var(--dyn-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05));
+  max-height: 300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dyn-select-search {
+  padding: var(--dyn-spacing-md, 12px);
+  border-bottom: 1px solid var(--dyn-color-border, #d1d5db);
+}
+
+.dyn-select-search-input {
+  width: 100%;
+  font-size: var(--dyn-font-size-sm, 14px);
+  padding: var(--dyn-spacing-sm, 8px);
+  border: 1px solid var(--dyn-color-border, #d1d5db);
+  border-radius: var(--dyn-border-radius-sm, 4px);
+  outline: none;
+}
+
+.dyn-select-search-input:focus {
+  border-color: var(--dyn-color-primary, #0066cc);
+  box-shadow: 0 0 0 2px var(--dyn-color-primary-alpha, rgba(0, 102, 204, 0.1));
+}
+
+.dyn-select-options {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 240px;
+}
+
+.dyn-select-option {
+  display: flex;
+  align-items: center;
+  padding: var(--dyn-spacing-md, 12px);
+  cursor: pointer;
+  font-size: var(--dyn-font-size-base, 16px);
+  line-height: 1.5;
+  color: var(--dyn-color-text-primary, #333);
+  transition: background-color 0.15s ease;
+  gap: var(--dyn-spacing-sm, 8px);
+}
+
+.dyn-select-option:hover:not(.dyn-select-option--disabled) {
+  background-color: var(--dyn-color-surface-hover, #f3f4f6);
+}
+
+.dyn-select-option--selected {
+  background-color: var(--dyn-color-primary-light, #e3f2fd);
+  color: var(--dyn-color-primary-dark, #1565c0);
+}
+
+.dyn-select-option--disabled {
+  color: var(--dyn-color-text-disabled, #9ca3af);
+  cursor: not-allowed;
+}
+
+.dyn-select-option-text {
+  flex: 1;
+}
+
+.dyn-select-checkbox {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--dyn-color-border, #d1d5db);
+  border-radius: var(--dyn-border-radius-sm, 3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--dyn-color-surface, #fff);
+  transition: all 0.2s ease;
+}
+
+.dyn-select-checkbox--checked {
+  background-color: var(--dyn-color-primary, #0066cc);
+  border-color: var(--dyn-color-primary, #0066cc);
+  color: var(--dyn-color-surface, #fff);
+}
+
+.dyn-select-empty {
+  padding: var(--dyn-spacing-lg, 24px) var(--dyn-spacing-md, 12px);
+  text-align: center;
+  color: var(--dyn-color-text-secondary, #666);
+  font-size: var(--dyn-font-size-sm, 14px);
+  font-style: italic;
+}
