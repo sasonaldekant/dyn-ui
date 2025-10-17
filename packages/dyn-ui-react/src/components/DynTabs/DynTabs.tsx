@@ -207,7 +207,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
             return (
               <div key={item.processedKey} className={wrapperClass} role="presentation" data-status={item.disabled ? 'disabled' : selected ? 'active' : 'inactive'}>
                 <button
-                  ref={(el) => { tabsRef.current[index] = el; /* no return */ }}
+                  ref={(el) => { tabsRef.current[index] = el; return el; }}
                   id={tabId}
                   role="tab"
                   type="button"
@@ -237,7 +237,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
                     ×
                   </button>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>
