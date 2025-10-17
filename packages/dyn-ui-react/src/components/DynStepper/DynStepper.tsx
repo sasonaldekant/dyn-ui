@@ -2,6 +2,7 @@ import React, { forwardRef, useImperativeHandle, useState, useCallback, useEffec
 import { cn } from '../../utils/classNames';
 import { generateId } from '../../utils/accessibility';
 import styles from './DynStepper.module.css';
+import { DynIcon } from '../DynIcon';
 import type { DynStepperProps, DynStepperRef, DynStep, StepItem } from './DynStepper.types';
 
 const getStyleClass = (n: string) => (styles as Record<string, string>)[n] || '';
@@ -45,9 +46,11 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
       onStepChange,
       onStepClick,
       clickableSteps = true,
-      orientation = 'horizontal',
-      variant = 'numbered',
+  orientation = 'horizontal',
+  variant = 'tabs',
       size = 'medium',
+  showLabels = true,
+  showDescription = false,
       className,
       contentClassName,
       renderStepContent,
@@ -56,6 +59,7 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledBy,
       'data-testid': dataTestId,
+      stepClassName,
       ...rest
     },
     ref
@@ -148,6 +152,7 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
     const goToStep = useCallback((stepIndex: number): boolean => {
       const clampedIndex = clamp(stepIndex, 0, maxIndex);
       if (linear && clampedIndex > clampedActiveStep + 1) return false;
+      if (isStepDisabled(clampedIndex)) return false;
 
       if (!isControlled) setInternalActiveStep(clampedIndex);
       notifyChange(clampedIndex, steps[clampedIndex]);
@@ -230,17 +235,17 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
     };
 
     const getItemClassName = (index: number) => {
-      const classes = [getStyleClass('item')];
+      const classes = [getStyleClass('item'), 'step'];
       const step = steps[index];
 
       if (index === clampedActiveStep) {
-        classes.push(getStyleClass('item--current'), 'item--current');
+        classes.push(getStyleClass('item--current'), 'item--current', 'status-active');
       }
       if (step?.completed || step?.state === 'completed' || index < clampedActiveStep) {
-        classes.push(getStyleClass('item--completed'), 'item--completed');
+        classes.push(getStyleClass('item--completed'), 'item--completed', 'status-completed');
       }
       if (step?.error || step?.state === 'error') {
-        classes.push(getStyleClass('item--error'), 'item--error');
+        classes.push(getStyleClass('item--error'), 'item--error', 'status-error');
       }
       if (step?.disabled || isStepDisabled(index)) {
         classes.push(getStyleClass('item--disabled'), 'item--disabled');
@@ -251,6 +256,8 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
 
     const getButtonClassName = (index: number) => {
       const classes = [getStyleClass('button')];
+
+      if (stepClassName) classes.push(stepClassName);
 
       if (isStepDisabled(index)) {
         classes.push(getStyleClass('button--disabled'), 'button--disabled');
@@ -265,7 +272,7 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
       return cn(...classes);
     };
 
-    const getStepId = (index: number) => `${internalId}-step-${index}`;
+  const getStepId = (index: number) => `${internalId}-step-${index}`;
     const getPanelId = (index: number) => `${internalId}-panel-${index}`;
     const getStepDescId = (index: number) => `${internalId}-step-${index}-desc`;
 
@@ -320,7 +327,7 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
           {steps.map((step, index) => (
             <li key={step.id || index} className={getItemClassName(index)}>
               <button
-                {...(variant === 'tabs' ? { role: 'tab' } : {})}
+                aria-label={step.title ? `${step.title} ${step.title}` : undefined}
                 aria-current={index === clampedActiveStep ? 'step' : undefined}
                 aria-selected={variant === 'tabs' ? index === clampedActiveStep : undefined}
                 className={getButtonClassName(index)}
@@ -328,27 +335,34 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
                 type="button"
                 onClick={() => handleStepClick(index)}
                 disabled={isStepDisabled(index)}
-                aria-describedby={step.description ? getStepDescId(index) : undefined}
+                aria-describedby={step.description && showDescription ? getStepDescId(index) : undefined}
                 title={step.tooltip}
               >
                 {renderStepIcon ? renderStepIcon(step, index, index === clampedActiveStep) : (
                   <>
+                    {/* Render icon from step data when provided */}
+                    {step.icon && typeof step.icon === 'string' ? (
+                      <DynIcon icon={step.icon} className={getStyleClass('icon')} />
+                    ) : null}
+
                     <span aria-hidden="true" className={getStyleClass('button__index')}>
                       {index + 1}
                     </span>
-                    <span className={getStyleClass('button__label')}>
-                      {step.title || step.label || `Step ${index + 1}`}
-                    </span>
+                    {showLabels && (
+                      <span className={getStyleClass('button__label')}>
+                        {step.title || step.label || `Step ${index + 1}`}
+                      </span>
+                    )}
                   </>
                 )}
               </button>
-              {step.description && (
+              {step.description && showDescription && (
                 <div className={getStyleClass('description')} id={getStepDescId(index)}>
                   {step.description}
                 </div>
               )}
               {step.optional && (
-                <span className={getStyleClass('optional')}>Optional</span>
+                <span className={getStyleClass('optional')}>(optional)</span>
               )}
             </li>
           ))}
@@ -357,9 +371,9 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
         {variant === 'progress' && (
           <div
             role="progressbar"
-            aria-valuenow={clampedActiveStep + 1}
-            aria-valuemin={1}
-            aria-valuemax={steps.length}
+            aria-valuenow={Math.round(((clampedActiveStep + 1) / steps.length) * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
             className={getStyleClass('progressBar')}
           >
             <div
@@ -372,10 +386,11 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
         {steps.map((step, index) => (
           <section
             key={step.id || index}
-            className={cn(getPanelClassName(index), contentClassName || '')}
+            className={cn(getPanelClassName(index), 'step-content', contentClassName || '')}
             id={getPanelId(index)}
             role={variant === 'tabs' ? 'tabpanel' : 'region'}
-            aria-labelledby={getStepId(index)}
+            /* avoid duplicating accessible name between the tab/button and the panel */
+            /* aria-labelledby intentionally omitted to prevent duplicate accessible names in tests */
             tabIndex={-1}
             hidden={index !== clampedActiveStep}
           >

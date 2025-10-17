@@ -7,17 +7,21 @@ import { vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+// Mock child components with proper vitest imports
+var mockDynIcon: any;
+
+vi.mock('../DynIcon', () => {
+  mockDynIcon = vi.fn(({ icon, className }: { icon: string; className?: string }) => (
+    <i data-testid={`icon-${icon}`} className={className} />
+  ));
+
+  return {
+    DynIcon: mockDynIcon
+  };
+});
+
 import DynStepper from './DynStepper';
 import { StepItem, DynStepperHandle } from './DynStepper.types';
-
-// Mock child components with proper vitest imports
-const mockDynIcon = vi.fn(({ icon, className }: { icon: string; className?: string }) => (
-  <i data-testid={`icon-${icon}`} className={className} />
-));
-
-vi.mock('../DynIcon', () => ({
-  DynIcon: mockDynIcon
-}));
 
 // Sample test data
 const mockSteps: StepItem[] = [
@@ -78,7 +82,7 @@ describe('DynStepper', () => {
 
   it('renders steps correctly', () => {
     render(<DynStepper {...defaultProps} />);
-    
+
     expect(screen.getByRole('tablist')).toBeInTheDocument();
     expect(screen.getByText('Step 1')).toBeInTheDocument();
     expect(screen.getByText('Step 2')).toBeInTheDocument();
@@ -88,7 +92,7 @@ describe('DynStepper', () => {
 
   it('shows first step as active by default', () => {
     render(<DynStepper {...defaultProps} />);
-    
+
     const firstStep = screen.getByLabelText(/step 1.*step 1/i);
     expect(firstStep).toHaveAttribute('aria-current', 'step');
     expect(screen.getByText('Step 1 Content')).toBeInTheDocument();
@@ -96,7 +100,7 @@ describe('DynStepper', () => {
 
   it('respects defaultActiveStep prop', () => {
     render(<DynStepper steps={mockSteps} defaultActiveStep={1} />);
-    
+
     const secondStep = screen.getByLabelText(/step 2.*step 2/i);
     expect(secondStep).toHaveAttribute('aria-current', 'step');
     expect(screen.getByText('Step 2 Content')).toBeInTheDocument();
@@ -106,16 +110,16 @@ describe('DynStepper', () => {
     const user = userEvent.setup();
     const onStepChange = vi.fn();
     render(
-      <DynStepper 
-        steps={mockSteps} 
+      <DynStepper
+        steps={mockSteps}
         onStepChange={onStepChange}
         linear={false}
       />
     );
-    
+
     const secondStep = screen.getByLabelText(/step 2.*step 2/i);
     await user.click(secondStep);
-    
+
     expect(onStepChange).toHaveBeenCalledWith(1, mockSteps[1]);
   });
 
@@ -123,16 +127,16 @@ describe('DynStepper', () => {
     const user = userEvent.setup();
     const onStepClick = vi.fn();
     render(
-      <DynStepper 
-        steps={mockSteps} 
+      <DynStepper
+        steps={mockSteps}
         onStepClick={onStepClick}
         linear={false}
       />
     );
-    
+
     const secondStep = screen.getByLabelText(/step 2.*step 2/i);
     await user.click(secondStep);
-    
+
     expect(onStepClick).toHaveBeenCalledWith(1, mockSteps[1]);
   });
 
@@ -140,16 +144,16 @@ describe('DynStepper', () => {
     const user = userEvent.setup();
     const onStepChange = vi.fn();
     render(
-      <DynStepper 
-        steps={mockSteps} 
+      <DynStepper
+        steps={mockSteps}
         onStepChange={onStepChange}
         linear={false}
       />
     );
-    
+
     const disabledStep = screen.getByLabelText(/step 3.*step 3/i);
     expect(disabledStep).toBeDisabled();
-    
+
     await user.click(disabledStep);
     expect(onStepChange).not.toHaveBeenCalledWith(2, mockSteps[2]);
   });
@@ -158,17 +162,17 @@ describe('DynStepper', () => {
     const user = userEvent.setup();
     const onStepChange = vi.fn();
     render(
-      <DynStepper 
-        steps={mockSteps} 
+      <DynStepper
+        steps={mockSteps}
         onStepChange={onStepChange}
         linear={true}
       />
     );
-    
+
     // Should not be able to click step 4 when step 1 is not completed
     const fourthStep = screen.getByLabelText(/step 4.*step 4/i);
     await user.click(fourthStep);
-    
+
     expect(onStepChange).not.toHaveBeenCalledWith(3, mockSteps[3]);
   });
 
@@ -176,9 +180,9 @@ describe('DynStepper', () => {
     const { container, rerender } = render(
       <DynStepper steps={mockSteps} orientation="horizontal" />
     );
-    
+
     expect(container.firstChild).toHaveClass('orientation-horizontal');
-    
+
     rerender(<DynStepper steps={mockSteps} orientation="vertical" />);
     expect(container.firstChild).toHaveClass('orientation-vertical');
   });
@@ -187,12 +191,12 @@ describe('DynStepper', () => {
     const { container, rerender } = render(
       <DynStepper steps={mockSteps} variant="numbered" />
     );
-    
+
     expect(container.firstChild).toHaveClass('variant-numbered');
-    
+
     rerender(<DynStepper steps={mockSteps} variant="dots" />);
     expect(container.firstChild).toHaveClass('variant-dots');
-    
+
     rerender(<DynStepper steps={mockSteps} variant="progress" />);
     expect(container.firstChild).toHaveClass('variant-progress');
   });
@@ -201,16 +205,16 @@ describe('DynStepper', () => {
     const { container, rerender } = render(
       <DynStepper steps={mockSteps} size="small" />
     );
-    
+
     expect(container.firstChild).toHaveClass('size-small');
-    
+
     rerender(<DynStepper steps={mockSteps} size="large" />);
     expect(container.firstChild).toHaveClass('size-large');
   });
 
   it('shows progress bar for progress variant', () => {
     render(<DynStepper steps={mockSteps} variant="progress" defaultActiveStep={1} />);
-    
+
     const progressBar = screen.getByRole('progressbar');
     expect(progressBar).toBeInTheDocument();
     expect(progressBar).toHaveAttribute('aria-valuenow', '50'); // 2nd step out of 4
@@ -218,29 +222,29 @@ describe('DynStepper', () => {
 
   it('renders step descriptions when showDescription=true', () => {
     render(<DynStepper steps={mockSteps} showDescription={true} />);
-    
+
     expect(screen.getByText('First step')).toBeInTheDocument();
     expect(screen.getByText('Second step')).toBeInTheDocument();
   });
 
   it('hides labels when showLabels=false', () => {
     render(<DynStepper steps={mockSteps} showLabels={false} />);
-    
+
     expect(screen.queryByText('Step 1')).not.toBeInTheDocument();
     expect(screen.queryByText('Step 2')).not.toBeInTheDocument();
   });
 
   it('renders step states correctly', () => {
     render(<DynStepper steps={stepsWithStates} defaultActiveStep={2} />);
-    
+
     // Check if completed step has correct class
     const completedStep = screen.getByLabelText(/completed step/i);
     expect(completedStep.closest('.step')).toHaveClass('status-completed');
-    
+
     // Check if error step has correct class
     const errorStep = screen.getByLabelText(/error step/i);
     expect(errorStep.closest('.step')).toHaveClass('status-error');
-    
+
     // Check if active step has correct class
     const activeStep = screen.getByLabelText(/active step/i);
     expect(activeStep.closest('.step')).toHaveClass('status-active');
@@ -248,7 +252,7 @@ describe('DynStepper', () => {
 
   it('renders optional badge for optional steps', () => {
     render(<DynStepper steps={mockSteps} />);
-    
+
     expect(screen.getByText('(optional)')).toBeInTheDocument();
   });
 
@@ -256,7 +260,7 @@ describe('DynStepper', () => {
     const { container } = render(
       <DynStepper steps={mockSteps} className="custom-stepper" />
     );
-    
+
     expect(container.firstChild).toHaveClass('custom-stepper');
   });
 
@@ -265,7 +269,7 @@ describe('DynStepper', () => {
     render(
       <DynStepper steps={mockSteps} stepClassName={customStepClass} />
     );
-    
+
     const steps = screen.getAllByRole('button');
     steps.forEach(step => {
       expect(step).toHaveClass(customStepClass);
@@ -277,35 +281,35 @@ describe('DynStepper', () => {
     render(
       <DynStepper steps={mockSteps} contentClassName={customContentClass} />
     );
-    
+
     const contentArea = document.querySelector('.step-content');
     expect(contentArea).toHaveClass(customContentClass);
   });
 
   it('handles custom renderStepContent', () => {
     const customRender = vi.fn((step, index) => <div>Custom {step.title} - {index}</div>);
-    
+
     render(
-      <DynStepper 
-        steps={mockSteps} 
+      <DynStepper
+        steps={mockSteps}
         renderStepContent={customRender}
       />
     );
-    
+
     expect(customRender).toHaveBeenCalledWith(mockSteps[0], 0);
     expect(screen.getByText('Custom Step 1 - 0')).toBeInTheDocument();
   });
 
   it('handles custom renderStepIcon', () => {
     const customIconRender = vi.fn((step, index, isActive) => <div>Icon {index}</div>);
-    
+
     render(
-      <DynStepper 
-        steps={mockSteps} 
+      <DynStepper
+        steps={mockSteps}
         renderStepIcon={customIconRender}
       />
     );
-    
+
     expect(customIconRender).toHaveBeenCalledWith(mockSteps[0], 0, true);
     expect(screen.getByText('Icon 0')).toBeInTheDocument();
   });
@@ -314,18 +318,16 @@ describe('DynStepper', () => {
     const stepsWithIcons = [
       { ...mockSteps[0], icon: 'test-icon' }
     ];
-    
+
     render(<DynStepper steps={stepsWithIcons} />);
-    
-    expect(mockDynIcon).toHaveBeenCalledWith(
-      expect.objectContaining({ icon: 'test-icon' }),
-      expect.anything()
-    );
+
+    // Ensure DynIcon rendered for step icon
+    expect(screen.getByTestId('icon-test-icon')).toBeInTheDocument();
   });
 
   it('handles empty steps array', () => {
     render(<DynStepper steps={[]} />);
-    
+
     expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
   });
 
@@ -338,9 +340,9 @@ describe('DynStepper', () => {
         content: <div>Content</div>
       }
     ];
-    
+
     render(<DynStepper steps={stepsWithTooltip} />);
-    
+
     const step = screen.getByLabelText(/step with tooltip/i);
     expect(step).toHaveAttribute('title', 'This is a tooltip');
   });
@@ -349,16 +351,16 @@ describe('DynStepper', () => {
     it('provides nextStep method', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
       const onStepChange = vi.fn();
-      
+
       render(
-        <DynStepper 
+        <DynStepper
           ref={stepperRef}
           steps={mockSteps}
           onStepChange={onStepChange}
           linear={false}
         />
       );
-      
+
       const result = stepperRef.current?.nextStep();
       expect(result).toBe(true);
       expect(onStepChange).toHaveBeenCalledWith(1, mockSteps[1]);
@@ -367,9 +369,9 @@ describe('DynStepper', () => {
     it('provides prevStep method', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
       const onStepChange = vi.fn();
-      
+
       render(
-        <DynStepper 
+        <DynStepper
           ref={stepperRef}
           steps={mockSteps}
           defaultActiveStep={1}
@@ -377,7 +379,7 @@ describe('DynStepper', () => {
           linear={false}
         />
       );
-      
+
       const result = stepperRef.current?.prevStep();
       expect(result).toBe(true);
       expect(onStepChange).toHaveBeenCalledWith(0, mockSteps[0]);
@@ -386,16 +388,16 @@ describe('DynStepper', () => {
     it('provides goToStep method', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
       const onStepChange = vi.fn();
-      
+
       render(
-        <DynStepper 
+        <DynStepper
           ref={stepperRef}
           steps={mockSteps}
           onStepChange={onStepChange}
           linear={false}
         />
       );
-      
+
       const result = stepperRef.current?.goToStep(2);
       expect(result).toBe(false); // step 2 is disabled
       expect(onStepChange).not.toHaveBeenCalledWith(2, mockSteps[2]);
@@ -403,56 +405,56 @@ describe('DynStepper', () => {
 
     it('provides getCurrentStep method', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
-      
+
       render(
-        <DynStepper 
+        <DynStepper
           ref={stepperRef}
           steps={mockSteps}
           defaultActiveStep={1}
         />
       );
-      
+
       expect(stepperRef.current?.getCurrentStep()).toBe(1);
     });
 
     it('provides getStepData method', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
-      
+
       render(
-        <DynStepper 
+        <DynStepper
           ref={stepperRef}
           steps={mockSteps}
         />
       );
-      
+
       expect(stepperRef.current?.getStepData(0)).toBe(mockSteps[0]);
       expect(stepperRef.current?.getStepData(99)).toBeUndefined();
     });
 
     it('provides validateStep method', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
-      
+
       render(
-        <DynStepper 
+        <DynStepper
           ref={stepperRef}
           steps={mockSteps}
         />
       );
-      
+
       expect(stepperRef.current?.validateStep(0)).toBe(true); // normal step
       expect(stepperRef.current?.validateStep(2)).toBe(false); // disabled step
     });
 
     it('provides completeStep method', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
-      
+
       render(
-        <DynStepper 
+        <DynStepper
           ref={stepperRef}
           steps={mockSteps}
         />
       );
-      
+
       expect(() => {
         stepperRef.current?.completeStep(0);
       }).not.toThrow();
@@ -460,18 +462,18 @@ describe('DynStepper', () => {
 
     it('provides errorStep method', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
-      
+
       render(
-        <DynStepper 
+        <DynStepper
           ref={stepperRef}
           steps={mockSteps}
         />
       );
-      
+
       expect(() => {
         stepperRef.current?.errorStep(0, true);
       }).not.toThrow();
-      
+
       expect(() => {
         stepperRef.current?.errorStep(0, false);
       }).not.toThrow();
@@ -479,31 +481,31 @@ describe('DynStepper', () => {
 
     it('returns false when nextStep reaches end', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
-      
+
       render(
-        <DynStepper 
+        <DynStepper
           ref={stepperRef}
           steps={mockSteps}
           defaultActiveStep={3} // last step
           linear={false}
         />
       );
-      
+
       const result = stepperRef.current?.nextStep();
       expect(result).toBe(false);
     });
 
     it('returns false when prevStep reaches beginning', () => {
       const stepperRef = React.createRef<DynStepperHandle>();
-      
+
       render(
-        <DynStepper 
+        <DynStepper
           ref={stepperRef}
           steps={mockSteps}
           defaultActiveStep={0} // first step
         />
       );
-      
+
       const result = stepperRef.current?.prevStep();
       expect(result).toBe(false);
     });
@@ -513,41 +515,41 @@ describe('DynStepper', () => {
     const user = userEvent.setup();
     const onStepChange = vi.fn();
     render(
-      <DynStepper 
-        steps={mockSteps} 
+      <DynStepper
+        steps={mockSteps}
         onStepChange={onStepChange}
         clickableSteps={false}
         linear={false}
       />
     );
-    
+
     const secondStep = screen.getByLabelText(/step 2.*step 2/i);
     await user.click(secondStep);
-    
+
     expect(onStepChange).not.toHaveBeenCalledWith(1, mockSteps[1]);
   });
 
   it('handles controlled mode correctly', () => {
     const onStepChange = vi.fn();
     const { rerender } = render(
-      <DynStepper 
-        steps={mockSteps} 
+      <DynStepper
+        steps={mockSteps}
         activeStep={0}
         onStepChange={onStepChange}
       />
     );
-    
+
     expect(screen.getByText('Step 1 Content')).toBeInTheDocument();
-    
+
     // Change active step externally
     rerender(
-      <DynStepper 
-        steps={mockSteps} 
+      <DynStepper
+        steps={mockSteps}
         activeStep={1}
         onStepChange={onStepChange}
       />
     );
-    
+
     expect(screen.getByText('Step 2 Content')).toBeInTheDocument();
   });
 });
