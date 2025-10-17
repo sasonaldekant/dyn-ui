@@ -1,7 +1,10 @@
 import * as React from 'react';
-import classNames from 'classnames';
 import { DynLabelProps } from '../../types/label.types';
 import styles from './DynLabel.module.css';
+
+// Lightweight replacement for the 'classnames' package to avoid adding an external dependency.
+const classNames = (...args: Array<string | false | null | undefined>) =>
+  args.filter(Boolean).join(' ');
 
 export const DynLabel: React.FC<DynLabelProps> = ({
   children,
@@ -51,8 +54,8 @@ export const DynLabel: React.FC<DynLabelProps> = ({
 
   return (
     <div className={styles['dyn-label-container']} role="group">
-      <label 
-        className={labelClasses} 
+      <label
+        className={labelClasses}
         htmlFor={htmlFor}
         aria-describedby={helpText && htmlFor ? `${htmlFor}-help` : undefined}
       >

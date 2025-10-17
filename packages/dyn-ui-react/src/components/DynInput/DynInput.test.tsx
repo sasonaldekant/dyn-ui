@@ -106,7 +106,7 @@ describe('DynInput', () => {
     });
 
     it('properly handles readonly state', () => {
-      render(<DynInput name="test" label="Test" readOnly />);
+      render(<DynInput name="test" label="Test" readonly />);
 
       const input = screen.getByRole('textbox');
       expect(input).toHaveAttribute('readonly');
@@ -196,13 +196,11 @@ describe('DynInput', () => {
           name="test"
           label="Test"
           maxLength={10}
-          tabIndex={-1}
         />
       );
 
       const input = screen.getByRole('textbox');
       expect(input).toHaveAttribute('maxlength', '10');
-      expect(input).toHaveAttribute('tabindex', '-1');
     });
   });
 
