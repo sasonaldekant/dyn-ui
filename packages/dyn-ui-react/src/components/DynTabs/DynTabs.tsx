@@ -227,7 +227,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
                     ×
                   </button>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>
