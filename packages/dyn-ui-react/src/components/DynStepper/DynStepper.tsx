@@ -30,7 +30,7 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
   ) => {
     const [internalId] = useState(() => id || generateId('stepper'));
     const isControlled = typeof value === 'number';
-    const [current, setCurrent] = useState<number>(isControlled ? (value as number) : defaultValue);
+    const [current, setCurrent] = useState<number>(() => (isControlled ? Number(value) : Number(defaultValue)));
 
     if (!steps || steps.length === 0) return null;
 
@@ -40,7 +40,7 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
       const next = clamp(idx, 0, maxIndex);
       if (linear && next > current + 1) return; // block skipping when linear
       if (!isControlled) setCurrent(next);
-      onChange?.(next);
+      (onChange as any)?.(next);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -118,7 +118,9 @@ export const DynStepper = forwardRef<DynStepperRef, DynStepperProps>(
             tabIndex={-1}
             className={cn(getStyleClass('panel'), idx === current && getStyleClass('panel--active'))}
           >
-            {typeof s.content === 'function' ? s.content({ index: idx, selected: idx === current }) : s.content}
+            {typeof s.content === 'function'
+              ? (s.content as (args: { index: number; selected: boolean }) => React.ReactNode)({ index: idx, selected: idx === current })
+              : s.content}
           </section>
         ))}
       </div>
