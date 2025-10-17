@@ -2,7 +2,10 @@ import React, { useMemo, useRef, useState, useEffect, forwardRef } from 'react';
 import { cn } from '../../utils/classNames';
 import { generateId } from '../../utils/accessibility';
 import styles from './DynTabs.module.css';
-import type { DynTabsProps, DynTabsRef, DynTabItem } from './DynTabs.types';
+import type { DynTabsProps, DynTabsRef, DynTabItem, TabContentFunction } from './DynTabs.types';
+
+  // type guard for tab content function
+  const isTabContentFunction = (c: any): c is TabContentFunction => typeof c === 'function';
 
 const getStyleClass = (name: string) => (styles as Record<string, string>)[name] || '';
 
@@ -31,7 +34,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
   ) => {
     const [internalId] = useState(() => id || generateId('tabs'));
     const isControlled = value !== undefined;
-    
+
     // Enhanced initial value calculation with proper type handling
     const getInitialValue = (): string | undefined => {
       if (value !== undefined) return String(value);
@@ -41,7 +44,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
       if (firstItem?.id !== undefined) return String(firstItem.id);
       return undefined;
     };
-    
+
     const [current, setCurrent] = useState<string | undefined>(getInitialValue());
 
     useEffect(() => {
@@ -65,7 +68,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
     // Enhanced currentIndex calculation with safety checks
     const currentIndex = useMemo(() => {
       if (!current || !items?.length) return -1;
-      return items.findIndex(i => 
+      return items.findIndex(i =>
         (i.value !== undefined && String(i.value) === current) ||
         (i.id !== undefined && String(i.id) === current)
       );
@@ -79,14 +82,14 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
       const next = (idx + delta + count) % count;
       const nextItem = items[next];
       if (nextItem?.disabled) return; // simple guard; could loop to next enabled if needed
-      
+
       // Enhanced value retrieval with proper fallback
-      const nextValue = nextItem?.value !== undefined 
-        ? String(nextItem.value) 
-        : nextItem?.id !== undefined 
+      const nextValue = nextItem?.value !== undefined
+        ? String(nextItem.value)
+        : nextItem?.id !== undefined
           ? String(nextItem.id)
           : undefined;
-      
+
       if (nextValue) {
         onSelect(nextValue);
         tabsRef.current[next]?.focus();
@@ -112,9 +115,9 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
           e.preventDefault();
           const firstItem = items[0];
           if (firstItem) {
-            const firstValue = firstItem.value !== undefined 
+            const firstValue = firstItem.value !== undefined
               ? String(firstItem.value)
-              : firstItem.id !== undefined 
+              : firstItem.id !== undefined
                 ? String(firstItem.id)
                 : undefined;
             if (firstValue) {
@@ -127,9 +130,9 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
           e.preventDefault();
           const lastItem = items[items.length - 1];
           if (lastItem) {
-            const lastValue = lastItem.value !== undefined 
+            const lastValue = lastItem.value !== undefined
               ? String(lastItem.value)
-              : lastItem.id !== undefined 
+              : lastItem.id !== undefined
                 ? String(lastItem.id)
                 : undefined;
             if (lastValue) {
@@ -154,18 +157,18 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
     const processedItems = useMemo(() => {
       return items.map((item, index) => {
         // Ensure each item has a usable key and value
-        const itemValue = item.value !== undefined 
-          ? String(item.value) 
-          : item.id !== undefined 
-            ? String(item.id) 
+        const itemValue = item.value !== undefined
+          ? String(item.value)
+          : item.id !== undefined
+            ? String(item.id)
             : `tab-${index}`;
-        
-        const itemKey = item.id !== undefined 
+
+        const itemKey = item.id !== undefined
           ? String(item.id)
-          : item.value !== undefined 
+          : item.value !== undefined
             ? String(item.value)
             : `tab-${index}`;
-            
+
         return {
           ...item,
           processedValue: itemValue,
@@ -179,7 +182,12 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
         id={internalId}
         className={cn(getStyleClass('root'), className)}
         data-testid={dataTestId || 'dyn-tabs'}
-        {...rest}
+        {...(
+          // only forward safe DOM props (data-*, aria-*, style)
+          Object.fromEntries(
+            Object.entries(rest).filter(([k]) => k.startsWith('data-') || k.startsWith('aria-') || k === 'style')
+          ) as Record<string, unknown>
+        )}
       >
         <div
           role="tablist"
@@ -197,13 +205,12 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
             const selected = item.processedValue === current;
             const tabId = `${internalId}-tab-${item.processedValue}`;
             const panelId = `${internalId}-panel-${item.processedValue}`;
-            
+
             return (
               <button
                 key={item.processedKey}
-                ref={(el) => {
+                ref={(el: HTMLButtonElement | null) => {
                   tabsRef.current[index] = el;
-                  return el; // Fixed: Return the element instead of void
                 }}
                 id={tabId}
                 role="tab"
@@ -241,7 +248,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
           const selected = item.processedValue === current;
           const tabId = `${internalId}-tab-${item.processedValue}`;
           const panelId = `${internalId}-panel-${item.processedValue}`;
-          
+
           return (
             <div
               key={`panel-${item.processedKey}`}
@@ -251,11 +258,11 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
               hidden={!selected}
               tabIndex={-1}
               className={cn(
-                getStyleClass('tabpanel'), 
+                getStyleClass('tabpanel'),
                 selected && getStyleClass('tabpanel--active')
               )}
             >
-              {typeof item.content === 'function' 
+              {isTabContentFunction(item.content)
                 ? item.content({ value: item.processedValue, selected })
                 : item.content
               }
