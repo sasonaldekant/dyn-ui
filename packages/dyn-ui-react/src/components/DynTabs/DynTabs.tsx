@@ -2,14 +2,10 @@ import React, { useMemo, useRef, useState, useEffect, forwardRef } from 'react';
 import { cn } from '../../utils/classNames';
 import { generateId } from '../../utils/accessibility';
 import styles from './DynTabs.module.css';
-import type { DynTabsProps, DynTabsRef, DynTabItem } from './DynTabs.types';
+import type { DynTabsProps, DynTabsRef } from './DynTabs.types';
 
 const getStyleClass = (name: string) => (styles as Record<string, string>)[name] || '';
 
-/**
- * DynTabs — standardized per DynAvatar gold patterns: a11y, ids, focus mgmt, memoization.
- * TypeScript-safe implementation with proper type guards and null handling.
- */
 export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
   (
     {
@@ -31,28 +27,48 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
   ) => {
     const [internalId] = useState(() => id || generateId('tabs'));
     const isControlled = value !== undefined;
-    
-    // Enhanced initial value calculation with proper type handling
+
+    // Build processed items once per items change
+    const processedItems = useMemo(() => {
+      return items.map((item, index) => {
+        const processedValue =
+          item.value != null ? String(item.value)
+          : item.id != null ? String(item.id)
+          : `tab-${index}`;
+        const processedKey =
+          item.id != null ? String(item.id)
+          : item.value != null ? String(item.value)
+          : `tab-${index}`;
+        return { ...item, processedValue, processedKey } as typeof item & { processedValue: string; processedKey: string };
+      });
+    }, [items]);
+
+    // Initial current based on processedItems
     const getInitialValue = (): string | undefined => {
       if (value !== undefined) return String(value);
       if (defaultValue !== undefined) return String(defaultValue);
-      const firstItem = items?.[0];
-      if (firstItem?.value !== undefined) return String(firstItem.value);
-      if (firstItem?.id !== undefined) return String(firstItem.id);
-      return undefined;
+      return processedItems[0]?.processedValue;
     };
-    
+
     const [current, setCurrent] = useState<string | undefined>(getInitialValue());
 
+    // Keep current in sync for controlled usage
     useEffect(() => {
-      if (isControlled && value !== undefined) {
-        setCurrent(String(value));
-      }
+      if (isControlled && value !== undefined) setCurrent(String(value));
     }, [isControlled, value]);
+
+    // If items change and current becomes invalid, reset to first enabled tab
+    useEffect(() => {
+      if (!processedItems.length) return;
+      const exists = processedItems.some(i => i.processedValue === current);
+      if (!exists) {
+        const firstEnabled = processedItems.find(i => !i.disabled) ?? processedItems[0];
+        setCurrent(firstEnabled.processedValue);
+      }
+    }, [processedItems, current]);
 
     const tabsRef = useRef<Array<HTMLButtonElement | null>>([]);
 
-    // Enhanced onSelect with proper type safety
     const onSelect = (val: string, focusPanel = false) => {
       if (!isControlled) setCurrent(val);
       onChange?.(val);
@@ -62,35 +78,32 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
       }
     };
 
-    // Enhanced currentIndex calculation with safety checks
     const currentIndex = useMemo(() => {
-      if (!current || !items?.length) return -1;
-      return items.findIndex(i => 
-        (i.value !== undefined && String(i.value) === current) ||
-        (i.id !== undefined && String(i.id) === current)
-      );
-    }, [items, current]);
+      if (!current) return -1;
+      return processedItems.findIndex(i => i.processedValue === current);
+    }, [processedItems, current]);
+
+    // Loop-to-next-enabled navigation
+    const moveFocus = (startIndex: number, delta: number) => {
+      const count = processedItems.length;
+      if (count === 0) return;
+      let idx = startIndex;
+      for (let step = 0; step < count; step++) {
+        idx = (idx + delta + count) % count;
+        const cand = processedItems[idx];
+        if (!cand?.disabled) {
+          onSelect(cand.processedValue);
+          tabsRef.current[idx]?.focus();
+          return;
+        }
+      }
+    };
 
     const focusTabByOffset = (delta: number) => {
-      if (!items?.length) return;
-      const count = items.length;
-      let idx = currentIndex;
-      if (idx < 0) idx = 0;
-      const next = (idx + delta + count) % count;
-      const nextItem = items[next];
-      if (nextItem?.disabled) return; // simple guard; could loop to next enabled if needed
-      
-      // Enhanced value retrieval with proper fallback
-      const nextValue = nextItem?.value !== undefined 
-        ? String(nextItem.value) 
-        : nextItem?.id !== undefined 
-          ? String(nextItem.id)
-          : undefined;
-      
-      if (nextValue) {
-        onSelect(nextValue);
-        tabsRef.current[next]?.focus();
-      }
+      const count = processedItems.length;
+      if (!count) return;
+      const idx = currentIndex < 0 ? 0 : currentIndex;
+      moveFocus(idx, delta);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -108,36 +121,25 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
         case 'ArrowUp':
           if (!isH) { e.preventDefault(); focusTabByOffset(-1); }
           break;
-        case 'Home':
+        case 'Home': {
           e.preventDefault();
-          const firstItem = items[0];
-          if (firstItem) {
-            const firstValue = firstItem.value !== undefined 
-              ? String(firstItem.value)
-              : firstItem.id !== undefined 
-                ? String(firstItem.id)
-                : undefined;
-            if (firstValue) {
-              onSelect(firstValue);
-              tabsRef.current[0]?.focus();
-            }
-          }
+          if (!processedItems.length) return;
+          const first = processedItems.find(i => !i.disabled) ?? processedItems[0];
+          const idx = processedItems.indexOf(first);
+          onSelect(first.processedValue);
+          if (idx >= 0) tabsRef.current[idx]?.focus();
           break;
-        case 'End':
+        }
+        case 'End': {
           e.preventDefault();
-          const lastItem = items[items.length - 1];
-          if (lastItem) {
-            const lastValue = lastItem.value !== undefined 
-              ? String(lastItem.value)
-              : lastItem.id !== undefined 
-                ? String(lastItem.id)
-                : undefined;
-            if (lastValue) {
-              onSelect(lastValue);
-              tabsRef.current[items.length - 1]?.focus();
-            }
-          }
+          if (!processedItems.length) return;
+          const rev = [...processedItems].reverse();
+          const last = rev.find(i => !i.disabled) ?? rev[0];
+          const idx = processedItems.indexOf(last);
+          onSelect(last.processedValue);
+          if (idx >= 0) tabsRef.current[idx]?.focus();
           break;
+        }
         case 'Enter':
         case ' ': // Space
           if (activation === 'manual') {
@@ -150,37 +152,8 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
       }
     };
 
-    // Enhanced item processing with proper key and value handling
-    const processedItems = useMemo(() => {
-      return items.map((item, index) => {
-        // Ensure each item has a usable key and value
-        const itemValue = item.value !== undefined 
-          ? String(item.value) 
-          : item.id !== undefined 
-            ? String(item.id) 
-            : `tab-${index}`;
-        
-        const itemKey = item.id !== undefined 
-          ? String(item.id)
-          : item.value !== undefined 
-            ? String(item.value)
-            : `tab-${index}`;
-            
-        return {
-          ...item,
-          processedValue: itemValue,
-          processedKey: itemKey
-        };
-      });
-    }, [items]);
-
     return (
-      <div
-        id={internalId}
-        className={cn(getStyleClass('root'), className)}
-        data-testid={dataTestId || 'dyn-tabs'}
-        {...rest}
-      >
+      <div id={internalId} className={cn(getStyleClass('root'), className)} data-testid={dataTestId || 'dyn-tabs'} {...rest}>
         <div
           role="tablist"
           aria-label={ariaLabel}
@@ -197,14 +170,10 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
             const selected = item.processedValue === current;
             const tabId = `${internalId}-tab-${item.processedValue}`;
             const panelId = `${internalId}-panel-${item.processedValue}`;
-            
             return (
               <button
                 key={item.processedKey}
-                ref={(el) => {
-                  tabsRef.current[index] = el;
-                  return el; // Fixed: Return the element instead of void
-                }}
+                ref={(el) => { tabsRef.current[index] = el; return el; }}
                 id={tabId}
                 role="tab"
                 type="button"
@@ -221,16 +190,10 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
                 onClick={() => onSelect(item.processedValue, activation === 'auto')}
                 disabled={item.disabled}
               >
-                {item.icon && (
-                  <span className={getStyleClass('tab__icon')} aria-hidden="true">
-                    {item.icon}
-                  </span>
-                )}
+                {item.icon && <span className={getStyleClass('tab__icon')} aria-hidden="true">{item.icon}</span>}
                 <span className={getStyleClass('tab__label')}>{item.label}</span>
                 {item.badge && (
-                  <span className={getStyleClass('tab__badge')} aria-hidden="true">
-                    {item.badge}
-                  </span>
+                  <span className={getStyleClass('tab__badge')} aria-hidden="true">{item.badge}</span>
                 )}
               </button>
             );
@@ -241,7 +204,6 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
           const selected = item.processedValue === current;
           const tabId = `${internalId}-tab-${item.processedValue}`;
           const panelId = `${internalId}-panel-${item.processedValue}`;
-          
           return (
             <div
               key={`panel-${item.processedKey}`}
@@ -250,15 +212,9 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
               aria-labelledby={tabId}
               hidden={!selected}
               tabIndex={-1}
-              className={cn(
-                getStyleClass('tabpanel'), 
-                selected && getStyleClass('tabpanel--active')
-              )}
+              className={cn(getStyleClass('tabpanel'), selected && getStyleClass('tabpanel--active'))}
             >
-              {typeof item.content === 'function' 
-                ? item.content({ value: item.processedValue, selected })
-                : item.content
-              }
+              {typeof item.content === 'function' ? item.content({ value: item.processedValue, selected }) : item.content}
             </div>
           );
         })}
