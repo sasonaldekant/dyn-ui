@@ -7,5 +7,11 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:box": "vitest --environment=jsdom src/components/DynBox"
+  },
+  "dependencies": {
+    "classnames": "^2.5.1"
+  },
+  "devDependencies": {
+    "@types/classnames": "^2.3.0"
   }
 }

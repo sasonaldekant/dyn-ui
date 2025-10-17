@@ -83,6 +83,7 @@ const sampleMenus: MenuItem[] = [
 
 const defaultProps = {
   menus: sampleMenus,
+  items: sampleMenus,
   collapsed: false,
   filter: true,
   automaticToggle: false
@@ -267,7 +268,7 @@ describe('DynMenu', () => {
     const user = userEvent.setup();
     render(<DynMenu {...defaultProps} />);
     
-    const dashboardItem = screen.getByText('Dashboard').closest('[role="menuitem"]');
+    const dashboardItem = screen.getByText('Dashboard').closest('[role="menuitem"]') as HTMLElement | null;
     
     if (dashboardItem) {
       dashboardItem.focus();
@@ -293,12 +294,11 @@ describe('DynMenu', () => {
         link: 'https://example.com'
       }
     ];
-    
     // Mock window.location.href setter
     delete (window as any).location;
     (window as any).location = { href: '' };
     
-    render(<DynMenu menus={menuWithLink} />);
+    render(<DynMenu items={menuWithLink} />);
     
     const linkItem = screen.getByText('External Link');
     fireEvent.click(linkItem);

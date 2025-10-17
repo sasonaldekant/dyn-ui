@@ -67,8 +67,16 @@ export const DynMenu: React.FC<DynMenuProps> = ({
     setFocusIndex(index);
   };
 
-  const onSubItemClick = (action: string) => {
-    onAction?.(action);
+  const onSubItemClick = (action: string | (() => void) | undefined) => {
+    if (typeof action === 'string') {
+      onAction?.(action);
+    } else if (typeof action === 'function') {
+      try {
+        action();
+      } catch {
+        // ignore errors from provided callback
+      }
+    }
     closeAll();
   };
 
@@ -92,7 +100,7 @@ export const DynMenu: React.FC<DynMenuProps> = ({
         return (
           <div key={buttonId} className={getStyleClass('menubar__item')}>
             <button
-              ref={(el) => (itemRefs.current[idx] = el)}
+              ref={(el) => { itemRefs.current[idx] = el; }}
               id={buttonId}
               type="button"
               role="menuitem"

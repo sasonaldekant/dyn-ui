@@ -7,8 +7,7 @@ import React from 'react';
 import { DynPageProps } from '../../types/layout.types';
 import { classNames } from '../../utils/classNames';
 import { DynButton } from '../DynButton';
-
-export type DynButtonKind = 'primary' | 'secondary' | 'danger';
+import type { DynButtonKind } from '../DynButton/DynButton.types';
 
 export const DynPage: React.FC<DynPageProps> = ({
   title,
@@ -79,7 +78,7 @@ export const DynPage: React.FC<DynPageProps> = ({
         {actions.map((action) => (
           <DynButton
             key={action.key}
-            kind={action.type || 'secondary'}
+            kind={(action.type ?? 'secondary') as DynButtonKind}
             size={size === 'large' ? 'large' : 'medium'}
             disabled={action.disabled}
             loading={action.loading}

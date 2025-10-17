@@ -139,7 +139,8 @@ describe('DynPage', () => {
     );
     
     // CSS module friendly assertion
-    expect(container.firstChild?.className).toMatch(/large/i);
+    const el = container.firstElementChild as HTMLElement | null;
+    expect(el?.className).toMatch(/large/i);
   });
 
   it('applies padding classes', () => {
@@ -150,7 +151,8 @@ describe('DynPage', () => {
     );
     
     // CSS module friendly assertion
-    expect(container.firstChild?.className).toMatch(/padding.*lg/i);
+    const el = container.firstElementChild as HTMLElement | null;
+    expect(el?.className).toMatch(/padding.*lg/i);
   });
 
   it('applies background classes', () => {
@@ -161,7 +163,8 @@ describe('DynPage', () => {
     );
     
     // CSS module friendly assertion
-    expect(container.firstChild?.className).toMatch(/surface/i);
+    const el = container.firstElementChild as HTMLElement | null;
+    expect(el?.className).toMatch(/surface/i);
   });
 
   it('has proper semantic structure', () => {
