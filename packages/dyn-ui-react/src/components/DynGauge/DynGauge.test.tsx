@@ -5,18 +5,17 @@ import { DynGauge } from './DynGauge';
 
 describe('DynGauge', () => {
   beforeEach(() => {
-    vi.stubGlobal(
-      'requestAnimationFrame',
-      (cb: FrameRequestCallback) => {
-        const timeoutId = window.setTimeout(() => cb(performance.now()), 16);
-        return timeoutId as unknown as number;
-      }
-    );
+    // Provide a stable requestAnimationFrame shim for animations
+    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
+      const timeoutId = window.setTimeout(() => cb(performance.now()), 16);
+      return timeoutId as unknown as number;
+    });
 
     vi.stubGlobal('cancelAnimationFrame', (id: number) => {
       window.clearTimeout(id as unknown as number);
     });
 
+    // Mock canvas 2D context methods used by the gauge drawing code
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(() => {
       const context = {
         beginPath: vi.fn(),
@@ -102,9 +101,11 @@ describe('DynGauge', () => {
 
     const legend = screen.getByText('Low').closest('figcaption');
     expect(legend).not.toBeNull();
-    const legendScope = within(legend!);
-
-    expect(legendScope.getByText('Low')).toBeInTheDocument();
-    expect(legendScope.getByText('Medium')).toBeInTheDocument();
+      const legendScope = within(legend!);
+  
+      expect(legendScope.getByText('Low')).toBeInTheDocument();
+      expect(legendScope.getByText('Medium')).toBeInTheDocument();
+      expect(legendScope.getByText('Medium')).toBeInTheDocument();
+    });
+  
   });
-});

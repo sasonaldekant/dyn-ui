@@ -13,7 +13,11 @@
     "check:implementation": "node check-implementation.js",
     "validate:types": "tsx scripts/validate-component-types.ts",
     "validate:components": "tsx scripts/validate-component-types.ts",
-    "tokens:build": "cd packages/design-tokens && npm run build"
+    "tokens:build": "cd packages/design-tokens && npm run build",
+    "test:run": "vitest --run",
+    "test:coverage": "vitest --coverage",
+    "test:ui": "vitest --ui",
+    "test:dyngauge": "vitest DynGauge --run"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "4.1.1",
