@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { cn } from '../../utils/classNames';
 import { generateId } from '../../utils/accessibility';
 import styles from './DynTable.module.css';
@@ -7,16 +7,108 @@ import { useEffect, useState } from 'react';
 
 const getStyleClass = (n: string) => (styles as Record<string, string>)[n] || '';
 
+const NON_DOM_PROPS = new Set([
+  'columns',
+  'data',
+  'actions',
+  'loading',
+  'size',
+  'bordered',
+  'striped',
+  'hoverable',
+  'selectable',
+  'selectedKeys',
+  'rowKey',
+  'pagination',
+  'sortBy',
+  'sortable',
+  'onSort',
+  'onSelectionChange',
+  'emptyText',
+  'height'
+]);
+
+const formatBoolean = (value: unknown) => (value ? 'Yes' : 'No');
+
+const formatCellValue = (value: unknown) => {
+  if (value === null || value === undefined) return '';
+  return String(value);
+};
+
+const getRowKey = (row: any, index: number, rowKey?: DynTableProps['rowKey']) => {
+  if (typeof rowKey === 'function') return rowKey(row);
+  if (typeof rowKey === 'string' && rowKey in row) return String(row[rowKey]);
+  if ('id' in row) return String(row.id);
+  if ('key' in row) return String(row.key);
+  return String(index);
+};
+
+const isColumnSortable = (sortable: boolean, columnSortable?: boolean) => {
+  if (!sortable) return false;
+  if (columnSortable === false) return false;
+  return true;
+};
+
+const SortIcons: React.FC<{ direction?: TableSortDirection; isActive: boolean }> = ({ direction, isActive }) => {
+  return (
+    <span className={cn(getStyleClass('dyn-table__sort-icons'), 'dyn-table__sort-icons')} aria-hidden="true">
+      <span
+        className={cn(
+          getStyleClass('dyn-table__sort-icon'),
+          'dyn-table__sort-icon',
+          isActive && direction === 'asc' && [
+            getStyleClass('dyn-table__sort-icon--active'),
+            'dyn-table__sort-icon--active'
+          ]
+        )}
+      >
+        ▲
+      </span>
+      <span
+        className={cn(
+          getStyleClass('dyn-table__sort-icon'),
+          'dyn-table__sort-icon',
+          isActive && direction === 'desc' && [
+            getStyleClass('dyn-table__sort-icon--active'),
+            'dyn-table__sort-icon--active'
+          ]
+        )}
+      >
+        ▼
+      </span>
+    </span>
+  );
+};
+
+const useStableId = (id?: string) => {
+  const [value] = useState(() => id || generateId('table'));
+  return value;
+};
+
 export const DynTable: React.FC<DynTableProps> = ({
   columns,
   data,
-  sortable = false,
+  actions = [],
+  loading = false,
+  size = 'medium',
+  bordered = true,
+  striped = false,
+  hoverable = false,
+  selectable = false,
+  sortable = true,
+  selectedKeys,
+  rowKey,
+  pagination,
   sortBy,
   onSort,
+  onSelectionChange,
+  emptyText = 'No data available',
+  height,
   className,
   id,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
+  'aria-describedby': ariaDescribedBy,
   'data-testid': dataTestId,
   ...rest
 }) => {
