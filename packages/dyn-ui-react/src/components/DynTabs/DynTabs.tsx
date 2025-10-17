@@ -209,7 +209,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
             return (
               <React.Fragment key={item.processedKey}>
                 <button
-                  ref={(el) => { tabsRef.current[index] = el; /* no return */ }}
+                  ref={(el) => { tabsRef.current[index] = el; }}
                   id={tabId}
                   role="tab"
                   type="button"
