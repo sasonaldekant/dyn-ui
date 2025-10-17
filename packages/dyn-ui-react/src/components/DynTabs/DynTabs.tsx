@@ -99,8 +99,8 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
       if (lazy && loaded[val] === undefined) {
         // Immediately show loading for the newly selected tab
         setLoaded(prev => ({ ...prev, [val]: false }));
-        // Complete loading in a microtask
-        queueMicrotask(() => setLoaded(prev => ({ ...prev, [val]: true })));
+        // Complete loading on next macrotask so the loading state is observable
+        setTimeout(() => setLoaded(prev => ({ ...prev, [val]: true })), 0);
       }
       if (focusPanel) {
         const panel = document.getElementById(`${internalId}-panel-${val}`);
@@ -196,7 +196,8 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
             const selected = item.processedValue === current;
             const tabId = `${internalId}-tab-${item.processedValue}`;
             const panelId = `${internalId}-panel-${item.processedValue}`;
-            const wrapperClass = cn(
+            // Move tab-related classes and status onto the actual tab element (button)
+            const tabClass = cn(
               css('tab'),
               size && css(`tab--${size}`),
               variant && css(`tab--${variant}`),
@@ -204,19 +205,21 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
               item.disabled && css('tab--disabled'),
               item.closable && css('tab--closable')
             );
+
             return (
-              <div key={item.processedKey} className={wrapperClass} role="presentation" data-status={item.disabled ? 'disabled' : selected ? 'active' : 'inactive'}>
+              <React.Fragment key={item.processedKey}>
                 <button
                   ref={(el) => { tabsRef.current[index] = el; /* no return */ }}
                   id={tabId}
                   role="tab"
                   type="button"
-                  className={css('tab__content')}
+                  className={cn(tabClass, css('tab__content'))}
                   data-value={item.processedValue}
                   aria-selected={selected}
                   aria-controls={panelId}
                   aria-disabled={item.disabled || undefined}
                   tabIndex={selected ? 0 : -1}
+                  data-status={item.disabled ? 'disabled' : selected ? 'active' : 'inactive'}
                   onClick={() => !item.disabled && onSelect(item.processedValue, activation === 'auto')}
                   disabled={item.disabled}
                 >
@@ -237,7 +240,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
                     ×
                   </button>
                 )}
-              </div>
+              </React.Fragment>
             );
           })}
         </div>
