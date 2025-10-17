@@ -16,9 +16,6 @@ export const DynLabel: React.FC<DynLabelProps> = ({
   className,
   ...restProps
 }: DynLabelProps) => {
-  // Use label element when htmlFor is provided, otherwise use span
-  const ElementType = htmlFor ? 'label' : 'span';
-
   const labelClasses = classNames(
     styles['dyn-label'],
     disabled && styles['dyn-label--disabled'],
@@ -56,19 +53,32 @@ export const DynLabel: React.FC<DynLabelProps> = ({
     );
   };
 
+  // Use React.createElement for dynamic element type to avoid ESBuild JSX parsing issues
+  const elementProps = {
+    className: labelClasses,
+    ...(htmlFor && { htmlFor }),
+    ...(helpText && htmlFor && { 'aria-describedby': `${htmlFor}-help` }),
+    ...restProps
+  };
+
+  const labelContent = (
+    <span className={styles['dyn-label-text']}>
+      {children}
+      {renderRequirementIndicator()}
+    </span>
+  );
+
   return (
     <div className={styles['dyn-label-container']} role="group">
-      <label
-        className={labelClasses}
-        htmlFor={htmlFor}
-        aria-describedby={helpText && htmlFor ? `${htmlFor}-help` : undefined}
-        {...restProps}
-      >
-        <span className={styles['dyn-label-text']}>
-          {children}
-          {renderRequirementIndicator()}
+      {htmlFor ? (
+        <label {...elementProps}>
+          {labelContent}
+        </label>
+      ) : (
+        <span {...elementProps}>
+          {labelContent}
         </span>
-      </ElementType>
+      )}
       {renderHelpText()}
     </div>
   );
