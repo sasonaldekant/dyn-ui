@@ -10,6 +10,7 @@
   background-color: var(--dyn-color-surface, var(--color-surface, #ffffff));
   border-radius: var(--dyn-border-radius-lg, var(--radius-lg, 0.5rem));
   overflow: hidden;
+  position: relative;
 }
 
 /* Position variants */
@@ -59,6 +60,36 @@
   gap: var(--dyn-spacing-xxs, var(--spacing-xxs, 0.125rem));
 }
 
+/* Close buttons container (visual placement over tabs) */
+.tab-close-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* stretch over the tablist so close buttons can visually overlay tabs */
+  display: flex;
+  align-items: center;
+  gap: var(--dyn-spacing-xxs, var(--spacing-xxs, 0.125rem));
+  padding: var(--dyn-spacing-xs, var(--spacing-xs, 0.25rem));
+  pointer-events: none; /* container itself should not capture pointer events */
+  box-sizing: border-box;
+}
+
+.tab-close-container > button {
+  pointer-events: auto; /* allow clicks on the actual close buttons */
+  background: transparent;
+  /* visually pull the close button to the right edge of a typical tab */
+  margin-left: 0.25rem;
+}
+
+/* Left and right positioned tabs: place close container vertically centered to the tablist */
+.tabs--left .tab-close-container,
+.tabs--right .tab-close-container {
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
 .tabs--left .tablist,
 .tabs--right .tablist {
   flex-direction: column;
@@ -91,7 +122,7 @@
   line-height: var(--dyn-line-height-base, var(--line-height-base, 1.5));
   border-radius: var(--dyn-border-radius-md, var(--radius-md, 0.375rem));
   cursor: pointer;
-  transition: 
+  transition:
     background-color var(--dyn-transition-fast, var(--transition-fast, 150ms)),
     color var(--dyn-transition-fast, var(--transition-fast, 150ms)),
     transform var(--dyn-transition-fast, var(--transition-fast, 150ms));
@@ -239,6 +270,18 @@
   flex-shrink: 0;
 }
 
+.tab__close--positioned {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transition: opacity 160ms ease, transform 160ms ease;
+  opacity: 0.9;
+}
+
+.tab__close--positioned:hover {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
 .tab__close:hover {
   color: var(--dyn-color-error, var(--color-error, #ef4444));
   background-color: var(--dyn-color-error-subtle, color-mix(in srgb, var(--dyn-color-error, #ef4444) 10%, transparent));
@@ -342,7 +385,7 @@
   .tabs--right {
     flex-direction: column;
   }
-  
+
   .tabs--left .tablist,
   .tabs--right .tablist {
     flex-direction: row;
@@ -353,21 +396,21 @@
     width: 100%;
     overflow-x: auto;
   }
-  
+
   .tab {
     min-width: max-content;
     min-height: var(--dyn-touch-target-min, 44px);
   }
-  
+
   .tab__label {
     white-space: nowrap;
   }
-  
+
   .tab-add {
     width: var(--dyn-touch-target-min, 44px);
     height: var(--dyn-touch-target-min, 44px);
   }
-  
+
   .panel {
     padding: var(--dyn-spacing-md, var(--spacing-md, 0.75rem));
   }
@@ -414,17 +457,17 @@
   .tab {
     border: var(--dyn-border-width, 1px) solid var(--dyn-color-border, var(--color-border, #e5e7eb));
   }
-  
+
   .tab:focus-visible {
     outline-width: var(--dyn-focus-ring-width-high-contrast, 3px);
   }
-  
+
   .tab--active {
     border-color: var(--dyn-color-primary, var(--color-primary, #3b82f6));
     background-color: var(--dyn-color-primary, var(--color-primary, #3b82f6));
     color: var(--dyn-color-primary-contrast, var(--color-primary-contrast, #ffffff));
   }
-  
+
   .tab--underlined.tab--active {
     border-bottom-width: var(--dyn-border-width-thick, 3px);
   }
@@ -440,7 +483,7 @@
     transition: none;
     animation: none;
   }
-  
+
   .loading-spinner {
     transform: rotate(45deg);
   }
@@ -451,11 +494,11 @@
   .tabs {
     break-inside: avoid;
   }
-  
+
   .tablist {
     display: none;
   }
-  
+
   .panel {
     border: var(--dyn-border-width, 1px) solid var(--dyn-color-border, #000000);
     box-shadow: none;
