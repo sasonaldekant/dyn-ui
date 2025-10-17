@@ -19,8 +19,8 @@ describe('DynLabel', () => {
     expect(screen.getByText('Optional Label')).toBeInTheDocument();
     
     // Use custom text matcher to handle text broken up by multiple elements
-    const element = screen.getByText((content, element) => {
-      return element && element.textContent && element.textContent.includes('(optional)');
+    const element = screen.getByText((_content, element) => {
+      return Boolean(element && element.textContent && element.textContent.includes('(optional)'));
     });
     expect(element).toBeInTheDocument();
     

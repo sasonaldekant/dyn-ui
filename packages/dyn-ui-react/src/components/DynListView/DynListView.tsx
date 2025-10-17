@@ -8,7 +8,7 @@ const getStyleClass = (n: string) => (styles as Record<string, string>)[n] || ''
 
 export const DynListView = forwardRef<HTMLDivElement, DynListViewProps>(function DynListView(
   {
-    items,
+    items = [],
     value,
     defaultValue,
     multiSelect = false,
@@ -40,7 +40,7 @@ export const DynListView = forwardRef<HTMLDivElement, DynListViewProps>(function
 
   const commit = (vals: string[] | string) => {
     if (!isControlled) setSelected(vals as any);
-    onChange?.(vals as any);
+    onChange?.(vals as any, undefined as any);
   };
 
   const toggle = (val: string) => {
