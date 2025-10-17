@@ -24,3 +24,6 @@ export const testAccessibility = async (container: HTMLElement) => {
 
   expect(violations, formattedViolations).toHaveLength(0);
 };
+
+// Export DynStepper test helpers
+export * from './stepper-helpers';
