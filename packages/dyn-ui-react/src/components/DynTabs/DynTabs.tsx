@@ -86,8 +86,10 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
     const onSelect = (val: string, focusPanel = false) => {
       if (!isControlled) setCurrent(val);
       onChange?.(val);
-      if (lazy && !loaded[val]) {
+      if (lazy && loaded[val] === undefined) {
+        // mark only the selected tab as loading initially
         setLoaded(prev => ({ ...prev, [val]: false }));
+        // simulate async completion in next microtask
         queueMicrotask(() => setLoaded(prev => ({ ...prev, [val]: true })));
       }
       if (focusPanel) {
@@ -167,9 +169,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
       className
     );
 
-    const listClass = cn(
-      css('tablist'),
-    );
+    const listClass = cn(css('tablist'));
 
     return (
       <div id={internalId} className={rootClass} data-testid={dataTestId || 'test-tabs'} {...rest}>
@@ -227,7 +227,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
                     ×
                   </button>
                 )}
-              </button>
+              </div>
             );
           })}
         </div>
@@ -237,7 +237,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
           const tabId = `${internalId}-tab-${item.processedValue}`;
           const panelId = `${internalId}-panel-${item.processedValue}`;
           const panelClass = cn(css('panel'), animated && css('panel--animated'));
-          const isLoaded = !lazy || !!loaded[item.processedValue];
+          const isLoaded = !lazy || loaded[item.processedValue] === true || item.processedValue === current;
           return (
             <div
               key={`panel-${item.processedKey}`}
@@ -248,7 +248,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
               tabIndex={-1}
               className={panelClass}
             >
-              {lazy && !isLoaded && (
+              {lazy && selected && !isLoaded && (
                 <div className={css('panel__loading')} aria-label="Loading content">
                   {loadingComponent || <span>Loading tab content</span>}
                 </div>
