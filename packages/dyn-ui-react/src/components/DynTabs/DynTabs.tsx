@@ -96,10 +96,11 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
     const onSelect = (val: string, focusPanel = false) => {
       if (!isControlled) setCurrent(val);
       onChange?.(val);
-      if (lazy && loaded[val] === undefined) {
-        // Immediately show loading for the newly selected tab
-        setLoaded(prev => ({ ...prev, [val]: false }));
-        // Complete loading in a microtask
+      if (lazy) {
+        setLoaded(prev => {
+          if (prev[val] === true) return prev;
+          return { ...prev, [val]: false };
+        });
         queueMicrotask(() => setLoaded(prev => ({ ...prev, [val]: true })));
       }
       if (focusPanel) {
@@ -207,7 +208,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
             return (
               <div key={item.processedKey} className={wrapperClass} role="presentation" data-status={item.disabled ? 'disabled' : selected ? 'active' : 'inactive'}>
                 <button
-                  ref={(el) => { tabsRef.current[index] = el; /* no return */ }}
+                  ref={(el) => { tabsRef.current[index] = el; }}
                   id={tabId}
                   role="tab"
                   type="button"
