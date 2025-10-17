@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { DynLabel } from './DynLabel';
 
@@ -17,15 +17,13 @@ describe('DynLabel', () => {
   it('shows optional indicator', () => {
     render(<DynLabel optional>Optional Label</DynLabel>);
     expect(screen.getByText('Optional Label')).toBeInTheDocument();
-
-    // Use custom text matcher to handle text broken up by multiple elements
-    const element = screen.getByText((_content, element) => {
-      return Boolean(element && element.textContent && element.textContent.includes('(optional)'));
-    });
-    expect(element).toBeInTheDocument();
-
-    // Alternative: test by data-testid
+    
+    // Use data-testid to avoid multiple element matching issues
     expect(screen.getByTestId('optional-indicator')).toBeInTheDocument();
+    
+    // Verify the text content is correct
+    const optionalElement = screen.getByTestId('optional-indicator');
+    expect(optionalElement).toHaveTextContent('(optional)');
   });
 
   it('applies htmlFor attribute', () => {
@@ -35,34 +33,35 @@ describe('DynLabel', () => {
   });
 
   it('applies custom className', () => {
-    render(<DynLabel className="custom-label">Custom Label</DynLabel>);
-    const root = screen.getByText('Custom Label').closest('label, span');
-    expect(root).toHaveClass('custom-label');
+    render(<DynLabel className="custom-label" data-testid="test-label">Custom Label</DynLabel>);
+    const labelElement = screen.getByTestId('test-label');
+    expect(labelElement).toHaveClass('custom-label');
   });
 
   it('passes through additional props', () => {
     render(<DynLabel data-testid="custom-label" title="Tooltip">Label with Props</DynLabel>);
-    const root = screen.getByTestId('custom-label');
-    expect(root).toHaveAttribute('title', 'Tooltip');
+    const label = screen.getByTestId('custom-label');
+    expect(label).toHaveAttribute('title', 'Tooltip');
   });
 
   it('renders as label element when htmlFor is provided', () => {
-    render(<DynLabel htmlFor="input">Form Label</DynLabel>);
-    const element = screen.getByText('Form Label').closest('label');
-    expect(element).toBeTruthy();
-    expect(element?.tagName).toBe('LABEL');
+    render(<DynLabel htmlFor="input" data-testid="form-label">Form Label</DynLabel>);
+    const element = screen.getByTestId('form-label');
+    expect(element.tagName).toBe('LABEL');
   });
 
   it('renders as span element when htmlFor is not provided', () => {
-    render(<DynLabel>Span Label</DynLabel>);
-    const element = screen.getByText('Span Label').closest('span');
-    expect(element).toBeTruthy();
-    expect(element?.tagName).toBe('SPAN');
+    render(<DynLabel data-testid="span-label">Span Label</DynLabel>);
+    const element = screen.getByTestId('span-label');
+    expect(element.tagName).toBe('SPAN');
   });
 
   it('combines required and optional correctly', () => {
+    // Should prioritize required over optional
     render(<DynLabel required optional>Priority Label</DynLabel>);
     expect(screen.getByText('*')).toBeInTheDocument();
+    
+    // Check that optional indicator is NOT present when required is true
     expect(screen.queryByTestId('optional-indicator')).not.toBeInTheDocument();
   });
 });
