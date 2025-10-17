@@ -195,27 +195,27 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
               item.closable && css('tab--closable')
             );
             return (
-              <div key={item.processedKey} className={tabClass} role="presentation" data-status={item.disabled ? 'disabled' : selected ? 'active' : 'inactive'}>
-                <button
-                  ref={(el) => { tabsRef.current[index] = el; return el; }}
-                  id={tabId}
-                  role="tab"
-                  type="button"
-                  className={css('tab__content')}
-                  data-value={item.processedValue}
-                  aria-selected={selected}
-                  aria-controls={panelId}
-                  aria-disabled={item.disabled || undefined}
-                  tabIndex={selected ? 0 : -1}
-                  onClick={() => !item.disabled && onSelect(item.processedValue, activation === 'auto')}
-                  disabled={item.disabled}
-                >
-                  {item.icon && <span className={css('tab__icon')} aria-hidden="true">{item.icon}</span>}
-                  <span className={css('tab__label')}>{item.label}</span>
-                  {item.badge && (
-                    <span className={css('tab__badge')} aria-hidden="true">{item.badge}</span>
-                  )}
-                </button>
+              <button
+                key={item.processedKey}
+                ref={(el) => { tabsRef.current[index] = el; }}
+                id={tabId}
+                role="tab"
+                type="button"
+                className={tabClass}
+                data-value={item.processedValue}
+                aria-selected={selected}
+                aria-controls={panelId}
+                aria-disabled={item.disabled || undefined}
+                data-status={item.disabled ? 'disabled' : selected ? 'active' : 'inactive'}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => !item.disabled && onSelect(item.processedValue, activation === 'auto')}
+                disabled={item.disabled}
+              >
+                {item.icon && <span className={css('tab__icon')} aria-hidden="true">{item.icon}</span>}
+                <span className={css('tab__label')}>{item.label}</span>
+                {item.badge && (
+                  <span className={css('tab__badge')} aria-hidden="true">{item.badge}</span>
+                )}
                 {(closable || item.closable) && (
                   <button
                     type="button"
@@ -227,7 +227,7 @@ export const DynTabs = forwardRef<DynTabsRef, DynTabsProps>(
                     ×
                   </button>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>
