@@ -1,6 +1,7 @@
 /**
  * Base types for form field components
  * Part of DYN UI Form Components Group - SCOPE 6
+ * Updated: 2025-10-18 - Added Currency and TextArea support for AccountingOnline ERP
  */
 
 import type { ReactNode } from 'react';
@@ -44,9 +45,23 @@ export interface DynFieldRef {
   setValue: (value: any) => void;
 }
 
-// Input specific types
-export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url';
+// Input specific types - EXTENDED for ERP
+export type InputType = 'text' | 'email' | 'password' | 'number' | 'currency' | 'tel' | 'url';
 export type InputSize = 'small' | 'medium' | 'large';
+export type CurrencyPosition = 'before' | 'after';
+export type ResizeMode = 'none' | 'vertical' | 'horizontal' | 'both';
+
+// Currency configuration for ERP financial inputs
+export interface CurrencyInputConfig {
+  currency?: 'RSD' | 'EUR' | 'USD';
+  precision?: number;
+  thousandSeparator?: string;
+  decimalSeparator?: string;
+  showCurrencySymbol?: boolean;
+  currencyPosition?: CurrencyPosition;
+  autoFormat?: boolean;
+  allowNegative?: boolean;
+}
 
 export interface DynInputProps extends DynFieldBase {
   type?: InputType;
@@ -58,9 +73,27 @@ export interface DynInputProps extends DynFieldBase {
   pattern?: string;
   icon?: string;
   showCleanButton?: boolean;
+  
+  // Number/Currency specific
   step?: number;
   min?: number;
   max?: number;
+  showSpinButtons?: boolean;
+  
+  // Currency specific
+  currencyConfig?: CurrencyInputConfig;
+}
+
+// TextArea specific types - NEW for ERP
+export interface DynTextAreaProps extends DynFieldBase {
+  rows?: number;
+  cols?: number;
+  resize?: ResizeMode;
+  autoResize?: boolean;
+  maxLength?: number;
+  minLength?: number;
+  showCharacterCount?: boolean;
+  wrap?: 'soft' | 'hard' | 'off';
 }
 
 // Select specific types
@@ -89,16 +122,22 @@ export interface DynDatePickerProps extends DynFieldBase {
   size?: InputSize;
 }
 
-// // FieldContainer specific types
-// export interface DynFieldContainerProps {
-//   children: React.ReactElement;
-//   label?: string;
-//   required?: boolean;
-//   optional?: boolean;
-//   helpText?: string;
-//   errorText?: string;
-//   showValidation?: boolean;
-//   className?: string;
-//   htmlFor?: string;
-// }
+// Utility types for currency formatting
+export interface CurrencyFormatOptions {
+  currency: string;
+  precision: number;
+  thousandSeparator: string;
+  decimalSeparator: string;
+  showCurrencySymbol: boolean;
+  currencyPosition: CurrencyPosition;
+  allowNegative?: boolean;
+}
 
+// Export currency symbols mapping
+export const CURRENCY_SYMBOLS = {
+  RSD: 'RSD',
+  EUR: '€',
+  USD: '$'
+} as const;
+
+export type CurrencyType = keyof typeof CURRENCY_SYMBOLS;
