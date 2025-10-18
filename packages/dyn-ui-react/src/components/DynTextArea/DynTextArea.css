@@ -1,0 +1,98 @@
+/**
+ * DynTextArea component styles
+ * Part of DYN UI Form Components - ERP Extension
+ */
+
+.dyn-textarea-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.dyn-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: var(--dyn-spacing-2, 8px) var(--dyn-spacing-3, 12px);
+  border: 1px solid var(--dyn-color-border, #d1d5db);
+  border-radius: var(--dyn-border-radius, 6px);
+  font-family: var(--dyn-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: var(--dyn-font-size-sm, 14px);
+  line-height: var(--dyn-line-height-normal, 1.5);
+  color: var(--dyn-color-text, #111827);
+  background-color: var(--dyn-color-background, #ffffff);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  resize: vertical;
+}
+
+.dyn-textarea:focus {
+  outline: none;
+  border-color: var(--dyn-color-primary, #3b82f6);
+  box-shadow: 0 0 0 3px var(--dyn-color-primary-100, rgba(59, 130, 246, 0.1));
+}
+
+.dyn-textarea--focused {
+  border-color: var(--dyn-color-primary, #3b82f6);
+}
+
+.dyn-textarea--error {
+  border-color: var(--dyn-color-error, #ef4444);
+}
+
+.dyn-textarea--error:focus {
+  border-color: var(--dyn-color-error, #ef4444);
+  box-shadow: 0 0 0 3px var(--dyn-color-error-100, rgba(239, 68, 68, 0.1));
+}
+
+.dyn-textarea--disabled {
+  background-color: var(--dyn-color-gray-50, #f9fafb);
+  color: var(--dyn-color-gray-400, #9ca3af);
+  cursor: not-allowed;
+  resize: none;
+}
+
+.dyn-textarea--readonly {
+  background-color: var(--dyn-color-gray-50, #f9fafb);
+  cursor: default;
+  resize: none;
+}
+
+.dyn-textarea--auto-resize {
+  resize: none;
+  overflow: hidden;
+}
+
+.dyn-textarea--resize-none {
+  resize: none;
+}
+
+.dyn-textarea--resize-horizontal {
+  resize: horizontal;
+}
+
+.dyn-textarea--resize-both {
+  resize: both;
+}
+
+.dyn-textarea-character-count {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--dyn-spacing-1, 4px);
+  font-size: var(--dyn-font-size-xs, 12px);
+  color: var(--dyn-color-gray-500, #6b7280);
+}
+
+.dyn-textarea-character-count--warning {
+  color: var(--dyn-color-warning, #f59e0b);
+}
+
+.dyn-textarea-character-count--error {
+  color: var(--dyn-color-error, #ef4444);
+  font-weight: var(--dyn-font-weight-medium, 500);
+}
+
+/* Responsive sizing */
+@media (max-width: 640px) {
+  .dyn-textarea {
+    font-size: var(--dyn-font-size-base, 16px); /* Prevent zoom on mobile */
+  }
+}
