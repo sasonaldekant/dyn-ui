@@ -1,6 +1,6 @@
 ﻿// Standardized exports for ALL DYN-UI components
 // Ovaj fajl pokriva sve komponente - ne menjaj ručno!
-// Generated on: 2025-10-14 17:37:11
+// Generated on: 2025-10-18 19:25:00 - Added DynTextArea for ERP
 export { DynAvatar } from './DynAvatar';
 export { DynBadge } from './DynBadge';
 export { DynBox } from './DynBox';
@@ -24,6 +24,7 @@ export { DynSelect } from './DynSelect';
 export { DynStepper } from './DynStepper';
 export { DynTable } from './DynTable';
 export { DynTabs } from './DynTabs';
+export { DynTextArea } from './DynTextArea'; // NEW - ERP Forms Support
 export { DynToolbar } from './DynToolbar';
 export { DynTreeView } from './DynTreeView';
 export { ThemeSwitcher } from './ThemeSwitcher';
@@ -33,6 +34,17 @@ export { ThemeProvider, useTheme } from '../theme/ThemeProvider';
 export { IconDictionaryProvider } from '../providers';
 export { classNames, createClassNameGenerator, combineClasses } from '../utils/classNames';
 export { generateInitials } from '../utils/dynFormatters';
+
+// Currency utilities - NEW for ERP
+export { 
+  formatCurrencyValue,
+  parseCurrencyValue,
+  formatRSD,
+  formatEUR,
+  formatUSD,
+  getCurrencyConfig,
+  CURRENCY_SYMBOLS
+} from '../utils/currencyFormatters';
 
 // Type exports
 export type * from './DynAvatar';
@@ -58,6 +70,7 @@ export type * from './DynSelect';
 export type * from './DynStepper';
 export type * from './DynTable';
 export type * from './DynTabs';
+export type * from './DynTextArea'; // NEW - ERP Forms Support
 export type * from './DynToolbar';
 export type * from './DynTreeView';
 export type * from './ThemeSwitcher';
